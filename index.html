@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Inventory Gudang Pro</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: {
+                            900: '#07090e',
+                            800: '#0d1117',
+                            700: '#161b22',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(7, 9, 14, 0.8); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+
+        /* Dynamic Theme Variables */
+        :root {
+            --theme-bg: #07090e;
+            --theme-card: #0f131a;
+            --theme-card-border: rgba(255, 255, 255, 0.06);
+            --theme-accent: #f97316; /* Orange Coral */
+            --theme-accent-hover: #ea580c;
+            --theme-accent-glow: rgba(249, 115, 22, 0.18);
+            --theme-text: #f3f4f6;
+            --theme-text-muted: #8b949e;
+        }
+
+        .theme-sunset {
+            --theme-bg: #07090e;
+            --theme-card: #0f131a;
+            --theme-card-border: rgba(249, 115, 22, 0.12);
+            --theme-accent: #f97316;
+            --theme-accent-hover: #ea580c;
+            --theme-accent-glow: rgba(249, 115, 22, 0.2);
+        }
+
+        .theme-emerald {
+            --theme-bg: #051410;
+            --theme-card: #091f19;
+            --theme-card-border: rgba(16, 185, 129, 0.12);
+            --theme-accent: #10b981;
+            --theme-accent-hover: #059669;
+            --theme-accent-glow: rgba(16, 185, 129, 0.2);
+        }
+
+        .theme-midnight {
+            --theme-bg: #060a12;
+            --theme-card: #0c1424;
+            --theme-card-border: rgba(59, 130, 246, 0.12);
+            --theme-accent: #3b82f6;
+            --theme-accent-hover: #2563eb;
+            --theme-accent-glow: rgba(59, 130, 246, 0.2);
+        }
+
+        body { background-color: var(--theme-bg); color: var(--theme-text); }
+        .app-card { 
+            background-color: var(--theme-card); 
+            border: 1px solid var(--theme-card-border);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+            transition: all 0.25s ease;
+        }
+        .app-card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+        .theme-accent-bg { background-color: var(--theme-accent); }
+        .theme-accent-bg:hover { background-color: var(--theme-accent-hover); }
+        .theme-accent-text { color: var(--theme-accent); }
+        .theme-accent-border { border-color: var(--theme-accent); }
+        .theme-focus:focus { outline: none; border-color: var(--theme-accent); box-shadow: 0 0 0 3px var(--theme-accent-glow); }
+        
+        /* High visibility form labels */
+        label {
+            color: #f3f4f6 !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.025em;
+        }
+
+        input, select, textarea {
+            transition: all 0.2s ease;
+            color: #f9fafb !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #9ca3af !important;
+        }
+
+        /* Prevent table text clipping and ensure comfortable whitespace */
+        table th, table td {
+            white-space: nowrap;
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+
+        /* Fluid Table Optimization */
+        .fluid-table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+        .fluid-table {
+            width: 100%;
+            table-layout: auto;
+        }
+
+        /* Centered Top Toast Styling */
+        #toast-container {
+            position: fixed;
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: center;
+            pointer-events: none;
+        }
+        #toast-container > div {
+            pointer-events: auto;
+        }
+
+        /* Blinking animation for low stock alert */
+        @keyframes lowStockBlinkRed {
+            0%, 100% { border-color: rgba(244, 63, 94, 0.9); box-shadow: inset 0 0 15px rgba(244, 63, 94, 0.35), 0 0 15px rgba(244, 63, 94, 0.45); background-color: rgba(244, 63, 94, 0.12); }
+            50% { border-color: rgba(244, 63, 94, 0.25); box-shadow: inset 0 0 3px rgba(244, 63, 94, 0.05), 0 0 3px rgba(244, 63, 94, 0.1); background-color: rgba(244, 63, 94, 0.03); }
+        }
+        @keyframes lowStockBlinkOrange {
+            0%, 100% { border-color: rgba(245, 158, 11, 0.9); box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.35), 0 0 15px rgba(245, 158, 11, 0.45); background-color: rgba(245, 158, 11, 0.12); }
+            50% { border-color: rgba(245, 158, 11, 0.25); box-shadow: inset 0 0 3px rgba(245, 158, 11, 0.05), 0 0 3px rgba(245, 158, 11, 0.1); background-color: rgba(245, 158, 11, 0.03); }
+        }
+        .blink-low-stock-red {
+            animation: lowStockBlinkRed 1.2s infinite ease-in-out;
+        }
+        .blink-low-stock-orange {
+            animation: lowStockBlinkOrange 1.2s infinite ease-in-out;
+        }
+        /* Role Badge Styling */
+        .role-badge-admin { background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
+        .role-badge-staff { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .role-badge-viewer { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-orange-500 selection:text-white theme-sunset">
+
+    <!-- TOP HEADER -->
+    <header class="h-16 border-b border-white/5 bg-dark-800/90 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-6 lg:px-8">
+        <div class="flex items-center gap-3.5">
+            <div class="w-10 h-10 rounded-xl theme-accent-bg flex items-center justify-center shadow-xl shadow-orange-500/40 text-white font-black text-xl tracking-wider brightness-125 saturate-150">
+                G
+            </div>
+            <div>
+                <h1 class="font-bold text-base md:text-lg tracking-wide flex items-center gap-2 text-gray-100">
+                    Sistem Manajemen Inventory Gudang Pro
+                </h1>
+                <p class="text-[11px] text-gray-400 font-medium tracking-wide">Professional Inventory & PO System</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div id="live-clock" class="text-xs font-mono bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-lg text-gray-300 hidden md:block shadow-inner">
+                <!-- Live clock -->
+            </div>
+            <!-- Current User Info & Logout -->
+            <div id="current-user-banner" class="flex items-center gap-2.5 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl">
+                <!-- Rendered via JS -->
+            </div>
+            <button onclick="exportCSVData()" class="px-4 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center gap-2 shadow-lg shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-95">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                <span>Export CSV</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="flex-1 flex overflow-hidden">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="w-64 border-r border-white/5 bg-dark-800/40 backdrop-blur-sm flex flex-col justify-between shrink-0 select-none">
+            <nav class="p-4 space-y-1.5 overflow-y-auto">
+                <div class="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Menu Utama</div>
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <span>Dashboard Realtime</span>
+                </button>
+                <button onclick="switchTab('master')" id="nav-master" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                    <i data-lucide="package" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <span>Master Data Barang</span>
+                </button>
+                <button onclick="switchTab('masuk')" id="nav-masuk" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                    <i data-lucide="plus-circle" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <span>Barang Masuk</span>
+                </button>
+                <button onclick="switchTab('keluar')" id="nav-keluar" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                    <i data-lucide="minus-circle" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <span>Barang Keluar</span>
+                </button>
+                <button onclick="switchTab('po')" id="nav-po" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                    <i data-lucide="file-text" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <span>PO Masuk (Customer)</span>
+                </button>
+                <button onclick="switchTab('retur')" id="nav-retur" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <span>Retur Barang</span>
+                </button>
+                <div id="nav-users-wrapper" class="pt-2">
+                    <button onclick="switchTab('users')" id="nav-users" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                        <i data-lucide="users" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                        <span>Manajemen User</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- SIDEBAR FOOTER / THEME SELECTOR -->
+            <div class="p-4 border-t border-white/5 space-y-3 bg-dark-900/60">
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="palette" class="w-3 h-3"></i> Tema Tampilan
+                    </label>
+                    <select id="theme-selector" onchange="changeTheme(this.value)" class="w-full bg-dark-700/80 border border-white/10 rounded-xl px-3 py-2 text-xs text-gray-200 theme-focus">
+                        <option value="sunset">Sunset Coral (Default)</option>
+                        <option value="emerald">Emerald Forest</option>
+                        <option value="midnight">Midnight Blue</option>
+                    </select>
+                </div>
+                <button onclick="resetData()" class="w-full py-2 px-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold hover:bg-rose-500/20 transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="database" class="w-3.5 h-3.5"></i>
+                    <span>Reset Data Contoh</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT CONTAINER -->
+        <main class="flex-1 overflow-y-auto px-6 lg:px-10 py-6 bg-dark-900 w-full">
+
+            <!-- 1. TAB DASHBOARD -->
+            <section id="tab-dashboard" class="space-y-6 w-full">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                    <div>
+                        <h2 class="text-xl font-extrabold tracking-tight text-gray-100">DASHBOARD REALTIME</h2>
+                        <p class="text-xs text-gray-400 mt-0.5">Ringkasan stok gudang, pergerakan transaksi, dan status PO aktif.</p>
+                    </div>
+                    <div class="text-xs text-gray-400 font-medium bg-white/5 px-3 py-1.5 rounded-xl border border-white/5 w-fit">
+                        Status Sistem: <span class="text-emerald-400 font-bold">● Normal & Sinkron</span>
+                    </div>
+                </div>
+
+                <!-- STAT CARDS -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div class="app-card p-4 rounded-2xl relative overflow-hidden group">
+                        <div class="text-gray-300 text-[11px] font-bold uppercase tracking-wider">Total SKU</div>
+                        <div id="stat-sku" class="text-2xl font-black mt-2 font-mono text-white">0</div>
+                        <div class="text-[10px] text-gray-300 mt-1">Jenis barang</div>
+                        <div class="absolute right-3 top-3 text-orange-400/40 group-hover:scale-110 transition-transform"><i data-lucide="package" class="w-7 h-7"></i></div>
+                    </div>
+                    <div id="card-stok-fisik" class="app-card p-4 rounded-2xl relative overflow-hidden group">
+                        <div class="text-gray-300 text-[11px] font-bold uppercase tracking-wider">Stok Fisik</div>
+                        <div id="stat-stok" class="text-2xl font-black mt-2 font-mono text-white">0</div>
+                        <div id="stat-stok-desc" class="text-[10px] text-gray-300 mt-1">Akumulasi unit</div>
+                        <div class="absolute right-3 top-3 text-emerald-400/40 group-hover:scale-110 transition-transform"><i data-lucide="layers" class="w-7 h-7"></i></div>
+                    </div>
+                    <div class="app-card p-4 rounded-2xl relative overflow-hidden group">
+                        <div class="text-gray-300 text-[11px] font-bold uppercase tracking-wider">Total Masuk</div>
+                        <div id="stat-masuk" class="text-2xl font-black mt-2 font-mono text-emerald-300">0</div>
+                        <div class="text-[10px] text-gray-300 mt-1">Unit masuk</div>
+                        <div class="absolute right-3 top-3 text-emerald-400/40 group-hover:scale-110 transition-transform"><i data-lucide="arrow-down-left" class="w-7 h-7"></i></div>
+                    </div>
+                    <div class="app-card p-4 rounded-2xl relative overflow-hidden group">
+                        <div class="text-gray-300 text-[11px] font-bold uppercase tracking-wider">Total Keluar</div>
+                        <div id="stat-keluar" class="text-2xl font-black mt-2 font-mono text-rose-300">0</div>
+                        <div class="text-[10px] text-gray-300 mt-1">Unit keluar</div>
+                        <div class="absolute right-3 top-3 text-rose-400/40 group-hover:scale-110 transition-transform"><i data-lucide="arrow-up-right" class="w-7 h-7"></i></div>
+                    </div>
+                    <div class="app-card p-4 rounded-2xl relative overflow-hidden group">
+                        <div class="text-gray-300 text-[11px] font-bold uppercase tracking-wider">PO Aktif</div>
+                        <div id="stat-po" class="text-2xl font-black mt-2 font-mono text-sky-300">0</div>
+                        <div class="text-[10px] text-gray-300 mt-1">Belum selesai</div>
+                        <div class="absolute right-3 top-3 text-sky-400/40 group-hover:scale-110 transition-transform"><i data-lucide="file-text" class="w-7 h-7"></i></div>
+                    </div>
+                    <div class="app-card p-4 rounded-2xl relative overflow-hidden group">
+                        <div class="text-gray-300 text-[11px] font-bold uppercase tracking-wider">Total Retur</div>
+                        <div id="stat-retur" class="text-2xl font-black mt-2 font-mono text-amber-300">0</div>
+                        <div class="text-[10px] text-gray-300 mt-1">Transaksi retur</div>
+                        <div class="absolute right-3 top-3 text-amber-400/40 group-hover:scale-110 transition-transform"><i data-lucide="rotate-ccw" class="w-7 h-7"></i></div>
+                    </div>
+                </div>
+
+                <!-- GRAFIK & STOK MENIPIS -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- GRAFIK BARANG MASUK -->
+                    <div class="app-card p-6 rounded-2xl flex flex-col">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-xs tracking-wider text-emerald-400 uppercase flex items-center gap-2">
+                                <i data-lucide="bar-chart-2" class="w-4 h-4"></i> GRAFIK BARANG MASUK (TOP SKU)
+                            </h3>
+                            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-semibold px-2 py-0.5 rounded-md">Inflow</span>
+                        </div>
+                        <div id="chart-masuk" class="flex-1 min-h-[220px] flex items-end gap-3 pt-6 pb-2 px-2 border-b border-white/5 overflow-x-auto">
+                            <!-- Rendered via JS -->
+                        </div>
+                    </div>
+
+                    <!-- GRAFIK BARANG KELUAR -->
+                    <div class="app-card p-6 rounded-2xl flex flex-col">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-xs tracking-wider text-rose-400 uppercase flex items-center gap-2">
+                                <i data-lucide="bar-chart-2" class="w-4 h-4"></i> GRAFIK BARANG KELUAR (TOP SKU)
+                            </h3>
+                            <span class="text-[10px] bg-rose-500/20 text-rose-300 font-semibold px-2 py-0.5 rounded-md">Outflow</span>
+                        </div>
+                        <div id="chart-keluar" class="flex-1 min-h-[220px] flex items-end gap-3 pt-6 pb-2 px-2 border-b border-white/5 overflow-x-auto">
+                            <!-- Rendered via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STOK MENIPIS WIDGET -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="app-card p-6 rounded-2xl lg:col-span-3 flex flex-col">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-xs tracking-wider text-rose-400 uppercase flex items-center gap-1.5">
+                                <i data-lucide="alert-triangle" class="w-4 h-4"></i> PERINGATAN STOK MENIPIS
+                            </h3>
+                            <span class="text-[10px] bg-rose-500/20 text-rose-300 font-semibold px-2 py-0.5 rounded-md">&lt; Stok Min.</span>
+                        </div>
+                        <div id="low-stock-list" class="flex flex-col gap-2.5 overflow-y-auto max-h-[300px] pr-1">
+                            <!-- Rendered via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AKTIVITAS TRANSAKSI TERAKHIR -->
+                <div class="app-card p-6 rounded-2xl">
+                    <h3 class="font-bold text-xs tracking-wider text-gray-200 uppercase mb-4 flex items-center gap-2">
+                        <i data-lucide="activity" class="w-4 h-4 text-orange-400"></i> AKTIVITAS TRANSAKSI TERAKHIR (REALTIME LOG)
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
+                                <tr>
+                                    <th class="py-3 px-3.5 rounded-l-xl">Waktu / Tanggal</th>
+                                    <th class="py-3 px-3.5">Jenis Transaksi</th>
+                                    <th class="py-3 px-3.5">ID Referensi</th>
+                                    <th class="py-3 px-3.5">Nama Barang</th>
+                                    <th class="py-3 px-3.5 text-right">Qty</th>
+                                    <th class="py-3 px-3.5 rounded-r-xl">Keterangan / Partner</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-activity-body" class="divide-y divide-white/5">
+                                <!-- Rendered via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. TAB MASTER DATA BARANG -->
+            <section id="tab-master" class="space-y-6 w-full hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Form Input Master -->
+                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3">
+                        <h3 id="master-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
+                            <i data-lucide="package-plus" class="w-4 h-4 text-orange-400"></i> TAMBAH MASTER BARANG
+                        </h3>
+                        <form id="form-master" onsubmit="saveMasterItem(event)" class="space-y-4">
+                            <input type="hidden" id="master-edit-mode" value="false">
+                            <div>
+                                <label class="text-xs block mb-1">ID Barang (SKU) *</label>
+                                <input type="text" id="master-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" placeholder="Contoh: EJ-003-03">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Nama Barang *</label>
+                                <input type="text" id="master-nama" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Contoh: ELASTIS LURUS">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Kategori *</label>
+                                <input type="text" id="master-jenis" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Contoh: ELASTIS HURUF">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-xs block mb-1">Lebar</label>
+                                    <input type="text" id="master-lebar" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="35 mm">
+                                </div>
+                                <div>
+                                    <label class="text-xs block mb-1">Ukuran</label>
+                                    <input type="text" id="master-ukuran" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="SIZE XXL">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-xs block mb-1">Berat (gr)</label>
+                                    <input type="number" id="master-berat" min="0" value="0" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" placeholder="150">
+                                </div>
+                                <div>
+                                    <label class="text-xs block mb-1">Satuan *</label>
+                                    <select id="master-satuan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                        <option value="YARD">YARD</option>
+                                        <option value="METER">METER</option>
+                                        <option value="ROLL">ROLL</option>
+                                        <option value="PCS">PCS</option>
+                                        <option value="KG">KG</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-xs block mb-1">Stok Min. *</label>
+                                    <input type="number" id="master-min" min="0" value="50" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                                </div>
+                                <div>
+                                    <label class="text-xs block mb-1">Stok Awal *</label>
+                                    <input type="number" id="master-stok" min="0" value="0" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                                </div>
+                            </div>
+                            <div class="pt-2 flex gap-2">
+                                <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
+                                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                    <span>Simpan</span>
+                                </button>
+                                <button type="button" onclick="resetMasterForm()" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Tabel Master -->
+                    <div class="app-card p-6 rounded-2xl lg:col-span-9 flex flex-col">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-3 mb-5">
+                            <div>
+                                <h3 class="font-bold text-xs tracking-wider uppercase text-gray-100">DAFTAR MASTER BARANG</h3>
+                                <p class="text-xs text-gray-300 mt-0.5" id="master-total-badge">0 Item terdaftar</p>
+                            </div>
+                            <div class="flex items-center gap-2.5 w-full md:w-auto">
+                                <div class="w-full md:w-64">
+                                    <input type="text" id="search-master" oninput="renderMasterTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Nama / Kategori...">
+                                </div>
+                                <button onclick="printMasterTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
+                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                                    <span>Print</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="fluid-table-container flex-1 pb-2">
+                            <table class="fluid-table text-left text-xs">
+                                <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
+                                    <tr>
+                                        <th class="py-3 px-2 rounded-l-xl text-center w-10">No</th>
+                                        <th class="py-3 px-3">ID Barang</th>
+                                        <th class="py-3 px-3">Nama Barang</th>
+                                        <th class="py-3 px-3">Kategori</th>
+                                        <th class="py-3 px-2">Lebar</th>
+                                        <th class="py-3 px-2">Ukuran</th>
+                                        <th class="py-3 px-2">Berat</th>
+                                        <th class="py-3 px-2">Satuan</th>
+                                        <th class="py-3 px-3 text-right">Stok</th>
+                                        <th class="py-3 px-3 text-right">Min.</th>
+                                        <th class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="master-table-body" class="divide-y divide-white/5">
+                                    <!-- Rendered via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. TAB BARANG MASUK -->
+            <section id="tab-masuk" class="space-y-6 w-full hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3">
+                        <h3 id="masuk-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
+                            <i data-lucide="plus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG MASUK
+                        </h3>
+                        <form id="form-masuk" onsubmit="saveMasukItem(event)" class="space-y-4">
+                            <input type="hidden" id="masuk-edit-mode" value="false">
+                            <div>
+                                <label class="text-xs block mb-1">ID Transaksi *</label>
+                                <input type="text" id="masuk-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Tanggal *</label>
+                                <input type="date" id="masuk-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Pilih Barang *</label>
+                                <select id="masuk-barang" onchange="updateMasukItemInfo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <option value="">-- Pilih Barang —</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 bg-white/5 p-3 rounded-xl border border-white/10 text-[11px] text-gray-200">
+                                <div><span class="text-gray-300 block mb-0.5 font-medium">Kategori:</span> <span id="info-masuk-jenis" class="font-bold text-white">-</span></div>
+                                <div><span class="text-gray-300 block mb-0.5 font-medium">Satuan:</span> <span id="info-masuk-satuan" class="font-bold text-white">-</span></div>
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Jumlah Masuk (Qty) *</label>
+                                <input type="number" id="masuk-qty" min="1" value="100" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Supplier / Sumber *</label>
+                                <input type="text" id="masuk-supplier" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. SINAR TEXTILE">
+                            </div>
+                            <div class="pt-2 flex gap-2">
+                                <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
+                                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                    <span>Simpan</span>
+                                </button>
+                                <button type="button" onclick="resetMasukForm()" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="app-card p-6 rounded-2xl lg:col-span-9 flex flex-col">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-3 mb-5">
+                            <div>
+                                <h3 class="font-bold text-xs tracking-wider uppercase text-gray-100">RIWAYAT TRANSAKSI BARANG MASUK</h3>
+                                <p class="text-xs text-gray-300 mt-0.5" id="masuk-total-badge">0 Transaksi</p>
+                            </div>
+                            <div class="flex items-center gap-2.5 w-full md:w-auto">
+                                <div class="w-full md:w-64">
+                                    <input type="text" id="search-masuk" oninput="renderMasukTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Supplier...">
+                                </div>
+                                <button onclick="printMasukTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
+                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                                    <span>Print</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="fluid-table-container flex-1 pb-2">
+                            <table class="fluid-table text-left text-xs">
+                                <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
+                                    <tr>
+                                        <th class="py-3 px-2 rounded-l-xl text-center w-10">No</th>
+                                        <th class="py-3 px-3">ID Transaksi</th>
+                                        <th class="py-3 px-3">Tanggal</th>
+                                        <th class="py-3 px-3">ID Barang</th>
+                                        <th class="py-3 px-3">Nama Barang</th>
+                                        <th class="py-3 px-3">Kategori</th>
+                                        <th class="py-3 px-2">Lebar</th>
+                                        <th class="py-3 px-2">Ukuran</th>
+                                        <th class="py-3 px-2">Satuan</th>
+                                        <th class="py-3 px-3 text-right">Qty Masuk</th>
+                                        <th class="py-3 px-3">Supplier</th>
+                                        <th class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="masuk-table-body" class="divide-y divide-white/5">
+                                    <!-- Rendered via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. TAB BARANG KELUAR -->
+            <section id="tab-keluar" class="space-y-6 w-full hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3">
+                        <h3 id="keluar-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
+                            <i data-lucide="minus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG KELUAR
+                        </h3>
+                        <form id="form-keluar" onsubmit="saveKeluarItem(event)" class="space-y-4">
+                            <input type="hidden" id="keluar-edit-mode" value="false">
+                            <div>
+                                <label class="text-xs block mb-1">ID Transaksi *</label>
+                                <input type="text" id="keluar-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Tanggal *</label>
+                                <input type="date" id="keluar-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Merujuk ke PO Aktif *</label>
+                                <select id="keluar-po-ref" onchange="updateKeluarFromPo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <option value="">-- Pilih PO Customer Aktif —</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Pilih Barang *</label>
+                                <select id="keluar-barang" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <option value="">-- Pilih Barang —</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Jumlah Keluar (Qty) *</label>
+                                <input type="number" id="keluar-qty" min="1" value="50" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Customer / Tujuan *</label>
+                                <input type="text" id="keluar-tujuan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA">
+                            </div>
+                            <div class="pt-2 flex gap-2">
+                                <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
+                                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                    <span>Simpan</span>
+                                </button>
+                                <button type="button" onclick="resetKeluarForm()" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="app-card p-6 rounded-2xl lg:col-span-9 flex flex-col">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-3 mb-5">
+                            <div>
+                                <h3 class="font-bold text-xs tracking-wider uppercase text-gray-100">RIWAYAT TRANSAKSI BARANG KELUAR</h3>
+                                <p class="text-xs text-gray-300 mt-0.5" id="keluar-total-badge">0 Transaksi</p>
+                            </div>
+                            <div class="flex items-center gap-2.5 w-full md:w-auto">
+                                <div class="w-full md:w-64">
+                                    <input type="text" id="search-keluar" oninput="renderKeluarTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Customer...">
+                                </div>
+                                <button onclick="printKeluarTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
+                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                                    <span>Print</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="fluid-table-container flex-1 pb-2">
+                            <table class="fluid-table text-left text-xs">
+                                <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
+                                    <tr>
+                                        <th class="py-3 px-2 rounded-l-xl text-center w-10">No</th>
+                                        <th class="py-3 px-3">ID Transaksi</th>
+                                        <th class="py-3 px-3">Tanggal</th>
+                                        <th class="py-3 px-3">ID Barang</th>
+                                        <th class="py-3 px-3">Nama Barang</th>
+                                        <th class="py-3 px-3">Kategori</th>
+                                        <th class="py-3 px-2">Lebar</th>
+                                        <th class="py-3 px-2">Ukuran</th>
+                                        <th class="py-3 px-2">Satuan</th>
+                                        <th class="py-3 px-3 text-right">Qty Keluar</th>
+                                        <th class="py-3 px-3">Customer / Tujuan</th>
+                                        <th class="py-3 px-3">No PO Ref</th>
+                                        <th class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="keluar-table-body" class="divide-y divide-white/5">
+                                    <!-- Rendered via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. TAB PO MASUK (CUSTOMER) -->
+            <section id="tab-po" class="space-y-6 w-full hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3">
+                        <h3 id="po-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
+                            <i data-lucide="file-plus" class="w-4 h-4 text-orange-400"></i> INPUT PO CUSTOMER
+                        </h3>
+                        <form id="form-po" onsubmit="savePoItem(event)" class="space-y-4">
+                            <input type="hidden" id="po-edit-mode" value="false">
+                            <div>
+                                <label class="text-xs block mb-1">ID Sistem PO * (Auto)</label>
+                                <input type="text" id="po-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">No. PO Customer *</label>
+                                <input type="text" id="po-no-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" placeholder="PO/2026/XI/001">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Tanggal PO *</label>
+                                <input type="date" id="po-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Nama Customer *</label>
+                                <input type="text" id="po-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Pilih Barang *</label>
+                                <select id="po-barang" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <option value="">-- Pilih Barang —</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Jumlah Qty PO *</label>
+                                <input type="number" id="po-qty" min="1" value="500" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                            </div>
+                            <div class="pt-2 flex gap-2">
+                                <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
+                                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                    <span>Simpan</span>
+                                </button>
+                                <button type="button" onclick="resetPoForm()" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="app-card p-6 rounded-2xl lg:col-span-9 flex flex-col">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-3 mb-5">
+                            <div>
+                                <h3 class="font-bold text-xs tracking-wider uppercase text-gray-100">DAFTAR PURCHASE ORDER (PO) CUSTOMER</h3>
+                                <p class="text-xs text-gray-300 mt-0.5" id="po-total-badge">0 PO</p>
+                            </div>
+                            <div class="flex items-center gap-2.5 w-full md:w-auto">
+                                <div class="w-full md:w-64">
+                                    <input type="text" id="search-po" oninput="renderPoTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari No PO / Customer / Barang...">
+                                </div>
+                                <button onclick="printPoTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
+                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                                    <span>Print</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="fluid-table-container flex-1 pb-2">
+                            <table class="fluid-table text-left text-xs">
+                                <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
+                                    <tr>
+                                        <th class="py-3 px-2 rounded-l-xl text-center w-10">No</th>
+                                        <th class="py-3 px-3">ID Sistem</th>
+                                        <th class="py-3 px-3">No. PO Cust</th>
+                                        <th class="py-3 px-3">Tanggal</th>
+                                        <th class="py-3 px-3">Customer</th>
+                                        <th class="py-3 px-3">ID Barang</th>
+                                        <th class="py-3 px-3">Nama Barang</th>
+                                        <th class="py-3 px-3">Kategori</th>
+                                        <th class="py-3 px-2">Lebar</th>
+                                        <th class="py-3 px-2">Ukuran</th>
+                                        <th class="py-3 px-2">Satuan</th>
+                                        <th class="py-3 px-3 text-right">Qty PO</th>
+                                        <th class="py-3 px-3 text-right">Terkirim</th>
+                                        <th class="py-3 px-3 text-right">Sisa PO</th>
+                                        <th class="py-3 px-3 text-center">Status</th>
+                                        <th class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="po-table-body" class="divide-y divide-white/5">
+                                    <!-- Rendered via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. TAB RETUR BARANG -->
+            <section id="tab-retur" class="space-y-6 w-full hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div id="retur-form-card" class="app-card p-5 rounded-2xl h-fit lg:col-span-3">
+                        <h3 id="retur-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
+                            <i data-lucide="rotate-ccw" class="w-4 h-4 text-orange-400"></i> INPUT RETUR BARANG
+                        </h3>
+                        <form id="form-retur" onsubmit="saveReturItem(event)" class="space-y-4">
+                            <input type="hidden" id="retur-edit-mode" value="false">
+                            <div>
+                                <label class="text-xs block mb-1">ID Retur *</label>
+                                <input type="text" id="retur-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Tanggal *</label>
+                                <input type="date" id="retur-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Pilih Barang *</label>
+                                <select id="retur-barang" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <option value="">-- Pilih Barang —</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Jumlah Retur (Qty) *</label>
+                                <input type="number" id="retur-qty" min="1" value="10" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Keterangan / Alasan *</label>
+                                <input type="text" id="retur-keterangan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Contoh: Barang cacat">
+                            </div>
+                            <div class="pt-2 flex gap-2">
+                                <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
+                                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                    <span>Simpan</span>
+                                </button>
+                                <button type="button" onclick="resetReturForm()" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="retur-table-card" class="app-card p-6 rounded-2xl lg:col-span-9 flex flex-col">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-3 mb-5">
+                            <div>
+                                <h3 class="font-bold text-xs tracking-wider uppercase text-gray-100">RIWAYAT TRANSAKSI RETUR BARANG</h3>
+                                <p class="text-xs text-gray-300 mt-0.5" id="retur-total-badge">0 Transaksi</p>
+                            </div>
+                            <div class="w-full md:w-80">
+                                <input type="text" id="search-retur" oninput="renderReturTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Alasan...">
+                            </div>
+                        </div>
+                        <div class="fluid-table-container flex-1 pb-2">
+                            <table class="fluid-table text-left text-xs">
+                                <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
+                                    <tr>
+                                        <th class="py-3 px-2 rounded-l-xl text-center w-10">No</th>
+                                        <th class="py-3 px-3">ID Retur</th>
+                                        <th class="py-3 px-3">Tanggal</th>
+                                        <th class="py-3 px-3">ID Barang</th>
+                                        <th class="py-3 px-3">Nama Barang</th>
+                                        <th class="py-3 px-3">Kategori</th>
+                                        <th class="py-3 px-2">Lebar</th>
+                                        <th class="py-3 px-2">Ukuran</th>
+                                        <th class="py-3 px-2">Satuan</th>
+                                        <th class="py-3 px-3 text-right">Qty Retur</th>
+                                        <th class="py-3 px-3">Alasan Retur</th>
+                                        <th id="retur-th-aksi" class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="retur-table-body" class="divide-y divide-white/5">
+                                    <!-- Rendered via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. TAB MANAJEMEN USER -->
+            <section id="tab-users" class="space-y-6 w-full hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div id="user-form-card" class="app-card p-5 rounded-2xl h-fit lg:col-span-4">
+                        <h3 class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
+                            <i data-lucide="user-plus" class="w-4 h-4 text-orange-400"></i> TAMBAH USER SISTEM
+                        </h3>
+                        <form id="form-user" onsubmit="saveNewUser(event)" class="space-y-4">
+                            <div>
+                                <label class="text-xs block mb-1">Username *</label>
+                                <input type="text" id="new-user-username" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="budi_gudang">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Nama Lengkap *</label>
+                                <input type="text" id="new-user-name" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Budi Santoso">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Password *</label>
+                                <input type="text" id="new-user-pass" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="rahasia123">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Hak Akses (Role) *</label>
+                                <select id="new-user-role" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <option value="admin">Admin (Full Access)</option>
+                                    <option value="staff">Staff (Edit Data, No Delete User)</option>
+                                    <option value="viewer">Viewer (Read-Only)</option>
+                                </select>
+                            </div>
+                            <div class="pt-2">
+                                <button type="submit" class="w-full py-2.5 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
+                                    <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
+                                    <span>Simpan User Baru</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="app-card p-6 rounded-2xl lg:col-span-8 flex flex-col">
+                        <div class="flex items-center justify-between mb-5">
+                            <div>
+                                <h3 class="font-bold text-xs tracking-wider uppercase text-gray-100">DAFTAR USER SISTEM & HAK AKSES</h3>
+                                <p class="text-xs text-gray-300 mt-0.5" id="user-total-badge">0 User</p>
+                            </div>
+                        </div>
+                        <div class="fluid-table-container flex-1 pb-2">
+                            <table class="fluid-table text-left text-xs">
+                                <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
+                                    <tr>
+                                        <th class="py-3 px-2 rounded-l-xl text-center w-10">No</th>
+                                        <th class="py-3 px-3">Username</th>
+                                        <th class="py-3 px-3">Nama Lengkap</th>
+                                        <th class="py-3 px-3">Role / Hak Akses</th>
+                                        <th class="py-3 px-3">Status Aktif</th>
+                                        <th class="py-3 px-3 rounded-r-xl text-center">Aksi / Switch</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="user-table-body" class="divide-y divide-white/5">
+                                    <!-- Rendered via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div id="login-modal" class="fixed inset-0 z-50 bg-dark-900/90 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="app-card max-w-md w-full p-8 rounded-3xl shadow-2xl border border-white/10 space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-14 h-14 rounded-2xl theme-accent-bg mx-auto flex items-center justify-center shadow-xl shadow-orange-500/30 text-white font-black text-2xl">
+                    G
+                </div>
+                <h3 class="font-extrabold text-lg text-gray-100 tracking-tight">LOGIN SISTEM INVENTORY</h3>
+                <p class="text-xs text-gray-400">Masukkan kredensial akun Anda untuk masuk</p>
+            </div>
+            
+            <form id="form-login" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="text-xs block mb-1">Username</label>
+                    <input type="text" id="login-username" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Masukkan username">
+                </div>
+                <div>
+                    <label class="text-xs block mb-1">Password</label>
+                    <input type="password" id="login-password" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="••••••••">
+                </div>
+                <div class="pt-2">
+                    <button type="submit" class="w-full py-3 rounded-xl theme-accent-bg text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-orange-500/30 hover:scale-[1.02] active:scale-95 transition-all">
+                        Masuk Sistem
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER (Centered Top) -->
+    <div id="toast-container"></div>
+
+    <!-- MODAL CONFIRMATION DIALOG -->
+    <div id="confirm-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="app-card max-w-sm w-full p-6 rounded-2xl shadow-2xl border border-white/10 space-y-4">
+            <h4 id="confirm-title" class="font-bold text-sm text-gray-100 uppercase tracking-wide">Konfirmasi Aksi</h4>
+            <p id="confirm-message" class="text-xs text-gray-300 leading-relaxed">Apakah Anda yakin ingin melanjutkan tindakan ini?</p>
+            <div class="flex justify-end gap-2.5 pt-2">
+                <button id="confirm-cancel-btn" class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-semibold text-gray-300 hover:bg-white/10">Batal</button>
+                <button id="confirm-ok-btn" class="px-4 py-2 rounded-xl theme-accent-bg text-xs font-semibold text-white shadow-lg">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const DEFAULT_DATA = {
+            theme: 'sunset',
+            currentUser: { username: 'admin', name: 'Administrator', role: 'admin' },
+            users: [
+                { username: 'admin', name: 'Administrator', pass: 'admin123', role: 'admin' },
+                { username: 'staff', name: 'Staff Gudang', pass: 'staff123', role: 'staff' },
+                { username: 'viewer', name: 'Viewer Pimpinan', pass: 'viewer123', role: 'viewer' }
+            ],
+            items: [
+                { id: 'EJ-003-02', nama: 'MARCELLO RED BORDER', jenis: 'ELASTIS HURUF', lebar: '35 mm', ukuran: 'SIZE L', berat: 120, satuan: 'YARD', min: 100, stok: 2300 },
+                { id: 'MARIO', nama: 'MARIO', jenis: 'ELASTIS POLOS', lebar: '30 mm', ukuran: 'SIZE M', berat: 100, satuan: 'YARD', min: 150, stok: 1250 },
+                { id: 'EJ-002-001', nama: 'MANGO SPORT', jenis: 'ELASTIS HURUF', lebar: '35 mm', ukuran: 'SIZE XXL', berat: 140, satuan: 'YARD', min: 100, stok: 800 },
+                { id: 'FX-0005', nama: 'POLYPROPYLENE', jenis: 'FASTRACK', lebar: '25 mm', ukuran: 'ALL SIZE', berat: 85, satuan: 'METER', min: 120, stok: 620 },
+                { id: 'EJ0050', nama: 'ELASTIS TALI SEPATU', jenis: 'FASTRACK', lebar: '10 mm', ukuran: 'STANDARD', berat: 50, satuan: 'PCS', min: 200, stok: 95 },
+                { id: 'FX-001', nama: '025 FE', jenis: 'FASTRACK', lebar: '20 mm', ukuran: 'STANDARD', berat: 90, satuan: 'ROLL', min: 100, stok: 90 }
+            ],
+            masuk: [
+                { id: 'IN-2611-0002', tanggal: '2026-11-11', barangId: 'EJ-003-02', nama: 'MARCELLO RED BORDER', jenis: 'ELASTIS HURUF', lebar: '35 mm', ukuran: 'SIZE L', satuan: 'YARD', qty: 1000, supplier: 'PT. SINAR TEXTILE' },
+                { id: 'IN-2611-0001', tanggal: '2026-11-10', barangId: 'MARIO', nama: 'MARIO', jenis: 'ELASTIS POLOS', lebar: '30 mm', ukuran: 'SIZE M', satuan: 'YARD', qty: 500, supplier: 'PRODUKSI LOOM A' }
+            ],
+            keluar: [
+                { id: 'OT-2611-0001', tanggal: '2026-11-11', barangId: 'EJ-002-001', nama: 'MANGO SPORT', jenis: 'ELASTIS HURUF', lebar: '35 mm', ukuran: 'SIZE XXL', satuan: 'YARD', qty: 300, tujuan: 'PT. MAJU JAYA', poRef: 'POC-2611-0001' }
+            ],
+            po: [
+                { id: 'POC-2611-0001', noPoCustomer: 'PO/2026/XI/001', tanggal: '2026-11-12', customer: 'PT. MAJU JAYA', barangId: 'EJ-003-02', nama: 'MARCELLO RED BORDER', jenis: 'ELASTIS HURUF', lebar: '35 mm', ukuran: 'SIZE L', satuan: 'YARD', qty: 500, terkirim: 0, status: 'OPEN' },
+                { id: 'POC-2611-0002', noPoCustomer: 'PO/2026/XI/002', tanggal: '2026-11-12', customer: 'PT. PANCA TIRTA SEJAHTERA', barangId: 'EJ0050', nama: 'ELASTIS TALI SEPATU', jenis: 'FASTRACK', lebar: '10 mm', ukuran: 'STANDARD', satuan: 'PCS', qty: 100, terkirim: 40, status: 'PARTIAL' }
+            ],
+            retur: [
+                { id: 'RTR-2011-0001', tanggal: '2026-11-11', barangId: 'FX-001', nama: '025 FE', jenis: 'FASTRACK', lebar: '20 mm', ukuran: 'STANDARD', satuan: 'ROLL', qty: 25, keterangan: 'KELEBIHAN KIRIM PO LAMA' }
+            ]
+        };
+
+        let db = JSON.parse(localStorage.getItem('gudang_pro_db')) || DEFAULT_DATA;
+        if (!db.users) db.users = DEFAULT_DATA.users;
+        if (!db.currentUser) db.currentUser = DEFAULT_DATA.currentUser;
+
+        function saveDB() {
+            localStorage.setItem('gudang_pro_db', JSON.stringify(db));
+            refreshAllViews();
+        }
+
+        function refreshAllViews() {
+            populateItemDropdowns();
+            populatePoDropdowns();
+            renderDashboard();
+            renderMasterTable();
+            renderMasukTable();
+            renderKeluarTable();
+            renderPoTable();
+            renderReturTable();
+            renderUserTable();
+            renderCurrentUserBanner();
+            applyRoleRestrictions();
+            lucide.createIcons();
+        }
+
+        function resetData() {
+            if (db.currentUser.role !== 'admin') {
+                showToast('Hanya Admin yang dapat mereset data contoh!', 'error');
+                return;
+            }
+            showConfirm('Reset Data Contoh', 'Apakah Anda yakin ingin mengembalikan data ke data awal contoh?', () => {
+                db = JSON.parse(JSON.stringify(DEFAULT_DATA));
+                saveDB();
+                showToast('Data berhasil direset ke contoh awal!');
+            });
+        }
+
+        function checkAuth() {
+            if (!db.currentUser) {
+                const modal = document.getElementById('login-modal');
+                if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+            } else {
+                const modal = document.getElementById('login-modal');
+                if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+            }
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const un = document.getElementById('login-username').value.trim();
+            const pw = document.getElementById('login-password').value.trim();
+            const found = db.users.find(u => u.username === un && u.pass === pw);
+            if (found) {
+                db.currentUser = { username: found.username, name: found.name, role: found.role };
+                saveDB();
+                document.getElementById('login-modal').classList.add('hidden');
+                document.getElementById('login-modal').classList.remove('flex');
+                showToast(`Login berhasil sebagai ${found.name} (${found.role.toUpperCase()})!`);
+            } else {
+                showToast('Username atau password salah!', 'error');
+            }
+        }
+
+        function logoutUser() {
+            showConfirm('Logout Sistem', 'Apakah Anda yakin ingin keluar dari sesi saat ini?', () => {
+                db.currentUser = null;
+                saveDB();
+                const modal = document.getElementById('login-modal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                showToast('Berhasil logout.', 'warning');
+            });
+        }
+
+        function renderCurrentUserBanner() {
+            const banner = document.getElementById('current-user-banner');
+            if (!banner || !db.currentUser) return;
+            const role = db.currentUser.role;
+            const badgeClass = role === 'admin' ? 'role-badge-admin' : (role === 'staff' ? 'role-badge-staff' : 'role-badge-viewer');
+            banner.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center font-bold text-xs">
+                        <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                    </div>
+                    <div class="text-left leading-tight hidden sm:block">
+                        <div class="font-bold text-xs text-gray-200">${db.currentUser.name}</div>
+                        <span class="px-1.5 py-0.2 rounded text-[9px] font-extrabold uppercase ${badgeClass}">${role}</span>
+                    </div>
+                </div>
+                <button onclick="logoutUser()" class="p-1.5 rounded-lg bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 transition-colors ml-1" title="Logout">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                </button>
+            `;
+            lucide.createIcons();
+        }
+
+        function applyRoleRestrictions() {
+            if (!db.currentUser) return;
+            const role = db.currentUser.role;
+            const userNavWrapper = document.getElementById('nav-users-wrapper');
+            if (userNavWrapper) userNavWrapper.style.display = role === 'admin' ? 'block' : 'none';
+            if (role !== 'admin') {
+                const usersSec = document.getElementById('tab-users');
+                if (usersSec && !usersSec.classList.contains('hidden')) switchTab('dashboard');
+            }
+            const formCards = ['master-form-card', 'masuk-form-card', 'keluar-form-card', 'po-form-card', 'retur-form-card', 'user-form-card'];
+            formCards.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (role === 'viewer') { el.style.opacity = '0.4'; el.style.pointerEvents = 'none'; }
+                else { el.style.opacity = '1'; el.style.pointerEvents = 'auto'; }
+            });
+            const actionThs = ['master-th-aksi', 'masuk-th-aksi', 'keluar-th-aksi', 'po-th-aksi', 'retur-th-aksi'];
+            actionThs.forEach(id => {
+                const th = document.getElementById(id);
+                if (th) th.style.display = role === 'viewer' ? 'none' : '';
+            });
+        }
+
+        function switchTab(tabId) {
+            const tabs = ['dashboard', 'master', 'masuk', 'keluar', 'po', 'retur', 'users'];
+            tabs.forEach(t => {
+                const sec = document.getElementById(`tab-${t}`);
+                const btn = document.getElementById(`nav-${t}`);
+                if (sec) sec.classList.add('hidden');
+                if (btn) btn.className = "sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200";
+            });
+            const activeSec = document.getElementById(`tab-${tabId}`);
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeSec) activeSec.classList.remove('hidden');
+            if (activeBtn) activeBtn.className = "sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20";
+            lucide.createIcons();
+        }
+
+        function changeTheme(themeName) {
+            db.theme = themeName;
+            applyTheme(themeName);
+            saveDB();
+            showToast(`Tema berhasil diubah ke ${themeName}!`);
+        }
+
+        function applyTheme(themeName) {
+            document.body.className = `min-h-screen flex flex-col antialiased selection:bg-orange-500 selection:text-white theme-${themeName}`;
+            const sel = document.getElementById('theme-selector');
+            if (sel) sel.value = themeName;
+        }
+
+        function updateClock() {
+            const clockEl = document.getElementById('live-clock');
+            if (clockEl) {
+                const now = new Date();
+                clockEl.textContent = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ' | ' + now.toLocaleTimeString('id-ID');
+            }
+        }
+        setInterval(updateClock, 1000);
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            const bgClass = type === 'error' ? 'bg-rose-500/90 text-white' : (type === 'warning' ? 'bg-amber-500/90 text-white' : 'bg-emerald-500/90 text-white');
+            toast.className = `px-4 py-3 rounded-xl shadow-xl text-xs font-semibold backdrop-blur-md flex items-center gap-2.5 animate-bounce ${bgClass}`;
+            toast.innerHTML = `<i data-lucide="${type === 'error' ? 'alert-circle' : 'check-circle'}" class="w-4 h-4"></i><span>${msg}</span>`;
+            container.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function showConfirm(title, message, onConfirm) {
+            const modal = document.getElementById('confirm-modal');
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            const okBtn = document.getElementById('confirm-ok-btn');
+            const cancelBtn = document.getElementById('confirm-cancel-btn');
+            const cleanup = () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                okBtn.onclick = null;
+                cancelBtn.onclick = null;
+            };
+            okBtn.onclick = () => { cleanup(); onConfirm(); };
+            cancelBtn.onclick = () => { cleanup(); };
+        }
+
+        function generateId(prefix) {
+            const now = new Date();
+            const yy = String(now.getFullYear()).slice(-2);
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const rand = Math.floor(1000 + Math.random() * 9000);
+            return `${prefix}-${yy}${mm}-${rand}`;
+        }
+
+        function generateMasukSequentialId() {
+            const now = new Date();
+            const yy = String(now.getFullYear()).slice(-2);
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const count = db.masuk.length + 1;
+            return `IN-${yy}${mm}-${String(count).padStart(4, '0')}`;
+        }
+
+        function generateKeluarSequentialId() {
+            const now = new Date();
+            const yy = String(now.getFullYear()).slice(-2);
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const count = db.keluar.length + 1;
+            return `OT-${yy}${mm}-${String(count).padStart(4, '0')}`;
+        }
+
+        function generatePoSequentialId() {
+            const now = new Date();
+            const yy = String(now.getFullYear()).slice(-2);
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const count = db.po.length + 1;
+            return `POC-${yy}${mm}-${String(count).padStart(4, '0')}`;
+        }
+
+        function populateItemDropdowns() {
+            ['masuk-barang', 'keluar-barang', 'po-barang', 'retur-barang'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const currentVal = el.value;
+                el.innerHTML = '<option value="">-- Pilih Barang —</option>' + db.items.map(item => 
+                    `<option value="${item.id}">${item.id} — ${item.nama} (${item.satuan})</option>`
+                ).join('');
+                el.value = currentVal;
+            });
+        }
+
+        function populatePoDropdowns() {
+            const el = document.getElementById('keluar-po-ref');
+            if (!el) return;
+            const currentVal = el.value;
+            const activePos = db.po.filter(p => p.status === 'OPEN' || p.status === 'PARTIAL');
+            el.innerHTML = '<option value="">-- Pilih PO Customer Aktif —</option>' + activePos.map(p => {
+                const item = db.items.find(i => i.id === p.barangId);
+                const sisa = p.qty - (p.terkirim || 0);
+                return `<option value="${p.id}">${p.id} (${p.noPoCustomer}) - ${p.customer} | ${item ? item.nama : p.barangId} (Sisa: ${sisa} ${item ? item.satuan : ''})</option>`;
+            }).join('');
+            el.value = currentVal;
+        }
+
+        function saveNewUser(e) {
+            e.preventDefault();
+            if (db.currentUser.role === 'viewer') return;
+            const username = document.getElementById('new-user-username').value.trim().toLowerCase();
+            const name = document.getElementById('new-user-name').value.trim();
+            const pass = document.getElementById('new-user-pass').value.trim();
+            const role = document.getElementById('new-user-role').value;
+            if (db.users.some(u => u.username === username)) {
+                showToast(`Username ${username} sudah digunakan!`, 'error');
+                return;
+            }
+            db.users.push({ username, name, pass, role });
+            saveDB();
+            document.getElementById('form-user').reset();
+            showToast(`User ${username} berhasil ditambahkan!`);
+        }
+
+        function deleteUser(username) {
+            if (db.currentUser.role !== 'admin') return;
+            if (db.currentUser.username === username) {
+                showToast('Tidak dapat menghapus akun yang sedang aktif digunakan!', 'error');
+                return;
+            }
+            showConfirm('Hapus User', `Yakin ingin menghapus user ${username}?`, () => {
+                db.users = db.users.filter(u => u.username !== username);
+                saveDB();
+                showToast(`User ${username} berhasil dihapus.`, 'warning');
+            });
+        }
+
+        function switchUserRoleSession(username) {
+            const u = db.users.find(usr => usr.username === username);
+            if (u) {
+                db.currentUser = { username: u.username, name: u.name, role: u.role };
+                saveDB();
+                showToast(`Berhasil beralih sesi ke ${u.name} (${u.role.toUpperCase()})!`);
+            }
+        }
+
+        function renderUserTable() {
+            const tbody = document.getElementById('user-table-body');
+            const badgeTotal = document.getElementById('user-total-badge');
+            if (!tbody) return;
+            badgeTotal.textContent = `${db.users.length} User`;
+            const currentRole = db.currentUser ? db.currentUser.role : '';
+            const currentUsername = db.currentUser ? db.currentUser.username : '';
+
+            tbody.innerHTML = db.users.map((u, index) => {
+                const isCurrent = currentUsername === u.username;
+                const badgeClass = u.role === 'admin' ? 'role-badge-admin' : (u.role === 'staff' ? 'role-badge-staff' : 'role-badge-viewer');
+                return `
+                    <tr class="hover:bg-white/5">
+                        <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
+                        <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${u.username}</td>
+                        <td class="py-3 px-3 font-medium">${u.name}</td>
+                        <td class="py-3 px-3"><span class="px-2.5 py-1 rounded text-[10px] font-bold uppercase ${badgeClass}">${u.role}</span></td>
+                        <td class="py-3 px-3 font-semibold ${isCurrent ? 'text-emerald-400' : 'text-gray-400'}">${isCurrent ? '● Aktif Sekarang' : 'Standby'}</td>
+                        <td class="py-3 px-3 text-center flex items-center justify-center gap-1.5">
+                            ${!isCurrent ? `<button onclick="switchUserRoleSession('${u.username}')" class="px-2.5 py-1 rounded bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 font-semibold inline-flex items-center gap-1">Switch</button>` : ''}
+                            ${currentRole === 'admin' && !isCurrent ? `<button onclick="deleteUser('${u.username}')" class="px-2.5 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold inline-flex items-center gap-1">Hapus</button>` : ''}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function renderDashboard() {
+            const totalSku = db.items.length;
+            const totalStok = db.items.reduce((acc, i) => acc + (i.stok || 0), 0);
+            const totalMasuk = db.masuk.reduce((acc, i) => acc + (i.qty || 0), 0);
+            const totalKeluar = db.keluar.reduce((acc, i) => acc + (i.qty || 0), 0);
+            const poAktif = db.po.filter(p => p.status === 'OPEN' || p.status === 'PARTIAL').length;
+            const totalRetur = db.retur.reduce((acc, i) => acc + (i.qty || 0), 0);
+
+            document.getElementById('stat-sku').textContent = totalSku.toLocaleString('id-ID');
+            document.getElementById('stat-stok').textContent = totalStok.toLocaleString('id-ID');
+            document.getElementById('stat-masuk').textContent = totalMasuk.toLocaleString('id-ID');
+            document.getElementById('stat-keluar').textContent = totalKeluar.toLocaleString('id-ID');
+            document.getElementById('stat-po').textContent = poAktif.toLocaleString('id-ID');
+            document.getElementById('stat-retur').textContent = totalRetur.toLocaleString('id-ID');
+
+            const lowStockItems = db.items.filter(i => i.stok <= i.min);
+            const cardStokFisik = document.getElementById('card-stok-fisik');
+            const statStokDesc = document.getElementById('stat-stok-desc');
+            if (lowStockItems.length > 0) {
+                cardStokFisik.classList.add('blink-low-stock');
+                statStokDesc.innerHTML = `<span class="text-rose-400 font-bold">⚠ ${lowStockItems.length} SKU di bawah min!</span>`;
+            } else {
+                cardStokFisik.classList.remove('blink-low-stock');
+                statStokDesc.textContent = 'Akumulasi unit';
+            }
+
+            const itemMap = {};
+            db.items.forEach(i => { itemMap[i.id] = { id: i.id, nama: i.nama, satuan: i.satuan, masuk: 0, keluar: 0 }; });
+            db.masuk.forEach(m => { if (itemMap[m.barangId]) itemMap[m.barangId].masuk += m.qty; });
+            db.keluar.forEach(k => { if (itemMap[k.barangId]) itemMap[k.barangId].keluar += k.qty; });
+            const allItemsArray = Object.values(itemMap);
+
+            const masukItems = [...allItemsArray].sort((a, b) => b.masuk - a.masuk).slice(0, 5);
+            const maxMasuk = Math.max(...masukItems.map(i => i.masuk), 10);
+            document.getElementById('chart-masuk').innerHTML = masukItems.map(item => {
+                const h = Math.max(10, Math.round((item.masuk / maxMasuk) * 100));
+                return `
+                    <div class="flex-1 flex flex-col items-center h-full justify-end group min-w-[70px]">
+                        <span class="text-[9px] font-mono text-emerald-300 mb-1 opacity-0 group-hover:opacity-100 transition-opacity font-bold">+${item.masuk.toLocaleString('id-ID')}</span>
+                        <div style="height: ${h}%" class="w-full bg-emerald-500 hover:bg-emerald-400 rounded-t-md transition-all shadow-md flex items-center justify-center"></div>
+                        <span class="text-[10px] font-mono text-gray-300 mt-2 truncate w-full text-center font-medium" title="${item.id} — ${item.nama}">${item.id}</span>
+                    </div>
+                `;
+            }).join('') || '<div class="w-full text-center text-xs opacity-50 py-10">Belum ada data barang masuk</div>';
+
+            const keluarItems = [...allItemsArray].sort((a, b) => b.keluar - a.keluar).slice(0, 5);
+            const maxKeluar = Math.max(...keluarItems.map(i => i.keluar), 10);
+            document.getElementById('chart-keluar').innerHTML = keluarItems.map(item => {
+                const h = Math.max(10, Math.round((item.keluar / maxKeluar) * 100));
+                return `
+                    <div class="flex-1 flex flex-col items-center h-full justify-end group min-w-[70px]">
+                        <span class="text-[9px] font-mono text-rose-300 mb-1 opacity-0 group-hover:opacity-100 transition-opacity font-bold">-${item.keluar.toLocaleString('id-ID')}</span>
+                        <div style="height: ${h}%" class="w-full bg-rose-500 hover:bg-rose-400 rounded-t-md transition-all shadow-md flex items-center justify-center"></div>
+                        <span class="text-[10px] font-mono text-gray-300 mt-2 truncate w-full text-center font-medium" title="${item.id} — ${item.nama}">${item.id}</span>
+                    </div>
+                `;
+            }).join('') || '<div class="w-full text-center text-xs opacity-50 py-10">Belum ada data barang keluar</div>';
+
+            document.getElementById('low-stock-list').innerHTML = lowStockItems.map(item => {
+                const halfMin = item.min / 2;
+                const isVeryLow = item.stok < halfMin;
+                const badgeColorClass = isVeryLow ? 'bg-rose-500/20 text-rose-400 border-rose-500/40' : 'bg-orange-500/20 text-orange-400 border-orange-500/40';
+                const cardStyleClass = isVeryLow ? 'border-rose-500/55 blink-low-stock-red' : 'border-orange-500/55 blink-low-stock-orange';
+                const statusLabel = isVeryLow ? 'Kritis (< 50% Min)' : 'Waspada (≥ 50% Min)';
+                return `
+                    <div class="p-3.5 rounded-xl border ${cardStyleClass} flex items-center justify-between text-xs transition-all">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg ${badgeColorClass} border flex items-center justify-center font-bold shrink-0">
+                                <i data-lucide="${isVeryLow ? 'alert-octagon' : 'alert-triangle'}" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-100 flex items-center gap-2">
+                                    <span>${item.id} — ${item.nama}</span>
+                                    <span class="px-2 py-0.5 rounded text-[9px] font-semibold ${badgeColorClass}">${statusLabel}</span>
+                                </div>
+                                <div class="text-[11px] text-gray-300 mt-0.5">Kategori: <span class="text-white font-medium">${item.jenis}</span> | Batas Minimum: <span class="${isVeryLow ? 'text-rose-300' : 'text-orange-300'} font-semibold">${item.min} ${item.satuan}</span></div>
+                            </div>
+                        </div>
+                        <div class="text-right shrink-0 pl-4">
+                            <span class="font-mono font-bold ${isVeryLow ? 'text-rose-400' : 'text-orange-400'} text-sm">${item.stok.toLocaleString('id-ID')}</span>
+                            <span class="text-[10px] text-gray-300 block">${item.satuan}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('') || '<div class="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl text-center font-medium">Semua stok barang aman di atas batas minimum.</div>';
+
+            const allActivity = [
+                ...db.masuk.map(i => ({ tanggal: i.tanggal, jenis: 'BARANG MASUK', idRef: i.id, nama: i.nama, qty: `+${i.qty.toLocaleString('id-ID')}`, info: i.supplier, color: 'text-emerald-400' })),
+                ...db.keluar.map(i => ({ tanggal: i.tanggal, jenis: 'BARANG KELUAR', idRef: i.id, nama: i.nama, qty: `-${i.qty.toLocaleString('id-ID')}`, info: i.tujuan, color: 'text-rose-400' })),
+                ...db.retur.map(i => ({ tanggal: i.tanggal, jenis: 'RETUR CUSTOMER', idRef: i.id, nama: i.nama, qty: `+${i.qty.toLocaleString('id-ID')}`, info: i.keterangan, color: 'text-amber-400' }))
+            ].sort((a, b) => new Date(b.tanggal) - new Date(new Date(a.tanggal))).slice(0, 5);
+
+            document.getElementById('recent-activity-body').innerHTML = allActivity.map(a => `
+                <tr class="hover:bg-white/5">
+                    <td class="py-3 px-3.5 opacity-80 font-mono">${a.tanggal}</td>
+                    <td class="py-3 px-3.5 font-bold ${a.color}">${a.jenis}</td>
+                    <td class="py-3 px-3.5 font-mono text-gray-300">${a.idRef}</td>
+                    <td class="py-3 px-3.5 font-medium text-gray-100">${a.nama}</td>
+                    <td class="py-3 px-3.5 text-right font-mono font-bold ${a.color}">${a.qty}</td>
+                    <td class="py-3 px-3.5 opacity-80">${a.info}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="6" class="py-6 text-center opacity-50">Belum ada aktivitas transaksi.</td></tr>';
+            lucide.createIcons();
+        }
+
+        function saveMasterItem(e) {
+            e.preventDefault();
+            if (db.currentUser.role === 'viewer') return;
+            const id = document.getElementById('master-id').value.trim().toUpperCase();
+            const nama = document.getElementById('master-nama').value.trim().toUpperCase();
+            const jenis = document.getElementById('master-jenis').value.trim().toUpperCase();
+            const lebar = document.getElementById('master-lebar').value.trim();
+            const ukuran = document.getElementById('master-ukuran').value.trim().toUpperCase();
+            const berat = parseFloat(document.getElementById('master-berat').value) || 0;
+            const satuan = document.getElementById('master-satuan').value;
+            const min = parseInt(document.getElementById('master-min').value) || 0;
+            const stok = parseInt(document.getElementById('master-stok').value) || 0;
+            const isEdit = document.getElementById('master-edit-mode').value === 'true';
+
+            if (!isEdit && db.items.some(i => i.id === id)) {
+                showToast(`ID Barang ${id} sudah terdaftar!`, 'error');
+                return;
+            }
+
+            if (isEdit) {
+                const item = db.items.find(i => i.id === id);
+                if (item) {
+                    item.nama = nama; item.jenis = jenis; item.lebar = lebar;
+                    item.ukuran = ukuran; item.berat = berat; item.satuan = satuan;
+                    item.min = min; item.stok = stok;
+                }
+                showToast(`Master barang ${id} berhasil diperbarui!`);
+            } else {
+                db.items.push({ id, nama, jenis, lebar, ukuran, berat, satuan, min, stok });
+                showToast(`Master barang ${id} berhasil ditambahkan!`);
+            }
+            resetMasterForm();
+            saveDB();
+        }
+
+        function editMasterItem(id) {
+            if (db.currentUser.role === 'viewer') return;
+            const item = db.items.find(i => i.id === id);
+            if (!item) return;
+            document.getElementById('master-edit-mode').value = 'true';
+            document.getElementById('master-id').value = item.id;
+            document.getElementById('master-id').disabled = true;
+            document.getElementById('master-nama').value = item.nama;
+            document.getElementById('master-jenis').value = item.jenis;
+            document.getElementById('master-lebar').value = item.lebar || '';
+            document.getElementById('master-ukuran').value = item.ukuran || '';
+            document.getElementById('master-berat').value = item.berat || 0;
+            document.getElementById('master-satuan').value = item.satuan;
+            document.getElementById('master-min').value = item.min;
+            document.getElementById('master-stok').value = item.stok;
+            document.getElementById('master-form-title').innerHTML = `<i data-lucide="edit" class="w-4 h-4 text-orange-400"></i> EDIT MASTER BARANG (${id})`;
+            lucide.createIcons();
+        }
+
+        function deleteMasterItem(id) {
+            if (db.currentUser.role === 'viewer') return;
+            showConfirm('Hapus Master Barang', `Yakin ingin menghapus master barang ${id}?`, () => {
+                db.items = db.items.filter(i => i.id !== id);
+                saveDB();
+                showToast(`Master barang ${id} berhasil dihapus.`, 'warning');
+            });
+        }
+
+        function resetMasterForm() {
+            document.getElementById('form-master').reset();
+            document.getElementById('master-edit-mode').value = 'false';
+            document.getElementById('master-id').disabled = false;
+            document.getElementById('master-form-title').innerHTML = `<i data-lucide="package-plus" class="w-4 h-4 text-orange-400"></i> TAMBAH MASTER BARANG`;
+            lucide.createIcons();
+        }
+
+        function renderMasterTable() {
+            const q = document.getElementById('search-master').value.toLowerCase();
+            const tbody = document.getElementById('master-table-body');
+            const badgeTotal = document.getElementById('master-total-badge');
+            const isViewer = db.currentUser && db.currentUser.role === 'viewer';
+            const filtered = db.items.filter(i => i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.jenis.toLowerCase().includes(q));
+            if (badgeTotal) badgeTotal.textContent = `${filtered.length} Item terdaftar`;
+
+            tbody.innerHTML = filtered.map((i, index) => `
+                <tr class="hover:bg-white/5">
+                    <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
+                    <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
+                    <td class="py-3 px-3 font-medium">${i.nama}</td>
+                    <td class="py-3 px-3 opacity-80">${i.jenis}</td>
+                    <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
+                    <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
+                    <td class="py-3 px-2 opacity-80 font-mono">${i.berat || 0} gr</td>
+                    <td class="py-3 px-2 opacity-80">${i.satuan}</td>
+                    <td class="py-3 px-3 text-right font-bold font-mono text-emerald-400">${i.stok.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-3 text-right font-mono opacity-80">${i.min.toLocaleString('id-ID')}</td>
+                    ${!isViewer ? `
+                        <td class="py-3 px-3 text-center flex items-center justify-center gap-1.5">
+                            <button onclick="editMasterItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 font-semibold inline-flex items-center gap-1"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit</button>
+                            <button onclick="deleteMasterItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold inline-flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus</button>
+                        </td>
+                    ` : ''}
+                </tr>
+            `).join('') || `<tr><td colspan="${isViewer ? 10 : 11}" class="py-6 text-center opacity-50">Tidak ada master barang ditemukan.</td></tr>`;
+            lucide.createIcons();
+        }
+
+        function updateMasukItemInfo() {
+            const barangId = document.getElementById('masuk-barang').value;
+            const item = db.items.find(i => i.id === barangId);
+            document.getElementById('info-masuk-jenis').textContent = item ? item.jenis : '-';
+            document.getElementById('info-masuk-satuan').textContent = item ? item.satuan : '-';
+        }
+
+        function saveMasukItem(e) {
+            e.preventDefault();
+            if (db.currentUser.role === 'viewer') return;
+            const id = document.getElementById('masuk-id').value.trim().toUpperCase();
+            const tanggal = document.getElementById('masuk-tanggal').value;
+            const barangId = document.getElementById('masuk-barang').value;
+            const qty = parseInt(document.getElementById('masuk-qty').value) || 0;
+            const supplier = document.getElementById('masuk-supplier').value.trim().toUpperCase();
+            const isEdit = document.getElementById('masuk-edit-mode').value === 'true';
+
+            const item = db.items.find(i => i.id === barangId);
+            if (!item) { showToast('Pilih barang yang valid!', 'error'); return; }
+
+            if (isEdit) {
+                const oldTrx = db.masuk.find(m => m.id === id);
+                if (oldTrx) {
+                    const oldItem = db.items.find(i => i.id === oldTrx.barangId);
+                    if (oldItem) oldItem.stok -= oldTrx.qty;
+                }
+                db.masuk = db.masuk.filter(m => m.id !== id);
+            } else if (db.masuk.some(m => m.id === id)) {
+                showToast(`ID Transaksi Masuk ${id} sudah ada!`, 'error');
+                return;
+            }
+
+            db.masuk.unshift({ id, tanggal, barangId, nama: item.nama, jenis: item.jenis, lebar: item.lebar, ukuran: item.ukuran, satuan: item.satuan, qty, supplier });
+            item.stok += qty;
+            saveDB();
+            resetMasukForm();
+            showToast(`Transaksi barang masuk ${id} berhasil disimpan!`);
+        }
+
+        function editMasukItem(id) {
+            if (db.currentUser.role === 'viewer') return;
+            const trx = db.masuk.find(m => m.id === id);
+            if (!trx) return;
+            document.getElementById('masuk-edit-mode').value = 'true';
+            document.getElementById('masuk-id').value = trx.id;
+            document.getElementById('masuk-id').disabled = true;
+            document.getElementById('masuk-tanggal').value = trx.tanggal;
+            document.getElementById('masuk-barang').value = trx.barangId;
+            updateMasukItemInfo();
+            document.getElementById('masuk-qty').value = trx.qty;
+            document.getElementById('masuk-supplier').value = trx.supplier;
+            document.getElementById('masuk-form-title').innerHTML = `<i data-lucide="edit" class="w-4 h-4 text-orange-400"></i> EDIT BARANG MASUK (${id})`;
+            lucide.createIcons();
+        }
+
+        function deleteMasukItem(id) {
+            if (db.currentUser.role === 'viewer') return;
+            showConfirm('Hapus Barang Masuk', `Yakin ingin menghapus transaksi masuk ${id}?`, () => {
+                const trx = db.masuk.find(m => m.id === id);
+                if (trx) {
+                    const item = db.items.find(i => i.id === trx.barangId);
+                    if (item) item.stok = Math.max(0, item.stok - trx.qty);
+                }
+                db.masuk = db.masuk.filter(m => m.id !== id);
+                saveDB();
+                showToast(`Transaksi ${id} berhasil dihapus.`, 'warning');
+            });
+        }
+
+        function resetMasukForm() {
+            document.getElementById('form-masuk').reset();
+            document.getElementById('masuk-edit-mode').value = 'false';
+            document.getElementById('masuk-id').disabled = false;
+            document.getElementById('masuk-id').value = generateMasukSequentialId();
+            document.getElementById('masuk-tanggal').valueAsDate = new Date();
+            updateMasukItemInfo();
+            document.getElementById('masuk-form-title').innerHTML = `<i data-lucide="plus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG MASUK`;
+            lucide.createIcons();
+        }
+
+        function renderMasukTable() {
+            const q = document.getElementById('search-masuk').value.toLowerCase();
+            const tbody = document.getElementById('masuk-table-body');
+            const badgeTotal = document.getElementById('masuk-total-badge');
+            const isViewer = db.currentUser && db.currentUser.role === 'viewer';
+            const filtered = db.masuk.filter(i => i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.supplier.toLowerCase().includes(q));
+            if (badgeTotal) badgeTotal.textContent = `${filtered.length} Transaksi`;
+
+            tbody.innerHTML = filtered.map((i, index) => `
+                <tr class="hover:bg-white/5">
+                    <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
+                    <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
+                    <td class="py-3 px-3 opacity-85">${i.tanggal}</td>
+                    <td class="py-3 px-3 font-mono text-xs opacity-80">${i.barangId}</td>
+                    <td class="py-3 px-3 font-medium">${i.nama}</td>
+                    <td class="py-3 px-3 opacity-80">${i.jenis}</td>
+                    <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
+                    <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
+                    <td class="py-3 px-2 opacity-80">${i.satuan}</td>
+                    <td class="py-3 px-3 text-right font-bold text-emerald-400">+${i.qty.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-3 font-semibold">${i.supplier}</td>
+                    ${!isViewer ? `
+                        <td class="py-3 px-3 text-center flex items-center justify-center gap-1.5">
+                            <button onclick="editMasukItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 font-semibold inline-flex items-center gap-1"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit</button>
+                            <button onclick="deleteMasukItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold inline-flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus</button>
+                        </td>
+                    ` : ''}
+                </tr>
+            `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada riwayat barang masuk ditemukan.</td></tr>`;
+            lucide.createIcons();
+        }
+
+        function updateKeluarFromPo() {
+            const poRef = document.getElementById('keluar-po-ref').value;
+            const po = db.po.find(p => p.id === poRef);
+            if (po) {
+                document.getElementById('keluar-barang').value = po.barangId;
+                document.getElementById('keluar-tujuan').value = po.customer;
+                const sisa = po.qty - (po.terkirim || 0);
+                document.getElementById('keluar-qty').value = sisa > 0 ? sisa : 1;
+            }
+        }
+
+        function saveKeluarItem(e) {
+            e.preventDefault();
+            if (db.currentUser.role === 'viewer') return;
+            const id = document.getElementById('keluar-id').value.trim().toUpperCase();
+            const tanggal = document.getElementById('keluar-tanggal').value;
+            const poRef = document.getElementById('keluar-po-ref').value;
+            const barangId = document.getElementById('keluar-barang').value;
+            const qty = parseInt(document.getElementById('keluar-qty').value) || 0;
+            const tujuan = document.getElementById('keluar-tujuan').value.trim().toUpperCase();
+            const isEdit = document.getElementById('keluar-edit-mode').value === 'true';
+
+            if (!poRef) { showToast('Barang keluar wajib merujuk ke PO Customer aktif!', 'error'); return; }
+            const item = db.items.find(i => i.id === barangId);
+            if (!item) { showToast('Pilih barang yang valid!', 'error'); return; }
+            const po = db.po.find(p => p.id === poRef);
+            if (!po) { showToast('PO Customer referensi tidak ditemukan!', 'error'); return; }
+
+            let oldQty = 0;
+            if (isEdit) {
+                const oldTrx = db.keluar.find(k => k.id === id);
+                if (oldTrx) oldQty = oldTrx.qty;
+            }
+            if (qty > (item.stok + oldQty)) { showToast(`Stok tidak mencukupi!`, 'error'); return; }
+
+            if (isEdit) {
+                const oldTrx = db.keluar.find(k => k.id === id);
+                if (oldTrx) {
+                    const oldItem = db.items.find(i => i.id === oldTrx.barangId);
+                    if (oldItem) oldItem.stok += oldTrx.qty;
+                    const oldPo = db.po.find(p => p.id === oldTrx.poRef);
+                    if (oldPo) {
+                        oldPo.terkirim = Math.max(0, (oldPo.terkirim || 0) - oldTrx.qty);
+                        oldPo.status = oldPo.terkirim >= oldPo.qty ? 'CLOSED' : (oldPo.terkirim > 0 ? 'PARTIAL' : 'OPEN');
+                    }
+                }
+                db.keluar = db.keluar.filter(k => k.id !== id);
+            } else if (db.keluar.some(k => k.id === id)) {
+                showToast(`ID Transaksi Keluar ${id} sudah ada!`, 'error');
+                return;
+            }
+
+            db.keluar.unshift({ id, tanggal, barangId, nama: item.nama, jenis: item.jenis, lebar: item.lebar, ukuran: item.ukuran, satuan: item.satuan, qty, tujuan, poRef });
+            item.stok -= qty;
+            po.terkirim = (po.terkirim || 0) + qty;
+            po.status = po.terkirim >= po.qty ? 'CLOSED' : 'PARTIAL';
+            saveDB();
+            resetKeluarForm();
+            showToast(`Transaksi barang keluar ${id} berhasil disimpan!`);
+        }
+
+        function editKeluarItem(id) {
+            if (db.currentUser.role === 'viewer') return;
+            const trx = db.keluar.find(k => k.id === id);
+            if (!trx) return;
+            document.getElementById('keluar-edit-mode').value = 'true';
+            document.getElementById('keluar-id').value = trx.id;
+            document.getElementById('keluar-id').disabled = true;
+            document.getElementById('keluar-tanggal').value = trx.tanggal;
+            document.getElementById('keluar-po-ref').value = trx.poRef || '';
+            document.getElementById('keluar-barang').value = trx.barangId;
+            document.getElementById('keluar-qty').value = trx.qty;
+            document.getElementById('keluar-tujuan').value = trx.tujuan;
+            document.getElementById('keluar-form-title').innerHTML = `<i data-lucide="edit" class="w-4 h-4 text-orange-400"></i> EDIT BARANG KELUAR (${id})`;
+            lucide.createIcons();
+        }
+
+        function deleteKeluarItem(id) {
+            if (db.currentUser.role === 'viewer') return;
+            showConfirm('Hapus Barang Keluar', `Yakin ingin menghapus transaksi keluar ${id}?`, () => {
+                const trx = db.keluar.find(k => k.id === id);
+                if (trx) {
+                    const item = db.items.find(i => i.id === trx.barangId);
+                    if (item) item.stok += trx.qty;
+                    const po = db.po.find(p => p.id === trx.poRef);
+                    if (po) {
+                        po.terkirim = Math.max(0, (po.terkirim || 0) - trx.qty);
+                        po.status = po.terkirim > 0 ? 'PARTIAL' : 'OPEN';
+                    }
+                }
+                db.keluar = db.keluar.filter(k => k.id !== id);
+                saveDB();
+                showToast(`Transaksi ${id} berhasil dihapus.`, 'warning');
+            });
+        }
+
+        function resetKeluarForm() {
+            document.getElementById('form-keluar').reset();
+            document.getElementById('keluar-edit-mode').value = 'false';
+            document.getElementById('keluar-id').disabled = false;
+            document.getElementById('keluar-id').value = generateKeluarSequentialId();
+            document.getElementById('keluar-tanggal').valueAsDate = new Date();
+            document.getElementById('keluar-form-title').innerHTML = `<i data-lucide="minus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG KELUAR`;
+            lucide.createIcons();
+        }
+
+        function renderKeluarTable() {
+            const q = document.getElementById('search-keluar').value.toLowerCase();
+            const tbody = document.getElementById('keluar-table-body');
+            const badgeTotal = document.getElementById('keluar-total-badge');
+            const isViewer = db.currentUser && db.currentUser.role === 'viewer';
+            const filtered = db.keluar.filter(i => i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.tujuan.toLowerCase().includes(q) || (i.poRef && i.poRef.toLowerCase().includes(q)));
+            if (badgeTotal) badgeTotal.textContent = `${filtered.length} Transaksi`;
+
+            tbody.innerHTML = filtered.map((i, index) => `
+                <tr class="hover:bg-white/5">
+                    <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
+                    <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
+                    <td class="py-3 px-3 opacity-85">${i.tanggal}</td>
+                    <td class="py-3 px-3 font-mono text-xs opacity-80">${i.barangId}</td>
+                    <td class="py-3 px-3 font-medium">${i.nama}</td>
+                    <td class="py-3 px-3 opacity-80">${i.jenis}</td>
+                    <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
+                    <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
+                    <td class="py-3 px-2 opacity-80">${i.satuan}</td>
+                    <td class="py-3 px-3 text-right font-bold text-rose-400">-${i.qty.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-3 font-semibold">${i.tujuan}</td>
+                    <td class="py-3 px-3 font-mono text-sky-400">${i.poRef || '-'}</td>
+                    ${!isViewer ? `
+                        <td class="py-3 px-3 text-center flex items-center justify-center gap-1.5">
+                            <button onclick="editKeluarItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 font-semibold inline-flex items-center gap-1"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit</button>
+                            <button onclick="deleteKeluarItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold inline-flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus</button>
+                        </td>
+                    ` : ''}
+                </tr>
+            `).join('') || `<tr><td colspan="${isViewer ? 12 : 13}" class="py-6 text-center opacity-50">Tidak ada riwayat barang keluar ditemukan.</td></tr>`;
+            lucide.createIcons();
+        }
+
+        function savePoItem(e) {
+            e.preventDefault();
+            if (db.currentUser.role === 'viewer') return;
+            const id = document.getElementById('po-id').value.trim().toUpperCase();
+            const noPoCustomer = document.getElementById('po-no-customer').value.trim().toUpperCase();
+            const tanggal = document.getElementById('po-tanggal').value;
+            const customer = document.getElementById('po-customer').value.trim().toUpperCase();
+            const barangId = document.getElementById('po-barang').value;
+            const qty = parseInt(document.getElementById('po-qty').value) || 0;
+            const isEdit = document.getElementById('po-edit-mode').value === 'true';
+
+            const item = db.items.find(i => i.id === barangId);
+            if (!item) { showToast('Pilih barang yang valid!', 'error'); return; }
+
+            if (isEdit) {
+                const po = db.po.find(p => p.id === id);
+                if (po) {
+                    po.noPoCustomer = noPoCustomer; po.tanggal = tanggal; po.customer = customer;
+                    po.barangId = barangId; po.nama = item.nama; po.jenis = item.jenis;
+                    po.lebar = item.lebar; po.ukuran = item.ukuran; po.satuan = item.satuan;
+                    po.qty = qty; po.status = po.terkirim >= qty ? 'CLOSED' : (po.terkirim > 0 ? 'PARTIAL' : 'OPEN');
+                }
+                showToast(`PO ${id} berhasil diperbarui!`);
+            } else {
+                if (db.po.some(p => p.id === id)) { showToast(`ID Sistem PO ${id} sudah ada!`, 'error'); return; }
+                db.po.unshift({ id, noPoCustomer, tanggal, customer, barangId, nama: item.nama, jenis: item.jenis, lebar: item.lebar, ukuran: item.ukuran, satuan: item.satuan, qty, terkirim: 0, status: 'OPEN' });
+                showToast(`PO Customer ${id} berhasil ditambahkan!`);
+            }
+            resetPoForm();
+            saveDB();
+        }
+
+        function editPoItem(id) {
+            if (db.currentUser.role === 'viewer') return;
+            const po = db.po.find(p => p.id === id);
+            if (!po) return;
+            document.getElementById('po-edit-mode').value = 'true';
+            document.getElementById('po-id').value = po.id;
+            document.getElementById('po-id').disabled = true;
+            document.getElementById('po-no-customer').value = po.noPoCustomer || '';
+            document.getElementById('po-tanggal').value = po.tanggal;
+            document.getElementById('po-customer').value = po.customer;
+            document.getElementById('po-barang').value = po.barangId;
+            document.getElementById('po-qty').value = po.qty;
+            document.getElementById('po-form-title').innerHTML = `<i data-lucide="edit" class="w-4 h-4 text-orange-400"></i> EDIT PO CUSTOMER (${id})`;
+            lucide.createIcons();
+        }
+
+        function cancelPoItem(id) {
+            if (db.currentUser.role === 'viewer') return;
+            const po = db.po.find(p => p.id === id);
+            if (!po || po.status === 'CLOSED') return;
+            const terkirim = po.terkirim || 0;
+            showConfirm('Batalkan PO Customer', `Yakin ingin membatalkan PO ${id}?`, () => {
+                if (terkirim > 0) {
+                    const item = db.items.find(i => i.id === po.barangId);
+                    if (item) item.stok += terkirim;
+                }
+                po.status = 'CANCELLED';
+                saveDB();
+                showToast(`PO ${id} berhasil dibatalkan.`, 'warning');
+            });
+        }
+
+        function resetPoForm() {
+            document.getElementById('form-po').reset();
+            document.getElementById('po-edit-mode').value = 'false';
+            document.getElementById('po-id').disabled = false;
+            document.getElementById('po-id').value = generatePoSequentialId();
+            document.getElementById('po-tanggal').valueAsDate = new Date();
+            document.getElementById('po-form-title').innerHTML = `<i data-lucide="file-plus" class="w-4 h-4 text-orange-400"></i> INPUT PO CUSTOMER`;
+            lucide.createIcons();
+        }
+
+        function renderPoTable() {
+            const q = document.getElementById('search-po').value.toLowerCase();
+            const tbody = document.getElementById('po-table-body');
+            const badgeTotal = document.getElementById('po-total-badge');
+            const isViewer = db.currentUser && db.currentUser.role === 'viewer';
+            const filtered = db.po.filter(i => i.id.toLowerCase().includes(q) || (i.noPoCustomer && i.noPoCustomer.toLowerCase().includes(q)) || i.customer.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q));
+            if (badgeTotal) badgeTotal.textContent = `${filtered.length} PO`;
+
+            tbody.innerHTML = filtered.map((i, index) => {
+                const terkirim = i.terkirim || 0;
+                const sisa = Math.max(0, i.qty - terkirim);
+                let statusBadge = '';
+                if (i.status === 'OPEN') statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-400">OPEN</span>';
+                else if (i.status === 'PARTIAL') statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400">PARTIAL</span>';
+                else if (i.status === 'CLOSED') statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400">CLOSED</span>';
+                else if (i.status === 'CANCELLED') statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-400">CANCELLED</span>';
+
+                const canCancel = i.status !== 'CANCELLED' && i.status !== 'CLOSED';
+                return `
+                    <tr class="hover:bg-white/5">
+                        <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
+                        <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
+                        <td class="py-3 px-3 font-mono text-sky-300 font-semibold">${i.noPoCustomer || '-'}</td>
+                        <td class="py-3 px-3 opacity-85">${i.tanggal}</td>
+                        <td class="py-3 px-3 font-medium">${i.customer}</td>
+                        <td class="py-3 px-3 font-mono text-xs opacity-80">${i.barangId}</td>
+                        <td class="py-3 px-3 font-medium">${i.nama}</td>
+                        <td class="py-3 px-3 opacity-80">${i.jenis}</td>
+                        <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
+                        <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
+                        <td class="py-3 px-2 opacity-80">${i.satuan}</td>
+                        <td class="py-3 px-3 text-right font-mono font-bold">${i.qty.toLocaleString('id-ID')}</td>
+                        <td class="py-3 px-3 text-right font-mono text-emerald-400">${terkirim.toLocaleString('id-ID')}</td>
+                        <td class="py-3 px-3 text-right font-mono font-bold text-amber-400">${sisa.toLocaleString('id-ID')}</td>
+                        <td class="py-3 px-3 text-center">${statusBadge}</td>
+                        ${!isViewer ? `
+                            <td class="py-3 px-3 text-center flex items-center justify-center gap-1.5">
+                                ${i.status !== 'CANCELLED' && i.status !== 'CLOSED' ? `
+                                    <button onclick="editPoItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 font-semibold inline-flex items-center gap-1"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit</button>
+                                    ${canCancel ? `<button onclick="cancelPoItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold inline-flex items-center gap-1"><i data-lucide="x-circle" class="w-3.5 h-3.5"></i> Batal</button>` : ''}
+                                ` : `<span class="opacity-50 text-[11px]">-</span>`}
+                            </td>
+                        ` : ''}
+                    </tr>
+                `;
+            }).join('') || `<tr><td colspan="${isViewer ? 15 : 16}" class="py-6 text-center opacity-50">Tidak ada daftar PO customer ditemukan.</td></tr>`;
+            lucide.createIcons();
+        }
+
+        function saveReturItem(e) {
+            e.preventDefault();
+            if (db.currentUser.role === 'viewer') return;
+            const id = document.getElementById('retur-id').value.trim().toUpperCase();
+            const tanggal = document.getElementById('retur-tanggal').value;
+            const barangId = document.getElementById('retur-barang').value;
+            const qty = parseInt(document.getElementById('retur-qty').value) || 0;
+            const keterangan = document.getElementById('retur-keterangan').value.trim().toUpperCase();
+
+            const item = db.items.find(i => i.id === barangId);
+            if (!item) { showToast('Pilih barang yang valid!', 'error'); return; }
+            if (db.retur.some(r => r.id === id)) { showToast(`ID Retur ${id} sudah ada!`, 'error'); return; }
+
+            db.retur.unshift({ id, tanggal, barangId, nama: item.nama, jenis: item.jenis, lebar: item.lebar, ukuran: item.ukuran, satuan: item.satuan, qty, keterangan });
+            item.stok += qty;
+            saveDB();
+            resetReturForm();
+            showToast(`Retur barang ${id} berhasil disimpan!`);
+        }
+
+        function deleteReturItem(id) {
+            if (db.currentUser.role === 'viewer') return;
+            showConfirm('Hapus Transaksi Retur', `Yakin ingin menghapus retur ${id}?`, () => {
+                const trx = db.retur.find(r => r.id === id);
+                if (trx) {
+                    const item = db.items.find(i => i.id === trx.barangId);
+                    if (item) item.stok = Math.max(0, item.stok - trx.qty);
+                }
+                db.retur = db.retur.filter(r => r.id !== id);
+                saveDB();
+                showToast(`Retur ${id} berhasil dihapus.`, 'warning');
+            });
+        }
+
+        function resetReturForm() {
+            document.getElementById('form-retur').reset();
+            document.getElementById('retur-id').value = generateId('RTR');
+            document.getElementById('retur-tanggal').valueAsDate = new Date();
+        }
+
+        function renderReturTable() {
+            const q = document.getElementById('search-retur').value.toLowerCase();
+            const tbody = document.getElementById('retur-table-body');
+            const badgeTotal = document.getElementById('retur-total-badge');
+            const isViewer = db.currentUser && db.currentUser.role === 'viewer';
+            const filtered = db.retur.filter(i => i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.keterangan.toLowerCase().includes(q));
+            if (badgeTotal) badgeTotal.textContent = `${filtered.length} Transaksi`;
+
+            tbody.innerHTML = filtered.map((i, index) => `
+                <tr class="hover:bg-white/5">
+                    <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
+                    <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
+                    <td class="py-3 px-3 opacity-85">${i.tanggal}</td>
+                    <td class="py-3 px-3 font-mono text-xs opacity-80">${i.barangId}</td>
+                    <td class="py-3 px-3 font-medium">${i.nama}</td>
+                    <td class="py-3 px-3 opacity-80">${i.jenis}</td>
+                    <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
+                    <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
+                    <td class="py-3 px-2 opacity-80">${i.satuan}</td>
+                    <td class="py-3 px-3 text-right font-bold text-amber-400">+${i.qty.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-3 font-semibold">${i.keterangan}</td>
+                    ${!isViewer ? `
+                        <td class="py-3 px-3 text-center">
+                            <button onclick="deleteReturItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 inline-flex items-center gap-1 font-semibold"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus</button>
+                        </td>
+                    ` : ''}
+                </tr>
+            `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada riwayat retur barang ditemukan.</td></tr>`;
+            lucide.createIcons();
+        }
+
+        function exportCSVData() {
+            let csvContent = "data:text/csv;charset=utf-8,ID,Nama,Kategori,Satuan,Stok\n";
+            db.items.forEach(i => { csvContent += `"${i.id}","${i.nama}","${i.jenis}","${i.satuan}",${i.stok}\n`; });
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", "inventory_gudang_pro.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("Data master berhasil diexport ke CSV!");
+        }
+
+        window.onload = function() {
+            applyTheme(db.theme || 'sunset');
+            document.getElementById('masuk-id').value = generateMasukSequentialId();
+            document.getElementById('masuk-tanggal').valueAsDate = new Date();
+            document.getElementById('keluar-id').value = generateKeluarSequentialId();
+            document.getElementById('keluar-tanggal').valueAsDate = new Date();
+            document.getElementById('po-id').value = generatePoSequentialId();
+            document.getElementById('po-tanggal').valueAsDate = new Date();
+            document.getElementById('retur-id').value = generateId('RTR');
+            document.getElementById('retur-tanggal').valueAsDate = new Date();
+
+            checkAuth();
+            refreshAllViews();
+            updateClock();
+        };
+    </script>
+</body>
+</html>
