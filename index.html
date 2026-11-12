@@ -992,7 +992,9 @@
 
         let db = JSON.parse(localStorage.getItem('gudang_pro_db')) || DEFAULT_DATA;
         if (!db.users) db.users = DEFAULT_DATA.users;
-        if (!db.currentUser) db.currentUser = DEFAULT_DATA.currentUser;
+        
+        // Force require login on fresh browser load/session
+        db.currentUser = null;
 
         function saveDB() {
             localStorage.setItem('gudang_pro_db', JSON.stringify(db));
