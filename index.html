@@ -112,6 +112,24 @@
             --theme-accent-glow: rgba(6, 182, 212, 0.3);
         }
 
+        .theme-neon-rainbow {
+            --theme-bg: #120826;
+            --theme-card: #1f0c3f;
+            --theme-card-border: rgba(236, 72, 153, 0.3);
+            --theme-accent: #a855f7;
+            --theme-accent-hover: #9333ea;
+            --theme-accent-glow: rgba(168, 85, 247, 0.4);
+        }
+
+        .theme-cyberpunk {
+            --theme-bg: #030712;
+            --theme-card: #0f172a;
+            --theme-card-border: rgba(250, 204, 21, 0.3);
+            --theme-accent: #facc15;
+            --theme-accent-hover: #eab308;
+            --theme-accent-glow: rgba(250, 204, 21, 0.4);
+        }
+
         body { background-color: var(--theme-bg); color: var(--theme-text); }
         .app-card { 
             background-color: var(--theme-card); 
@@ -237,7 +255,7 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <div id="live-clock" class="text-xs font-mono bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-lg text-gray-300 hidden md:block shadow-inner">
+            <div id="live-clock" class="text-sm font-mono font-bold bg-gradient-to-r from-orange-500/20 via-pink-500/20 to-purple-500/20 border border-white/20 px-4 py-2 rounded-xl text-gray-100 hidden md:flex items-center gap-2 shadow-lg shadow-orange-500/10 tracking-wider">
                 <!-- Live clock -->
             </div>
             <!-- Current User Info & Logout -->
@@ -307,6 +325,8 @@
                         <option value="royal">Purple Royal Gold</option>
                         <option value="neon-sunset">Neon Sunset (Vibrant Rose)</option>
                         <option value="aurora">Aurora Cyan (Fresh Neon)</option>
+                        <option value="neon-rainbow">🌈 Neon Rainbow (Super Colorful)</option>
+                        <option value="cyberpunk">⚡ Electric Cyberpunk (Vibrant Yellow/Blue)</option>
                     </select>
                 </div>
                 <div id="reset-btn-wrapper">
@@ -1542,7 +1562,10 @@
             const clockEl = document.getElementById('live-clock');
             if (clockEl) {
                 const now = new Date();
-                clockEl.textContent = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ' | ' + now.toLocaleTimeString('id-ID');
+                const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+                clockEl.innerHTML = `<i data-lucide="clock" class="w-4 h-4 text-orange-400"></i> <span>${dateStr} &bull; ${timeStr}</span>`;
+                lucide.createIcons();
             }
         }
         setInterval(updateClock, 1000);
