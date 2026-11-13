@@ -1,3 +1,4 @@
+<!-- ... euer existing code ... -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -146,7 +147,6 @@
         .theme-accent-border { border-color: var(--theme-accent); }
         .theme-focus:focus { outline: none; border-color: var(--theme-accent); box-shadow: 0 0 0 3px var(--theme-accent-glow); }
         
-        /* High visibility form labels */
         label {
             color: #f3f4f6 !important;
             font-weight: 600 !important;
@@ -169,14 +169,12 @@
             color: #9ca3af !important;
         }
 
-        /* Prevent table text clipping and ensure comfortable whitespace */
         table th, table td {
             white-space: nowrap;
             padding-left: 0.75rem !important;
             padding-right: 0.75rem !important;
         }
 
-        /* Fluid Table Optimization */
         .fluid-table-container {
             width: 100%;
             overflow-x: auto;
@@ -186,7 +184,6 @@
             table-layout: auto;
         }
 
-        /* Centered Top Toast Styling */
         #toast-container {
             position: fixed;
             top: 1.5rem;
@@ -203,7 +200,6 @@
             pointer-events: auto;
         }
 
-        /* Blinking animation for low stock alert */
         @keyframes lowStockBlinkRed {
             0%, 100% { border-color: rgba(244, 63, 94, 0.9); box-shadow: inset 0 0 15px rgba(244, 63, 94, 0.35), 0 0 15px rgba(244, 63, 94, 0.45); background-color: rgba(244, 63, 94, 0.12); }
             50% { border-color: rgba(244, 63, 94, 0.25); box-shadow: inset 0 0 3px rgba(244, 63, 94, 0.05), 0 0 3px rgba(244, 63, 94, 0.1); background-color: rgba(244, 63, 94, 0.03); }
@@ -212,18 +208,13 @@
             0%, 100% { border-color: rgba(245, 158, 11, 0.9); box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.35), 0 0 15px rgba(245, 158, 11, 0.45); background-color: rgba(245, 158, 11, 0.12); }
             50% { border-color: rgba(245, 158, 11, 0.25); box-shadow: inset 0 0 3px rgba(245, 158, 11, 0.05), 0 0 3px rgba(245, 158, 11, 0.1); background-color: rgba(245, 158, 11, 0.03); }
         }
-        .blink-low-stock-red {
-            animation: lowStockBlinkRed 1.2s infinite ease-in-out;
-        }
-        .blink-low-stock-orange {
-            animation: lowStockBlinkOrange 1.2s infinite ease-in-out;
-        }
-        /* Role Badge Styling */
+        .blink-low-stock-red { animation: lowStockBlinkRed 1.2s infinite ease-in-out; }
+        .blink-low-stock-orange { animation: lowStockBlinkOrange 1.2s infinite ease-in-out; }
+
         .role-badge-admin { background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
         .role-badge-staff { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
         .role-badge-viewer { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
 
-        /* Premium Dashboard Glow Accents */
         .dashboard-glow-card {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
             backdrop-filter: blur(12px);
@@ -256,11 +247,8 @@
 
         <div class="flex items-center gap-4">
             <div id="live-clock" class="text-sm font-mono font-bold bg-gradient-to-r from-orange-500/20 via-pink-500/20 to-purple-500/20 border border-white/20 px-4 py-2 rounded-xl text-gray-100 hidden md:flex items-center gap-2 shadow-lg shadow-orange-500/10 tracking-wider">
-                <!-- Live clock -->
             </div>
-            <!-- Current User Info & Logout -->
             <div id="current-user-banner" class="flex items-center gap-2.5 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl">
-                <!-- Rendered via JS -->
             </div>
             <button onclick="exportCSVData()" class="px-4 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center gap-2 shadow-lg shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-95">
                 <i data-lucide="download" class="w-3.5 h-3.5"></i>
@@ -311,7 +299,6 @@
                 </div>
             </nav>
 
-            <!-- SIDEBAR FOOTER / THEME SELECTOR -->
             <div class="p-4 border-t border-white/5 space-y-3 bg-dark-900/60">
                 <div>
                     <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
@@ -332,7 +319,7 @@
                 <div id="reset-btn-wrapper">
                     <button onclick="resetData()" class="w-full py-2 px-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold hover:bg-rose-500/20 transition-all flex items-center justify-center gap-2">
                         <i data-lucide="database" class="w-3.5 h-3.5"></i>
-                        <span>Reset Data Contoh</span>
+                        <span>Reset Data Gudang</span>
                     </button>
                 </div>
             </div>
@@ -346,16 +333,10 @@
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-white/[0.04] to-transparent p-6 rounded-3xl border border-white/5 backdrop-blur-xl">
                     <div class="space-y-1">
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wider">
-                            <span class="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span> Live Operational Command Center
+                            <span class="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span> Inventory Command Center
                         </div>
                         <h2 class="text-2xl font-black tracking-tight text-white">DASHBOARD REALTIME</h2>
-                        <p class="text-xs text-gray-400">Ringkasan stok gudang, pergerakan transaksi, dan status PO aktif secara real-time.</p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="text-xs text-gray-300 font-medium bg-dark-800/80 px-4 py-2 rounded-2xl border border-white/10 shadow-lg flex items-center gap-2">
-                            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-                            <span>Status Sistem: <span class="text-emerald-400 font-bold">● Normal & Sinkron</span></span>
-                        </div>
+                        <p class="text-xs text-gray-400">Ringkasan stok gudang, pergerakan transaksi, dan status PO aktif.</p>
                     </div>
                 </div>
 
@@ -379,7 +360,7 @@
                             </div>
                         </div>
                         <div id="stat-stok" class="text-3xl font-black font-mono text-white tracking-tight">0</div>
-                        <div id="stat-stok-desc" class="text-[11px] text-gray-400 mt-1 font-medium">Akumulasi unit gudang</div>
+                        <div class="text-[11px] text-gray-400 mt-1 font-medium">Akumulasi unit gudang</div>
                     </div>
                     <div onclick="switchTab('masuk')" class="dashboard-glow-card p-4 rounded-3xl relative overflow-hidden group cursor-pointer" title="Klik untuk lihat Barang Masuk">
                         <div class="flex items-center justify-between mb-3">
@@ -425,7 +406,6 @@
 
                 <!-- GRAFIK & STOK MENIPIS -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- GRAFIK BARANG MASUK -->
                     <div class="dashboard-glow-card p-6 rounded-3xl flex flex-col">
                         <div class="flex items-center justify-between mb-6">
                             <div class="flex items-center gap-2.5">
@@ -437,11 +417,9 @@
                             <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-semibold px-2.5 py-1 rounded-xl border border-emerald-500/30">Inflow Trend</span>
                         </div>
                         <div id="chart-masuk" class="flex-1 min-h-[220px] flex items-end gap-3 pt-6 pb-2 px-2 border-b border-white/5 overflow-x-auto">
-                            <!-- Rendered via JS -->
                         </div>
                     </div>
 
-                    <!-- GRAFIK BARANG KELUAR -->
                     <div class="dashboard-glow-card p-6 rounded-3xl flex flex-col">
                         <div class="flex items-center justify-between mb-6">
                             <div class="flex items-center gap-2.5">
@@ -453,7 +431,6 @@
                             <span class="text-[10px] bg-rose-500/20 text-rose-300 font-semibold px-2.5 py-1 rounded-xl border border-rose-500/30">Outflow Trend</span>
                         </div>
                         <div id="chart-keluar" class="flex-1 min-h-[220px] flex items-end gap-3 pt-6 pb-2 px-2 border-b border-white/5 overflow-x-auto">
-                            <!-- Rendered via JS -->
                         </div>
                     </div>
                 </div>
@@ -471,7 +448,6 @@
                             <span class="text-[10px] bg-rose-500/20 text-rose-300 font-semibold px-2.5 py-1 rounded-xl border border-rose-500/30">&lt; Stok Min.</span>
                         </div>
                         <div id="low-stock-list" class="flex flex-col gap-2.5 overflow-y-auto max-h-[300px] pr-1">
-                            <!-- Rendered via JS -->
                         </div>
                     </div>
                 </div>
@@ -483,7 +459,7 @@
                             <div class="w-8 h-8 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center">
                                 <i data-lucide="activity" class="w-4 h-4"></i>
                             </div>
-                            <h3 class="font-bold text-xs tracking-wider text-gray-200 uppercase">AKTIVITAS TRANSAKSI TERAKHIR (REALTIME LOG)</h3>
+                            <h3 class="font-bold text-xs tracking-wider text-gray-200 uppercase">AKTIVITAS TRANSAKSI TERAKHIR (LOG)</h3>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
@@ -500,7 +476,6 @@
                                 </tr>
                             </thead>
                             <tbody id="recent-activity-body" class="divide-y divide-white/5">
-                                <!-- Rendered via JS -->
                             </tbody>
                         </table>
                     </div>
@@ -510,8 +485,7 @@
             <!-- 2. TAB MASTER DATA BARANG -->
             <section id="tab-master" class="space-y-6 w-full hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <!-- Form Input Master (Compact Width: lg:col-span-3) -->
-                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3">
+                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3" id="master-form-card">
                         <h3 id="master-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="package-plus" class="w-4 h-4 text-orange-400"></i> TAMBAH MASTER BARANG
                         </h3>
@@ -615,7 +589,6 @@
                         </form>
                     </div>
 
-                    <!-- Tabel Master (Wide Width: lg:col-span-9) -->
                     <div class="app-card p-6 rounded-2xl lg:col-span-9 flex flex-col">
                         <div class="flex flex-col md:flex-row items-center justify-between gap-3 mb-5">
                             <div>
@@ -646,11 +619,10 @@
                                         <th class="py-3 px-2">Satuan</th>
                                         <th class="py-3 px-3 text-right">Stok</th>
                                         <th class="py-3 px-3 text-right">Min.</th>
-                                        <th class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
+                                        <th id="master-th-aksi" class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="master-table-body" class="divide-y divide-white/5">
-                                    <!-- Rendered via JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -661,7 +633,7 @@
             <!-- 3. TAB BARANG MASUK -->
             <section id="tab-masuk" class="space-y-6 w-full hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3">
+                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3" id="masuk-form-card">
                         <h3 id="masuk-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="plus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG MASUK
                         </h3>
@@ -736,11 +708,10 @@
                                         <th class="py-3 px-2">Satuan</th>
                                         <th class="py-3 px-3 text-right">Qty Masuk</th>
                                         <th class="py-3 px-3">Sumber</th>
-                                        <th class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
+                                        <th id="masuk-th-aksi" class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="masuk-table-body" class="divide-y divide-white/5">
-                                    <!-- Rendered via JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -751,7 +722,7 @@
             <!-- 4. TAB BARANG KELUAR -->
             <section id="tab-keluar" class="space-y-6 w-full hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3">
+                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3" id="keluar-form-card">
                         <h3 id="keluar-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="minus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG KELUAR
                         </h3>
@@ -829,11 +800,10 @@
                                         <th class="py-3 px-3 text-right">Qty Keluar</th>
                                         <th class="py-3 px-3">Customer / Tujuan</th>
                                         <th class="py-3 px-3">No PO Ref</th>
-                                        <th class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
+                                        <th id="keluar-th-aksi" class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="keluar-table-body" class="divide-y divide-white/5">
-                                    <!-- Rendered via JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -844,8 +814,7 @@
             <!-- 5. TAB PO MASUK (CUSTOMER) -->
             <section id="tab-po" class="space-y-6 w-full hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <!-- Form Input PO (Compact Width: lg:col-span-3) -->
-                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3">
+                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3" id="po-form-card">
                         <h3 id="po-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="file-plus" class="w-4 h-4 text-orange-400"></i> INPUT PO CUSTOMER
                         </h3>
@@ -924,11 +893,10 @@
                                         <th class="py-3 px-3 text-right">Terkirim</th>
                                         <th class="py-3 px-3 text-right">Sisa PO</th>
                                         <th class="py-3 px-3 text-center">Status</th>
-                                        <th class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
+                                        <th id="po-th-aksi" class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="po-table-body" class="divide-y divide-white/5">
-                                    <!-- Rendered via JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -1065,7 +1033,6 @@
                                     </tr>
                                 </thead>
                                 <tbody id="sampel-table-body" class="divide-y divide-white/5">
-                                    <!-- Rendered via JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -1145,7 +1112,6 @@
                                     </tr>
                                 </thead>
                                 <tbody id="retur-table-body" class="divide-y divide-white/5">
-                                    <!-- Rendered via JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -1211,7 +1177,6 @@
                                     </tr>
                                 </thead>
                                 <tbody id="user-table-body" class="divide-y divide-white/5">
-                                    <!-- Rendered via JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -1229,7 +1194,7 @@
                 <div class="w-14 h-14 rounded-2xl theme-accent-bg mx-auto flex items-center justify-center shadow-xl shadow-orange-500/30 text-white font-black text-2xl">
                     G
                 </div>
-                <h3 class="font-extrabold text-lg text-gray-100 tracking-tight">LOGIN SISTEM INVENTORY</h3>
+                <h3 class="font-extrabold text-lg text-gray-100 tracking-tight">LOGIN INVENTORY</h3>
                 <p class="text-xs text-gray-400">Masukkan kredensial Anda untuk masuk</p>
             </div>
             
@@ -1251,7 +1216,7 @@
         </div>
     </div>
 
-    <!-- TOAST NOTIFICATION CONTAINER (Centered Top) -->
+    <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-container"></div>
 
     <!-- MODAL CONFIRMATION DIALOG -->
@@ -1266,14 +1231,15 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        // ==========================================
-        // 1. STATE & LOCALSTORAGE DATABASE
-        // ==========================================
+    <!-- ROBUST STORAGE SYNC SCRIPT WITH FIREBASE FALLBACK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
         const DEFAULT_DATA = {
             theme: 'sunset',
-            currentUser: { username: 'admin', name: 'Administrator', role: 'admin' },
+            currentUser: null,
             users: [
                 { username: 'admin', name: 'Administrator', pass: 'admin123', role: 'admin' },
                 { username: 'staff', name: 'Staff Gudang', pass: 'staff123', role: 'staff' },
@@ -1288,87 +1254,103 @@
                 { id: 'FX-001', nama: '025 FE', jenis: 'FASTRACK', lebar: '20 mm', ukuran: 'STANDARD', berat: 90, satuan: 'ROLL', min: 100, stok: 90 }
             ],
             masuk: [
-                { id: 'IN-2611-0002', tanggal: '2026-11-11', barangId: 'EJ-003-02', nama: 'MARCELLO RED BORDER', jenis: 'ELASTIS HURUF', lebar: '35 mm', ukuran: 'SIZE L', satuan: 'YARD', qty: 1000, supplier: 'PT. SINAR TEXTILE' },
-                { id: 'IN-2611-0001', tanggal: '2026-11-10', barangId: 'MARIO', nama: 'MARIO', jenis: 'ELASTIS POLOS', lebar: '30 mm', ukuran: 'SIZE M', satuan: 'YARD', qty: 500, supplier: 'PRODUKSI LOOM A' }
+                { id: 'IN-2611-0002', tanggal: '2026-11-11', barangId: 'EJ-003-02', nama: 'MARCELLO RED BORDER', jenis: 'ELASTIS HURUF', lebar: '35 mm', ukuran: 'SIZE L', satuan: 'YARD', qty: 1000, supplier: 'PT. SINAR TEXTILE', user: 'Administrator' },
+                { id: 'IN-2611-0001', tanggal: '2026-11-10', barangId: 'MARIO', nama: 'MARIO', jenis: 'ELASTIS POLOS', lebar: '30 mm', ukuran: 'SIZE M', satuan: 'YARD', qty: 500, supplier: 'PRODUKSI LOOM A', user: 'Administrator' }
             ],
             keluar: [
-                { id: 'OT-2611-0001', tanggal: '2026-11-11', barangId: 'EJ-002-001', nama: 'MANGO SPORT', jenis: 'ELASTIS HURUF', lebar: '35 mm', ukuran: 'SIZE XXL', satuan: 'YARD', qty: 300, tujuan: 'PT. MAJU JAYA', poRef: 'POC-2611-0001' }
+                { id: 'OT-2611-0001', tanggal: '2026-11-11', barangId: 'EJ-002-001', nama: 'MANGO SPORT', jenis: 'ELASTIS HURUF', lebar: '35 mm', ukuran: 'SIZE XXL', satuan: 'YARD', qty: 300, tujuan: 'PT. MAJU JAYA', poRef: 'POC-2611-0001', user: 'Administrator' }
             ],
             po: [
                 { id: 'POC-2611-0001', noPoCustomer: 'PO/2026/XI/001', tanggal: '2026-11-12', customer: 'PT. MAJU JAYA', barangId: 'EJ-003-02', nama: 'MARCELLO RED BORDER', jenis: 'ELASTIS HURUF', lebar: '35 mm', ukuran: 'SIZE L', satuan: 'YARD', qty: 500, terkirim: 0, status: 'OPEN' },
                 { id: 'POC-2611-0002', noPoCustomer: 'PO/2026/XI/002', tanggal: '2026-11-12', customer: 'PT. PANCA TIRTA SEJAHTERA', barangId: 'EJ0050', nama: 'ELASTIS TALI SEPATU', jenis: 'FASTRACK', lebar: '10 mm', ukuran: 'STANDARD', satuan: 'PCS', qty: 100, terkirim: 40, status: 'PARTIAL' }
             ],
             sampel: [
-                { id: 'SMP-2611-0001', nama: 'SAMPEL ELASTIS POLOS CUSTOM', kategori: 'ELASTIS POLOS', lebar: '25 mm', ukuran: 'SIZE M', berat: 45, tebal: '1.0 mm' }
+                { id: 'SMP-2611-0001', tanggal: '2026-11-11', customer: 'PT. MAJU JAYA', nama: 'SAMPEL ELASTIS POLOS CUSTOM', kategori: 'ELASTIS POLOS', lebar: '25 mm', ukuran: 'SIZE M', berat: 45, tebal: '1.0 mm' }
             ],
             retur: [
-                { id: 'RTR-2011-0001', tanggal: '2026-11-11', barangId: 'FX-001', nama: '025 FE', jenis: 'FASTRACK', lebar: '20 mm', ukuran: 'STANDARD', satuan: 'ROLL', qty: 25, keterangan: 'KELEBIHAN KIRIM PO LAMA' }
+                { id: 'RTR-2011-0001', tanggal: '2026-11-11', barangId: 'FX-001', nama: '025 FE', jenis: 'FASTRACK', lebar: '20 mm', ukuran: 'STANDARD', satuan: 'ROLL', qty: 25, keterangan: 'KELEBIHAN KIRIM PO LAMA', user: 'Administrator' }
             ]
         };
 
-        let db = JSON.parse(localStorage.getItem('gudang_pro_db')) || DEFAULT_DATA;
-        if (!db.users) {
-            db.users = DEFAULT_DATA.users;
-        }
-        if (!db.currentUser) {
-            db.currentUser = DEFAULT_DATA.currentUser;
-        }
-        if (!db.sampel) {
-            db.sampel = DEFAULT_DATA.sampel;
+        // Load initial state with localStorage fallback
+        const localSaved = localStorage.getItem('gudang_pro_local_state');
+        window.gudangAppDb = localSaved ? JSON.parse(localSaved) : JSON.parse(JSON.stringify(DEFAULT_DATA));
+
+        // Try optional cloud sync if Firebase config is available
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'gudang-pro-cloud-system';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+
+        if (firebaseConfig) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+                const auth = getAuth(app);
+                
+                const initCloud = async () => {
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                        const docRef = doc(db, 'artifacts', appId, 'gudang_sync', 'gudang_main_state');
+                        const docSnap = await getDoc(docRef);
+                        if (docSnap.exists()) {
+                            const cloudData = docSnap.data();
+                            if (cloudData && cloudData.items) {
+                                window.gudangAppDb = cloudData;
+                                if (window.activeUserSession) window.gudangAppDb.currentUser = window.activeUserSession;
+                                refreshAllViews();
+                            }
+                        }
+                    } catch (e) {
+                        console.warn("Cloud sync fallback to local storage mode due to permissions/network:", e.message);
+                    }
+                };
+                initCloud();
+            } catch(e) {
+                console.warn("Firebase initialization skipped:", e);
+            }
         }
 
-        function saveDB() {
-            localStorage.setItem('gudang_pro_db', JSON.stringify(db));
+        window.saveCloudDB = async function() {
+            try {
+                localStorage.setItem('gudang_pro_local_state', JSON.stringify(window.gudangAppDb));
+                if (firebaseConfig) {
+                    const app = initializeApp(firebaseConfig);
+                    const db = getFirestore(app);
+                    const docRef = doc(db, 'artifacts', appId, 'gudang_sync', 'gudang_main_state');
+                    await setDoc(docRef, window.gudangAppDb);
+                }
+            } catch (err) {
+                console.warn("Cloud save warning (saved locally instead):", err.message);
+                localStorage.setItem('gudang_pro_local_state', JSON.stringify(window.gudangAppDb));
+            }
             refreshAllViews();
-        }
+        };
 
-        // Populate item select dropdowns across modules
-        function populateItemDropdowns() {
+        window.populateItemDropdowns = function() {
             const dropdowns = ['masuk-barang', 'keluar-barang', 'po-barang', 'retur-barang'];
             dropdowns.forEach(id => {
                 const sel = document.getElementById(id);
                 if (!sel) return;
                 const currentVal = sel.value;
                 sel.innerHTML = '<option value="">-- Pilih Barang --</option>' + 
-                    db.items.map(i => `<option value="${i.id}">${i.id} - ${i.nama} (${i.jenis})</option>`).join('');
+                    window.gudangAppDb.items.map(i => `<option value="${i.id}">${i.id} - ${i.nama} (${i.jenis})</option>`).join('');
                 if (currentVal) sel.value = currentVal;
             });
-        }
+        };
 
-        // Populate PO dropdown for Barang Keluar
-        function populatePoDropdowns() {
+        window.populatePoDropdowns = function() {
             const sel = document.getElementById('keluar-po-ref');
             if (!sel) return;
             const currentVal = sel.value;
             sel.innerHTML = '<option value="">-- Pilih PO Customer Aktif --</option>' + 
-                db.po.filter(p => p.status !== 'CLOSED').map(p => `<option value="${p.id}">${p.id} - ${p.customer} (${p.nama} | Sisa: ${p.qty - (p.terkirim || 0)})</option>`).join('');
+                window.gudangAppDb.po.filter(p => p.status !== 'CLOSED').map(p => `<option value="${p.id}">${p.id} - ${p.customer} (${p.nama} | Sisa: ${p.qty - (p.terkirim || 0)})</option>`).join('');
             if (currentVal) sel.value = currentVal;
-        }
+        };
 
-        function updateMasukItemInfo() {
-            const barangId = document.getElementById('masuk-barang')?.value;
-            const item = db.items.find(x => x.id === barangId);
-            const jenisEl = document.getElementById('info-masuk-jenis');
-            const satuanEl = document.getElementById('info-masuk-satuan');
-            if (jenisEl) jenisEl.textContent = item ? item.jenis : '-';
-            if (satuanEl) satuanEl.textContent = item ? item.satuan : '-';
-        }
-
-        function updateKeluarFromPo() {
-            const poId = document.getElementById('keluar-po-ref')?.value;
-            const po = db.po.find(x => x.id === poId);
-            if (po) {
-                const barangSel = document.getElementById('keluar-barang');
-                const tujuanInp = document.getElementById('keluar-tujuan');
-                const qtyInp = document.getElementById('keluar-qty');
-                if (barangSel) barangSel.value = po.barangId;
-                if (tujuanInp) tujuanInp.value = po.customer;
-                if (qtyInp) qtyInp.value = Math.max(0, po.qty - (po.terkirim || 0));
-            }
-        }
-
-        // Refresh all views and tables across modules
-        function refreshAllViews() {
+        window.refreshAllViews = function() {
             populateItemDropdowns();
             populatePoDropdowns();
             renderDashboard();
@@ -1382,69 +1364,76 @@
             renderCurrentUserBanner();
             applyRoleRestrictions();
             lucide.createIcons();
-        }
+        };
 
-        function resetData() {
-            if (db.currentUser.role !== 'admin') {
-                showToast('Hanya Admin yang dapat mereset data contoh!', 'error');
+        window.resetData = async function() {
+            if (window.gudangAppDb.currentUser?.role !== 'admin') {
+                showToast('Hanya Admin yang dapat mereset data!', 'error');
                 return;
             }
-            showConfirm('Reset Data Contoh', 'Apakah Anda yakin ingin mengembalikan data ke data awal contoh?', () => {
-                db = JSON.parse(JSON.stringify(DEFAULT_DATA));
-                saveDB();
-                showToast('Data berhasil direset ke contoh awal!');
+            showConfirm('Reset Data Gudang', 'Apakah Anda yakin ingin mereset seluruh data gudang ke kondisi awal?', async () => {
+                window.gudangAppDb = JSON.parse(JSON.stringify(DEFAULT_DATA));
+                if (window.activeUserSession) window.gudangAppDb.currentUser = window.activeUserSession;
+                await saveCloudDB();
+                showToast('Data berhasil direset!');
             });
-        }
+        };
+    </script>
 
-        // ==========================================
-        // 2. AUTH & ROLE RESTRICTIONS
-        // ==========================================
-        function checkAuth() {
-            if (!db.currentUser) {
+    <!-- MAIN APP LOGIC -->
+    <script>
+        window.activeUserSession = JSON.parse(localStorage.getItem('gudang_pro_session')) || null;
+
+        window.checkAuth = function() {
+            if (!window.activeUserSession) {
                 showLoginModal();
             } else {
+                window.gudangAppDb.currentUser = window.activeUserSession;
                 hideLoginModal();
             }
-        }
+        };
 
-        function showLoginModal() {
+        window.showLoginModal = function() {
             const modal = document.getElementById('login-modal');
             if (modal) {
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
             }
-        }
+        };
 
-        function hideLoginModal() {
+        window.hideLoginModal = function() {
             const modal = document.getElementById('login-modal');
             if (modal) {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
             }
-        }
+        };
 
-        function handleLoginSubmit(e) {
+        window.handleLoginSubmit = function(e) {
             e.preventDefault();
             const un = document.getElementById('login-username').value.trim();
             const pw = document.getElementById('login-password').value.trim();
 
-            const found = db.users.find(u => u.username === un && u.pass === pw);
+            const found = window.gudangAppDb.users.find(u => u.username === un && u.pass === pw);
             if (found) {
-                db.currentUser = { username: found.username, name: found.name, role: found.role };
-                saveDB();
+                window.activeUserSession = { username: found.username, name: found.name, role: found.role };
+                window.gudangAppDb.currentUser = window.activeUserSession;
+                localStorage.setItem('gudang_pro_session', JSON.stringify(window.activeUserSession));
+                saveCloudDB();
                 hideLoginModal();
                 showToast(`Login berhasil sebagai ${found.name} (${found.role.toUpperCase()})!`);
             } else {
                 showToast('Username atau password salah!', 'error');
             }
-        }
+        };
 
-        function logoutUser() {
+        window.logoutUser = function() {
             showConfirm('Logout Sistem', 'Apakah Anda yakin ingin keluar dari sesi saat ini?', () => {
-                db.currentUser = null;
-                saveDB();
-                
-                // Clear login input fields
+                window.activeUserSession = null;
+                window.gudangAppDb.currentUser = null;
+                localStorage.removeItem('gudang_pro_session');
+                saveCloudDB();
+
                 const userInp = document.getElementById('login-username');
                 const passInp = document.getElementById('login-password');
                 if (userInp) userInp.value = '';
@@ -1453,12 +1442,12 @@
                 showLoginModal();
                 showToast('Berhasil logout.', 'warning');
             });
-        }
+        };
 
-        function renderCurrentUserBanner() {
+        window.renderCurrentUserBanner = function() {
             const banner = document.getElementById('current-user-banner');
-            if (!banner || !db.currentUser) return;
-            const role = db.currentUser.role;
+            if (!banner || !window.gudangAppDb.currentUser) return;
+            const role = window.gudangAppDb.currentUser.role;
             const badgeClass = role === 'admin' ? 'role-badge-admin' : (role === 'staff' ? 'role-badge-staff' : 'role-badge-viewer');
             
             banner.innerHTML = `
@@ -1467,7 +1456,7 @@
                         <i data-lucide="user" class="w-3.5 h-3.5"></i>
                     </div>
                     <div class="text-left leading-tight hidden sm:block">
-                        <div class="font-bold text-xs text-gray-200">${db.currentUser.name}</div>
+                        <div class="font-bold text-xs text-gray-200">${window.gudangAppDb.currentUser.name}</div>
                         <span class="px-1.5 py-0.2 rounded text-[9px] font-extrabold uppercase ${badgeClass}">${role}</span>
                     </div>
                 </div>
@@ -1476,15 +1465,13 @@
                 </button>
             `;
             lucide.createIcons();
-        }
+        };
 
-        function applyRoleRestrictions() {
-            if (!db.currentUser) return;
-            const role = db.currentUser.role;
+        window.applyRoleRestrictions = function() {
+            if (!window.gudangAppDb.currentUser) return;
+            const role = window.gudangAppDb.currentUser.role;
 
-            // Hide Manajemen User tab for non-admin users
             const navUsersWrapper = document.getElementById('nav-users-wrapper');
-            const tabUsersSec = document.getElementById('tab-users');
             if (navUsersWrapper) {
                 navUsersWrapper.style.display = role === 'admin' ? 'block' : 'none';
             }
@@ -1492,15 +1479,12 @@
                 switchTab('dashboard');
             }
 
-            // Hide Reset Data Contoh button for non-admin users
             const resetBtnWrapper = document.getElementById('reset-btn-wrapper');
             if (resetBtnWrapper) {
                 resetBtnWrapper.style.display = role === 'admin' ? 'block' : 'none';
             }
 
-            // Forms to hide or disable for Viewer
-            const formCards = ['master-form-card', 'masuk-form-card', 'keluar-form-card', 'po-form-card', 'retur-form-card', 'user-form-card'];
-            
+            const formCards = ['master-form-card', 'masuk-form-card', 'keluar-form-card', 'po-form-card', 'sampel-form-card', 'retur-form-card', 'user-form-card'];
             formCards.forEach(id => {
                 const el = document.getElementById(id);
                 if (!el) return;
@@ -1513,20 +1497,14 @@
                 }
             });
 
-            // If viewer, hide table action buttons (Edit / Delete)
-            const actionThs = ['master-th-aksi', 'masuk-th-aksi', 'keluar-th-aksi', 'po-th-aksi', 'retur-th-aksi'];
+            const actionThs = ['master-th-aksi', 'masuk-th-aksi', 'keluar-th-aksi', 'po-th-aksi', 'sampel-th-aksi', 'retur-th-aksi'];
             actionThs.forEach(id => {
                 const th = document.getElementById(id);
-                if (th) {
-                    th.style.display = role === 'viewer' ? 'none' : '';
-                }
+                if (th) th.style.display = role === 'viewer' ? 'none' : '';
             });
-        }
+        };
 
-        // ==========================================
-        // 3. NAVIGATION & UI THEME
-        // ==========================================
-        function switchTab(tabId) {
+        window.switchTab = function(tabId) {
             const tabs = ['dashboard', 'master', 'po', 'masuk', 'keluar', 'sampel', 'retur', 'users'];
             tabs.forEach(t => {
                 const sec = document.getElementById(`tab-${t}`);
@@ -1544,22 +1522,22 @@
                 activeBtn.className = "sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20";
             }
             lucide.createIcons();
-        }
+        };
 
-        function changeTheme(themeName) {
-            db.theme = themeName;
+        window.changeTheme = function(themeName) {
+            window.gudangAppDb.theme = themeName;
             applyTheme(themeName);
-            saveDB();
+            saveCloudDB();
             showToast(`Tema berhasil diubah ke ${themeName}!`);
-        }
+        };
 
-        function applyTheme(themeName) {
+        window.applyTheme = function(themeName) {
             document.body.className = `min-h-screen flex flex-col antialiased selection:bg-orange-500 selection:text-white theme-${themeName}`;
             const sel = document.getElementById('theme-selector');
             if (sel) sel.value = themeName;
-        }
+        };
 
-        function updateClock() {
+        window.updateClock = function() {
             const clockEl = document.getElementById('live-clock');
             if (clockEl) {
                 const now = new Date();
@@ -1568,10 +1546,10 @@
                 clockEl.innerHTML = `<i data-lucide="clock" class="w-4 h-4 text-orange-400"></i> <span>${dateStr} &bull; ${timeStr}</span>`;
                 lucide.createIcons();
             }
-        }
+        };
         setInterval(updateClock, 1000);
 
-        function showToast(msg, type = 'success') {
+        window.showToast = function(msg, type = 'success') {
             const container = document.getElementById('toast-container');
             if (!container) return;
             const toast = document.createElement('div');
@@ -1585,9 +1563,9 @@
                 toast.style.transition = 'opacity 0.3s ease';
                 setTimeout(() => toast.remove(), 300);
             }, 3500);
-        }
+        };
 
-        function showConfirm(title, message, onConfirm) {
+        window.showConfirm = function(title, message, onConfirm) {
             const modal = document.getElementById('confirm-modal');
             document.getElementById('confirm-title').textContent = title;
             document.getElementById('confirm-message').textContent = message;
@@ -1611,119 +1589,52 @@
             cancelBtn.onclick = () => {
                 cleanup();
             };
-        }
+        };
 
-        function generateId(prefix) {
+        window.generateId = function(prefix) {
             const now = new Date();
             const yy = String(now.getFullYear()).slice(-2);
             const mm = String(now.getMonth() + 1).padStart(2, '0');
             const rand = Math.floor(1000 + Math.random() * 9000);
             return `${prefix}-${yy}${mm}-${rand}`;
-        }
+        };
 
-        function generateMasukSequentialId() {
+        window.generateMasukSequentialId = function() {
+            const count = (window.gudangAppDb.masuk ? window.gudangAppDb.masuk.length : 0) + 1;
             const now = new Date();
             const yy = String(now.getFullYear()).slice(-2);
             const mm = String(now.getMonth() + 1).padStart(2, '0');
-            const count = (db.masuk ? db.masuk.length : 0) + 1;
-            const seq = String(count).padStart(4, '0');
-            return `IN-${yy}${mm}-${seq}`;
-        }
+            return `IN-${yy}${mm}-${String(count).padStart(4, '0')}`;
+        };
 
-        function generateKeluarSequentialId() {
+        window.generateKeluarSequentialId = function() {
+            const count = (window.gudangAppDb.keluar ? window.gudangAppDb.keluar.length : 0) + 1;
             const now = new Date();
             const yy = String(now.getFullYear()).slice(-2);
             const mm = String(now.getMonth() + 1).padStart(2, '0');
-            const count = (db.keluar ? db.keluar.length : 0) + 1;
-            const seq = String(count).padStart(4, '0');
-            return `OT-${yy}${mm}-${seq}`;
-        }
+            return `OT-${yy}${mm}-${String(count).padStart(4, '0')}`;
+        };
 
-        function generatePoSequentialId() {
+        window.generatePoSequentialId = function() {
+            const count = (window.gudangAppDb.po ? window.gudangAppDb.po.length : 0) + 1;
             const now = new Date();
             const yy = String(now.getFullYear()).slice(-2);
             const mm = String(now.getMonth() + 1).padStart(2, '0');
-            const count = (db.po ? db.po.length : 0) + 1;
-            const seq = String(count).padStart(4, '0');
-            return `POC-${yy}${mm}-${seq}`;
-        }
+            return `POC-${yy}${mm}-${String(count).padStart(4, '0')}`;
+        };
 
-        function generateSampelSequentialId() {
+        window.generateSampelSequentialId = function() {
+            const count = (window.gudangAppDb.sampel ? window.gudangAppDb.sampel.length : 0) + 1;
             const now = new Date();
             const yy = String(now.getFullYear()).slice(-2);
             const mm = String(now.getMonth() + 1).padStart(2, '0');
-            const count = (db.sampel ? db.sampel.length : 0) + 1;
-            const seq = String(count).padStart(4, '0');
-            return `SMP-${yy}${mm}-${seq}`;
-        }
+            return `SMP-${yy}${mm}-${String(count).padStart(4, '0')}`;
+        };
 
-        // ==========================================
-        // 3. NAVIGATION & UI THEME
-        // ==========================================
-        function switchTab(tabId) {
-            const tabs = ['dashboard', 'master', 'masuk', 'keluar', 'po', 'sampel', 'retur', 'users'];
-            tabs.forEach(t => {
-                const sec = document.getElementById(`tab-${t}`);
-                const btn = document.getElementById(`nav-${t}`);
-                if (sec) sec.classList.add('hidden');
-                if (btn) {
-                    btn.className = "sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200";
-                }
-            });
-
-            const activeSec = document.getElementById(`tab-${tabId}`);
-            const activeBtn = document.getElementById(`nav-${tabId}`);
-            if (activeSec) activeSec.classList.remove('hidden');
-            if (activeBtn) {
-                activeBtn.className = "sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20";
-            }
-            lucide.createIcons();
-        }
-
-        function changeTheme(themeName) {
-            db.theme = themeName;
-            applyTheme(themeName);
-            saveDB();
-            showToast(`Tema berhasil diubah ke ${themeName}!`);
-        }
-
-        function applyTheme(themeName) {
-            document.body.className = `min-h-screen flex flex-col antialiased selection:bg-orange-500 selection:text-white theme-${themeName}`;
-            const sel = document.getElementById('theme-selector');
-            if (sel) sel.value = themeName;
-        }
-
-        function updateClock() {
-            const clockEl = document.getElementById('live-clock');
-            if (clockEl) {
-                const now = new Date();
-                clockEl.textContent = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ' | ' + now.toLocaleTimeString('id-ID');
-            }
-        }
-        setInterval(updateClock, 1000);
-
-        function showToast(msg, type = 'success') {
-            const container = document.getElementById('toast-container');
-            if (!container) return;
-            const toast = document.createElement('div');
-            const bgClass = type === 'error' ? 'bg-rose-500/90 text-white' : (type === 'warning' ? 'bg-amber-500/90 text-white' : 'bg-emerald-500/90 text-white');
-            toast.className = `px-4 py-3 rounded-xl shadow-xl text-xs font-semibold backdrop-blur-md flex items-center gap-2.5 animate-bounce ${bgClass}`;
-            toast.innerHTML = `<i data-lucide="${type === 'error' ? 'alert-circle' : 'check-circle'}" class="w-4 h-4"></i><span>${msg}</span>`;
-            container.appendChild(toast);
-            lucide.createIcons();
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transition = 'opacity 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
-        }
-
-        // ==========================================
-        // 4. MASTER BARANG LOGIC
-        // ==========================================
-        function saveMasterItem(e) {
+        // Master CRUD
+        window.saveMasterItem = function(e) {
             e.preventDefault();
-            if (db.currentUser.role === 'viewer') {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') {
                 showToast('Akses ditolak: Mode Viewer tidak dapat menambah atau mengubah data!', 'error');
                 return;
             }
@@ -1733,45 +1644,36 @@
             const jenis = document.getElementById('master-jenis').value;
             const lebar = document.getElementById('master-lebar').value;
             const ukuran = document.getElementById('master-ukuran').value;
-            const beratRaw = document.getElementById('master-berat').value.trim();
-            const berat = beratRaw === '' ? 0 : parseFloat(beratRaw) || 0;
+            const berat = parseFloat(document.getElementById('master-berat').value) || 0;
             const satuan = document.getElementById('master-satuan').value;
             const min = parseInt(document.getElementById('master-min').value) || 0;
             const stok = parseInt(document.getElementById('master-stok').value) || 0;
             const isEdit = document.getElementById('master-edit-mode').value === 'true';
 
             if (isEdit) {
-                const item = db.items.find(x => x.id === id);
+                const item = window.gudangAppDb.items.find(x => x.id === id);
                 if (item) {
-                    item.nama = nama;
-                    item.jenis = jenis;
-                    item.lebar = lebar;
-                    item.ukuran = ukuran;
-                    item.berat = berat;
-                    item.satuan = satuan;
-                    item.min = min;
-                    item.stok = stok;
+                    item.nama = nama; item.jenis = jenis; item.lebar = lebar;
+                    item.ukuran = ukuran; item.berat = berat; item.satuan = satuan;
+                    item.min = min; item.stok = stok;
                 }
                 showToast(`Barang ${id} berhasil diperbarui!`);
             } else {
-                if (db.items.some(x => x.id === id)) {
+                if (window.gudangAppDb.items.some(x => x.id === id)) {
                     showToast(`ID Barang ${id} sudah ada!`, 'error');
                     return;
                 }
-                db.items.unshift({ id, nama, jenis, lebar, ukuran, berat, satuan, min, stok });
+                window.gudangAppDb.items.unshift({ id, nama, jenis, lebar, ukuran, berat, satuan, min, stok });
                 showToast(`Barang ${id} berhasil ditambahkan!`);
             }
 
             resetMasterForm();
-            saveDB();
-        }
+            saveCloudDB();
+        };
 
-        function editMasterItem(id) {
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat mengedit data!', 'error');
-                return;
-            }
-            const item = db.items.find(x => x.id === id);
+        window.editMasterItem = function(id) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
+            const item = window.gudangAppDb.items.find(x => x.id === id);
             if (!item) return;
 
             document.getElementById('master-edit-mode').value = 'true';
@@ -1787,39 +1689,34 @@
             document.getElementById('master-stok').value = item.stok || 0;
             document.getElementById('master-form-title').innerHTML = `<i data-lucide="edit" class="w-4 h-4 text-orange-400"></i> EDIT MASTER BARANG (${id})`;
             lucide.createIcons();
-        }
+        };
 
-        function deleteMasterItem(id) {
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat menghapus data!', 'error');
-                return;
-            }
-            showConfirm('Hapus Barang', `Yakin ingin menghapus ${id} dari master data?`, () => {
-                db.items = db.items.filter(x => x.id !== id);
-                saveDB();
+        window.deleteMasterItem = function(id) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
+            showConfirm('Hapus Barang', `Yakin ingin menghapus ${id}?`, () => {
+                window.gudangAppDb.items = window.gudangAppDb.items.filter(x => x.id !== id);
+                saveCloudDB();
                 showToast(`Barang ${id} berhasil dihapus.`, 'warning');
             });
-        }
+        };
 
-        function resetMasterForm() {
+        window.resetMasterForm = function() {
             document.getElementById('form-master').reset();
             document.getElementById('master-edit-mode').value = 'false';
             document.getElementById('master-id').disabled = false;
             document.getElementById('master-id').value = '';
             document.getElementById('master-form-title').innerHTML = `<i data-lucide="package-plus" class="w-4 h-4 text-orange-400"></i> TAMBAH MASTER BARANG`;
             lucide.createIcons();
-        }
+        };
 
-        function renderMasterTable() {
-            const q = document.getElementById('search-master').value.toLowerCase();
+        window.renderMasterTable = function() {
+            const q = document.getElementById('search-master')?.value.toLowerCase() || '';
             const tbody = document.getElementById('master-table-body');
             const badgeTotal = document.getElementById('master-total-badge');
-            const isViewer = db.currentUser && db.currentUser.role === 'viewer';
+            const isViewer = window.gudangAppDb.currentUser?.role === 'viewer';
 
-            const filtered = db.items.filter(i => 
-                i.id.toLowerCase().includes(q) || 
-                i.nama.toLowerCase().includes(q) || 
-                i.jenis.toLowerCase().includes(q)
+            const filtered = window.gudangAppDb.items.filter(i => 
+                i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.jenis.toLowerCase().includes(q)
             );
 
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Item terdaftar`;
@@ -1841,141 +1738,79 @@
                         <td class="py-3 px-3 text-right font-mono opacity-70">${i.min.toLocaleString('id-ID')}</td>
                         ${!isViewer ? `
                             <td class="py-3 px-3 text-center flex items-center justify-center gap-1.5">
-                                <button onclick="editMasterItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 font-semibold inline-flex items-center gap-1" title="Edit">
-                                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit
-                                </button>
-                                <button onclick="deleteMasterItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold inline-flex items-center gap-1" title="Hapus">
-                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
-                                </button>
+                                <button onclick="editMasterItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 font-semibold inline-flex items-center gap-1">Edit</button>
+                                <button onclick="deleteMasterItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold inline-flex items-center gap-1">Hapus</button>
                             </td>
                         ` : ''}
                     </tr>
                 `;
-            }).join('') || `<tr><td colspan="${isViewer ? 10 : 11}" class="py-6 text-center opacity-50">Tidak ada data master barang ditemukan.</td></tr>`;
+            }).join('') || `<tr><td colspan="${isViewer ? 10 : 11}" class="py-6 text-center opacity-50">Tidak ada data master barang.</td></tr>`;
             lucide.createIcons();
-        }
+        };
 
-        // ==========================================
-        // 5. BARANG MASUK LOGIC
-        // ==========================================
-        function saveMasukItem(e) {
+        // Barang Masuk CRUD
+        window.updateMasukItemInfo = function() {
+            const barangId = document.getElementById('masuk-barang')?.value;
+            const item = window.gudangAppDb.items.find(x => x.id === barangId);
+            document.getElementById('info-masuk-jenis').textContent = item ? item.jenis : '-';
+            document.getElementById('info-masuk-satuan').textContent = item ? item.satuan : '-';
+        };
+
+        window.saveMasukItem = function(e) {
             e.preventDefault();
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat menambah atau mengubah data!', 'error');
-                return;
-            }
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
 
             const id = document.getElementById('masuk-id').value.trim().toUpperCase();
             const tanggal = document.getElementById('masuk-tanggal').value;
             const barangId = document.getElementById('masuk-barang').value;
             const qty = parseInt(document.getElementById('masuk-qty').value) || 0;
             const supplier = document.getElementById('masuk-supplier').value.trim().toUpperCase();
-            const isEdit = document.getElementById('masuk-edit-mode').value === 'true';
-            const username = db.currentUser ? db.currentUser.name : 'System';
+            const username = window.gudangAppDb.currentUser?.name || 'Administrator';
 
-            const item = db.items.find(x => x.id === barangId);
-            if (!item) {
-                showToast('Barang tidak valid!', 'error');
-                return;
-            }
+            const item = window.gudangAppDb.items.find(x => x.id === barangId);
+            if (!item) return;
 
-            if (isEdit) {
-                const old = db.masuk.find(x => x.id === id);
-                if (old) {
-                    const diff = qty - old.qty;
-                    item.stok += diff;
-                    old.tanggal = tanggal;
-                    old.barangId = barangId;
-                    old.nama = item.nama;
-                    old.jenis = item.jenis;
-                    old.lebar = item.lebar || '';
-                    old.ukuran = item.ukuran || '';
-                    old.satuan = item.satuan;
-                    old.qty = qty;
-                    old.supplier = supplier;
-                    old.user = username;
-                }
-                showToast(`Transaksi Masuk ${id} diperbarui!`);
-            } else {
-                if (db.masuk.some(x => x.id === id)) {
-                    showToast(`ID Transaksi ${id} sudah ada!`, 'error');
-                    return;
-                }
-                item.stok += qty;
-                db.masuk.unshift({
-                    id, tanggal, barangId, nama: item.nama, jenis: item.jenis,
-                    lebar: item.lebar || '', ukuran: item.ukuran || '', satuan: item.satuan, qty, supplier, user: username
-                });
-                showToast(`Transaksi Masuk ${id} berhasil disimpan!`);
-            }
-
+            item.stok += qty;
+            window.gudangAppDb.masuk.unshift({
+                id, tanggal, barangId, nama: item.nama, jenis: item.jenis,
+                lebar: item.lebar || '', ukuran: item.ukuran || '', satuan: item.satuan, qty, supplier, user: username
+            });
             resetMasukForm();
-            saveDB();
-        }
+            saveCloudDB();
+            showToast('Transaksi masuk berhasil disimpan!');
+        };
 
-        function editMasukItem(id) {
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat mengedit data!', 'error');
-                return;
-            }
-            const m = db.masuk.find(x => x.id === id);
-            if (!m) return;
-
-            document.getElementById('masuk-edit-mode').value = 'true';
-            document.getElementById('masuk-id').value = m.id;
-            document.getElementById('masuk-id').disabled = true;
-            document.getElementById('masuk-tanggal').value = m.tanggal;
-            document.getElementById('masuk-barang').value = m.barangId;
-            document.getElementById('masuk-qty').value = m.qty;
-            document.getElementById('masuk-supplier').value = m.supplier;
-            updateMasukItemInfo();
-            document.getElementById('masuk-form-title').innerHTML = `<i data-lucide="edit" class="w-4 h-4 text-orange-400"></i> EDIT BARANG MASUK (${id})`;
-            lucide.createIcons();
-        }
-
-        function deleteMasukItem(id) {
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat menghapus data!', 'error');
-                return;
-            }
-            showConfirm('Hapus Barang Masuk', `Yakin ingin menghapus transaksi masuk ${id}? Stok barang akan disesuaikan.`, () => {
-                const m = db.masuk.find(x => x.id === id);
+        window.deleteMasukItem = function(id) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
+            showConfirm('Hapus Barang Masuk', `Yakin ingin menghapus ${id}?`, () => {
+                const m = window.gudangAppDb.masuk.find(x => x.id === id);
                 if (m) {
-                    const item = db.items.find(x => x.id === m.barangId);
-                    if (item) {
-                        item.stok = Math.max(0, item.stok - m.qty);
-                    }
-                    db.masuk = db.masuk.filter(x => x.id !== id);
-                    saveDB();
-                    showToast(`Transaksi ${id} dihapus.`, 'warning');
+                    const item = window.gudangAppDb.items.find(x => x.id === m.barangId);
+                    if (item) item.stok = Math.max(0, item.stok - m.qty);
+                    window.gudangAppDb.masuk = window.gudangAppDb.masuk.filter(x => x.id !== id);
+                    saveCloudDB();
+                    showToast('Transaksi dihapus.', 'warning');
                 }
             });
-        }
+        };
 
-        function resetMasukForm() {
+        window.resetMasukForm = function() {
             document.getElementById('form-masuk').reset();
-            document.getElementById('masuk-edit-mode').value = 'false';
-            document.getElementById('masuk-id').disabled = false;
             document.getElementById('masuk-id').value = generateMasukSequentialId();
             document.getElementById('masuk-tanggal').valueAsDate = new Date();
             document.getElementById('info-masuk-jenis').textContent = '-';
             document.getElementById('info-masuk-satuan').textContent = '-';
-            document.getElementById('masuk-form-title').innerHTML = `<i data-lucide="plus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG MASUK`;
-            lucide.createIcons();
-        }
+        };
 
-        function renderMasukTable() {
-            const q = document.getElementById('search-masuk').value.toLowerCase();
+        window.renderMasukTable = function() {
+            const q = document.getElementById('search-masuk')?.value.toLowerCase() || '';
             const tbody = document.getElementById('masuk-table-body');
             const badgeTotal = document.getElementById('masuk-total-badge');
-            const isViewer = db.currentUser && db.currentUser.role === 'viewer';
+            const isViewer = window.gudangAppDb.currentUser?.role === 'viewer';
 
-            const filtered = db.masuk.filter(i => 
-                i.id.toLowerCase().includes(q) || 
-                i.nama.toLowerCase().includes(q) || 
-                i.supplier.toLowerCase().includes(q)
+            const filtered = window.gudangAppDb.masuk.filter(i => 
+                i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.supplier.toLowerCase().includes(q)
             );
-
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Transaksi`;
 
             tbody.innerHTML = filtered.map((i, index) => `
@@ -1992,29 +1827,29 @@
                     <td class="py-3 px-3 text-right font-mono font-bold text-emerald-400">+${i.qty.toLocaleString('id-ID')}</td>
                     <td class="py-3 px-3 font-medium">${i.supplier}</td>
                     ${!isViewer ? `
-                        <td class="py-3 px-3 text-center flex items-center justify-center gap-1.5">
-                            <button onclick="editMasukItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 font-semibold inline-flex items-center gap-1" title="Edit">
-                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit
-                            </button>
-                            <button onclick="deleteMasukItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold inline-flex items-center gap-1" title="Hapus">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
-                            </button>
+                        <td class="py-3 px-3 text-center">
+                            <button onclick="deleteMasukItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
                         </td>
                     ` : ''}
                 </tr>
-            `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada riwayat barang masuk ditemukan.</td></tr>`;
+            `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
             lucide.createIcons();
-        }
+        };
 
-        // ==========================================
-        // 6. BARANG KELUAR LOGIC
-        // ==========================================
-        function saveKeluarItem(e) {
-            e.preventDefault();
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat menambah atau mengubah data!', 'error');
-                return;
+        // Barang Keluar CRUD
+        window.updateKeluarFromPo = function() {
+            const poId = document.getElementById('keluar-po-ref')?.value;
+            const po = window.gudangAppDb.po.find(x => x.id === poId);
+            if (po) {
+                document.getElementById('keluar-barang').value = po.barangId;
+                document.getElementById('keluar-tujuan').value = po.customer;
+                document.getElementById('keluar-qty').value = Math.max(0, po.qty - (po.terkirim || 0));
             }
+        };
+
+        window.saveKeluarItem = function(e) {
+            e.preventDefault();
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
 
             const id = document.getElementById('keluar-id').value.trim().toUpperCase();
             const tanggal = document.getElementById('keluar-tanggal').value;
@@ -2022,137 +1857,69 @@
             const barangId = document.getElementById('keluar-barang').value;
             const qty = parseInt(document.getElementById('keluar-qty').value) || 0;
             const tujuan = document.getElementById('keluar-tujuan').value.trim().toUpperCase();
-            const isEdit = document.getElementById('keluar-edit-mode').value === 'true';
-            const username = db.currentUser ? db.currentUser.name : 'System';
+            const username = window.gudangAppDb.currentUser?.name || 'Administrator';
 
-            const item = db.items.find(x => x.id === barangId);
-            if (!item) {
-                showToast('Barang tidak valid!', 'error');
+            const item = window.gudangAppDb.items.find(x => x.id === barangId);
+            if (!item || item.stok < qty) {
+                showToast('Stok barang tidak mencukupi!', 'error');
                 return;
             }
 
-            if (!isEdit && item.stok < qty) {
-                showToast(`Stok tidak mencukupi! Stok saat ini: ${item.stok}`, 'error');
-                return;
-            }
+            item.stok -= qty;
+            window.gudangAppDb.keluar.unshift({
+                id, tanggal, poRef, barangId, nama: item.nama, jenis: item.jenis,
+                lebar: item.lebar || '', ukuran: item.ukuran || '', satuan: item.satuan, qty, tujuan, user: username
+            });
 
-            if (isEdit) {
-                const old = db.keluar.find(x => x.id === id);
-                if (old) {
-                    const diff = qty - old.qty;
-                    if (item.stok < diff) {
-                        showToast('Stok tidak mencukupi untuk penambahan qty!', 'error');
-                        return;
-                    }
-                    item.stok -= diff;
-                    old.tanggal = tanggal;
-                    old.poRef = poRef;
-                    old.barangId = barangId;
-                    old.nama = item.nama;
-                    old.jenis = item.jenis;
-                    old.lebar = item.lebar || '';
-                    old.ukuran = item.ukuran || '';
-                    old.satuan = item.satuan;
-                    old.qty = qty;
-                    old.tujuan = tujuan;
-                    old.user = username;
+            if (poRef) {
+                const po = window.gudangAppDb.po.find(x => x.id === poRef);
+                if (po) {
+                    po.terkirim = (po.terkirim || 0) + qty;
+                    po.status = po.terkirim >= po.qty ? 'CLOSED' : 'PARTIAL';
                 }
-                showToast(`Transaksi Keluar ${id} diperbarui!`);
-            } else {
-                item.stok -= qty;
-                db.keluar.unshift({
-                    id, tanggal, poRef, barangId, nama: item.nama, jenis: item.jenis,
-                    lebar: item.lebar || '', ukuran: item.ukuran || '', satuan: item.satuan, qty, tujuan, user: username
-                });
-
-                // Update PO terkirim if linked
-                if (poRef) {
-                    const po = db.po.find(x => x.id === poRef);
-                    if (po) {
-                        po.terkirim = (po.terkirim || 0) + qty;
-                        if (po.terkirim >= po.qty) {
-                            po.status = 'CLOSED';
-                        } else {
-                            po.status = 'PARTIAL';
-                        }
-                    }
-                }
-
-                showToast(`Transaksi Keluar ${id} berhasil disimpan!`);
             }
 
             resetKeluarForm();
-            saveDB();
-        }
+            saveCloudDB();
+            showToast('Transaksi keluar berhasil disimpan!');
+        };
 
-        function editKeluarItem(id) {
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat mengedit data!', 'error');
-                return;
-            }
-            const k = db.keluar.find(x => x.id === id);
-            if (!k) return;
-
-            document.getElementById('keluar-edit-mode').value = 'true';
-            document.getElementById('keluar-id').value = k.id;
-            document.getElementById('keluar-id').disabled = true;
-            document.getElementById('keluar-tanggal').value = k.tanggal;
-            document.getElementById('keluar-po-ref').value = k.poRef || '';
-            document.getElementById('keluar-barang').value = k.barangId;
-            document.getElementById('keluar-qty').value = k.qty;
-            document.getElementById('keluar-tujuan').value = k.tujuan;
-            document.getElementById('keluar-form-title').innerHTML = `<i data-lucide="edit" class="w-4 h-4 text-orange-400"></i> EDIT BARANG KELUAR (${id})`;
-            lucide.createIcons();
-        }
-
-        function deleteKeluarItem(id) {
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat menghapus data!', 'error');
-                return;
-            }
-            showConfirm('Hapus Barang Keluar', `Yakin ingin menghapus transaksi keluar ${id}? Stok barang akan dikembalikan.`, () => {
-                const k = db.keluar.find(x => x.id === id);
+        window.deleteKeluarItem = function(id) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
+            showConfirm('Hapus Barang Keluar', `Yakin ingin menghapus ${id}?`, () => {
+                const k = window.gudangAppDb.keluar.find(x => x.id === id);
                 if (k) {
-                    const item = db.items.find(x => x.id === k.barangId);
-                    if (item) {
-                        item.stok += k.qty;
-                    }
+                    const item = window.gudangAppDb.items.find(x => x.id === k.barangId);
+                    if (item) item.stok += k.qty;
                     if (k.poRef) {
-                        const po = db.po.find(x => x.id === k.poRef);
+                        const po = window.gudangAppDb.po.find(x => x.id === k.poRef);
                         if (po) {
                             po.terkirim = Math.max(0, (po.terkirim || 0) - k.qty);
                             po.status = po.terkirim > 0 ? 'PARTIAL' : 'OPEN';
                         }
                     }
-                    db.keluar = db.keluar.filter(x => x.id !== id);
-                    saveDB();
-                    showToast(`Transaksi ${id} dihapus.`, 'warning');
+                    window.gudangAppDb.keluar = window.gudangAppDb.keluar.filter(x => x.id !== id);
+                    saveCloudDB();
+                    showToast('Transaksi dihapus.', 'warning');
                 }
             });
-        }
+        };
 
-        function resetKeluarForm() {
+        window.resetKeluarForm = function() {
             document.getElementById('form-keluar').reset();
-            document.getElementById('keluar-edit-mode').value = 'false';
-            document.getElementById('keluar-id').disabled = false;
             document.getElementById('keluar-id').value = generateKeluarSequentialId();
             document.getElementById('keluar-tanggal').valueAsDate = new Date();
-            document.getElementById('keluar-form-title').innerHTML = `<i data-lucide="minus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG KELUAR`;
-            lucide.createIcons();
-        }
+        };
 
-        function renderKeluarTable() {
-            const q = document.getElementById('search-keluar').value.toLowerCase();
+        window.renderKeluarTable = function() {
+            const q = document.getElementById('search-keluar')?.value.toLowerCase() || '';
             const tbody = document.getElementById('keluar-table-body');
             const badgeTotal = document.getElementById('keluar-total-badge');
-            const isViewer = db.currentUser && db.currentUser.role === 'viewer';
+            const isViewer = window.gudangAppDb.currentUser?.role === 'viewer';
 
-            const filtered = db.keluar.filter(i => 
-                i.id.toLowerCase().includes(q) || 
-                i.nama.toLowerCase().includes(q) || 
-                i.tujuan.toLowerCase().includes(q)
+            const filtered = window.gudangAppDb.keluar.filter(i => 
+                i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.tujuan.toLowerCase().includes(q)
             );
-
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Transaksi`;
 
             tbody.innerHTML = filtered.map((i, index) => `
@@ -2170,29 +1937,19 @@
                     <td class="py-3 px-3 font-medium">${i.tujuan}</td>
                     <td class="py-3 px-3 font-mono opacity-80">${i.poRef || '-'}</td>
                     ${!isViewer ? `
-                        <td class="py-3 px-3 text-center flex items-center justify-center gap-1.5">
-                            <button onclick="editKeluarItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 font-semibold inline-flex items-center gap-1" title="Edit">
-                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit
-                            </button>
-                            <button onclick="deleteKeluarItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold inline-flex items-center gap-1" title="Hapus">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
-                            </button>
+                        <td class="py-3 px-3 text-center">
+                            <button onclick="deleteKeluarItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
                         </td>
                     ` : ''}
                 </tr>
-            `).join('') || `<tr><td colspan="${isViewer ? 12 : 13}" class="py-6 text-center opacity-50">Tidak ada riwayat barang keluar ditemukan.</td></tr>`;
+            `).join('') || `<tr><td colspan="${isViewer ? 12 : 13}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
             lucide.createIcons();
-        }
+        };
 
-        // ==========================================
-        // 7. PO CUSTOMER LOGIC
-        // ==========================================
-        function savePoItem(e) {
+        // PO CRUD
+        window.savePoItem = function(e) {
             e.preventDefault();
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat menambah atau mengubah data!', 'error');
-                return;
-            }
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
 
             const id = document.getElementById('po-id').value.trim().toUpperCase();
             const noPoCustomer = document.getElementById('po-no-customer').value.trim().toUpperCase();
@@ -2200,115 +1957,55 @@
             const customer = document.getElementById('po-customer').value.trim().toUpperCase();
             const barangId = document.getElementById('po-barang').value;
             const qty = parseInt(document.getElementById('po-qty').value) || 0;
-            const isEdit = document.getElementById('po-edit-mode').value === 'true';
 
-            const item = db.items.find(x => x.id === barangId);
-            if (!item) {
-                showToast('Barang tidak valid!', 'error');
-                return;
-            }
+            const item = window.gudangAppDb.items.find(x => x.id === barangId);
+            if (!item) return;
 
-            if (isEdit) {
-                const po = db.po.find(x => x.id === id);
-                if (po) {
-                    po.noPoCustomer = noPoCustomer;
-                    po.tanggal = tanggal;
-                    po.customer = customer;
-                    po.barangId = barangId;
-                    po.nama = item.nama;
-                    po.jenis = item.jenis;
-                    po.lebar = item.lebar || '';
-                    po.ukuran = item.ukuran || '';
-                    po.satuan = item.satuan;
-                    po.qty = qty;
-                    if (po.terkirim >= qty) po.status = 'CLOSED';
-                    else if (po.terkirim > 0) po.status = 'PARTIAL';
-                    else po.status = 'OPEN';
-                }
-                showToast(`PO ${id} berhasil diperbarui!`);
-            } else {
-                if (db.po.some(x => x.id === id)) {
-                    showToast(`ID PO ${id} sudah ada!`, 'error');
-                    return;
-                }
-                db.po.unshift({
-                    id, noPoCustomer, tanggal, customer, barangId, nama: item.nama,
-                    jenis: item.jenis, lebar: item.lebar || '', ukuran: item.ukuran || '',
-                    satuan: item.satuan, qty, terkirim: 0, status: 'OPEN'
-                });
-                showToast(`PO ${id} berhasil ditambahkan!`);
-            }
-
-            resetPoForm();
-            saveDB();
-        }
-
-        function editPoItem(id) {
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat mengedit data!', 'error');
-                return;
-            }
-            const po = db.po.find(x => x.id === id);
-            if (!po) return;
-
-            document.getElementById('po-edit-mode').value = 'true';
-            document.getElementById('po-id').value = po.id;
-            document.getElementById('po-id').disabled = true;
-            document.getElementById('po-no-customer').value = po.noPoCustomer || '';
-            document.getElementById('po-tanggal').value = po.tanggal;
-            document.getElementById('po-customer').value = po.customer;
-            document.getElementById('po-barang').value = po.barangId;
-            document.getElementById('po-qty').value = po.qty;
-            document.getElementById('po-form-title').innerHTML = `<i data-lucide="edit" class="w-4 h-4 text-orange-400"></i> EDIT PO CUSTOMER (${id})`;
-            lucide.createIcons();
-        }
-
-        function deletePoItem(id) {
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat menghapus data!', 'error');
-                return;
-            }
-            showConfirm('Hapus PO', `Yakin ingin menghapus PO ${id}?`, () => {
-                db.po = db.po.filter(x => x.id !== id);
-                saveDB();
-                showToast(`PO ${id} berhasil dihapus.`, 'warning');
+            window.gudangAppDb.po.unshift({
+                id, noPoCustomer, tanggal, customer, barangId, nama: item.nama,
+                jenis: item.jenis, lebar: item.lebar || '', ukuran: item.ukuran || '',
+                satuan: item.satuan, qty, terkirim: 0, status: 'OPEN'
             });
-        }
+            resetPoForm();
+            saveCloudDB();
+            showToast('PO Customer berhasil disimpan!');
+        };
 
-        function resetPoForm() {
+        window.deletePoItem = function(id) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
+            showConfirm('Hapus PO', `Yakin ingin menghapus ${id}?`, () => {
+                window.gudangAppDb.po = window.gudangAppDb.po.filter(x => x.id !== id);
+                saveCloudDB();
+                showToast('PO dihapus.', 'warning');
+            });
+        };
+
+        window.resetPoForm = function() {
             document.getElementById('form-po').reset();
-            document.getElementById('po-edit-mode').value = 'false';
-            document.getElementById('po-id').disabled = false;
             document.getElementById('po-id').value = generatePoSequentialId();
             document.getElementById('po-tanggal').valueAsDate = new Date();
-            document.getElementById('po-form-title').innerHTML = `<i data-lucide="file-plus" class="w-4 h-4 text-orange-400"></i> INPUT PO CUSTOMER`;
-            lucide.createIcons();
-        }
+        };
 
-        function renderPoTable() {
-            const q = document.getElementById('search-po').value.toLowerCase();
+        window.renderPoTable = function() {
+            const q = document.getElementById('search-po')?.value.toLowerCase() || '';
             const tbody = document.getElementById('po-table-body');
             const badgeTotal = document.getElementById('po-total-badge');
-            const isViewer = db.currentUser && db.currentUser.role === 'viewer';
+            const isViewer = window.gudangAppDb.currentUser?.role === 'viewer';
 
-            const filtered = db.po.filter(i => 
-                i.id.toLowerCase().includes(q) || 
-                i.noPoCustomer.toLowerCase().includes(q) || 
-                i.customer.toLowerCase().includes(q) ||
-                i.nama.toLowerCase().includes(q)
+            const filtered = window.gudangAppDb.po.filter(i => 
+                i.id.toLowerCase().includes(q) || i.noPoCustomer.toLowerCase().includes(q) || i.customer.toLowerCase().includes(q)
             );
-
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} PO`;
 
             tbody.innerHTML = filtered.map((i, index) => {
                 const terkirim = i.terkirim || 0;
                 const sisa = Math.max(0, i.qty - terkirim);
-                const statusBadge = i.status === 'CLOSED' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : (i.status === 'PARTIAL' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-sky-500/20 text-sky-300 border-sky-500/30');
+                const statusBadge = i.status === 'CLOSED' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-sky-500/20 text-sky-300';
                 return `
                     <tr class="hover:bg-white/5">
                         <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
                         <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
-                        <td class="py-3 px-3 font-mono font-semibold">${i.noPoCustomer || '-'}</td>
+                        <td class="py-3 px-3 font-mono font-semibold">${i.noPoCustomer}</td>
                         <td class="py-3 px-3 opacity-80">${i.tanggal}</td>
                         <td class="py-3 px-3 font-medium">${i.customer}</td>
                         <td class="py-3 px-3 font-mono opacity-80">${i.barangId}</td>
@@ -2320,32 +2017,22 @@
                         <td class="py-3 px-3 text-right font-mono font-bold">${i.qty.toLocaleString('id-ID')}</td>
                         <td class="py-3 px-3 text-right font-mono text-emerald-400">${terkirim.toLocaleString('id-ID')}</td>
                         <td class="py-3 px-3 text-right font-mono text-amber-400">${sisa.toLocaleString('id-ID')}</td>
-                        <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold border ${statusBadge}">${i.status}</span></td>
+                        <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-extrabold ${statusBadge}">${i.status}</span></td>
                         ${!isViewer ? `
-                            <td class="py-3 px-3 text-center flex items-center justify-center gap-1.5">
-                                <button onclick="editPoItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 font-semibold inline-flex items-center gap-1" title="Edit">
-                                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit
-                                </button>
-                                <button onclick="deletePoItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold inline-flex items-center gap-1" title="Hapus">
-                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
-                                </button>
+                            <td class="py-3 px-3 text-center">
+                                <button onclick="deletePoItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
                             </td>
                         ` : ''}
                     </tr>
                 `;
-            }).join('') || `<tr><td colspan="${isViewer ? 15 : 16}" class="py-6 text-center opacity-50">Tidak ada data PO customer ditemukan.</td></tr>`;
+            }).join('') || `<tr><td colspan="${isViewer ? 15 : 16}" class="py-6 text-center opacity-50">Tidak ada PO aktif.</td></tr>`;
             lucide.createIcons();
-        }
+        };
 
-        // ==========================================
-        // 8. SAMPEL MODULE LOGIC
-        // ==========================================
-        function saveSampelItem(e) {
+        // Sampel CRUD
+        window.saveSampelItem = function(e) {
             e.preventDefault();
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat menambah atau mengubah data!', 'error');
-                return;
-            }
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
 
             const id = document.getElementById('sampel-id').value.trim().toUpperCase();
             const tanggal = document.getElementById('sampel-tanggal').value;
@@ -2354,98 +2041,40 @@
             const kategori = document.getElementById('sampel-kategori').value;
             const lebar = document.getElementById('sampel-lebar').value;
             const ukuran = document.getElementById('sampel-ukuran').value;
-            const beratRaw = document.getElementById('sampel-berat').value.trim();
-            const berat = beratRaw === '' ? 0 : parseFloat(beratRaw) || 0;
+            const berat = parseFloat(document.getElementById('sampel-berat').value) || 0;
             const tebal = document.getElementById('sampel-tebal').value.trim();
-            const isEdit = document.getElementById('sampel-edit-mode').value === 'true';
 
-            if (!db.sampel) {
-                db.sampel = [];
-            }
-
-            if (isEdit) {
-                const s = db.sampel.find(x => x.id === id);
-                if (s) {
-                    s.tanggal = tanggal;
-                    s.customer = customer;
-                    s.nama = nama;
-                    s.kategori = kategori;
-                    s.lebar = lebar;
-                    s.ukuran = ukuran;
-                    s.berat = berat;
-                    s.tebal = tebal;
-                }
-                showToast(`Sampel ${id} berhasil diperbarui!`);
-            } else {
-                if (db.sampel.some(x => x.id === id)) {
-                    showToast(`ID Sampel ${id} sudah ada!`, 'error');
-                    return;
-                }
-                db.sampel.unshift({ id, tanggal, customer, nama, kategori, lebar, ukuran, berat, tebal });
-                showToast(`Sampel ${id} berhasil ditambahkan!`);
-            }
-
+            if (!window.gudangAppDb.sampel) window.gudangAppDb.sampel = [];
+            window.gudangAppDb.sampel.unshift({ id, tanggal, customer, nama, kategori, lebar, ukuran, berat, tebal });
             resetSampelForm();
-            saveDB();
-        }
+            saveCloudDB();
+            showToast('Data sampel berhasil disimpan!');
+        };
 
-        function editSampelItem(id) {
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat mengedit data!', 'error');
-                return;
-            }
-            const s = db.sampel.find(x => x.id === id);
-            if (!s) return;
-            document.getElementById('sampel-edit-mode').value = 'true';
-            document.getElementById('sampel-id').value = s.id;
-            document.getElementById('sampel-id').disabled = true;
-            document.getElementById('sampel-tanggal').value = s.tanggal || new Date().toISOString().split('T')[0];
-            document.getElementById('sampel-customer').value = s.customer || '';
-            document.getElementById('sampel-nama').value = s.nama;
-            document.getElementById('sampel-kategori').value = s.kategori || '';
-            document.getElementById('sampel-lebar').value = s.lebar || '';
-            document.getElementById('sampel-ukuran').value = s.ukuran || '';
-            document.getElementById('sampel-berat').value = s.berat || 0;
-            document.getElementById('sampel-tebal').value = s.tebal || '';
-            document.getElementById('sampel-form-title').innerHTML = `<i data-lucide="edit" class="w-4 h-4 text-orange-400"></i> EDIT DATA SAMPEL (${id})`;
-            lucide.createIcons();
-        }
-
-        function deleteSampelItem(id) {
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat menghapus data!', 'error');
-                return;
-            }
-            showConfirm('Hapus Data Sampel', `Yakin ingin menghapus data sampel ${id}?`, () => {
-                db.sampel = db.sampel.filter(x => x.id !== id);
-                saveDB();
-                showToast(`Sampel ${id} berhasil dihapus.`, 'warning');
+        window.deleteSampelItem = function(id) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
+            showConfirm('Hapus Sampel', `Yakin ingin menghapus ${id}?`, () => {
+                window.gudangAppDb.sampel = window.gudangAppDb.sampel.filter(x => x.id !== id);
+                saveCloudDB();
+                showToast('Sampel dihapus.', 'warning');
             });
-        }
+        };
 
-        function resetSampelForm() {
+        window.resetSampelForm = function() {
             document.getElementById('form-sampel').reset();
-            document.getElementById('sampel-edit-mode').value = 'false';
-            document.getElementById('sampel-id').disabled = false;
             document.getElementById('sampel-id').value = generateSampelSequentialId();
             document.getElementById('sampel-tanggal').valueAsDate = new Date();
-            document.getElementById('sampel-form-title').innerHTML = `<i data-lucide="box" class="w-4 h-4 text-orange-400"></i> INPUT DATA SAMPEL`;
-            lucide.createIcons();
-        }
+        };
 
-        function renderSampelTable() {
+        window.renderSampelTable = function() {
             const q = document.getElementById('search-sampel')?.value.toLowerCase() || '';
             const tbody = document.getElementById('sampel-table-body');
             const badgeTotal = document.getElementById('sampel-total-badge');
-            const isViewer = db.currentUser && db.currentUser.role === 'viewer';
+            const isViewer = window.gudangAppDb.currentUser?.role === 'viewer';
 
-            const filtered = (db.sampel || []).filter(i => 
-                i.id.toLowerCase().includes(q) || 
-                (i.customer && i.customer.toLowerCase().includes(q)) || 
-                i.nama.toLowerCase().includes(q) || 
-                i.kategori.toLowerCase().includes(q)
+            const filtered = (window.gudangAppDb.sampel || []).filter(i => 
+                i.id.toLowerCase().includes(q) || (i.customer && i.customer.toLowerCase().includes(q)) || i.nama.toLowerCase().includes(q)
             );
-
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Sampel`;
 
             tbody.innerHTML = filtered.map((i, index) => `
@@ -2461,146 +2090,69 @@
                     <td class="py-3 px-3 text-right opacity-80 font-mono">${i.berat || 0} gr</td>
                     <td class="py-3 px-3 text-center opacity-80 font-mono">${i.tebal || '-'}</td>
                     ${!isViewer ? `
-                        <td class="py-3 px-3 text-center flex items-center justify-center gap-1.5">
-                            <button onclick="editSampelItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 font-semibold inline-flex items-center gap-1" title="Edit">
-                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit
-                            </button>
-                            <button onclick="deleteSampelItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold inline-flex items-center gap-1" title="Hapus">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
-                            </button>
+                        <td class="py-3 px-3 text-center">
+                            <button onclick="deleteSampelItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
                         </td>
                     ` : ''}
                 </tr>
-            `).join('') || `<tr><td colspan="${isViewer ? 10 : 11}" class="py-6 text-center opacity-50">Tidak ada data sampel ditemukan.</td></tr>`;
+            `).join('') || `<tr><td colspan="${isViewer ? 10 : 11}" class="py-6 text-center opacity-50">Tidak ada data sampel.</td></tr>`;
             lucide.createIcons();
-        }
+        };
 
-        function printSampelTable() {
-            const printWindow = window.open('', '_blank');
-            const nowStr = new Date().toLocaleString('id-ID');
-            const rows = (db.sampel || []).map((i, index) => `
-                <tr>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${index + 1}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; font-family: monospace;">${i.id}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.tanggal || '-'}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.customer || '-'}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.nama}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.kategori}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.lebar || '-'}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.ukuran || '-'}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${i.berat || 0} gr</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.tebal || '-'}</td>
-                </tr>
-            `).join('');
-
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>Laporan Data Sampel - Gudang Pro</title>
-                    <style>
-                        body { font-family: sans-serif; padding: 20px; color: #333; }
-                        h2 { margin-bottom: 5px; }
-                        .meta { font-size: 12px; color: #666; margin-bottom: 20px; }
-                        table { width: 100%; border-collapse: collapse; font-size: 11px; }
-                        th { background-color: #f2f2f2; border: 1px solid #ddd; padding: 8px; text-align: left; }
-                    </style>
-                </head>
-                <body>
-                    <h2>LAPORAN DATA SAMPEL MANDIRI</h2>
-                    <div class="meta">Dicetak pada: ${nowStr} | Total Sampel: ${(db.sampel || []).length}</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="text-align: center; width: 30px;">No</th>
-                                <th>ID Sampel</th>
-                                <th>Tanggal</th>
-                                <th>Customer</th>
-                                <th>Nama Sampel</th>
-                                <th>Kategori</th>
-                                <th>Lebar</th>
-                                <th>Ukuran</th>
-                                <th style="text-align: right;">Berat</th>
-                                <th>Tebal</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.focus();
-            setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
-        }
-
-        // ==========================================
-        // 9. RETUR & USERS & DASHBOARD & PRINTS
-        // ==========================================
-        function saveReturItem(e) {
+        // Retur CRUD
+        window.saveReturItem = function(e) {
             e.preventDefault();
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat menambah atau mengubah data!', 'error');
-                return;
-            }
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
 
             const id = document.getElementById('retur-id').value.trim().toUpperCase();
             const tanggal = document.getElementById('retur-tanggal').value;
             const barangId = document.getElementById('retur-barang').value;
             const qty = parseInt(document.getElementById('retur-qty').value) || 0;
             const keterangan = document.getElementById('retur-keterangan').value.trim().toUpperCase();
-            const username = db.currentUser ? db.currentUser.name : 'System';
+            const username = window.gudangAppDb.currentUser?.name || 'Administrator';
 
-            const item = db.items.find(x => x.id === barangId);
-            if (!item) {
-                showToast('Barang tidak valid!', 'error');
-                return;
-            }
+            const item = window.gudangAppDb.items.find(x => x.id === barangId);
+            if (!item) return;
 
             item.stok -= qty;
-            db.retur.unshift({
+            window.gudangAppDb.retur.unshift({
                 id, tanggal, barangId, nama: item.nama, jenis: item.jenis,
                 lebar: item.lebar || '', ukuran: item.ukuran || '', satuan: item.satuan, qty, keterangan, user: username
             });
-            showToast(`Retur ${id} berhasil disimpan!`);
             resetReturForm();
-            saveDB();
-        }
+            saveCloudDB();
+            showToast('Retur berhasil disimpan!');
+        };
 
-        function deleteReturItem(id) {
-            if (db.currentUser.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat menghapus data!', 'error');
-                return;
-            }
-            showConfirm('Hapus Retur', `Yakin ingin menghapus retur ${id}?`, () => {
-                const r = db.retur.find(x => x.id === id);
+        window.deleteReturItem = function(id) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
+            showConfirm('Hapus Retur', `Yakin ingin menghapus ${id}?`, () => {
+                const r = window.gudangAppDb.retur.find(x => x.id === id);
                 if (r) {
-                    const item = db.items.find(x => x.id === r.barangId);
+                    const item = window.gudangAppDb.items.find(x => x.id === r.barangId);
                     if (item) item.stok += r.qty;
-                    db.retur = db.retur.filter(x => x.id !== id);
-                    saveDB();
-                    showToast(`Retur ${id} dihapus.`, 'warning');
+                    window.gudangAppDb.retur = window.gudangAppDb.retur.filter(x => x.id !== id);
+                    saveCloudDB();
+                    showToast('Retur dihapus.', 'warning');
                 }
             });
-        }
+        };
 
-        function resetReturForm() {
+        window.resetReturForm = function() {
             document.getElementById('form-retur').reset();
             document.getElementById('retur-id').value = generateId('RTR');
             document.getElementById('retur-tanggal').valueAsDate = new Date();
-        }
+        };
 
-        function renderReturTable() {
-            const q = document.getElementById('search-retur').value.toLowerCase();
+        window.renderReturTable = function() {
+            const q = document.getElementById('search-retur')?.value.toLowerCase() || '';
             const tbody = document.getElementById('retur-table-body');
             const badgeTotal = document.getElementById('retur-total-badge');
-            const isViewer = db.currentUser && db.currentUser.role === 'viewer';
+            const isViewer = window.gudangAppDb.currentUser?.role === 'viewer';
 
-            const filtered = db.retur.filter(i => 
-                i.id.toLowerCase().includes(q) || 
-                i.nama.toLowerCase().includes(q) || 
-                i.keterangan.toLowerCase().includes(q)
+            const filtered = window.gudangAppDb.retur.filter(i => 
+                i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.keterangan.toLowerCase().includes(q)
             );
-
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Transaksi`;
 
             tbody.innerHTML = filtered.map((i, index) => `
@@ -2618,58 +2170,52 @@
                     <td class="py-3 px-3 font-medium">${i.keterangan}</td>
                     ${!isViewer ? `
                         <td class="py-3 px-3 text-center">
-                            <button onclick="deleteReturItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold inline-flex items-center gap-1" title="Hapus">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
-                            </button>
+                            <button onclick="deleteReturItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
                         </td>
                     ` : ''}
                 </tr>
-            `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada riwayat retur ditemukan.</td></tr>`;
+            `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
             lucide.createIcons();
-        }
+        };
 
-        function saveNewUser(e) {
+        // Users Management CRUD
+        window.saveNewUser = function(e) {
             e.preventDefault();
-            if (!db.currentUser || db.currentUser.role !== 'admin') return;
+            if (window.gudangAppDb.currentUser?.role !== 'admin') return;
 
             const username = document.getElementById('new-user-username').value.trim().toLowerCase();
             const name = document.getElementById('new-user-name').value.trim();
             const pass = document.getElementById('new-user-pass').value.trim();
             const role = document.getElementById('new-user-role').value;
 
-            if (db.users.some(u => u.username === username)) {
+            if (window.gudangAppDb.users.some(u => u.username === username)) {
                 showToast(`Username ${username} sudah terdaftar!`, 'error');
                 return;
             }
 
-            db.users.push({ username, name, pass, role });
-            saveDB();
+            window.gudangAppDb.users.push({ username, name, pass, role });
+            saveCloudDB();
             document.getElementById('form-user').reset();
             showToast(`User ${username} berhasil ditambahkan!`);
-        }
+        };
 
-        function deleteUser(username) {
-            if (!db.currentUser || db.currentUser.role !== 'admin') return;
-            if (username === 'admin') {
-                showToast('Akun admin utama tidak dapat dihapus!', 'error');
-                return;
-            }
+        window.deleteUser = function(username) {
+            if (window.gudangAppDb.currentUser?.role !== 'admin' || username === 'admin') return;
             showConfirm('Hapus User', `Yakin ingin menghapus user ${username}?`, () => {
-                db.users = db.users.filter(u => u.username !== username);
-                saveDB();
-                showToast(`User ${username} berhasil dihapus.`, 'warning');
+                window.gudangAppDb.users = window.gudangAppDb.users.filter(u => u.username !== username);
+                saveCloudDB();
+                showToast(`User ${username} dihapus.`, 'warning');
             });
-        }
+        };
 
-        function renderUserTable() {
+        window.renderUserTable = function() {
             const tbody = document.getElementById('user-table-body');
             const badgeTotal = document.getElementById('user-total-badge');
             if (!tbody) return;
 
-            if (badgeTotal) badgeTotal.textContent = `${db.users.length} User`;
-
-            tbody.innerHTML = db.users.map((u, index) => {
-                const isCurrent = db.currentUser && db.currentUser.username === u.username;
+            if (badgeTotal) badgeTotal.textContent = `${window.gudangAppDb.users.length} User`;
+            tbody.innerHTML = window.gudangAppDb.users.map((u, index) => {
+                const isCurrent = window.gudangAppDb.currentUser?.username === u.username;
                 const badgeClass = u.role === 'admin' ? 'role-badge-admin' : (u.role === 'staff' ? 'role-badge-staff' : 'role-badge-viewer');
                 return `
                     <tr class="hover:bg-white/5">
@@ -2679,24 +2225,25 @@
                         <td class="py-3 px-3 font-mono text-gray-300 bg-white/5 px-2 py-1 rounded">${u.pass}</td>
                         <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${badgeClass}">${u.role}</span></td>
                         <td class="py-3 px-3 text-emerald-400 font-semibold">● Aktif</td>
-                        <td class="py-3 px-3 text-center flex items-center justify-center gap-2">
-                            ${u.username !== 'admin' && db.currentUser && db.currentUser.role === 'admin' ? `
-                                <button onclick="deleteUser('${u.username}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 text-xs font-semibold">Hapus</button>
+                        <td class="py-3 px-3 text-center">
+                            ${u.username !== 'admin' && window.gudangAppDb.currentUser?.role === 'admin' ? `
+                                <button onclick="deleteUser('${u.username}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
                             ` : ''}
                         </td>
                     </tr>
                 `;
             }).join('');
             lucide.createIcons();
-        }
+        };
 
-        function renderDashboard() {
-            const totalSku = db.items.length;
-            const totalStok = db.items.reduce((acc, cur) => acc + cur.stok, 0);
-            const totalMasuk = db.masuk.reduce((acc, cur) => acc + cur.qty, 0);
-            const totalKeluar = db.keluar.reduce((acc, cur) => acc + cur.qty, 0);
-            const totalPo = db.po.filter(p => p.status !== 'CLOSED').length;
-            const totalRetur = db.retur.reduce((acc, cur) => acc + cur.qty, 0);
+        // Render Dashboard & Charts
+        window.renderDashboard = function() {
+            const totalSku = window.gudangAppDb.items.length;
+            const totalStok = window.gudangAppDb.items.reduce((acc, cur) => acc + cur.stok, 0);
+            const totalMasuk = window.gudangAppDb.masuk.reduce((acc, cur) => acc + cur.qty, 0);
+            const totalKeluar = window.gudangAppDb.keluar.reduce((acc, cur) => acc + cur.qty, 0);
+            const totalPo = window.gudangAppDb.po.filter(p => p.status !== 'CLOSED').length;
+            const totalRetur = window.gudangAppDb.retur.reduce((acc, cur) => acc + cur.qty, 0);
 
             document.getElementById('stat-sku').textContent = totalSku.toLocaleString('id-ID');
             document.getElementById('stat-stok').textContent = totalStok.toLocaleString('id-ID');
@@ -2707,15 +2254,15 @@
 
             // Charts
             const chartMasuk = document.getElementById('chart-masuk');
-            const topMasuk = [...db.items].sort((a,b) => {
-                const sumA = db.masuk.filter(m => m.barangId === a.id).reduce((s,m) => s + m.qty, 0);
-                const sumB = db.masuk.filter(m => m.barangId === b.id).reduce((s,m) => s + m.qty, 0);
+            const topMasuk = [...window.gudangAppDb.items].sort((a,b) => {
+                const sumA = window.gudangAppDb.masuk.filter(m => m.barangId === a.id).reduce((s,m) => s + m.qty, 0);
+                const sumB = window.gudangAppDb.masuk.filter(m => m.barangId === b.id).reduce((s,m) => s + m.qty, 0);
                 return sumB - sumA;
             }).slice(0, 5);
-            const maxMasuk = Math.max(...topMasuk.map(i => db.masuk.filter(m => m.barangId === i.id).reduce((s,m) => s + m.qty, 0)), 1);
+            const maxMasuk = Math.max(...topMasuk.map(i => window.gudangAppDb.masuk.filter(m => m.barangId === i.id).reduce((s,m) => s + m.qty, 0)), 1);
 
             chartMasuk.innerHTML = topMasuk.map(i => {
-                const qty = db.masuk.filter(m => m.barangId === i.id).reduce((s,m) => s + m.qty, 0);
+                const qty = window.gudangAppDb.masuk.filter(m => m.barangId === i.id).reduce((s,m) => s + m.qty, 0);
                 const pct = Math.max(12, Math.round((qty / maxMasuk) * 100));
                 return `
                     <div class="flex-1 flex flex-col items-center justify-end h-full group">
@@ -2727,15 +2274,15 @@
             }).join('') || '<div class="text-xs text-gray-500 m-auto">Belum ada data masuk</div>';
 
             const chartKeluar = document.getElementById('chart-keluar');
-            const topKeluar = [...db.items].sort((a,b) => {
-                const sumA = db.keluar.filter(m => m.barangId === a.id).reduce((s,m) => s + m.qty, 0);
-                const sumB = db.keluar.filter(m => m.barangId === b.id).reduce((s,m) => s + m.qty, 0);
+            const topKeluar = [...window.gudangAppDb.items].sort((a,b) => {
+                const sumA = window.gudangAppDb.keluar.filter(m => m.barangId === a.id).reduce((s,m) => s + m.qty, 0);
+                const sumB = window.gudangAppDb.keluar.filter(m => m.barangId === b.id).reduce((s,m) => s + m.qty, 0);
                 return sumB - sumA;
             }).slice(0, 5);
-            const maxKeluar = Math.max(...topKeluar.map(i => db.keluar.filter(m => m.barangId === i.id).reduce((s,m) => s + m.qty, 0)), 1);
+            const maxKeluar = Math.max(...topKeluar.map(i => window.gudangAppDb.keluar.filter(m => m.barangId === i.id).reduce((s,m) => s + m.qty, 0)), 1);
 
             chartKeluar.innerHTML = topKeluar.map(i => {
-                const qty = db.keluar.filter(m => m.barangId === i.id).reduce((s,m) => s + m.qty, 0);
+                const qty = window.gudangAppDb.keluar.filter(m => m.barangId === i.id).reduce((s,m) => s + m.qty, 0);
                 const pct = Math.max(12, Math.round((qty / maxKeluar) * 100));
                 return `
                     <div class="flex-1 flex flex-col items-center justify-end h-full group">
@@ -2746,18 +2293,17 @@
                 `;
             }).join('') || '<div class="text-xs text-gray-500 m-auto">Belum ada data keluar</div>';
 
-            // Low stock alert (Blink red if < 50% of min, blink orange if >= 50% and < min)
+            // Low stock alert
             const lowList = document.getElementById('low-stock-list');
-            const lowItems = db.items.filter(i => i.stok < i.min);
+            const lowItems = window.gudangAppDb.items.filter(i => i.stok < i.min);
             lowList.innerHTML = lowItems.map(i => {
                 const isBelow50 = i.stok < (i.min * 0.5);
                 const blinkClass = isBelow50 ? 'blink-low-stock-red' : 'blink-low-stock-orange';
                 const textClass = isBelow50 ? 'text-rose-400' : 'text-amber-400';
-                const iconColor = isBelow50 ? 'text-rose-400' : 'text-amber-400';
                 return `
                     <div class="p-3 rounded-xl border flex items-center justify-between text-xs ${blinkClass}">
                         <div class="flex items-center gap-3">
-                            <i data-lucide="alert-triangle" class="w-4 h-4 ${iconColor}"></i>
+                            <i data-lucide="alert-triangle" class="w-4 h-4 ${textClass}"></i>
                             <div>
                                 <span class="font-bold text-gray-100">${i.id} - ${i.nama}</span>
                                 <span class="text-[10px] text-gray-400 block">Kategori: ${i.jenis} | Lebar: ${i.lebar || '-'}</span>
@@ -2771,12 +2317,12 @@
                 `;
             }).join('') || '<div class="text-xs text-emerald-400 p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-center font-semibold">Semua stok barang dalam kondisi aman (&gt;= Minimum).</div>';
 
-            // Recent activity log with User info
+            // Recent activity log
             const recentBody = document.getElementById('recent-activity-body');
             const allLogs = [
-                ...db.masuk.map(m => ({ time: m.tanggal, type: 'MASUK', id: m.id, name: m.nama, qty: `+${m.qty} ${m.satuan}`, partner: m.supplier, user: m.user || 'Administrator' })),
-                ...db.keluar.map(k => ({ time: k.tanggal, type: 'KELUAR', id: k.id, name: k.nama, qty: `-${k.qty} ${k.satuan}`, partner: k.tujuan, user: k.user || 'Administrator' })),
-                ...db.retur.map(r => ({ time: r.tanggal, type: 'RETUR', id: r.id, name: r.nama, qty: `${r.qty} ${r.satuan}`, partner: r.keterangan, user: r.user || 'Administrator' }))
+                ...window.gudangAppDb.masuk.map(m => ({ time: m.tanggal, type: 'MASUK', id: m.id, name: m.nama, qty: `+${m.qty} ${m.satuan}`, partner: m.supplier, user: m.user || 'Administrator' })),
+                ...window.gudangAppDb.keluar.map(k => ({ time: k.tanggal, type: 'KELUAR', id: k.id, name: k.nama, qty: `-${k.qty} ${k.satuan}`, partner: k.tujuan, user: k.user || 'Administrator' })),
+                ...window.gudangAppDb.retur.map(r => ({ time: r.tanggal, type: 'RETUR', id: r.id, name: r.nama, qty: `${r.qty} ${r.satuan}`, partner: r.keterangan, user: r.user || 'Administrator' }))
             ].sort((a,b) => new Date(b.time) - new Date(a.time)).slice(0, 10);
 
             recentBody.innerHTML = allLogs.map(l => {
@@ -2794,11 +2340,11 @@
                 `;
             }).join('') || '<tr><td colspan="7" class="py-6 text-center opacity-50">Belum ada aktivitas transaksi.</td></tr>';
             lucide.createIcons();
-        }
+        };
 
-        function exportCSVData() {
+        window.exportCSVData = function() {
             let csvContent = "data:text/csv;charset=utf-8,ID,Nama,Jenis,Lebar,Ukuran,Berat,Satuan,Stok,Min\n";
-            db.items.forEach(i => {
+            window.gudangAppDb.items.forEach(i => {
                 csvContent += `"${i.id}","${i.nama}","${i.jenis}","${i.lebar || ''}","${i.ukuran || ''}",${i.berat || 0},"${i.satuan}",${i.stok},${i.min}\n`;
             });
             const encodedUri = encodeURI(csvContent);
@@ -2808,57 +2354,34 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            showToast('Data master berhasil diexport ke CSV!');
-        }
+            showToast('Data berhasil diexport ke CSV!');
+        };
 
-        function printMasterTable() {
+        window.printMasterTable = function() { printTableGeneric("LAPORAN MASTER DATA BARANG", window.gudangAppDb.items); };
+        window.printMasukTable = function() { printTableGeneric("LAPORAN BARANG MASUK", window.gudangAppDb.masuk); };
+        window.printKeluarTable = function() { printTableGeneric("LAPORAN BARANG KELUAR", window.gudangAppDb.keluar); };
+        window.printPoTable = function() { printTableGeneric("LAPORAN PURCHASE ORDER", window.gudangAppDb.po); };
+        window.printSampelTable = function() { printTableGeneric("LAPORAN DATA SAMPEL", window.gudangAppDb.sampel || []); };
+
+        function printTableGeneric(title, dataArr) {
             const printWindow = window.open('', '_blank');
             const nowStr = new Date().toLocaleString('id-ID');
-            const rows = db.items.map((i, index) => `
+            const headers = dataArr.length > 0 ? Object.keys(dataArr[0]) : [];
+            const rows = dataArr.map((i, index) => `
                 <tr>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${index + 1}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; font-family: monospace;">${i.id}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.nama}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.jenis}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.lebar || '-'}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.ukuran || '-'}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${i.berat || 0} gr</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.satuan}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">${i.stok.toLocaleString('id-ID')}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${i.min.toLocaleString('id-ID')}</td>
+                    <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">${index + 1}</td>
+                    ${Object.values(i).map(val => `<td style="border: 1px solid #ddd; padding: 6px;">${val}</td>`).join('')}
                 </tr>
             `).join('');
 
             printWindow.document.write(`
                 <html>
-                <head>
-                    <title>Laporan Master Barang - Gudang Pro</title>
-                    <style>
-                        body { font-family: sans-serif; padding: 20px; color: #333; }
-                        h2 { margin-bottom: 5px; }
-                        .meta { font-size: 12px; color: #666; margin-bottom: 20px; }
-                        table { width: 100%; border-collapse: collapse; font-size: 11px; }
-                        th { background-color: #f2f2f2; border: 1px solid #ddd; padding: 8px; text-align: left; }
-                    </style>
-                </head>
+                <head><title>${title}</title><style>body{font-family:sans-serif;padding:20px;} table{width:100%;border-collapse:collapse;font-size:11px;} th{background:#eee;border:1px solid #ddd;padding:6px;text-align:left;}</style></head>
                 <body>
-                    <h2>LAPORAN MASTER DATA BARANG</h2>
-                    <div class="meta">Dicetak pada: ${nowStr} | Total Item: ${db.items.length}</div>
+                    <h2>${title}</h2>
+                    <p style="font-size:12px;color:#666;">Dicetak: ${nowStr} | Total: ${dataArr.length}</p>
                     <table>
-                        <thead>
-                            <tr>
-                                <th style="text-align: center; width: 30px;">No</th>
-                                <th>ID Barang</th>
-                                <th>Nama Barang</th>
-                                <th>Kategori</th>
-                                <th>Lebar</th>
-                                <th>Ukuran</th>
-                                <th style="text-align: right;">Berat</th>
-                                <th>Satuan</th>
-                                <th style="text-align: right;">Stok</th>
-                                <th style="text-align: right;">Min</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th style="width:30px;text-align:center;">No</th>${headers.map(h => `<th>${h.toUpperCase()}</th>`).join('')}</tr></thead>
                         <tbody>${rows}</tbody>
                     </table>
                 </body>
@@ -2869,241 +2392,8 @@
             setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
         }
 
-        function printMasukTable() {
-            const printWindow = window.open('', '_blank');
-            const nowStr = new Date().toLocaleString('id-ID');
-            const rows = db.masuk.map((i, index) => `
-                <tr>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${index + 1}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; font-family: monospace;">${i.id}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.tanggal}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; font-family: monospace;">${i.barangId}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.nama}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.jenis}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.satuan}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; color: #059669;">+${i.qty.toLocaleString('id-ID')}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.supplier}</td>
-                </tr>
-            `).join('');
-
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>Laporan Barang Masuk - Gudang Pro</title>
-                    <style>
-                        body { font-family: sans-serif; padding: 20px; color: #333; }
-                        h2 { margin-bottom: 5px; }
-                        .meta { font-size: 12px; color: #666; margin-bottom: 20px; }
-                        table { width: 100%; border-collapse: collapse; font-size: 11px; }
-                        th { background-color: #f2f2f2; border: 1px solid #ddd; padding: 8px; text-align: left; }
-                    </style>
-                </head>
-                <body>
-                    <h2>LAPORAN RIWAYAT BARANG MASUK</h2>
-                    <div class="meta">Dicetak pada: ${nowStr} | Total Transaksi: ${db.masuk.length}</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="text-align: center; width: 30px;">No</th>
-                                <th>ID Transaksi</th>
-                                <th>Tanggal</th>
-                                <th>ID Barang</th>
-                                <th>Nama Barang</th>
-                                <th>Kategori</th>
-                                <th>Satuan</th>
-                                <th style="text-align: right;">Qty Masuk</th>
-                                <th>Sumber</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.focus();
-            setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
-        }
-
-        function printKeluarTable() {
-            const printWindow = window.open('', '_blank');
-            const nowStr = new Date().toLocaleString('id-ID');
-            const rows = db.keluar.map((i, index) => `
-                <tr>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${index + 1}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; font-family: monospace;">${i.id}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.tanggal}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; font-family: monospace;">${i.barangId}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.nama}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.satuan}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; color: #e11d48;">-${i.qty.toLocaleString('id-ID')}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.tujuan}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; font-family: monospace;">${i.poRef || '-'}</td>
-                </tr>
-            `).join('');
-
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>Laporan Barang Keluar - Gudang Pro</title>
-                    <style>
-                        body { font-family: sans-serif; padding: 20px; color: #333; }
-                        h2 { margin-bottom: 5px; }
-                        .meta { font-size: 12px; color: #666; margin-bottom: 20px; }
-                        table { width: 100%; border-collapse: collapse; font-size: 11px; }
-                        th { background-color: #f2f2f2; border: 1px solid #ddd; padding: 8px; text-align: left; }
-                    </style>
-                </head>
-                <body>
-                    <h2>LAPORAN RIWAYAT BARANG KELUAR</h2>
-                    <div class="meta">Dicetak pada: ${nowStr} | Total Transaksi: ${db.keluar.length}</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="text-align: center; width: 30px;">No</th>
-                                <th>ID Transaksi</th>
-                                <th>Tanggal</th>
-                                <th>ID Barang</th>
-                                <th>Nama Barang</th>
-                                <th>Satuan</th>
-                                <th style="text-align: right;">Qty Keluar</th>
-                                <th>Customer / Tujuan</th>
-                                <th>No PO Ref</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.focus();
-            setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
-        }
-
-        function printPoTable() {
-            const printWindow = window.open('', '_blank');
-            const nowStr = new Date().toLocaleString('id-ID');
-            const rows = db.po.map((i, index) => {
-                const terkirim = i.terkirim || 0;
-                const sisa = Math.max(0, i.qty - terkirim);
-                return `
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${index + 1}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; font-family: monospace;">${i.id}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; font-family: monospace;">${i.noPoCustomer || '-'}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">${i.tanggal}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">${i.customer}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">${i.nama}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${i.qty.toLocaleString('id-ID')}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right; color: #059669;">${terkirim.toLocaleString('id-ID')}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right; color: #d97706;">${sisa.toLocaleString('id-ID')}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">${i.status}</td>
-                    </tr>
-                `;
-            }).join('');
-
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>Laporan Purchase Order Customer - Gudang Pro</title>
-                    <style>
-                        body { font-family: sans-serif; padding: 20px; color: #333; }
-                        h2 { margin-bottom: 5px; }
-                        .meta { font-size: 12px; color: #666; margin-bottom: 20px; }
-                        table { width: 100%; border-collapse: collapse; font-size: 11px; }
-                        th { background-color: #f2f2f2; border: 1px solid #ddd; padding: 8px; text-align: left; }
-                    </style>
-                </head>
-                <body>
-                    <h2>LAPORAN PURCHASE ORDER (PO) CUSTOMER</h2>
-                    <div class="meta">Dicetak pada: ${nowStr} | Total PO: ${db.po.length}</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="text-align: center; width: 30px;">No</th>
-                                <th>ID Sistem</th>
-                                <th>No. PO Cust</th>
-                                <th>Tanggal</th>
-                                <th>Customer</th>
-                                <th>Nama Barang</th>
-                                <th style="text-align: right;">Qty PO</th>
-                                <th style="text-align: right;">Terkirim</th>
-                                <th style="text-align: right;">Sisa PO</th>
-                                <th style="text-align: center;">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.focus();
-            setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
-        }
-
-        function printSampelTable() {
-            const printWindow = window.open('', '_blank');
-            const nowStr = new Date().toLocaleString('id-ID');
-            const rows = (db.sampel || []).map((i, index) => `
-                <tr>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${index + 1}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; font-family: monospace;">${i.id}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.customer || '-'}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.nama}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.kategori}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.lebar || '-'}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.ukuran || '-'}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${i.berat || 0} gr</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${i.tebal || '-'}</td>
-                </tr>
-            `).join('');
-
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>Laporan Data Sampel - Gudang Pro</title>
-                    <style>
-                        body { font-family: sans-serif; padding: 20px; color: #333; }
-                        h2 { margin-bottom: 5px; }
-                        .meta { font-size: 12px; color: #666; margin-bottom: 20px; }
-                        table { width: 100%; border-collapse: collapse; font-size: 11px; }
-                        th { background-color: #f2f2f2; border: 1px solid #ddd; padding: 8px; text-align: left; }
-                    </style>
-                </head>
-                <body>
-                    <h2>LAPORAN DATA SAMPEL MANDIRI</h2>
-                    <div class="meta">Dicetak pada: ${nowStr} | Total Sampel: ${(db.sampel || []).length}</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="text-align: center; width: 30px;">No</th>
-                                <th>ID Sampel</th>
-                                <th>Customer</th>
-                                <th>Nama Sampel</th>
-                                <th>Kategori</th>
-                                <th>Lebar</th>
-                                <th>Ukuran</th>
-                                <th style="text-align: right;">Berat</th>
-                                <th>Tebal</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.focus();
-            setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
-        }
-
-        // ==========================================
-        // INITIALIZATION ON WINDOW LOAD
-        // ==========================================
-        window.onload = function() {
-            applyTheme(db.theme || 'sunset');
+        window.addEventListener('load', () => {
+            applyTheme('sunset');
             document.getElementById('masuk-id').value = generateMasukSequentialId();
             document.getElementById('masuk-tanggal').valueAsDate = new Date();
             document.getElementById('keluar-id').value = generateKeluarSequentialId();
@@ -3117,59 +2407,7 @@
 
             checkAuth();
             refreshAllViews();
-            updateClock();
-        };
-
-        // Helper to mark session as active upon successful login
-        window.handleLoginSubmit = function(e) {
-            e.preventDefault();
-            const un = document.getElementById('login-username').value.trim();
-            const pw = document.getElementById('login-password').value.trim();
-
-            const found = db.users.find(u => u.username === un && u.pass === pw);
-            if (found) {
-                db.currentUser = { username: found.username, name: found.name, role: found.role };
-                localStorage.setItem('gudang_pro_logged_in', 'true');
-                saveDB();
-                hideLoginModal();
-                showToast(`Login berhasil sebagai ${found.name} (${found.role.toUpperCase()})!`);
-            } else {
-                showToast('Username atau password salah!', 'error');
-            }
-        };
-
-        // Check auth: only prompt login if user has never logged in or explicitly logged out
-        window.checkAuth = function() {
-            const isLoggedIn = localStorage.getItem('gudang_pro_logged_in');
-            if (isLoggedIn !== 'true' || !db.currentUser) {
-                if (isLoggedIn === 'true' && db.users && db.users.length > 0) {
-                    db.currentUser = db.users[0]; // fallback to default admin if logged in flag exists
-                    hideLoginModal();
-                    return;
-                }
-                db.currentUser = null;
-                showLoginModal();
-            } else {
-                hideLoginModal();
-            }
-        };
-
-        // Helper to clear session on explicit logout
-        window.logoutUser = function() {
-            showConfirm('Logout Sistem', 'Apakah Anda yakin ingin keluar dari sesi saat ini?', () => {
-                db.currentUser = null;
-                localStorage.removeItem('gudang_pro_logged_in');
-                saveDB();
-                
-                const userInp = document.getElementById('login-username');
-                const passInp = document.getElementById('login-password');
-                if (userInp) userInp.value = '';
-                if (passInp) passInp.value = '';
-
-                showLoginModal();
-                showToast('Berhasil logout.', 'warning');
-            });
-        };
+        });
     </script>
 </body>
 </html>
