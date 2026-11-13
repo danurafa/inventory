@@ -1,4 +1,3 @@
-<!-- ... euer existing code ... -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -13,10 +12,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.13-v2";
+        const APP_VERSION = "2026.11.13-v4";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
-            // Clear stale cache flags if any
         }
 
         tailwind.config = {
@@ -248,7 +246,12 @@
                 <h1 class="font-bold text-base md:text-lg tracking-wide flex items-center gap-2 text-gray-100">
                     Sistem Manajemen Inventory Gudang
                 </h1>
-                <p class="text-[11px] text-gray-400 font-medium tracking-wide">Professional Inventory & PO System</p>
+                <div class="flex items-center gap-2">
+                    <p class="text-[11px] text-gray-400 font-medium tracking-wide">Professional Inventory & PO System</p>
+                    <span id="cloud-sync-status" class="inline-flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Cloud Sync Active
+                    </span>
+                </div>
             </div>
         </div>
 
@@ -473,13 +476,13 @@
                         <table class="w-full text-left text-xs">
                             <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
                                 <tr>
-                                    <th class="py-3 px-3.5 rounded-l-xl">Waktu / Tanggal</th>
-                                    <th class="py-3 px-3.5">Jenis Transaksi</th>
-                                    <th class="py-3 px-3.5">ID Referensi</th>
-                                    <th class="py-3 px-3.5">Nama Barang</th>
-                                    <th class="py-3 px-3.5 text-right">Qty</th>
-                                    <th class="py-3 px-3.5">Keterangan / Partner</th>
-                                    <th class="py-3 px-3.5 rounded-r-xl">User</th>
+                                    <th class="py-3 px-3 rounded-l-xl">Waktu / Tanggal</th>
+                                    <th class="py-3 px-3">Jenis Transaksi</th>
+                                    <th class="py-3 px-3">ID Referensi</th>
+                                    <th class="py-3 px-3">Nama Barang</th>
+                                    <th class="py-3 px-3 text-right">Qty</th>
+                                    <th class="py-3 px-3">Keterangan / Partner</th>
+                                    <th class="py-3 px-3 rounded-r-xl">User</th>
                                 </tr>
                             </thead>
                             <tbody id="recent-activity-body" class="divide-y divide-white/5">
@@ -637,188 +640,7 @@
                 </div>
             </section>
 
-            <!-- 3. TAB BARANG MASUK -->
-            <section id="tab-masuk" class="space-y-6 w-full hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3" id="masuk-form-card">
-                        <h3 id="masuk-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
-                            <i data-lucide="plus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG MASUK
-                        </h3>
-                        <form id="form-masuk" onsubmit="saveMasukItem(event)" class="space-y-4">
-                            <input type="hidden" id="masuk-edit-mode" value="false">
-                            <div>
-                                <label class="text-xs block mb-1">ID Transaksi *</label>
-                                <input type="text" id="masuk-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase">
-                            </div>
-                            <div>
-                                <label class="text-xs block mb-1">Tanggal *</label>
-                                <input type="date" id="masuk-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
-                            </div>
-                            <div>
-                                <label class="text-xs block mb-1">Pilih Barang *</label>
-                                <select id="masuk-barang" onchange="updateMasukItemInfo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
-                                    <option value="">-- Pilih Barang —</option>
-                                </select>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2 bg-white/5 p-3 rounded-xl border border-white/10 text-[11px] text-gray-200">
-                                <div><span class="text-gray-300 block mb-0.5 font-medium">Kategori:</span> <span id="info-masuk-jenis" class="font-bold text-white">-</span></div>
-                                <div><span class="text-gray-300 block mb-0.5 font-medium">Satuan:</span> <span id="info-masuk-satuan" class="font-bold text-white">-</span></div>
-                            </div>
-                            <div>
-                                <label class="text-xs block mb-1">Jumlah Masuk (Qty) *</label>
-                                <input type="number" id="masuk-qty" min="1" value="100" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
-                            </div>
-                            <div>
-                                <label class="text-xs block mb-1">Sumber *</label>
-                                <input type="text" id="masuk-supplier" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Divisi 1 / Divisi 2">
-                            </div>
-                            <div class="pt-2 flex gap-2">
-                                <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
-                                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
-                                    <span>Simpan</span>
-                                </button>
-                                <button type="button" onclick="resetMasukForm()" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
-                                    Reset
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="app-card p-6 rounded-2xl lg:col-span-9 flex flex-col">
-                        <div class="flex flex-col md:flex-row items-center justify-between gap-3 mb-5">
-                            <div>
-                                <h3 class="font-bold text-xs tracking-wider uppercase text-gray-100">RIWAYAT TRANSAKSI BARANG MASUK</h3>
-                                <p class="text-xs text-gray-300 mt-0.5" id="masuk-total-badge">0 Transaksi</p>
-                            </div>
-                            <div class="flex items-center gap-2.5 w-full md:w-auto">
-                                <div class="w-full md:w-64">
-                                    <input type="text" id="search-masuk" oninput="renderMasukTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Sumber...">
-                                </div>
-                                <button onclick="printMasukTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
-                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                                    <span>Print</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="fluid-table-container flex-1 pb-2">
-                            <table class="fluid-table text-left text-xs">
-                                <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
-                                    <tr>
-                                        <th class="py-3 px-2 rounded-l-xl text-center w-10">No</th>
-                                        <th class="py-3 px-3">ID Transaksi</th>
-                                        <th class="py-3 px-3">Tanggal</th>
-                                        <th class="py-3 px-3">ID Barang</th>
-                                        <th class="py-3 px-3">Nama Barang</th>
-                                        <th class="py-3 px-3">Kategori</th>
-                                        <th class="py-3 px-2">Lebar</th>
-                                        <th class="py-3 px-2">Ukuran</th>
-                                        <th class="py-3 px-2">Satuan</th>
-                                        <th class="py-3 px-3 text-right">Qty Masuk</th>
-                                        <th class="py-3 px-3">Sumber</th>
-                                        <th id="masuk-th-aksi" class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="masuk-table-body" class="divide-y divide-white/5">
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 4. TAB BARANG KELUAR -->
-            <section id="tab-keluar" class="space-y-6 w-full hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3" id="keluar-form-card">
-                        <h3 id="keluar-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
-                            <i data-lucide="minus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG KELUAR
-                        </h3>
-                        <form id="form-keluar" onsubmit="saveKeluarItem(event)" class="space-y-4">
-                            <input type="hidden" id="keluar-edit-mode" value="false">
-                            <div>
-                                <label class="text-xs block mb-1">ID Transaksi *</label>
-                                <input type="text" id="keluar-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase">
-                            </div>
-                            <div>
-                                <label class="text-xs block mb-1">Tanggal *</label>
-                                <input type="date" id="keluar-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
-                            </div>
-                            <div>
-                                <label class="text-xs block mb-1">Merujuk ke PO Aktif *</label>
-                                <select id="keluar-po-ref" onchange="updateKeluarFromPo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
-                                    <option value="">-- Pilih PO Customer Aktif —</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs block mb-1">Pilih Barang *</label>
-                                <select id="keluar-barang" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
-                                    <option value="">-- Pilih Barang —</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs block mb-1">Jumlah Keluar (Qty) *</label>
-                                <input type="number" id="keluar-qty" min="1" value="50" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
-                            </div>
-                            <div>
-                                <label class="text-xs block mb-1">Customer / Tujuan *</label>
-                                <input type="text" id="keluar-tujuan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA">
-                            </div>
-                            <div class="pt-2 flex gap-2">
-                                <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
-                                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
-                                    <span>Simpan</span>
-                                </button>
-                                <button type="button" onclick="resetKeluarForm()" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
-                                    Reset
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="app-card p-6 rounded-2xl lg:col-span-9 flex flex-col">
-                        <div class="flex flex-col md:flex-row items-center justify-between gap-3 mb-5">
-                            <div>
-                                <h3 class="font-bold text-xs tracking-wider uppercase text-gray-100">RIWAYAT TRANSAKSI BARANG KELUAR</h3>
-                                <p class="text-xs text-gray-300 mt-0.5" id="keluar-total-badge">0 Transaksi</p>
-                            </div>
-                            <div class="flex items-center gap-2.5 w-full md:w-auto">
-                                <div class="w-full md:w-64">
-                                    <input type="text" id="search-keluar" oninput="renderKeluarTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Customer...">
-                                </div>
-                                <button onclick="printKeluarTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
-                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                                    <span>Print</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="fluid-table-container flex-1 pb-2">
-                            <table class="fluid-table text-left text-xs">
-                                <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
-                                    <tr>
-                                        <th class="py-3 px-2 rounded-l-xl text-center w-10">No</th>
-                                        <th class="py-3 px-3">ID Transaksi</th>
-                                        <th class="py-3 px-3">Tanggal</th>
-                                        <th class="py-3 px-3">ID Barang</th>
-                                        <th class="py-3 px-3">Nama Barang</th>
-                                        <th class="py-3 px-3">Kategori</th>
-                                        <th class="py-3 px-2">Lebar</th>
-                                        <th class="py-3 px-2">Ukuran</th>
-                                        <th class="py-3 px-2">Satuan</th>
-                                        <th class="py-3 px-3 text-right">Qty Keluar</th>
-                                        <th class="py-3 px-3">Customer / Tujuan</th>
-                                        <th class="py-3 px-3">No PO Ref</th>
-                                        <th id="keluar-th-aksi" class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="keluar-table-body" class="divide-y divide-white/5">
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 5. TAB PO MASUK (CUSTOMER) -->
+            <!-- 3. TAB PO MASUK (CUSTOMER) - Moved Right Below Master Data -->
             <section id="tab-po" class="space-y-6 w-full hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3" id="po-form-card">
@@ -911,7 +733,188 @@
                 </div>
             </section>
 
-            <!-- 5.5. TAB SAMPEL -->
+            <!-- 4. TAB BARANG MASUK -->
+            <section id="tab-masuk" class="space-y-6 w-full hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3" id="masuk-form-card">
+                        <h3 id="masuk-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
+                            <i data-lucide="plus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG MASUK
+                        </h3>
+                        <form id="form-masuk" onsubmit="saveMasukItem(event)" class="space-y-4">
+                            <input type="hidden" id="masuk-edit-mode" value="false">
+                            <div>
+                                <label class="text-xs block mb-1">ID Transaksi *</label>
+                                <input type="text" id="masuk-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Tanggal *</label>
+                                <input type="date" id="masuk-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Pilih Barang *</label>
+                                <select id="masuk-barang" onchange="updateMasukItemInfo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <option value="">-- Pilih Barang —</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 bg-white/5 p-3 rounded-xl border border-white/10 text-[11px] text-gray-200">
+                                <div><span class="text-gray-300 block mb-0.5 font-medium">Kategori:</span> <span id="info-masuk-jenis" class="font-bold text-white">-</span></div>
+                                <div><span class="text-gray-300 block mb-0.5 font-medium">Satuan:</span> <span id="info-masuk-satuan" class="font-bold text-white">-</span></div>
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Jumlah Masuk (Qty) *</label>
+                                <input type="number" id="masuk-qty" min="1" value="100" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Sumber *</label>
+                                <input type="text" id="masuk-supplier" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Divisi 1 / Divisi 2">
+                            </div>
+                            <div class="pt-2 flex gap-2">
+                                <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
+                                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                    <span>Simpan</span>
+                                </button>
+                                <button type="button" onclick="resetMasukForm()" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="app-card p-6 rounded-2xl lg:col-span-9 flex flex-col">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-3 mb-5">
+                            <div>
+                                <h3 class="font-bold text-xs tracking-wider uppercase text-gray-100">RIWAYAT TRANSAKSI BARANG MASUK</h3>
+                                <p class="text-xs text-gray-300 mt-0.5" id="masuk-total-badge">0 Transaksi</p>
+                            </div>
+                            <div class="flex items-center gap-2.5 w-full md:w-auto">
+                                <div class="w-full md:w-64">
+                                    <input type="text" id="search-masuk" oninput="renderMasukTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Sumber...">
+                                </div>
+                                <button onclick="printMasukTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
+                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                                    <span>Print</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="fluid-table-container flex-1 pb-2">
+                            <table class="fluid-table text-left text-xs">
+                                <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
+                                    <tr>
+                                        <th class="py-3 px-2 rounded-l-xl text-center w-10">No</th>
+                                        <th class="py-3 px-3">ID Transaksi</th>
+                                        <th class="py-3 px-3">Tanggal</th>
+                                        <th class="py-3 px-3">ID Barang</th>
+                                        <th class="py-3 px-3">Nama Barang</th>
+                                        <th class="py-3 px-3">Kategori</th>
+                                        <th class="py-3 px-2">Lebar</th>
+                                        <th class="py-3 px-2">Ukuran</th>
+                                        <th class="py-3 px-2">Satuan</th>
+                                        <th class="py-3 px-3 text-right">Qty Masuk</th>
+                                        <th class="py-3 px-3">Sumber</th>
+                                        <th id="masuk-th-aksi" class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="masuk-table-body" class="divide-y divide-white/5">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. TAB BARANG KELUAR -->
+            <section id="tab-keluar" class="space-y-6 w-full hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="app-card p-5 rounded-2xl h-fit lg:col-span-3" id="keluar-form-card">
+                        <h3 id="keluar-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
+                            <i data-lucide="minus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG KELUAR
+                        </h3>
+                        <form id="form-keluar" onsubmit="saveKeluarItem(event)" class="space-y-4">
+                            <input type="hidden" id="keluar-edit-mode" value="false">
+                            <div>
+                                <label class="text-xs block mb-1">ID Transaksi *</label>
+                                <input type="text" id="keluar-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Tanggal *</label>
+                                <input type="date" id="keluar-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Merujuk ke PO Aktif *</label>
+                                <select id="keluar-po-ref" onchange="updateKeluarFromPo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <option value="">-- Pilih PO Customer Aktif —</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Pilih Barang *</label>
+                                <select id="keluar-barang" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <option value="">-- Pilih Barang —</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Jumlah Keluar (Qty) *</label>
+                                <input type="number" id="keluar-qty" min="1" value="50" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Customer / Tujuan *</label>
+                                <input type="text" id="keluar-tujuan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA">
+                            </div>
+                            <div class="pt-2 flex gap-2">
+                                <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
+                                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                    <span>Simpan</span>
+                                </button>
+                                <button type="button" onclick="resetKeluarForm()" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="app-card p-6 rounded-2xl lg:col-span-9 flex flex-col">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-3 mb-5">
+                            <div>
+                                <h3 class="font-bold text-xs tracking-wider uppercase text-gray-100">RIWAYAT TRANSAKSI BARANG KELUAR</h3>
+                                <p class="text-xs text-gray-300 mt-0.5" id="keluar-total-badge">0 Transaksi</p>
+                            </div>
+                            <div class="flex items-center gap-2.5 w-full md:w-auto">
+                                <div class="w-full md:w-64">
+                                    <input type="text" id="search-keluar" oninput="renderKeluarTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Customer...">
+                                </div>
+                                <button onclick="printKeluarTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
+                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                                    <span>Print</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="fluid-table-container flex-1 pb-2">
+                            <table class="fluid-table text-left text-xs">
+                                <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
+                                    <tr>
+                                        <th class="py-3 px-2 rounded-l-xl text-center w-10">No</th>
+                                        <th class="py-3 px-3">ID Transaksi</th>
+                                        <th class="py-3 px-3">Tanggal</th>
+                                        <th class="py-3 px-3">ID Barang</th>
+                                        <th class="py-3 px-3">Nama Barang</th>
+                                        <th class="py-3 px-3">Kategori</th>
+                                        <th class="py-3 px-2">Lebar</th>
+                                        <th class="py-3 px-2">Ukuran</th>
+                                        <th class="py-3 px-2">Satuan</th>
+                                        <th class="py-3 px-3 text-right">Qty Keluar</th>
+                                        <th class="py-3 px-3">Customer / Tujuan</th>
+                                        <th class="py-3 px-3">No PO Ref</th>
+                                        <th id="keluar-th-aksi" class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="keluar-table-body" class="divide-y divide-white/5">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. TAB SAMPEL -->
             <section id="tab-sampel" class="space-y-6 w-full hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <div id="sampel-form-card" class="app-card p-5 rounded-2xl h-fit lg:col-span-3">
@@ -1047,7 +1050,7 @@
                 </div>
             </section>
 
-            <!-- 6. TAB RETUR BARANG -->
+            <!-- 7. TAB RETUR BARANG -->
             <section id="tab-retur" class="space-y-6 w-full hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <div id="retur-form-card" class="app-card p-5 rounded-2xl h-fit lg:col-span-3">
@@ -1126,7 +1129,7 @@
                 </div>
             </section>
 
-            <!-- 7. TAB MANAJEMEN USER -->
+            <!-- 8. TAB MANAJEMEN USER -->
             <section id="tab-users" class="space-y-6 w-full hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <div id="user-form-card" class="app-card p-5 rounded-2xl h-fit lg:col-span-4">
@@ -1232,6 +1235,12 @@
             <h4 id="confirm-title" class="font-bold text-sm text-gray-100 uppercase tracking-wide">Konfirmasi Aksi</h4>
             <p id="confirm-message" class="text-xs text-gray-300 leading-relaxed">Apakah Anda yakin ingin melanjutkan tindakan ini?</p>
             <div class="flex justify-end gap-2.5 pt-2">
+                <button id="confirm-cancel-btn" class="px-4 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20 transition-all">Batal</button>
+                <button id="confirm-ok-btn" class="px-4 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold shadow-lg transition-all">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ROBUST STORAGE SYNC SCRIPT WITH FIREBASE FALLBACK & REALTIME LISTENER -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -1306,7 +1315,6 @@
                         }
                         const docRef = doc(db, 'artifacts', appId, 'gudang_sync', 'gudang_main_state');
                         
-                        // Realtime listener setup
                         onSnapshot(docRef, (docSnap) => {
                             if (docSnap.exists()) {
                                 const cloudData = docSnap.data();
@@ -1319,15 +1327,33 @@
                                 }
                             }
                         }, (error) => {
-                            console.warn("Snapshot listener error:", error);
+                            console.warn("Snapshot listener warning:", error);
+                            updateCloudStatusBadge(false);
                         });
+                        updateCloudStatusBadge(true);
                     } catch (e) {
                         console.warn("Cloud init fallback:", e.message);
+                        updateCloudStatusBadge(false);
                     }
                 };
                 initCloud();
             } catch(e) {
                 console.warn("Firebase init skipped:", e);
+                updateCloudStatusBadge(false);
+            }
+        } else {
+            updateCloudStatusBadge(false);
+        }
+
+        function updateCloudStatusBadge(isOnline) {
+            const badge = document.getElementById('cloud-sync-status');
+            if (!badge) return;
+            if (isOnline) {
+                badge.className = "inline-flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold";
+                badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Cloud Sync Active';
+            } else {
+                badge.className = "inline-flex items-center gap-1 text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/30 font-bold";
+                badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Local / Standalone Mode';
             }
         }
 
@@ -1339,10 +1365,12 @@
                     const db = getFirestore(app);
                     const docRef = doc(db, 'artifacts', appId, 'gudang_sync', 'gudang_main_state');
                     await setDoc(docRef, window.gudangAppDb);
+                    updateCloudStatusBadge(true);
                 }
             } catch (err) {
                 console.warn("Save sync warning:", err.message);
                 localStorage.setItem('gudang_pro_local_state', JSON.stringify(window.gudangAppDb));
+                updateCloudStatusBadge(false);
             }
             refreshAllViews();
         };
