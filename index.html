@@ -1296,7 +1296,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, enableIndexedDbPersistence, enableMultiTabIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const DEFAULT_DATA = {
             theme: 'sunset',
@@ -1336,20 +1336,7 @@
         const localSaved = localStorage.getItem('gudang_pro_local_state');
         window.gudangAppDb = localSaved ? JSON.parse(localSaved) : JSON.parse(JSON.stringify(DEFAULT_DATA));
 
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'gudang_pro_local_state' && e.newValue) {
-                try {
-                    const parsed = JSON.parse(e.newValue);
-                    const currentSessionUser = window.gudangAppDb.currentUser;
-                    window.gudangAppDb = parsed;
-                    if (currentSessionUser) window.gudangAppDb.currentUser = currentSessionUser;
-                    refreshAllViews();
-                } catch(err) {}
-            }
-        });
-
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'gudang-pro-cloud-system';
-        // Configured with your personal Firebase Cloud credentials
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
             apiKey: "AIzaSyCBWc__mP1LzKpEdXfh4K5G9Gu7luQrG3o",
             authDomain: "inventorytestcv.firebaseapp.com",
@@ -1368,7 +1355,6 @@
                 const app = initializeApp(firebaseConfig);
                 cloudDb = getFirestore(app);
                 const auth = getAuth(app);
-                // Fixed path to ensure reliable root sync across client instances
                 cloudDocRef = doc(cloudDb, 'artifacts', appId, 'gudang_sync', 'shared_inventory_main');
                 
                 const initCloud = async () => {
@@ -1379,6 +1365,23 @@
                             await signInAnonymously(auth);
                         }
                         
+                        // Fetch initial data immediately before binding snapshot listener
+                        const initialSnap = await getDoc(cloudDocRef);
+                        if (initialSnap.exists()) {
+                            const remoteData = initialSnap.data();
+                            if (remoteData && remoteData.items) {
+                                isSyncingFromCloud = true;
+                                const currentSessionUser = window.gudangAppDb.currentUser;
+                                window.gudangAppDb = remoteData;
+                                if (currentSessionUser) window.gudangAppDb.currentUser = currentSessionUser;
+                                localStorage.setItem('gudang_pro_local_state', JSON.stringify(remoteData));
+                                refreshAllViews();
+                                isSyncingFromCloud = false;
+                            }
+                        } else {
+                            await setDoc(cloudDocRef, window.gudangAppDb);
+                        }
+
                         onSnapshot(cloudDocRef, (docSnap) => {
                             if (docSnap.exists()) {
                                 const cloudData = docSnap.data();
@@ -1391,15 +1394,13 @@
                                     refreshAllViews();
                                     isSyncingFromCloud = false;
                                 }
-                            } else {
-                                setDoc(cloudDocRef, window.gudangAppDb).catch(() => {});
                             }
-                            updateCloudStatusBadge(navigator.onLine);
+                            updateCloudStatusBadge(true);
                         }, (error) => {
-                            console.warn("Snapshot listener warning:", error);
+                            console.warn("Snapshot listener error:", error);
                             updateCloudStatusBadge(navigator.onLine);
                         });
-                        updateCloudStatusBadge(navigator.onLine);
+                        updateCloudStatusBadge(true);
                     } catch (e) {
                         console.warn("Cloud init fallback:", e.message);
                         updateCloudStatusBadge(navigator.onLine);
@@ -1414,7 +1415,6 @@
             updateCloudStatusBadge(navigator.onLine);
         }
 
-        // Listen to live network status changes
         window.addEventListener('online', () => updateCloudStatusBadge(true));
         window.addEventListener('offline', () => updateCloudStatusBadge(false));
 
