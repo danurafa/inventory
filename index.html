@@ -1384,25 +1384,32 @@
                                     localStorage.setItem('gudang_pro_local_state', JSON.stringify(cloudData));
                                     refreshAllViews();
                                 }
+                            } else {
+                                setDoc(docRef, window.gudangAppDb).catch(() => {});
                             }
+                            updateCloudStatusBadge(navigator.onLine);
                         }, (error) => {
                             console.warn("Snapshot listener warning:", error);
-                            updateCloudStatusBadge(false);
+                            updateCloudStatusBadge(navigator.onLine);
                         });
-                        updateCloudStatusBadge(true);
+                        updateCloudStatusBadge(navigator.onLine);
                     } catch (e) {
                         console.warn("Cloud init fallback:", e.message);
-                        updateCloudStatusBadge(false);
+                        updateCloudStatusBadge(navigator.onLine);
                     }
                 };
                 initCloud();
             } catch(e) {
                 console.warn("Firebase init skipped:", e);
-                updateCloudStatusBadge(false);
+                updateCloudStatusBadge(navigator.onLine);
             }
         } else {
-            updateCloudStatusBadge(false);
+            updateCloudStatusBadge(navigator.onLine);
         }
+
+        // Listen to live network status changes
+        window.addEventListener('online', () => updateCloudStatusBadge(true));
+        window.addEventListener('offline', () => updateCloudStatusBadge(false));
 
         function updateCloudStatusBadge(isOnline) {
             const badge = document.getElementById('cloud-sync-status');
@@ -1412,7 +1419,7 @@
                 badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Cloud Sync Active';
             } else {
                 badge.className = "inline-flex items-center gap-1 text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/30 font-bold";
-                badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Local / Standalone Mode';
+                badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Offline (Standalone Mode)';
             }
         }
 
