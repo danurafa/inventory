@@ -12,6 +12,13 @@
     <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
+        // Force version check & cache bust timestamp
+        const APP_VERSION = "2026.11.13-v2";
+        if (localStorage.getItem('gudang_version') !== APP_VERSION) {
+            localStorage.setItem('gudang_version', APP_VERSION);
+            // Clear stale cache flags if any
+        }
+
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -1275,6 +1282,17 @@
         // Load initial state with localStorage fallback
         const localSaved = localStorage.getItem('gudang_pro_local_state');
         window.gudangAppDb = localSaved ? JSON.parse(localSaved) : JSON.parse(JSON.stringify(DEFAULT_DATA));
+
+        // Auto-refresh data from localStorage if updated in another tab/device
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'gudang_pro_local_state' && e.newValue) {
+                try {
+                    window.gudangAppDb = JSON.parse(e.newValue);
+                    if (window.activeUserSession) window.gudangAppDb.currentUser = window.activeUserSession;
+                    refreshAllViews();
+                } catch(err) {}
+            }
+        });
 
         // Try optional cloud sync if Firebase config is available
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'gudang-pro-cloud-system';
