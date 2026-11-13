@@ -1359,11 +1359,15 @@
             appId: "1:909180357097:web:03df07f528c10a30a32378"
         };
 
+        let cloudDb = null;
+        let cloudDocRef = null;
+
         if (firebaseConfig) {
             try {
                 const app = initializeApp(firebaseConfig);
-                const db = getFirestore(app);
+                cloudDb = getFirestore(app);
                 const auth = getAuth(app);
+                cloudDocRef = doc(cloudDb, 'artifacts', appId, 'gudang_sync', 'gudang_main_state');
                 
                 const initCloud = async () => {
                     try {
@@ -1372,9 +1376,8 @@
                         } else {
                             await signInAnonymously(auth);
                         }
-                        const docRef = doc(db, 'artifacts', appId, 'gudang_sync', 'gudang_main_state');
                         
-                        onSnapshot(docRef, (docSnap) => {
+                        onSnapshot(cloudDocRef, (docSnap) => {
                             if (docSnap.exists()) {
                                 const cloudData = docSnap.data();
                                 if (cloudData && cloudData.items) {
@@ -1385,7 +1388,7 @@
                                     refreshAllViews();
                                 }
                             } else {
-                                setDoc(docRef, window.gudangAppDb).catch(() => {});
+                                setDoc(cloudDocRef, window.gudangAppDb).catch(() => {});
                             }
                             updateCloudStatusBadge(navigator.onLine);
                         }, (error) => {
@@ -1426,17 +1429,14 @@
         window.saveCloudDB = async function() {
             try {
                 localStorage.setItem('gudang_pro_local_state', JSON.stringify(window.gudangAppDb));
-                if (firebaseConfig) {
-                    const app = initializeApp(firebaseConfig);
-                    const db = getFirestore(app);
-                    const docRef = doc(db, 'artifacts', appId, 'gudang_sync', 'gudang_main_state');
-                    await setDoc(docRef, window.gudangAppDb);
+                if (cloudDb && cloudDocRef) {
+                    await setDoc(cloudDocRef, window.gudangAppDb);
                     updateCloudStatusBadge(true);
                 }
             } catch (err) {
                 console.warn("Save sync warning:", err.message);
                 localStorage.setItem('gudang_pro_local_state', JSON.stringify(window.gudangAppDb));
-                updateCloudStatusBadge(false);
+                updateCloudStatusBadge(navigator.onLine);
             }
             refreshAllViews();
         };
