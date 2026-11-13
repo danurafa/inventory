@@ -1361,13 +1361,15 @@
 
         let cloudDb = null;
         let cloudDocRef = null;
+        let isSyncingFromCloud = false;
 
         if (firebaseConfig) {
             try {
                 const app = initializeApp(firebaseConfig);
                 cloudDb = getFirestore(app);
                 const auth = getAuth(app);
-                cloudDocRef = doc(cloudDb, 'artifacts', appId, 'gudang_sync', 'gudang_main_state');
+                // Fixed path to ensure reliable root sync across client instances
+                cloudDocRef = doc(cloudDb, 'artifacts', appId, 'gudang_sync', 'shared_inventory_main');
                 
                 const initCloud = async () => {
                     try {
@@ -1381,11 +1383,13 @@
                             if (docSnap.exists()) {
                                 const cloudData = docSnap.data();
                                 if (cloudData && cloudData.items) {
+                                    isSyncingFromCloud = true;
                                     const currentSessionUser = window.gudangAppDb.currentUser;
                                     window.gudangAppDb = cloudData;
                                     if (currentSessionUser) window.gudangAppDb.currentUser = currentSessionUser;
                                     localStorage.setItem('gudang_pro_local_state', JSON.stringify(cloudData));
                                     refreshAllViews();
+                                    isSyncingFromCloud = false;
                                 }
                             } else {
                                 setDoc(cloudDocRef, window.gudangAppDb).catch(() => {});
@@ -1429,7 +1433,7 @@
         window.saveCloudDB = async function() {
             try {
                 localStorage.setItem('gudang_pro_local_state', JSON.stringify(window.gudangAppDb));
-                if (cloudDb && cloudDocRef) {
+                if (cloudDb && cloudDocRef && !isSyncingFromCloud) {
                     await setDoc(cloudDocRef, window.gudangAppDb);
                     updateCloudStatusBadge(true);
                 }
