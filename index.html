@@ -2044,7 +2044,7 @@
                 const value = String(row?.id || '').trim().toUpperCase();
                 if (!value.startsWith(prefix)) return;
                 const suffix = value.slice(prefix.length);
-                if (/^\\d+$/.test(suffix)) {
+                if (/^\d+$/.test(suffix)) {
                     maxNumber = Math.max(maxNumber, Number(suffix));
                 }
             });
