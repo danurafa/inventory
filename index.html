@@ -1131,8 +1131,15 @@
                                 </select>
                             </div>
                             <div>
+                                <label class="text-xs block mb-1">Referensi Barang Keluar *</label>
+                                <select id="retur-keluar-ref" required onchange="updateReturReferenceInfo()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <option value="">-- Pilih transaksi keluar asal --</option>
+                                </select>
+                                <p id="retur-reference-info" class="text-[11px] text-gray-400 mt-1">Pilih barang terlebih dahulu untuk melihat transaksi keluar yang bisa diretur.</p>
+                            </div>
+                            <div>
                                 <label class="text-xs block mb-1">Jumlah Retur (Qty) *</label>
-                                <input type="number" id="retur-qty" min="1" value="10" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                                <input type="number" id="retur-qty" min="1" value="1" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Keterangan / Alasan *</label>
@@ -2508,40 +2515,114 @@
         };
 
         // Retur CRUD
-        window.saveReturItem = function(e) {
+        window.getReturAlreadyQty = function(keluarRef) {
+            return (window.gudangAppDb.retur || [])
+                .filter(r => String(r.keluarRef || '') === String(keluarRef))
+                .reduce((sum, r) => sum + (Number(r.qty) || 0), 0);
+        };
+
+        window.updateReturReferenceOptions = function() {
+            const barangId = document.getElementById('retur-barang')?.value || '';
+            const select = document.getElementById('retur-keluar-ref');
+            const info = document.getElementById('retur-reference-info');
+            if (!select) return;
+            const previous = select.value;
+            const rows = (window.gudangAppDb.keluar || []).filter(k => {
+                if (String(k.barangId) !== String(barangId)) return false;
+                const returned = window.getReturAlreadyQty(k.id);
+                return (Number(k.qty) || 0) - returned > 0;
+            });
+            select.innerHTML = '<option value="">-- Pilih transaksi keluar asal --</option>' +
+                rows.map(k => {
+                    const remaining = Math.max(0, (Number(k.qty) || 0) - window.getReturAlreadyQty(k.id));
+                    const po = (window.gudangAppDb.po || []).find(p => String(p.id) === String(k.poRef));
+                    const label = `${k.id} | ${k.tanggal || '-'} | Qty ${k.qty} | Sisa dapat diretur ${remaining}` +
+                        (po ? ` | PO ${po.noPoCustomer || po.id}` : ' | Tanpa PO');
+                    return `<option value="${String(k.id).replace(/"/g, '&quot;')}">${label}</option>`;
+                }).join('');
+            if (rows.some(k => String(k.id) === previous)) select.value = previous;
+            if (info) {
+                if (!barangId) info.textContent = 'Pilih barang terlebih dahulu untuk melihat transaksi keluar yang bisa diretur.';
+                else if (!rows.length) info.textContent = 'Tidak ada transaksi keluar untuk barang ini yang masih memiliki sisa retur.';
+                else info.textContent = 'Pilih transaksi asal. PO dan customer akan ditentukan dari transaksi tersebut.';
+            }
+        };
+        window.updateReturReferenceInfo = function() {
+            const ref = document.getElementById('retur-keluar-ref')?.value || '';
+            const info = document.getElementById('retur-reference-info');
+            const qtyInput = document.getElementById('retur-qty');
+            const row = (window.gudangAppDb.keluar || []).find(k => String(k.id) === String(ref));
+            if (!row) {
+                if (info) info.textContent = 'Pilih transaksi keluar asal.';
+                return;
+            }
+            const remaining = Math.max(0, (Number(row.qty) || 0) - window.getReturAlreadyQty(ref));
+            const po = (window.gudangAppDb.po || []).find(p => String(p.id) === String(row.poRef));
+            if (qtyInput) qtyInput.max = String(remaining);
+            if (info) info.textContent = `Customer: ${row.tujuan || '-'} | PO: ${po ? (po.noPoCustomer || po.id) : 'Tanpa PO'} | Maksimal retur: ${remaining}`;
+        };
+
+        document.getElementById('retur-barang')?.addEventListener('change', () => {
+            window.updateReturReferenceOptions();
+        });
+
+        window.saveReturItem = async function(e) {
             e.preventDefault();
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
 
             const id = document.getElementById('retur-id').value.trim().toUpperCase();
             const tanggal = document.getElementById('retur-tanggal').value;
             const barangId = document.getElementById('retur-barang').value;
-            const qty = parseInt(document.getElementById('retur-qty').value) || 0;
+            const keluarRef = document.getElementById('retur-keluar-ref').value;
+            const qty = parseInt(document.getElementById('retur-qty').value, 10) || 0;
             const keterangan = document.getElementById('retur-keterangan').value.trim().toUpperCase();
             const username = window.gudangAppDb.currentUser?.name || 'Administrator';
+            const item = window.gudangAppDb.items.find(x => String(x.id) === String(barangId));
+            const keluar = (window.gudangAppDb.keluar || []).find(x => String(x.id) === String(keluarRef));
 
-            const item = window.gudangAppDb.items.find(x => x.id === barangId);
-            if (!item) return;
+            if (!item || !keluar) return showToast('Pilih barang dan referensi transaksi keluar yang valid.', 'error');
+            const remaining = Math.max(0, (Number(keluar.qty) || 0) - window.getReturAlreadyQty(keluarRef));
+            if (qty < 1 || qty > remaining) return showToast(`Qty retur maksimal ${remaining}.`, 'error');
+            if (String(keluar.barangId) !== String(barangId)) return showToast('Barang tidak sesuai dengan transaksi keluar asal.', 'error');
 
+            const po = (window.gudangAppDb.po || []).find(p => String(p.id) === String(keluar.poRef));
             item.stok += qty;
             window.gudangAppDb.retur.unshift({
                 id, tanggal, barangId, nama: item.nama, jenis: item.jenis,
-                lebar: item.lebar || '', ukuran: item.ukuran || '', satuan: item.satuan, qty, keterangan, user: username
+                lebar: item.lebar || '', ukuran: item.ukuran || '', satuan: item.satuan,
+                qty, keterangan, user: username, keluarRef, poRef: keluar.poRef || ''
             });
-            resetReturForm();
-            saveCloudDB();
-            showToast('Retur berhasil disimpan!');
+            if (po) {
+                po.terkirim = Math.max(0, Number(po.terkirim || 0) - qty);
+                po.status = po.terkirim >= Number(po.qty || 0) ? 'CLOSED' : (po.terkirim > 0 ? 'PARTIAL' : 'OPEN');
+            }
+            try {
+                await saveCloudDB();
+                resetReturForm();
+                showToast('Retur berhasil disimpan. Stok dan realisasi PO diperbarui.');
+            } catch (error) {
+                showToast(`Retur gagal disimpan: ${error.message}`, 'error');
+            }
         };
 
         window.deleteReturItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
-            showConfirm('Hapus Retur', `Yakin ingin menghapus ${id}?`, () => {
-                const r = window.gudangAppDb.retur.find(x => x.id === id);
-                if (r) {
-                    const item = window.gudangAppDb.items.find(x => x.id === r.barangId);
-                    if (item) item.stok += r.qty;
+            showConfirm('Hapus Retur', `Yakin ingin menghapus ${id}? Stok dan PO akan dikembalikan seperti sebelum retur.`, async () => {
+                try {
+                    const r = window.gudangAppDb.retur.find(x => x.id === id);
+                    if (!r) return;
+                    const item = window.gudangAppDb.items.find(x => String(x.id) === String(r.barangId));
+                    if (item) item.stok = Math.max(0, Number(item.stok || 0) - Number(r.qty || 0));
+                    const po = r.poRef ? window.gudangAppDb.po.find(x => String(x.id) === String(r.poRef)) : null;
+                    if (po) {
+                        po.terkirim = Math.min(Number(po.qty || 0), Number(po.terkirim || 0) + Number(r.qty || 0));
+                        po.status = po.terkirim >= Number(po.qty || 0) ? 'CLOSED' : (po.terkirim > 0 ? 'PARTIAL' : 'OPEN');
+                    }
                     window.gudangAppDb.retur = window.gudangAppDb.retur.filter(x => x.id !== id);
-                    saveCloudDB();
-                    showToast('Retur dihapus.', 'warning');
+                    await saveCloudDB();
+                    showToast('Retur dihapus; stok dan realisasi PO dipulihkan.', 'warning');
+                } catch (error) {
+                    showToast(`Retur gagal dihapus: ${error.message}`, 'error');
                 }
             });
         };
@@ -2550,6 +2631,9 @@
             document.getElementById('form-retur').reset();
             document.getElementById('retur-id').value = generateId('RTR');
             document.getElementById('retur-tanggal').valueAsDate = new Date();
+            window.updateReturReferenceOptions?.();
+            document.getElementById('retur-qty').max = '';
+            document.getElementById('retur-reference-info').textContent = 'Pilih barang terlebih dahulu untuk melihat transaksi keluar yang bisa diretur.';
         };
 
         window.renderReturTable = function() {
