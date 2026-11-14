@@ -1174,9 +1174,6 @@
                                         <th class="py-3 px-2 rounded-l-xl text-center w-10">No</th>
                                         <th class="py-3 px-3">ID Retur</th>
                                         <th class="py-3 px-3">Tanggal</th>
-                                        <th class="py-3 px-3">ID Keluar Asal</th>
-                                        <th class="py-3 px-3">No. PO</th>
-                                        <th class="py-3 px-3">Customer</th>
                                         <th class="py-3 px-3">ID Barang</th>
                                         <th class="py-3 px-3">Nama Barang</th>
                                         <th class="py-3 px-3">Kategori</th>
@@ -1527,15 +1524,21 @@
 
         window.saveCloudDB = async function() {
             saveLocalDB();
-            if (isSyncingFromCloud) return;
+            if (isSyncingFromCloud) return true;
             if (!workerToken || !cloudReady) {
                 updateCloudStatusBadge('offline', 'Login diperlukan untuk sinkronisasi.');
-                return;
+                return false;
             }
-            syncQueue = syncQueue.then(async () => {
+
+            // Setiap pemanggilan menunggu antrean sebelumnya. Nilai true hanya
+            // dikembalikan setelah Worker mengonfirmasi seluruh operasi.
+            const currentTask = syncQueue.then(async () => {
                 updateCloudStatusBadge('saving');
                 await syncLocalChanges();
-            }).catch(async error => {
+                return true;
+            });
+
+            syncQueue = currentTask.catch(async error => {
                 lastCloudError = error;
                 console.error('[Worker Sync] Gagal:', error);
                 updateCloudStatusBadge('error', error.message);
@@ -1544,8 +1547,10 @@
                     applyWorkerData(fresh.data);
                 } catch (_) {}
                 showToast(`Gagal menyimpan ke cloud: ${error.message}`, 'error');
+                return false;
             });
-            await syncQueue;
+
+            return await syncQueue;
         };
 
         async function loadUsersFromWorker() {
@@ -2265,7 +2270,7 @@
             }
         };
 
-        window.saveKeluarItem = function(e) {
+        window.saveKeluarItem = async function(e) {
             e.preventDefault();
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
 
@@ -2280,6 +2285,14 @@
             const item = window.gudangAppDb.items.find(x => x.id === barangId);
             if (!item || item.stok < qty) {
                 showToast('Stok barang tidak mencukupi!', 'error');
+                return;
+            }
+            if (!id || !tanggal || !poRef || !barangId || qty <= 0) {
+                showToast('Lengkapi data Barang Keluar terlebih dahulu.', 'error');
+                return;
+            }
+            if (window.gudangAppDb.keluar.some(x => String(x.id).toUpperCase() === id)) {
+                showToast('ID transaksi Barang Keluar sudah digunakan.', 'error');
                 return;
             }
 
@@ -2297,9 +2310,13 @@
                 }
             }
 
-            resetKeluarForm();
-            saveCloudDB();
-            showToast('Transaksi keluar berhasil disimpan!');
+            const saved = await saveCloudDB();
+            if (saved) {
+                resetKeluarForm();
+                showToast('Transaksi keluar berhasil disimpan dan dikonfirmasi Worker!');
+            } else {
+                showToast('Transaksi keluar belum terkonfirmasi tersimpan di cloud. Periksa koneksi dan riwayat sebelum mencoba ulang.', 'error');
+            }
         };
 
         window.deleteKeluarItem = function(id) {
@@ -2593,9 +2610,7 @@
             window.gudangAppDb.retur.unshift({
                 id, tanggal, barangId, nama: item.nama, jenis: item.jenis,
                 lebar: item.lebar || '', ukuran: item.ukuran || '', satuan: item.satuan,
-                qty, keterangan, user: username, keluarRef,
-                poRef: keluar.poRef || '',
-                customer: keluar.tujuan || keluar.customer || ''
+                qty, keterangan, user: username, keluarRef, poRef: keluar.poRef || ''
             });
             if (po) {
                 po.terkirim = Math.max(0, Number(po.terkirim || 0) - qty);
@@ -2646,52 +2661,32 @@
             const tbody = document.getElementById('retur-table-body');
             const badgeTotal = document.getElementById('retur-total-badge');
             const isViewer = window.gudangAppDb.currentUser?.role === 'viewer';
-            if (!tbody) return;
 
-            const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
-                '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
-            }[ch]));
-
-            const rows = window.gudangAppDb.retur || [];
-            const filtered = rows.filter(r => {
-                const outbound = (window.gudangAppDb.keluar || []).find(k => String(k.id) === String(r.keluarRef));
-                const po = (window.gudangAppDb.po || []).find(p => String(p.id) === String(r.poRef || outbound?.poRef));
-                const customer = r.customer || outbound?.tujuan || outbound?.customer || '';
-                const poNumber = po ? (po.noPoCustomer || po.id) : (r.poRef || outbound?.poRef || '');
-                return [r.id, r.nama, r.keterangan, r.keluarRef, poNumber, customer, r.barangId]
-                    .join(' ').toLowerCase().includes(q);
-            });
+            const filtered = window.gudangAppDb.retur.filter(i => 
+                i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.keterangan.toLowerCase().includes(q)
+            );
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Transaksi`;
 
-            tbody.innerHTML = filtered.map((r, index) => {
-                const outbound = (window.gudangAppDb.keluar || []).find(k => String(k.id) === String(r.keluarRef));
-                const po = (window.gudangAppDb.po || []).find(p => String(p.id) === String(r.poRef || outbound?.poRef));
-                const customer = r.customer || outbound?.tujuan || outbound?.customer || '-';
-                const poNumber = po ? (po.noPoCustomer || po.id) : (r.poRef || outbound?.poRef || '-');
-                return `
-                    <tr class="hover:bg-white/5">
-                        <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
-                        <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(r.id)}</td>
-                        <td class="py-3 px-3 opacity-80">${esc(r.tanggal || '-')}</td>
-                        <td class="py-3 px-3 font-mono opacity-80">${esc(r.keluarRef || '-')}</td>
-                        <td class="py-3 px-3 font-mono text-sky-300">${esc(poNumber)}</td>
-                        <td class="py-3 px-3">${esc(customer)}</td>
-                        <td class="py-3 px-3 font-mono opacity-80">${esc(r.barangId || '-')}</td>
-                        <td class="py-3 px-3 font-medium">${esc(r.nama || '-')}</td>
-                        <td class="py-3 px-3 opacity-80">${esc(r.jenis || '-')}</td>
-                        <td class="py-3 px-2 opacity-80">${esc(r.lebar || '-')}</td>
-                        <td class="py-3 px-2 opacity-80">${esc(r.ukuran || '-')}</td>
-                        <td class="py-3 px-2 opacity-80">${esc(r.satuan || '-')}</td>
-                        <td class="py-3 px-3 text-right font-mono font-bold text-amber-400">${(Number(r.qty) || 0).toLocaleString('id-ID')}</td>
-                        <td class="py-3 px-3 font-medium">${esc(r.keterangan || '-')}</td>
-                        ${!isViewer ? `
-                            <td class="py-3 px-3 text-center">
-                                <button onclick="deleteReturItem('${esc(r.id)}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
-                            </td>
-                        ` : ''}
-                    </tr>
-                `;
-            }).join('') || `<tr><td colspan="${isViewer ? 14 : 15}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
+            tbody.innerHTML = filtered.map((i, index) => `
+                <tr class="hover:bg-white/5">
+                    <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
+                    <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
+                    <td class="py-3 px-3 opacity-80">${i.tanggal}</td>
+                    <td class="py-3 px-3 font-mono opacity-80">${i.barangId}</td>
+                    <td class="py-3 px-3 font-medium">${i.nama}</td>
+                    <td class="py-3 px-3 opacity-80">${i.jenis}</td>
+                    <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
+                    <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
+                    <td class="py-3 px-2 opacity-80">${i.satuan}</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-amber-400">${i.qty.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-3 font-medium">${i.keterangan}</td>
+                    ${!isViewer ? `
+                        <td class="py-3 px-3 text-center">
+                            <button onclick="deleteReturItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
+                        </td>
+                    ` : ''}
+                </tr>
+            `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
             lucide.createIcons();
         };
 
