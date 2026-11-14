@@ -2097,43 +2097,43 @@
         };
 
         // Master CRUD
-        window.saveMasterItem = function(e) {
+        window.saveMasterItem = async function(e) {
             e.preventDefault();
-            if (window.gudangAppDb.currentUser?.role === 'viewer') {
-                showToast('Akses ditolak: Mode Viewer tidak dapat menambah atau mengubah data!', 'error');
+            const role = window.gudangAppDb.currentUser?.role;
+            if (!['admin','superadmin'].includes(role)) {
+                showToast('Hanya Admin dan Super Admin yang dapat mengelola Master Barang.', 'error');
                 return;
             }
-
             const id = document.getElementById('master-id').value.trim().toUpperCase();
             const nama = document.getElementById('master-nama').value.trim().toUpperCase();
             const jenis = document.getElementById('master-jenis').value;
             const lebar = document.getElementById('master-lebar').value;
             const ukuran = document.getElementById('master-ukuran').value;
-            const berat = parseFloat(document.getElementById('master-berat').value) || 0;
+            const berat = Number(document.getElementById('master-berat').value) || 0;
             const satuan = document.getElementById('master-satuan').value;
-            const min = parseInt(document.getElementById('master-min').value) || 0;
-            const stok = parseInt(document.getElementById('master-stok').value) || 0;
+            const min = Number(document.getElementById('master-min').value) || 0;
+            const stok = Number(document.getElementById('master-stok').value) || 0;
             const isEdit = document.getElementById('master-edit-mode').value === 'true';
-
-            if (isEdit) {
-                const item = window.gudangAppDb.items.find(x => x.id === id);
-                if (item) {
-                    item.nama = nama; item.jenis = jenis; item.lebar = lebar;
-                    item.ukuran = ukuran; item.berat = berat; item.satuan = satuan;
-                    item.min = min; // Stok hanya berubah melalui transaksi, bukan edit master.
-                }
-                showToast(`Barang ${id} berhasil diperbarui!`);
-            } else {
-                if (window.gudangAppDb.items.some(x => x.id === id)) {
-                    showToast(`ID Barang ${id} sudah ada!`, 'error');
-                    return;
-                }
-                window.gudangAppDb.items.unshift({ id, nama, jenis, lebar, ukuran, berat, satuan, min, stok });
-                showToast(`Barang ${id} berhasil ditambahkan!`);
+            if (!id || !nama || !jenis || !satuan || berat < 0 || min < 0 || stok < 0) {
+                showToast('Lengkapi Master Barang dan pastikan nilai angka tidak negatif.', 'error'); return;
             }
-
-            resetMasterForm();
-            saveCloudDB();
+            const existing = window.gudangAppDb.items.find(x => String(x.id).toUpperCase() === id);
+            if ((!isEdit && existing) || (isEdit && !existing)) {
+                showToast(existing ? `ID Barang ${id} sudah digunakan.` : `Barang ${id} tidak ditemukan.`, 'error'); return;
+            }
+            if (isEdit) {
+                Object.assign(existing, { nama, jenis, lebar, ukuran, berat, satuan, min });
+                // Stok tidak boleh diedit melalui Master Barang.
+            } else {
+                window.gudangAppDb.items.unshift({ id, nama, jenis, lebar, ukuran, berat, satuan, min, stok });
+            }
+            const saved = await saveCloudDB();
+            if (saved) {
+                resetMasterForm();
+                showToast(isEdit ? `Barang ${id} berhasil diperbarui.` : `Barang ${id} berhasil ditambahkan.`);
+            } else {
+                showToast(`Perubahan Master Barang ${id} belum dikonfirmasi Worker. Jangan kirim ulang sebelum memeriksa daftar.`, 'error');
+            }
         };
 
         window.editMasterItem = function(id) {
@@ -2157,11 +2157,14 @@
         };
 
         window.deleteMasterItem = function(id) {
-            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
-            showConfirm('Hapus Barang', `Yakin ingin menghapus ${id}?`, () => {
+            if (!['admin','superadmin'].includes(window.gudangAppDb.currentUser?.role)) {
+                showToast('Hanya Admin dan Super Admin yang dapat menghapus Master Barang.', 'error'); return;
+            }
+            showConfirm('Hapus Barang', `Yakin ingin menghapus ${id}?`, async () => {
                 window.gudangAppDb.items = window.gudangAppDb.items.filter(x => x.id !== id);
-                saveCloudDB();
-                showToast(`Barang ${id} berhasil dihapus.`, 'warning');
+                const saved = await saveCloudDB();
+                if (saved) showToast(`Barang ${id} berhasil dihapus dan dikonfirmasi Worker.`, 'warning');
+                else showToast(`Penghapusan ${id} belum dikonfirmasi Worker. Periksa kembali data.`, 'error');
             });
         };
 
@@ -2264,15 +2267,13 @@
 
         window.deleteMasukItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
-            showConfirm('Hapus Barang Masuk', `Yakin ingin menghapus ${id}?`, () => {
+            showConfirm('Hapus Barang Masuk', `Yakin ingin menghapus ${id}?`, async () => {
                 const m = window.gudangAppDb.masuk.find(x => x.id === id);
-                if (m) {
-                    const item = window.gudangAppDb.items.find(x => x.id === m.barangId);
-                    if (item) item.stok = Math.max(0, item.stok - m.qty);
-                    window.gudangAppDb.masuk = window.gudangAppDb.masuk.filter(x => x.id !== id);
-                    saveCloudDB();
-                    showToast('Transaksi dihapus.', 'warning');
-                }
+                if (!m) return;
+                window.gudangAppDb.masuk = window.gudangAppDb.masuk.filter(x => x.id !== id);
+                const saved = await saveCloudDB();
+                if (saved) showToast('Barang Masuk dihapus dan stok dikoreksi oleh Worker.', 'warning');
+                else showToast('Penghapusan Barang Masuk belum dikonfirmasi Worker. Periksa kembali data.', 'error');
             });
         };
 
@@ -2441,36 +2442,42 @@
         };
 
         // PO CRUD
-        window.savePoItem = function(e) {
+        window.savePoItem = async function(e) {
             e.preventDefault();
-            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
-
+            if (window.gudangAppDb.currentUser?.role === 'viewer') {
+                showToast('Viewer hanya dapat melihat data.', 'error'); return;
+            }
             const id = document.getElementById('po-id').value.trim().toUpperCase();
             const noPoCustomer = document.getElementById('po-no-customer').value.trim().toUpperCase();
             const tanggal = document.getElementById('po-tanggal').value;
             const customer = document.getElementById('po-customer').value.trim().toUpperCase();
             const barangId = document.getElementById('po-barang').value;
-            const qty = parseInt(document.getElementById('po-qty').value) || 0;
-
+            const qty = Number(document.getElementById('po-qty').value);
             const item = window.gudangAppDb.items.find(x => x.id === barangId);
-            if (!item) return;
-
+            if (!id || !noPoCustomer || !tanggal || !customer || !barangId || !Number.isInteger(qty) || qty <= 0) {
+                showToast('Lengkapi PO dan pastikan Qty bilangan bulat lebih dari nol.', 'error'); return;
+            }
+            if (!item) { showToast('Barang tidak ditemukan di Master Barang.', 'error'); return; }
+            if (window.gudangAppDb.po.some(x => String(x.id).toUpperCase() === id)) {
+                showToast(`ID Sistem PO ${id} sudah digunakan.`, 'error'); return;
+            }
             window.gudangAppDb.po.unshift({
                 id, noPoCustomer, tanggal, customer, barangId, nama: item.nama,
                 jenis: item.jenis, lebar: item.lebar || '', ukuran: item.ukuran || '',
                 satuan: item.satuan, qty, terkirim: 0, status: 'OPEN'
             });
-            resetPoForm();
-            saveCloudDB();
-            showToast('PO Customer berhasil disimpan!');
+            const saved = await saveCloudDB();
+            if (saved) { resetPoForm(); showToast('PO Customer berhasil disimpan dan dikonfirmasi Worker!'); }
+            else showToast('PO belum terkonfirmasi tersimpan di cloud. Periksa daftar PO sebelum mencoba ulang.', 'error');
         };
 
         window.deletePoItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
-            showConfirm('Hapus PO', `Yakin ingin menghapus ${id}?`, () => {
+            showConfirm('Hapus PO', `Yakin ingin menghapus ${id}?`, async () => {
                 window.gudangAppDb.po = window.gudangAppDb.po.filter(x => x.id !== id);
-                saveCloudDB();
-                showToast('PO dihapus.', 'warning');
+                const saved = await saveCloudDB();
+                if (saved) showToast('PO berhasil dihapus dan dikonfirmasi Worker.', 'warning');
+                else showToast('Penghapusan PO belum dikonfirmasi Worker. Periksa kembali data.', 'error');
             });
         };
 
