@@ -1615,6 +1615,8 @@
                     localStorage.setItem('gudang_pro_session', JSON.stringify(me.user));
                     const result = await workerRequest('/api/data', { method: 'GET' });
                     applyWorkerData(result.data);
+                    const masukIdField = document.getElementById('masuk-id');
+                    if (masukIdField) masukIdField.value = generateMasukSequentialId();
                     const keluarIdField = document.getElementById('keluar-id');
                     if (keluarIdField) keluarIdField.value = generateKeluarSequentialId();
                     await loadUsersFromWorker();
@@ -2025,11 +2027,26 @@
         };
 
         window.generateMasukSequentialId = function() {
-            const count = (window.gudangAppDb.masuk ? window.gudangAppDb.masuk.length : 0) + 1;
             const now = new Date();
             const yy = String(now.getFullYear()).slice(-2);
             const mm = String(now.getMonth() + 1).padStart(2, '0');
-            return `IN-${yy}${mm}-${String(count).padStart(4, '0')}`;
+            const prefix = `IN-${yy}${mm}-`;
+            const rows = Array.isArray(window.gudangAppDb?.masuk) ? window.gudangAppDb.masuk : [];
+            let maxNumber = 0;
+            rows.forEach(row => {
+                const value = String(row?.id || '').trim().toUpperCase();
+                if (!value.startsWith(prefix)) return;
+                const suffix = value.slice(prefix.length);
+                if (/^\d+$/.test(suffix)) maxNumber = Math.max(maxNumber, Number(suffix));
+            });
+            const usedIds = new Set(rows.map(row => String(row?.id || '').trim().toUpperCase()));
+            let nextNumber = maxNumber + 1;
+            let candidate = `${prefix}${String(nextNumber).padStart(4, '0')}`;
+            while (usedIds.has(candidate)) {
+                nextNumber++;
+                candidate = `${prefix}${String(nextNumber).padStart(4, '0')}`;
+            }
+            return candidate;
         };
 
         window.generateKeluarSequentialId = function() {
@@ -2204,7 +2221,7 @@
             document.getElementById('info-masuk-satuan').textContent = item ? item.satuan : '-';
         };
 
-        window.saveMasukItem = function(e) {
+        window.saveMasukItem = async function(e) {
             e.preventDefault();
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
 
@@ -2216,16 +2233,33 @@
             const username = window.gudangAppDb.currentUser?.name || 'Administrator';
 
             const item = window.gudangAppDb.items.find(x => x.id === barangId);
-            if (!item) return;
+            if (!id || !tanggal || !barangId || !supplier || !Number.isInteger(qty) || qty <= 0) {
+                showToast('Lengkapi data Barang Masuk dan pastikan Qty lebih dari nol.', 'error');
+                return;
+            }
+            if (!item) {
+                showToast('Barang tidak ditemukan di Master Barang.', 'error');
+                return;
+            }
+            if (window.gudangAppDb.masuk.some(x => String(x.id).toUpperCase() === id)) {
+                showToast('ID transaksi Barang Masuk sudah digunakan.', 'error');
+                return;
+            }
 
-            item.stok += qty;
+            // Mutasi lokal hanya sebagai draft optimistis. Worker menjadi sumber kebenaran.
+            item.stok = Number(item.stok || 0) + qty;
             window.gudangAppDb.masuk.unshift({
                 id, tanggal, barangId, nama: item.nama, jenis: item.jenis,
                 lebar: item.lebar || '', ukuran: item.ukuran || '', satuan: item.satuan, qty, supplier, user: username
             });
-            resetMasukForm();
-            saveCloudDB();
-            showToast('Transaksi masuk berhasil disimpan!');
+
+            const saved = await saveCloudDB();
+            if (saved) {
+                resetMasukForm();
+                showToast('Transaksi masuk berhasil disimpan dan dikonfirmasi Worker!');
+            } else {
+                showToast('Transaksi masuk belum terkonfirmasi tersimpan di cloud. Periksa riwayat dan stok sebelum mencoba ulang.', 'error');
+            }
         };
 
         window.deleteMasukItem = function(id) {
