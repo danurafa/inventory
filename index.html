@@ -2607,6 +2607,44 @@
             } catch (error) { showToast(error.message, 'error'); }
         };
 
+        // Reset password akun melalui Worker. Password lama tidak dapat dilihat karena disimpan sebagai hash.
+        window.resetUserPassword = async function(username) {
+            const actorRole = window.gudangAppDb.currentUser?.role;
+            const target = (window.gudangAppDb.users || []).find(u => u.username === username);
+            if (!['admin','superadmin'].includes(actorRole) || !target) return;
+            if (username === 'superadmin') {
+                showToast('Password Super Admin tidak dapat direset melalui menu ini.', 'error');
+                return;
+            }
+            if (actorRole === 'admin' && !['staff','viewer'].includes(target.role)) {
+                showToast('Admin hanya dapat mereset password Staff atau Viewer.', 'error');
+                return;
+            }
+            const newPassword = prompt(`Masukkan password baru untuk akun ${username} (minimal 10 karakter):`);
+            if (newPassword === null) return;
+            if (newPassword.length < 10 || newPassword.length > 128) {
+                showToast('Password harus terdiri dari 10–128 karakter.', 'error');
+                return;
+            }
+            const confirmPassword = prompt('Ulangi password baru untuk konfirmasi:');
+            if (confirmPassword === null) return;
+            if (newPassword !== confirmPassword) {
+                showToast('Konfirmasi password tidak sama.', 'error');
+                return;
+            }
+            try {
+                await workerRequest(`/api/users/${encodeURIComponent(username)}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ password: newPassword })
+                });
+                await loadUsersFromWorker();
+                window.refreshAllViews?.();
+                showToast(`Password akun ${username} berhasil direset.`);
+            } catch (error) {
+                showToast(`Reset password gagal: ${error.message}`, 'error');
+            }
+        };
+
         window.deleteUser = function(username) {
             const actorRole = window.gudangAppDb.currentUser?.role;
             if (!['admin','superadmin'].includes(actorRole)) return;
@@ -2638,8 +2676,11 @@
                         <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${badgeClass}">${u.role}</span></td>
                         <td class="py-3 px-3 text-emerald-400 font-semibold">● Aktif</td>
                         <td class="py-3 px-3 text-center">
-                            ${u.username !== window.gudangAppDb.currentUser?.username && (window.gudangAppDb.currentUser?.role === 'superadmin' || (window.gudangAppDb.currentUser?.role === 'admin' && ['staff','viewer'].includes(u.role))) ? `
-                                <button onclick="deleteUser('${u.username}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
+                            ${(window.gudangAppDb.currentUser?.role === 'superadmin' || (window.gudangAppDb.currentUser?.role === 'admin' && ['staff','viewer'].includes(u.role))) && u.username !== 'superadmin' ? `
+                                <div class="flex items-center justify-center gap-2">
+                                    <button onclick="resetUserPassword('${u.username}')" class="px-2 py-1 rounded bg-amber-500/20 text-amber-300 text-xs font-semibold">Reset Password</button>
+                                    ${u.username !== window.gudangAppDb.currentUser?.username ? `<button onclick="deleteUser('${u.username}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>` : ''}
+                                </div>
                             ` : ''}
                         </td>
                     </tr>
