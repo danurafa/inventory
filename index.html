@@ -1282,7 +1282,7 @@
                         <input id="restore-json-file" type="file" accept=".json,application/json" class="w-full text-xs text-gray-300 file:mr-3 file:px-3 file:py-2 file:rounded-lg file:border-0 file:bg-white/10 file:text-white hover:file:bg-white/20" onchange="previewRestoreFile(this)" autocomplete="off">
                         <div id="restore-file-info" class="hidden bg-white/5 rounded-xl p-3 text-xs text-gray-300"></div>
                         <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3 text-xs text-rose-300">Restore menimpa data aktif. Aplikasi akan mengunduh backup kondisi saat ini terlebih dahulu sebelum memulihkan file pilihan.</div>
-                        <button id="restore-json-btn" onclick="restoreInventoryBackup()" disabled class="w-full py-3 rounded-xl bg-rose-600/40 text-white/50 text-xs font-bold flex items-center justify-center gap-2 cursor-not-allowed"><i data-lucide="database" class="w-4 h-4"></i> RESTORE DATABASE</button>
+                        <button id="restore-json-btn" onclick="restoreInventoryBackup()" disabled class="w-full py-3 rounded-xl bg-rose-600/40 text-white/50 text-xs font-bold flex items-center justify-center gap-2 cursor-not-allowed"><i data-lucide="database-restore" class="w-4 h-4"></i> RESTORE DATABASE</button>
                     </div>
                 </div>
                 <div class="app-card p-5 rounded-2xl text-xs text-gray-400 space-y-2">
@@ -1358,6 +1358,17 @@
     <!-- FIREBASE CLOUD SYNC: STABLE INITIALIZATION, REALTIME LISTENER, QUEUED WRITES -->
     <script>
 
+        // Normalisasi KHUSUS TAMPILAN: jika nama lama sudah diawali ID barang,
+        // hilangkan awalan ID tersebut agar tidak tampil dua kali. Data database tidak diubah.
+        window.displayItemName = function(barangId, nama) {
+            const id = String(barangId ?? '').trim();
+            let text = String(nama ?? '').trim();
+            if (!id || !text) return text;
+            const escapedId = id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const prefix = new RegExp('^' + escapedId + '\\s*[-–—:]\\s*', 'i');
+            if (prefix.test(text)) text = text.replace(prefix, '').trim();
+            return text || String(nama ?? '').trim();
+        };
 
         const DEFAULT_DATA = {
             theme: 'sunset',
@@ -1924,7 +1935,7 @@
                 const meta = card.querySelector('[data-keluar-meta]');
                 const input = card.querySelector('[data-keluar-qty]');
                 const note = card.querySelector('[data-keluar-note]');
-                if (title) title.textContent = `${po.nama || item?.nama || po.barangId} (${po.barangId})`;
+                if (title) title.textContent = `${window.displayItemName(po.barangId, po.nama || item?.nama || po.barangId)} (${po.barangId})`;
                 if (meta) meta.textContent = `PO: ${Number(po.qty||0).toLocaleString('id-ID')} · Terkirim: ${Number(po.terkirim||0).toLocaleString('id-ID')} · Siap: ${ready.toLocaleString('id-ID')} · Stok: ${stock.toLocaleString('id-ID')}`;
                 if (input) {
                     input.max = String(max);
@@ -2417,7 +2428,7 @@
                     <tr class="hover:bg-white/5">
                         <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
                         <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.transactionId || i.groupId || i.id}</td>
-                        <td class="py-3 px-3 font-medium">${i.nama}</td>
+                        <td class="py-3 px-3 font-medium">${window.displayItemName(i.id, i.nama)}</td>
                         <td class="py-3 px-3 opacity-80">${i.jenis}</td>
                         <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
                         <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
@@ -2595,7 +2606,7 @@
                     <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
                     <td class="py-3 px-3 opacity-80">${i.tanggal}</td>
                     <td class="py-3 px-3 font-mono opacity-80">${i.barangId}</td>
-                    <td class="py-3 px-3 font-medium">${i.nama}</td>
+                    <td class="py-3 px-3 font-medium">${window.displayItemName(i.id, i.nama)}</td>
                     <td class="py-3 px-3 opacity-80">${i.jenis}</td>
                     <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
                     <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
@@ -2788,7 +2799,7 @@
                         <td class="p-2 text-center">${detailIndex + 1}</td>
                         <td class="p-2 font-mono">${esc(row.id)}</td>
                         <td class="p-2 font-mono">${esc(row.barangId)}</td>
-                        <td class="p-2 font-medium">${esc(row.nama)}</td>
+                        <td class="p-2 font-medium">${esc(window.displayItemName(row.barangId, row.nama))}</td>
                         <td class="p-2">${esc(row.jenis || '-')}</td>
                         <td class="p-2">${esc(row.lebar || '-')}</td>
                         <td class="p-2">${esc(row.ukuran || '-')}</td>
@@ -2960,7 +2971,7 @@
                     const sent=Number(r.terkirim||0), remain=Math.max(0,Number(r.qty||0)-sent);
                     const ready=getPoReadyQty(r);
                     const lineStatus=sent>=Number(r.qty||0)?'CLOSED':(sent>0?'PARTIAL':'OPEN');
-                    return `<tr class="bg-black/10 border-t border-white/5"><td class="py-2 px-3 font-mono">${r.id}</td><td class="py-2 px-3">${r.barangId} — ${r.nama||''}</td><td class="py-2 px-3 text-right">${Number(r.qty||0).toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-emerald-300">${ready.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right">${sent.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-amber-300">${remain.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-center">${lineStatus}</td><td class="py-2 px-3 text-right">${isViewer?ready.toLocaleString('id-ID'):`<input type="number" min="0" max="${Math.min(remain,Number((window.gudangAppDb.items||[]).find(x=>x.id===r.barangId)?.stok||0))}" step="1" value="${ready}" id="ready-${r.id}" class="w-20 bg-dark-700 border border-white/15 rounded px-2 py-1 text-right"><button onclick="updatePoReady('${r.id}')" class="ml-1 px-2 py-1 rounded bg-emerald-500/15 text-emerald-300">Atur</button>`}</td><td class="py-2 px-3 text-center">${!isViewer?`<button onclick="editPoItem('${r.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 mr-1">Edit</button><button onclick="deletePoItem('${r.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-300">Hapus</button>`:'-'}</td></tr>`;
+                    return `<tr class="bg-black/10 border-t border-white/5"><td class="py-2 px-3 font-mono">${r.id}</td><td class="py-2 px-3">${r.barangId} — ${window.displayItemName(r.barangId, r.nama)}</td><td class="py-2 px-3 text-right">${Number(r.qty||0).toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-emerald-300">${ready.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right">${sent.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-amber-300">${remain.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-center">${lineStatus}</td><td class="py-2 px-3 text-right">${isViewer?ready.toLocaleString('id-ID'):`<input type="number" min="0" max="${Math.min(remain,Number((window.gudangAppDb.items||[]).find(x=>x.id===r.barangId)?.stok||0))}" step="1" value="${ready}" id="ready-${r.id}" class="w-20 bg-dark-700 border border-white/15 rounded px-2 py-1 text-right"><button onclick="updatePoReady('${r.id}')" class="ml-1 px-2 py-1 rounded bg-emerald-500/15 text-emerald-300">Atur</button>`}</td><td class="py-2 px-3 text-center">${!isViewer?`<button onclick="editPoItem('${r.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 mr-1">Edit</button><button onclick="deletePoItem('${r.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-300">Hapus</button>`:'-'}</td></tr>`;
                 }).join('');
                 return `<tr class="hover:bg-white/5"><td class="py-3 px-2 text-center">${index+1}</td><td class="py-3 px-3 font-mono font-semibold">${g.head.noPoCustomer||g.head.id}</td><td class="py-3 px-3">${g.head.tanggal||'-'}</td><td class="py-3 px-3">${g.head.customer||'-'}</td><td class="py-3 px-3 text-center">${g.rows.length}</td><td class="py-3 px-3 text-right font-mono">${totalQty.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-right font-mono text-emerald-300">${totalSent.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${status==='CLOSED'?'bg-emerald-500/20 text-emerald-300':'bg-sky-500/20 text-sky-300'}">${status}</span></td><td class="py-3 px-3 text-center"><button onclick="togglePoDetails('${groupToken}')" class="px-3 py-1 rounded bg-indigo-500/20 text-indigo-300 text-xs">Detail (${g.rows.length})</button></td></tr><tr id="po-detail-${groupToken}" data-po-group-key="${groupToken}" class="${detailExpanded?'':'hidden'}"><td colspan="9" class="p-2"><div class="rounded-xl border border-white/10 overflow-x-auto"><table class="w-full text-xs"><thead class="bg-white/5 text-gray-400"><tr><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">Barang</th><th class="p-2 text-right">Qty PO</th><th class="p-2 text-right">Siap</th><th class="p-2 text-right">Terkirim</th><th class="p-2 text-right">Sisa</th><th class="p-2 text-center">Status</th><th class="p-2 text-right">Atur Siap</th><th class="p-2 text-center">Aksi</th></tr></thead><tbody>${details}</tbody></table></div></td></tr>`;
             }).join('') || `<tr><td colspan="9" class="py-6 text-center opacity-50">Tidak ada PO.</td></tr>`;
@@ -3052,7 +3063,7 @@
                     <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
                     <td class="py-3 px-3 opacity-80">${i.tanggal || '-'}</td>
                     <td class="py-3 px-3 font-medium">${i.customer || '-'}</td>
-                    <td class="py-3 px-3 font-medium">${i.nama}</td>
+                    <td class="py-3 px-3 font-medium">${window.displayItemName(i.id, i.nama)}</td>
                     <td class="py-3 px-3 opacity-80">${i.kategori}</td>
                     <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
                     <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
@@ -3240,7 +3251,7 @@
                     <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
                     <td class="py-3 px-3 opacity-80">${i.tanggal}</td>
                     <td class="py-3 px-3 font-mono opacity-80">${i.barangId}</td>
-                    <td class="py-3 px-3 font-medium">${i.nama}</td>
+                    <td class="py-3 px-3 font-medium">${window.displayItemName(i.id, i.nama)}</td>
                     <td class="py-3 px-3 opacity-80">${i.jenis}</td>
                     <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
                     <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
@@ -3430,7 +3441,7 @@
                         <div class="flex items-center gap-3">
                             <i data-lucide="alert-triangle" class="w-4 h-4 ${textClass}"></i>
                             <div>
-                                <span class="font-bold text-gray-100">${i.id} - ${i.nama}</span>
+                                <span class="font-bold text-gray-100">${i.id} - ${window.displayItemName(i.id, i.nama)}</span>
                                 <span class="text-[10px] text-gray-400 block">Kategori: ${i.jenis} | Lebar: ${i.lebar || '-'}</span>
                             </div>
                         </div>
@@ -3470,7 +3481,7 @@
         window.exportCSVData = function() {
             let csvContent = "data:text/csv;charset=utf-8,ID,Nama,Jenis,Lebar,Ukuran,Berat,Satuan,Stok,Min\n";
             window.gudangAppDb.items.forEach(i => {
-                csvContent += `"${i.id}","${i.nama}","${i.jenis}","${i.lebar || ''}","${i.ukuran || ''}",${i.berat || 0},"${i.satuan}",${i.stok},${i.min}\n`;
+                csvContent += `"${i.id}","${window.displayItemName(i.id, i.nama)}","${i.jenis}","${i.lebar || ''}","${i.ukuran || ''}",${i.berat || 0},"${i.satuan}",${i.stok},${i.min}\n`;
             });
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
@@ -3605,7 +3616,7 @@
                         qtyPill.textContent = `${r.qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim();
                         cardTitle.append(titleText, qtyPill);
                         card.appendChild(cardTitle);
-                        addDetailRow('Nama Barang', `${item?.nama || r.barangId} (${r.barangId})`, card);
+                        addDetailRow('Nama Barang', `${window.displayItemName(r.barangId, item?.nama || r.nama || r.barangId)} (${r.barangId})`, card);
                         addDetailRow('Qty Keluar', `${r.qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
                         if (po) {
                             addDetailRow('Nomor PO', po.noPoCustomer || po.id, card);
@@ -3627,7 +3638,7 @@
                 const itemId = document.getElementById(itemField)?.value;
                 const item = (window.gudangAppDb?.items || []).find(x => String(x.id) === String(itemId));
                 if (!item) return;
-                addDetailRow('Nama Barang', item.nama || '-');
+                addDetailRow('Nama Barang', window.displayItemName(item.id, item.nama) || '-');
                 addDetailRow('Jenis Barang', item.jenis || '-');
                 addDetailRow('Lebar Barang', item.lebar || '-');
                 addDetailRow('Ukuran Barang', item.ukuran || '-');
