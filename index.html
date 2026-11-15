@@ -722,15 +722,13 @@
                                 <label class="text-xs block mb-1">Nama Customer *</label>
                                 <input type="text" id="po-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA" autocomplete="off">
                             </div>
-                            <div>
-                                <label class="text-xs block mb-1">Pilih Barang *</label>
-                                <select id="po-barang" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
-                                    <option value="">-- Pilih Barang —</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs block mb-1">Jumlah Qty PO *</label>
-                                <input type="number" id="po-qty" min="1" value="500" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" autocomplete="off">
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between gap-2">
+                                    <label class="text-xs font-semibold">Daftar Barang dalam PO *</label>
+                                    <button type="button" onclick="addPoItemRow()" class="px-3 py-1.5 rounded-lg bg-sky-500/15 border border-sky-400/20 text-sky-300 text-[11px] font-semibold"><i data-lucide="plus" class="w-3 h-3 inline"></i> Tambah Barang</button>
+                                </div>
+                                <div id="po-items-container" class="space-y-2"></div>
+                                <p class="text-[10px] text-gray-400">Atur Qty PO dan Qty Siap Dikirim untuk setiap barang. Qty siap tidak menambah stok.</p>
                             </div>
                             <div class="pt-2 flex gap-2">
                                 <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
@@ -765,19 +763,12 @@
                                 <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
                                     <tr>
                                         <th class="py-3 px-2 rounded-l-xl text-center w-10">No</th>
-                                        <th class="py-3 px-3">ID Sistem</th>
-                                        <th class="py-3 px-3">No. PO Cust</th>
+                                        <th class="py-3 px-3">Nomor PO Customer</th>
                                         <th class="py-3 px-3">Tanggal</th>
                                         <th class="py-3 px-3">Customer</th>
-                                        <th class="py-3 px-3">ID Barang</th>
-                                        <th class="py-3 px-3">Nama Barang</th>
-                                        <th class="py-3 px-3">Kategori</th>
-                                        <th class="py-3 px-2">Lebar</th>
-                                        <th class="py-3 px-2">Ukuran</th>
-                                        <th class="py-3 px-2">Satuan</th>
-                                        <th class="py-3 px-3 text-right">Qty PO</th>
-                                        <th class="py-3 px-3 text-right">Terkirim</th>
-                                        <th class="py-3 px-3 text-right">Sisa PO</th>
+                                        <th class="py-3 px-3 text-center">Jumlah Barang</th>
+                                        <th class="py-3 px-3 text-right">Total Qty PO</th>
+                                        <th class="py-3 px-3 text-right">Total Terkirim</th>
                                         <th class="py-3 px-3 text-center">Status</th>
                                         <th id="po-th-aksi" class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
                                     </tr>
@@ -897,10 +888,17 @@
                                 <input type="date" id="keluar-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                             </div>
                             <div>
-                                <label class="text-xs block mb-1">Merujuk ke PO Aktif *</label>
-                                <select id="keluar-po-ref" onchange="updateKeluarFromPo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
-                                    <option value="">-- Pilih PO Customer Aktif —</option>
+                                <label class="text-xs block mb-1">Pilih Nomor PO Customer *</label>
+                                <select id="keluar-po-group" onchange="populatePoItemOptions()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
+                                    <option value="">-- Pilih Nomor PO —</option>
                                 </select>
+                            </div>
+                            <div>
+                                <label class="text-xs block mb-1">Pilih Barang dari PO *</label>
+                                <select id="keluar-po-ref" onchange="updateKeluarFromPo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
+                                    <option value="">-- Pilih Barang dalam PO —</option>
+                                </select>
+                                <p id="keluar-po-ready-info" class="text-[10px] text-emerald-300 mt-1">Pilih PO untuk melihat barang yang siap dikirim.</p>
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Pilih Barang *</label>
@@ -1769,13 +1767,29 @@
             });
         };
 
+        window.getPoReadyQty = function(po) {
+            if (!po) return 0;
+            const remain = Math.max(0, Number(po.qty||0) - Number(po.terkirim||0));
+            if (po.siapKirim !== undefined) return Math.max(0, Math.min(remain, Number(po.siapKirim||0)));
+            const item = (window.gudangAppDb.items||[]).find(x=>x.id===po.barangId);
+            return Math.max(0, Math.min(remain, Number(item?.stok||0)));
+        };
+
         window.populatePoDropdowns = function() {
-            const sel = document.getElementById('keluar-po-ref');
-            if (!sel) return;
-            const currentVal = sel.value;
-            sel.innerHTML = '<option value="">-- Pilih PO Customer Aktif --</option>' + 
-                window.gudangAppDb.po.filter(p => p.status !== 'CLOSED').map(p => `<option value="${p.id}">${p.id} - ${p.customer} (${p.nama} | Sisa: ${p.qty - (p.terkirim || 0)})</option>`).join('');
-            if (currentVal) sel.value = currentVal;
+            const groupSel=document.getElementById('keluar-po-group'); if(!groupSel) return;
+            const current=groupSel.value; const groups=new Map();
+            (window.gudangAppDb.po||[]).filter(p=>Number(p.qty||0)>Number(p.terkirim||0)).forEach(p=>{const key=`${String(p.customer||'').toUpperCase()}|${String(p.noPoCustomer||p.id).toUpperCase()}`; if(!groups.has(key)) groups.set(key,{key,label:`${p.noPoCustomer||p.id} — ${p.customer||''}`});});
+            groupSel.innerHTML='<option value="">-- Pilih Nomor PO --</option>'+[...groups.values()].map(g=>`<option value="${g.key}">${g.label}</option>`).join('');
+            if(current && groups.has(current)) groupSel.value=current;
+            populatePoItemOptions();
+        };
+        window.populatePoItemOptions = function() {
+            const groupKey=document.getElementById('keluar-po-group')?.value||''; const sel=document.getElementById('keluar-po-ref'); if(!sel)return;
+            const current=sel.value; const rows=(window.gudangAppDb.po||[]).filter(p=>`${String(p.customer||'').toUpperCase()}|${String(p.noPoCustomer||p.id).toUpperCase()}`===groupKey && Number(p.qty||0)>Number(p.terkirim||0));
+            sel.innerHTML='<option value="">-- Pilih Barang dalam PO --</option>'+rows.map(p=>{const remain=Math.max(0,Number(p.qty||0)-Number(p.terkirim||0));const ready=getPoReadyQty(p);return `<option value="${p.id}" ${ready<=0?'disabled':''}>${p.nama||p.barangId} | Siap: ${ready} | Sisa PO: ${remain}</option>`;}).join('');
+            if(current && rows.some(p=>p.id===current)) sel.value=current;
+            if(!rows.some(p=>getPoReadyQty(p)>0)) { const info=document.getElementById('keluar-po-ready-info'); if(info)info.textContent='Belum ada barang dengan Qty Siap Dikirim. Atur dari Detail PO.'; }
+            updateKeluarFromPo();
         };
 
         window.refreshAllViews = function() {
@@ -2102,7 +2116,12 @@
             const now = new Date();
             const yy = String(now.getFullYear()).slice(-2);
             const mm = String(now.getMonth() + 1).padStart(2, '0');
-            return `POC-${yy}${mm}-${String(count).padStart(4, '0')}`;
+            const used = new Set((window.gudangAppDb.po||[]).map(r=>String(r.id||'').toUpperCase()));
+            let next=count; let candidate=`POC-${yy}${mm}-${String(next).padStart(4,'0')}`;
+            while (used.has(candidate) || Array.from({length:20},(_,i)=>`${candidate}-${String(i+2).padStart(2,'0')}`).some(x=>used.has(x))) {
+                next++; candidate=`POC-${yy}${mm}-${String(next).padStart(4,'0')}`;
+            }
+            return candidate;
         };
 
         window.generateSampelSequentialId = function() {
@@ -2255,7 +2274,18 @@
         window.editPoItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
             const r = window.gudangAppDb.po.find(x => String(x.id) === String(id)); if (!r) return;
-            beginTransactionEdit('form-po','po-edit-mode', {'po-id':r.id,'po-no-customer':r.noPoCustomer,'po-tanggal':r.tanggal,'po-customer':r.customer,'po-barang':r.barangId,'po-qty':r.qty});
+            document.getElementById('form-po').reset();
+            document.getElementById('po-items-container').innerHTML = '';
+            document.getElementById('po-id').value = r.id;
+            document.getElementById('po-no-customer').value = r.noPoCustomer || '';
+            document.getElementById('po-tanggal').value = r.tanggal || '';
+            document.getElementById('po-customer').value = r.customer || '';
+            addPoItemRow({ barangId:r.barangId, qty:r.qty, siapKirim:r.siapKirim ?? Math.max(0, Number(r.qty||0)-Number(r.terkirim||0)) });
+            document.getElementById('po-edit-mode').value = 'true';
+            document.getElementById('po-form-title').innerHTML = '<i data-lucide="pencil" class="w-4 h-4 text-orange-400"></i> EDIT DETAIL PO';
+            document.getElementById('form-po').scrollIntoView({behavior:'smooth',block:'center'});
+            lucide.createIcons();
+            showToast('Mode edit detail PO aktif.', 'info');
         };
         window.editMasukItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
@@ -2266,7 +2296,10 @@
         window.editKeluarItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
             const r = window.gudangAppDb.keluar.find(x => String(x.id) === String(id)); if (!r) return;
+            const po=window.gudangAppDb.po.find(p=>p.id===r.poRef);
+            if(po){const groupKey=`${String(po.customer||'').toUpperCase()}|${String(po.noPoCustomer||po.id).toUpperCase()}`;document.getElementById('keluar-po-group').value=groupKey;populatePoItemOptions();}
             beginTransactionEdit('form-keluar','keluar-edit-mode', {'keluar-id':r.id,'keluar-tanggal':r.tanggal,'keluar-po-ref':r.poRef,'keluar-barang':r.barangId,'keluar-qty':r.qty,'keluar-tujuan':r.tujuan});
+            updateKeluarFromPo(); document.getElementById('keluar-qty').value=r.qty;
         };
         window.editSampelItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
@@ -2398,9 +2431,23 @@
             const poId = document.getElementById('keluar-po-ref')?.value;
             const po = window.gudangAppDb.po.find(x => x.id === poId);
             if (po) {
+                const item=window.gudangAppDb.items.find(x=>x.id===po.barangId);
+                const remain=Math.max(0,Number(po.qty||0)-Number(po.terkirim||0));
+                let ready=po.siapKirim===undefined?remain:Number(po.siapKirim||0);
+                let stock=Number(item?.stok||0);
+                const isEdit=document.getElementById('keluar-edit-mode')?.value==='true';
+                const old= isEdit ? window.gudangAppDb.keluar.find(x=>x.id===document.getElementById('keluar-id')?.value) : null;
+                if(old && old.poRef===po.id) { ready += Number(old.qty||0); }
+                if(old && old.barangId===po.barangId) { stock += Number(old.qty||0); }
+                const effectiveRemain=remain + ((old && old.poRef===po.id) ? Number(old.qty||0) : 0);
+                const max=Math.max(0,Math.min(ready,stock,effectiveRemain));
                 document.getElementById('keluar-barang').value = po.barangId;
                 document.getElementById('keluar-tujuan').value = po.customer;
-                document.getElementById('keluar-qty').value = Math.max(0, po.qty - (po.terkirim || 0));
+                document.getElementById('keluar-qty').max = max;
+                document.getElementById('keluar-qty').value = max;
+                const info=document.getElementById('keluar-po-ready-info'); if(info) info.textContent=`Qty PO: ${po.qty} • Terkirim: ${po.terkirim||0} • Siap efektif: ${ready} • Stok efektif: ${stock} • Maksimal keluar: ${max}`;
+            } else {
+                const info=document.getElementById('keluar-po-ready-info'); if(info) info.textContent='Pilih barang dalam PO untuk melihat Qty Siap Dikirim.';
             }
         };
 
@@ -2417,10 +2464,22 @@
             const username = window.gudangAppDb.currentUser?.name || 'Administrator';
 
             const item = window.gudangAppDb.items.find(x => x.id === barangId);
-            if (!item || item.stok < qty) {
-                showToast('Stok barang tidak mencukupi!', 'error');
+            const isEditKeluar = document.getElementById('keluar-edit-mode').value === 'true';
+            const oldKeluar = isEditKeluar ? window.gudangAppDb.keluar.find(x=>x.id===id) : null;
+            const sameItemAsOld = oldKeluar && oldKeluar.barangId === barangId;
+            const availableStock = Number(item?.stok||0) + (sameItemAsOld ? Number(oldKeluar.qty||0) : 0);
+            if (!item || availableStock < qty) {
+                showToast('Stok barang tidak mencukupi untuk jumlah yang diminta!', 'error');
                 return;
             }
+            const selectedPo = window.gudangAppDb.po.find(p=>p.id===poRef);
+            if (!selectedPo) { showToast('Detail PO tidak ditemukan.','error'); return; }
+            const poRemain=Math.max(0,Number(selectedPo.qty||0)-Number(selectedPo.terkirim||0) + ((oldKeluar && oldKeluar.poRef===poRef) ? Number(oldKeluar.qty||0) : 0));
+            let poReady=selectedPo.siapKirim===undefined?Math.max(0,Number(selectedPo.qty||0)-Number(selectedPo.terkirim||0)):Number(selectedPo.siapKirim||0);
+            if(oldKeluar && oldKeluar.poRef===poRef) poReady += Number(oldKeluar.qty||0);
+            const effectiveStock=Number(item?.stok||0) + ((oldKeluar && oldKeluar.barangId===barangId) ? Number(oldKeluar.qty||0) : 0);
+            poReady=Math.min(poReady,effectiveStock,poRemain);
+            if(qty>poReady || qty>poRemain){showToast(`Qty keluar melebihi kesiapan/sisa PO. Siap efektif: ${poReady}, Sisa efektif: ${poRemain}.`,'error');return;}
             if (!id || !tanggal || !poRef || !barangId || qty <= 0) {
                 showToast('Lengkapi data Barang Keluar terlebih dahulu.', 'error');
                 return;
@@ -2525,40 +2584,65 @@
         };
 
         // PO CRUD
+        window.addPoItemRow = function(values = {}) {
+            const host = document.getElementById('po-items-container');
+            if (!host) return;
+            const n = host.querySelectorAll('[data-po-item-row]').length + 1;
+            const itemOptions = (window.gudangAppDb.items || []).map(i => `<option value="${i.id}">${i.id} - ${i.nama} (${i.jenis||'-'})</option>`).join('');
+            const row = document.createElement('div');
+            row.className = 'grid grid-cols-1 sm:grid-cols-12 gap-2 p-2 rounded-xl border border-white/10 bg-white/5';
+            row.setAttribute('data-po-item-row','1');
+            row.innerHTML = `
+                <div class="sm:col-span-5"><label class="text-[10px] text-gray-400">Barang</label><select ${n===1?'id="po-barang"':''} data-po-field="barangId" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"><option value="">-- Pilih Barang --</option>${itemOptions}</select></div>
+                <div class="sm:col-span-3"><label class="text-[10px] text-gray-400">Qty PO</label><input ${n===1?'id="po-qty"':''} data-po-field="qty" type="number" min="1" step="1" value="${values.qty ?? 1}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
+                <div class="sm:col-span-3"><label class="text-[10px] text-gray-400">Qty Siap Dikirim</label><input ${n===1?'id="po-siap"':''} data-po-field="siapKirim" type="number" min="0" step="1" value="${values.siapKirim ?? 0}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
+                <div class="sm:col-span-1 flex items-end"><button type="button" onclick="this.closest('[data-po-item-row]').remove(); refreshPoItemRowIds()" class="w-full py-2 rounded-lg bg-rose-500/15 text-rose-300 text-xs" title="Hapus baris">✕</button></div>`;
+            host.appendChild(row);
+            const select = row.querySelector('[data-po-field="barangId"]'); if (values.barangId) select.value = values.barangId;
+            refreshPoItemRowIds();
+        };
+        window.refreshPoItemRowIds = function() {
+            const rows = [...document.querySelectorAll('#po-items-container [data-po-item-row]')];
+            rows.forEach((row,i) => {
+                row.querySelector('[data-po-field="barangId"]').id = i===0 ? 'po-barang' : `po-barang-${i+1}`;
+                row.querySelector('[data-po-field="qty"]').id = i===0 ? 'po-qty' : `po-qty-${i+1}`;
+                row.querySelector('[data-po-field="siapKirim"]').id = i===0 ? 'po-siap' : `po-siap-${i+1}`;
+            });
+        };
+        function readPoItemRows() {
+            return [...document.querySelectorAll('#po-items-container [data-po-item-row]')].map(row => ({
+                barangId: row.querySelector('[data-po-field="barangId"]')?.value || '',
+                qty: Number(row.querySelector('[data-po-field="qty"]')?.value || 0),
+                siapKirim: Number(row.querySelector('[data-po-field="siapKirim"]')?.value || 0)
+            }));
+        }
         window.savePoItem = async function(e) {
             e.preventDefault();
-            if (window.gudangAppDb.currentUser?.role === 'viewer') {
-                showToast('Viewer hanya dapat melihat data.', 'error'); return;
-            }
+            if (window.gudangAppDb.currentUser?.role === 'viewer') { showToast('Viewer hanya dapat melihat data.','error'); return; }
             const id = document.getElementById('po-id').value.trim().toUpperCase();
             const noPoCustomer = document.getElementById('po-no-customer').value.trim().toUpperCase();
             const tanggal = document.getElementById('po-tanggal').value;
             const customer = document.getElementById('po-customer').value.trim().toUpperCase();
-            const barangId = document.getElementById('po-barang').value;
-            const qty = Number(document.getElementById('po-qty').value);
-            const item = window.gudangAppDb.items.find(x => x.id === barangId);
-            if (!id || !noPoCustomer || !tanggal || !customer || !barangId || !Number.isInteger(qty) || qty <= 0) {
-                showToast('Lengkapi PO dan pastikan Qty bilangan bulat lebih dari nol.', 'error'); return;
+            const rows = readPoItemRows();
+            if (!id || !noPoCustomer || !tanggal || !customer || !rows.length || rows.some(r => !r.barangId || !Number.isSafeInteger(r.qty) || r.qty<=0 || !Number.isSafeInteger(r.siapKirim) || r.siapKirim<0 || r.siapKirim>r.qty)) {
+                showToast('Lengkapi data PO. Qty siap harus 0 sampai Qty PO.','error'); return;
             }
-            if (!item) { showToast('Barang tidak ditemukan di Master Barang.', 'error'); return; }
-            if (document.getElementById('po-edit-mode').value === 'true') {
-                try {
-                    await sendOperation('po.update', { id, record: { noPoCustomer, tanggal, customer, barangId, nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan, qty } });
-                    window.refreshAllViews?.(); resetPoForm(); showToast('PO berhasil diperbarui oleh Worker.');
-                } catch (error) { showToast(`Edit PO gagal: ${error.message}`, 'error'); }
-                return;
-            }
-            if (window.gudangAppDb.po.some(x => String(x.id).toUpperCase() === id)) {
-                showToast(`ID Sistem PO ${id} sudah digunakan.`, 'error'); return;
-            }
-            window.gudangAppDb.po.unshift({
-                id, noPoCustomer, tanggal, customer, barangId, nama: item.nama,
-                jenis: item.jenis, lebar: item.lebar || '', ukuran: item.ukuran || '',
-                satuan: item.satuan, qty, terkirim: 0, status: 'OPEN'
-            });
-            const saved = await saveCloudDB();
-            if (saved) { resetPoForm(); showToast('PO Customer berhasil disimpan dan dikonfirmasi Worker!'); }
-            else showToast('PO belum terkonfirmasi tersimpan di cloud. Periksa daftar PO sebelum mencoba ulang.', 'error');
+            if (new Set(rows.map(r=>r.barangId)).size !== rows.length) { showToast('Barang yang sama tidak boleh dimasukkan dua kali dalam satu PO.','error'); return; }
+            const isEdit = document.getElementById('po-edit-mode').value === 'true';
+            try {
+                if (isEdit) {
+                    if (rows.length !== 1) throw new Error('Mode edit hanya untuk satu detail PO.');
+                    const item = window.gudangAppDb.items.find(x=>x.id===rows[0].barangId);
+                    if (!item) throw new Error('Barang tidak ditemukan.');
+                    await sendOperation('po.update',{id,record:{noPoCustomer,tanggal,customer,barangId:rows[0].barangId,nama:item.nama,jenis:item.jenis,lebar:item.lebar||'',ukuran:item.ukuran||'',satuan:item.satuan,qty:rows[0].qty,siapKirim:rows[0].siapKirim}});
+                } else {
+                    const items = rows.map((r,i)=>({id:i===0?id:`${id}-${String(i+1).padStart(2,'0')}`, ...r}));
+                    await sendOperation('po.batchCreate',{id,noPoCustomer,tanggal,customer,items});
+                }
+                window.refreshAllViews?.();
+                resetPoForm();
+                showToast(isEdit?'Detail PO berhasil diperbarui.':'PO multi-barang berhasil disimpan ke Cloud.');
+            } catch(error) { showToast(`Simpan PO gagal: ${error.message}`,'error'); }
         };
 
         window.deletePoItem = function(id) {
@@ -2576,6 +2660,10 @@
             document.getElementById('po-edit-mode').value = 'false';
             document.getElementById('po-id').value = generatePoSequentialId();
             document.getElementById('po-tanggal').valueAsDate = new Date();
+            document.getElementById('po-items-container').innerHTML = '';
+            addPoItemRow();
+            document.getElementById('po-form-title').innerHTML = '<i data-lucide="file-plus" class="w-4 h-4 text-orange-400"></i> INPUT PO CUSTOMER';
+            lucide.createIcons();
         };
 
         window.renderPoTable = function() {
@@ -2583,43 +2671,36 @@
             const tbody = document.getElementById('po-table-body');
             const badgeTotal = document.getElementById('po-total-badge');
             const isViewer = window.gudangAppDb.currentUser?.role === 'viewer';
-
-            const filtered = window.gudangAppDb.po.filter(i => 
-                i.id.toLowerCase().includes(q) || i.noPoCustomer.toLowerCase().includes(q) || i.customer.toLowerCase().includes(q)
-            );
-            if (badgeTotal) badgeTotal.textContent = `${filtered.length} PO`;
-
-            tbody.innerHTML = filtered.map((i, index) => {
-                const terkirim = i.terkirim || 0;
-                const sisa = Math.max(0, i.qty - terkirim);
-                const statusBadge = i.status === 'CLOSED' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-sky-500/20 text-sky-300';
-                return `
-                    <tr class="hover:bg-white/5">
-                        <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
-                        <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
-                        <td class="py-3 px-3 font-mono font-semibold">${i.noPoCustomer}</td>
-                        <td class="py-3 px-3 opacity-80">${i.tanggal}</td>
-                        <td class="py-3 px-3 font-medium">${i.customer}</td>
-                        <td class="py-3 px-3 font-mono opacity-80">${i.barangId}</td>
-                        <td class="py-3 px-3 font-medium">${i.nama}</td>
-                        <td class="py-3 px-3 opacity-80">${i.jenis}</td>
-                        <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
-                        <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
-                        <td class="py-3 px-2 opacity-80">${i.satuan}</td>
-                        <td class="py-3 px-3 text-right font-mono font-bold">${i.qty.toLocaleString('id-ID')}</td>
-                        <td class="py-3 px-3 text-right font-mono text-emerald-400">${terkirim.toLocaleString('id-ID')}</td>
-                        <td class="py-3 px-3 text-right font-mono text-amber-400">${sisa.toLocaleString('id-ID')}</td>
-                        <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-extrabold ${statusBadge}">${i.status}</span></td>
-                        ${!isViewer ? `
-                            <td class="py-3 px-3 text-center">
-                                <button onclick="editPoItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-semibold mr-1">Edit</button>
-                            <button onclick="deletePoItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
-                            </td>
-                        ` : ''}
-                    </tr>
-                `;
-            }).join('') || `<tr><td colspan="${isViewer ? 15 : 16}" class="py-6 text-center opacity-50">Tidak ada PO aktif.</td></tr>`;
+            const groups = new Map();
+            (window.gudangAppDb.po||[]).forEach(r => {
+                const key = `${String(r.customer||'').toUpperCase()}|${String(r.noPoCustomer||r.id).toUpperCase()}`;
+                if (!groups.has(key)) groups.set(key,[]);
+                groups.get(key).push(r);
+            });
+            const allGroups = [...groups.entries()].map(([key,rows])=>({key,rows,head:rows[0]}));
+            const filtered = allGroups.filter(g => [g.head.noPoCustomer,g.head.customer,...g.rows.map(r=>r.id),...g.rows.map(r=>r.nama)].some(v=>String(v||'').toLowerCase().includes(q)));
+            if (badgeTotal) badgeTotal.textContent = `${filtered.length} PO • ${filtered.reduce((n,g)=>n+g.rows.length,0)} detail barang`;
+            tbody.innerHTML = filtered.map((g,index)=>{
+                const totalQty=g.rows.reduce((s,r)=>s+Number(r.qty||0),0);
+                const totalSent=g.rows.reduce((s,r)=>s+Number(r.terkirim||0),0);
+                const allClosed=g.rows.every(r=>Number(r.terkirim||0)>=Number(r.qty||0));
+                const status=allClosed?'CLOSED':(totalSent>0?'PARTIAL':'OPEN');
+                const details=g.rows.map(r=>{
+                    const sent=Number(r.terkirim||0), remain=Math.max(0,Number(r.qty||0)-sent);
+                    const ready=getPoReadyQty(r);
+                    const lineStatus=sent>=Number(r.qty||0)?'CLOSED':(sent>0?'PARTIAL':'OPEN');
+                    return `<tr class="bg-black/10 border-t border-white/5"><td class="py-2 px-3 font-mono">${r.id}</td><td class="py-2 px-3">${r.barangId} — ${r.nama||''}</td><td class="py-2 px-3 text-right">${Number(r.qty||0).toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-emerald-300">${ready.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right">${sent.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-amber-300">${remain.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-center">${lineStatus}</td><td class="py-2 px-3 text-right">${isViewer?ready.toLocaleString('id-ID'):`<input type="number" min="0" max="${Math.min(remain,Number((window.gudangAppDb.items||[]).find(x=>x.id===r.barangId)?.stok||0))}" step="1" value="${ready}" id="ready-${r.id}" class="w-20 bg-dark-700 border border-white/15 rounded px-2 py-1 text-right"><button onclick="updatePoReady('${r.id}')" class="ml-1 px-2 py-1 rounded bg-emerald-500/15 text-emerald-300">Atur</button>`}</td><td class="py-2 px-3 text-center">${!isViewer?`<button onclick="editPoItem('${r.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 mr-1">Edit</button><button onclick="deletePoItem('${r.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-300">Hapus</button>`:'-'}</td></tr>`;
+                }).join('');
+                return `<tr class="hover:bg-white/5"><td class="py-3 px-2 text-center">${index+1}</td><td class="py-3 px-3 font-mono font-semibold">${g.head.noPoCustomer||g.head.id}</td><td class="py-3 px-3">${g.head.tanggal||'-'}</td><td class="py-3 px-3">${g.head.customer||'-'}</td><td class="py-3 px-3 text-center">${g.rows.length}</td><td class="py-3 px-3 text-right font-mono">${totalQty.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-right font-mono text-emerald-300">${totalSent.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${status==='CLOSED'?'bg-emerald-500/20 text-emerald-300':'bg-sky-500/20 text-sky-300'}">${status}</span></td><td class="py-3 px-3 text-center"><button onclick="togglePoDetails(${index})" class="px-3 py-1 rounded bg-indigo-500/20 text-indigo-300 text-xs">Detail (${g.rows.length})</button></td></tr><tr id="po-detail-${index}" class="hidden"><td colspan="9" class="p-2"><div class="rounded-xl border border-white/10 overflow-x-auto"><table class="w-full text-xs"><thead class="bg-white/5 text-gray-400"><tr><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">Barang</th><th class="p-2 text-right">Qty PO</th><th class="p-2 text-right">Siap</th><th class="p-2 text-right">Terkirim</th><th class="p-2 text-right">Sisa</th><th class="p-2 text-center">Status</th><th class="p-2 text-right">Atur Siap</th><th class="p-2 text-center">Aksi</th></tr></thead><tbody>${details}</tbody></table></div></td></tr>`;
+            }).join('') || `<tr><td colspan="9" class="py-6 text-center opacity-50">Tidak ada PO.</td></tr>`;
             lucide.createIcons();
+        };
+        window.togglePoDetails = function(index) { const row=document.getElementById(`po-detail-${index}`); if(row) row.classList.toggle('hidden'); };
+        window.updatePoReady = async function(id) {
+            const input=document.getElementById(`ready-${id}`); if(!input) return;
+            const siapKirim=Number(input.value);
+            try { await sendOperation('po.ready.update',{id,siapKirim}); refreshAllViews(); showToast('Qty Siap Dikirim berhasil diperbarui.'); }
+            catch(e){ showToast(`Gagal mengatur Qty Siap: ${e.message}`,'error'); }
         };
 
         // Sampel CRUD
@@ -3150,7 +3231,7 @@
                 },
                 savePoItem: {
                     form: 'form-po', title: 'KONFIRMASI PO CUSTOMER',
-                    fields: [['po-id','ID PO Sistem'],['po-no-customer','Nomor PO Customer'],['po-tanggal','Tanggal PO'],['po-customer','Customer'],['po-barang','ID Barang'],['po-qty','Jumlah PO']]
+                    fields: [['po-id','ID Detail PO (utama)'],['po-no-customer','Nomor PO Customer'],['po-tanggal','Tanggal PO'],['po-customer','Customer']]
                 },
                 saveMasukItem: {
                     form: 'form-masuk', title: 'KONFIRMASI BARANG MASUK',
@@ -3202,7 +3283,7 @@
             }
 
             function addSelectedItemDetails(formName) {
-                const itemField = ({saveMasterItem:'',savePoItem:'po-barang',saveMasukItem:'masuk-barang',saveKeluarItem:'keluar-barang',saveSampelItem:'',saveReturItem:'retur-barang'})[formName];
+                const itemField = ({saveMasterItem:'',savePoItem:'',saveMasukItem:'masuk-barang',saveKeluarItem:'keluar-barang',saveSampelItem:'',saveReturItem:'retur-barang'})[formName];
                 if (!itemField) return;
                 const itemId = document.getElementById(itemField)?.value;
                 const item = (window.gudangAppDb?.items || []).find(x => String(x.id) === String(itemId));
@@ -3219,15 +3300,13 @@
                         addDetailRow('PO Asal', keluar.poRef || '-');
                     }
                 }
-                if (formName === 'saveKeluarItem' || formName === 'savePoItem') {
-                    const poId = formName === 'saveKeluarItem' ? document.getElementById('keluar-po-ref')?.value : document.getElementById('po-id')?.value;
+                if (formName === 'savePoItem') {
+                    readPoItemRows().forEach((r,i)=>{const item=(window.gudangAppDb?.items||[]).find(x=>x.id===r.barangId);addDetailRow(`Barang ${i+1}`,`${item?.nama||r.barangId} (${r.barangId})`);addDetailRow(`Qty PO / Siap ${i+1}`,`${r.qty} / ${r.siapKirim}`);});
+                }
+                if (formName === 'saveKeluarItem') {
+                    const poId = document.getElementById('keluar-po-ref')?.value;
                     const po = (window.gudangAppDb?.po || []).find(x => String(x.id) === String(poId));
-                    if (po) {
-                        addDetailRow('Customer PO', po.customer || '-');
-                        addDetailRow('Nomor PO Customer', po.noPoCustomer || '-');
-                        addDetailRow('Status PO Saat Ini', po.status || '-');
-                        addDetailRow('Qty Terkirim Saat Ini', String(po.terkirim || 0));
-                    }
+                    if (po) { addDetailRow('Customer PO', po.customer || '-'); addDetailRow('Nomor PO Customer', po.noPoCustomer || '-'); addDetailRow('Qty Siap Dikirim', String(getPoReadyQty(po))); }
                 }
             }
 
@@ -3315,6 +3394,7 @@
             document.getElementById('keluar-tanggal').valueAsDate = new Date();
             document.getElementById('po-id').value = generatePoSequentialId();
             document.getElementById('po-tanggal').valueAsDate = new Date();
+            resetPoForm();
             document.getElementById('sampel-id').value = generateSampelSequentialId();
             document.getElementById('sampel-tanggal').valueAsDate = new Date();
             document.getElementById('retur-id').value = generateId('RTR');
