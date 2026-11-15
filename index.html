@@ -1783,30 +1783,29 @@
             if(current && groups.has(current)) groupSel.value=current;
             populatePoItemOptions();
         };
-         = function() {
+        window.populatePoItemOptions = function() {
             const groupKey = document.getElementById('keluar-po-group')?.value || '';
             const host = document.getElementById('keluar-items-container');
             const info = document.getElementById('keluar-po-ready-info');
             if (!host) return;
+
+            // Simpan nilai Qty yang sedang diinput sebelum daftar dirender ulang.
+            // Ini penting karena refresh data Cloud dapat memanggil fungsi ini kembali.
             const previousQty = new Map(
                 [...host.querySelectorAll('[data-keluar-row]')].map(card => [
                     `${card.dataset.poRef}|${card.dataset.barangId}`,
                     card.querySelector('[data-keluar-qty]')?.value ?? '0'
                 ])
             );
-                     const previousQty = new Map(
-            [...host.querySelectorAll('[data-keluar-row]')].map(card => [
-                `${card.dataset.poRef}|${card.dataset.barangId}`,
-                card.querySelector('[data-keluar-qty]')?.value ?? '0'
-            ])
-        );
 
-        const activeInput = document.activeElement;
-        const activeCard = activeInput?.closest('[data-keluar-row]');
-        const activePoRef = host.contains(activeInput) ? activeCard?.dataset.poRef : null;
-        const activeBarangId = host.contains(activeInput) ? activeCard?.dataset.barangId : null;
-        const shouldRestoreFocus = host.contains(activeInput) &&
-    activeInput.hasAttribute('data-keluar-qty');
+            // Catat input yang sedang aktif agar fokus tidak hilang saat elemen dibuat ulang.
+            const activeInput = document.activeElement;
+            const hadFocusInsideHost = !!activeInput && host.contains(activeInput) &&
+                activeInput.hasAttribute('data-keluar-qty');
+            const activeCard = hadFocusInsideHost ? activeInput.closest('[data-keluar-row]') : null;
+            const activePoRef = activeCard?.dataset.poRef || '';
+            const activeBarangId = activeCard?.dataset.barangId || '';
+
             host.replaceChildren();
             const rows = (window.gudangAppDb.po || []).filter(p =>
                 `${String(p.customer||'').toUpperCase()}|${String(p.noPoCustomer||p.id).toUpperCase()}` === groupKey
@@ -1853,7 +1852,8 @@
                 inputLabel.className = 'block text-[10px] text-gray-400 mb-1';
                 inputLabel.textContent = 'Qty Keluar';
                 const input = document.createElement('input');
-                input.type = 'number'; input.min = '0'; input.max = String(max); input.step = '1'; input.value = previousQty.get(`${po.id}|${po.barangId}`) ?? '0';
+                input.type = 'number'; input.min = '0'; input.max = String(max); input.step = '1';
+                input.value = previousQty.get(`${po.id}|${po.barangId}`) ?? '0';
                 input.className = 'w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs font-mono';
                 input.autocomplete = 'off'; input.dataset.keluarQty = '1';
                 input.disabled = max <= 0;
@@ -1870,6 +1870,18 @@
             });
             if (info) info.textContent = isEdit ? 'Mode edit: ubah Qty pada satu detail transaksi ini.' : 'Isi Qty pada satu atau beberapa barang. Setiap baris memiliki batas kesiapan, sisa PO, dan stok sendiri.';
             updateKeluarBatchTotal();
+
+            // Pulihkan fokus ke kolom Qty yang sebelumnya sedang digunakan.
+            if (hadFocusInsideHost) {
+                const targetCard = [...host.querySelectorAll('[data-keluar-row]')].find(card =>
+                    card.dataset.poRef === activePoRef &&
+                    card.dataset.barangId === activeBarangId
+                );
+                const targetInput = targetCard?.querySelector('[data-keluar-qty]');
+                if (targetInput && !targetInput.disabled) {
+                    targetInput.focus({ preventScroll: true });
+                }
+            }
         };
 
         window.updateKeluarBatchTotal = function() {
