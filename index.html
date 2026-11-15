@@ -271,7 +271,32 @@
 
         .fluid-table-container {
             width: 100%;
+            /* Area riwayat dibatasi kira-kira 12 baris; scroll berada di dalam tabel. */
+            max-height: 580px;
             overflow-x: auto;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            scrollbar-gutter: stable;
+        }
+        .fluid-table-container thead th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: #182235;
+        }
+        .fluid-table-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .fluid-table-container::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, .38);
+            border-radius: 999px;
+        }
+        .fluid-table-container::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, .25);
+        }
+        @media (max-width: 768px) {
+            .fluid-table-container { max-height: 460px; }
         }
         .fluid-table {
             width: 100%;
