@@ -1783,7 +1783,7 @@
             if(current && groups.has(current)) groupSel.value=current;
             populatePoItemOptions();
         };
-        window.populatePoItemOptions = function() {
+         = function() {
             const groupKey = document.getElementById('keluar-po-group')?.value || '';
             const host = document.getElementById('keluar-items-container');
             const info = document.getElementById('keluar-po-ready-info');
@@ -1794,6 +1794,19 @@
                     card.querySelector('[data-keluar-qty]')?.value ?? '0'
                 ])
             );
+                     const previousQty = new Map(
+            [...host.querySelectorAll('[data-keluar-row]')].map(card => [
+                `${card.dataset.poRef}|${card.dataset.barangId}`,
+                card.querySelector('[data-keluar-qty]')?.value ?? '0'
+            ])
+        );
+
+        const activeInput = document.activeElement;
+        const activeCard = activeInput?.closest('[data-keluar-row]');
+        const activePoRef = host.contains(activeInput) ? activeCard?.dataset.poRef : null;
+        const activeBarangId = host.contains(activeInput) ? activeCard?.dataset.barangId : null;
+        const shouldRestoreFocus = host.contains(activeInput) &&
+    activeInput.hasAttribute('data-keluar-qty');
             host.replaceChildren();
             const rows = (window.gudangAppDb.po || []).filter(p =>
                 `${String(p.customer||'').toUpperCase()}|${String(p.noPoCustomer||p.id).toUpperCase()}` === groupKey
