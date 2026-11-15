@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.15-glass-blue-sidebar-toggle-center-v10";
+        const APP_VERSION = "2026.11.15-glass-blue-sidebar-toggle-stable-v11";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -1074,17 +1074,32 @@
         }
         #inventory-sidebar .sidebar-mid-toggle {
             position:absolute;
-            z-index:15;
-            top:50%;
-            right:9px;
-            transform:translateY(-50%);
+            z-index:75;
+            top:12px;
+            right:-20px;
+            transform:none;
             box-shadow:0 8px 22px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.12);
+            display:inline-flex !important;
+            visibility:visible !important;
+            opacity:1 !important;
+            pointer-events:auto !important;
         }
         #inventory-sidebar .sidebar-mid-toggle:hover {
-            transform:translateY(calc(-50% - 1px));
+            transform:translateY(-1px);
+        }
+        #inventory-sidebar .sidebar-toggle-svg {
+            width:17px;
+            height:17px;
+            display:block;
+            fill:none;
+            stroke:currentColor;
+            stroke-width:1.8;
+            stroke-linecap:round;
+            stroke-linejoin:round;
+            flex:none;
         }
         #inventory-app-layout.sidebar-collapsed #inventory-sidebar .sidebar-mid-toggle {
-            right:9px;
+            right:-20px;
         }
         /* Header brand now begins at the left edge without the toggle occupying space. */
         #inventory-top-header #header-brand-group {
@@ -1098,19 +1113,27 @@
             /* Keep the control reachable while the mobile drawer is closed. */
             #inventory-sidebar .sidebar-mid-toggle {
                 position:fixed;
-                top:50%;
-                left:8px;
+                top:4.75rem;
+                left:calc(min(17rem,84vw) - 20px);
                 right:auto;
-                transform:translateY(-50%);
-                z-index:70;
+                transform:none;
+                z-index:80;
             }
             #inventory-app-layout.mobile-sidebar-open #inventory-sidebar .sidebar-mid-toggle {
                 position:absolute;
-                top:50%;
+                top:12px;
                 left:auto;
-                right:9px;
-                transform:translateY(-50%);
+                right:-20px;
+                transform:none;
             }
+        }
+
+
+        #inventory-sidebar { overflow:visible !important; }
+        #inventory-sidebar nav { overflow-x:hidden; }
+        #inventory-sidebar .sidebar-mid-toggle { will-change:transform; }
+        @media(max-width:767px) {
+            #inventory-sidebar { overflow:visible !important; }
         }
 
 </style>
@@ -1159,7 +1182,10 @@
             <button type="button" id="sidebar-toggle" onclick="toggleInventorySidebar()"
                 class="sidebar-toggle-btn sidebar-mid-toggle w-9 h-9 rounded-xl border border-blue-400/25 bg-blue-500/10 text-blue-300 inline-flex items-center justify-center transition-all"
                 aria-label="Kecilkan atau buka menu" aria-expanded="true" title="Kecilkan menu">
-                <i data-lucide="panel-left-close" class="w-4 h-4"></i>
+                <svg class="sidebar-toggle-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <rect x="3.5" y="4" width="17" height="16" rx="2.5"></rect>
+                    <path d="M9 4v16M14.5 9l-3 3 3 3"></path>
+                </svg>
             </button>
 
             <nav class="p-4 space-y-1.5 overflow-y-auto">
@@ -5068,18 +5094,16 @@
                 return window.matchMedia('(max-width: 767px)').matches;
             }
             function updateToggleIcon() {
-                const icon = button.querySelector('[data-lucide]');
                 const mobileOpen = layout.classList.contains('mobile-sidebar-open');
                 const collapsed = layout.classList.contains('sidebar-collapsed');
-                const iconName = isMobile()
-                    ? (mobileOpen ? 'panel-left-close' : 'panel-left-open')
-                    : (collapsed ? 'panel-left-open' : 'panel-left-close');
-                if (icon) icon.setAttribute('data-lucide', iconName);
+                const showOpen = isMobile() ? !mobileOpen : collapsed;
+                button.innerHTML = showOpen
+                    ? '<svg class="sidebar-toggle-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="4" width="17" height="16" rx="2.5"></rect><path d="M9 4v16M14.5 9l-3 3 3 3"></path></svg>'
+                    : '<svg class="sidebar-toggle-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="4" width="17" height="16" rx="2.5"></rect><path d="M9 4v16M12.5 9l3 3-3 3"></path></svg>';
                 button.setAttribute('aria-expanded', String(isMobile() ? mobileOpen : !collapsed));
                 button.title = isMobile()
                     ? (mobileOpen ? 'Tutup menu' : 'Buka menu')
                     : (collapsed ? 'Perbesar menu' : 'Kecilkan menu');
-                if (window.lucide) window.lucide.createIcons();
             }
 
             const saved = localStorage.getItem(KEY);
