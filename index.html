@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.15-glass-blue-softlight-v4";
+        const APP_VERSION = "2026.11.15-glass-blue-login-v5";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -516,7 +516,94 @@
         body.theme-glass.theme-light .premium-dashboard .border-white\/10,
         body.theme-glass.theme-light .premium-dashboard .border-white\/5 { border-color:rgba(71,125,190,.18) !important; }
 
-    </style>
+    
+        /* GLASSMORPHISM LOGIN — keep the existing Glass Blue palette */
+        #login-modal.login-glass-overlay {
+            overflow:hidden; isolation:isolate;
+            background:
+                radial-gradient(ellipse at 82% 18%,rgba(56,189,248,.22),transparent 34%),
+                radial-gradient(ellipse at 16% 82%,rgba(37,99,235,.20),transparent 38%),
+                rgba(3,10,22,.76) !important;
+            backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+        }
+        #login-modal.login-glass-overlay::before,
+        #login-modal.login-glass-overlay::after {
+            content:""; position:absolute; z-index:-1; width:min(54vw,520px); height:min(54vw,520px);
+            border-radius:44% 56% 62% 38% / 42% 42% 58% 58%; filter:blur(1px); pointer-events:none; opacity:.72;
+        }
+        #login-modal.login-glass-overlay::before {
+            top:-18%;right:-12%;
+            background:radial-gradient(ellipse at 35% 35%,rgba(96,165,250,.34),transparent 60%),linear-gradient(135deg,rgba(59,130,246,.12),rgba(34,211,238,.20),transparent 72%);
+            border:1px solid rgba(147,197,253,.20);transform:rotate(-24deg);
+        }
+        #login-modal.login-glass-overlay::after {
+            bottom:-27%;left:-14%;
+            background:radial-gradient(ellipse at 55% 45%,rgba(14,165,233,.24),transparent 62%),linear-gradient(135deg,rgba(30,64,175,.12),rgba(56,189,248,.14),transparent 72%);
+            border:1px solid rgba(125,211,252,.16);transform:rotate(18deg);
+        }
+        #login-modal .login-glass-card {
+            position:relative;overflow:hidden;max-width:440px;padding:38px 36px 28px;
+            border:1px solid rgba(147,197,253,.30) !important;
+            background:linear-gradient(135deg,rgba(30,55,85,.70),rgba(12,31,56,.54) 52%,rgba(7,20,39,.72)) !important;
+            box-shadow:0 28px 90px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.22),0 0 45px rgba(59,130,246,.12) !important;
+            backdrop-filter:blur(28px) saturate(145%);-webkit-backdrop-filter:blur(28px) saturate(145%);
+        }
+        #login-modal .login-glass-card::before {
+            content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+            background:linear-gradient(120deg,rgba(255,255,255,.12),transparent 34%,transparent 68%,rgba(96,165,250,.08));
+        }
+        #login-modal .login-glass-heading,#login-modal .login-glass-section-label,
+        #login-modal #form-login,#login-modal .login-glass-footer {position:relative;z-index:1}
+        #login-modal .login-glass-mark {
+            width:58px;height:58px;border-radius:19px;color:#dbeafe;
+            background:linear-gradient(145deg,rgba(96,165,250,.32),rgba(37,99,235,.16));
+            border:1px solid rgba(191,219,254,.34);
+            box-shadow:0 10px 32px rgba(37,99,235,.24),inset 0 1px 0 rgba(255,255,255,.26);
+        }
+        #login-modal .login-glass-title {color:#f8fbff;font-size:21px;letter-spacing:.045em}
+        #login-modal .login-glass-title span {color:#38bdf8}
+        #login-modal .login-glass-subtitle {color:rgba(219,234,254,.70)}
+        #login-modal .login-glass-section-label {color:#eaf4ff;font-size:14px;font-weight:700;letter-spacing:.16em;margin:4px 0 -7px}
+        #login-modal .login-glass-field {
+            position:relative;display:flex;align-items:center;min-height:52px;border-radius:13px;
+            border:1px solid rgba(191,219,254,.28);background:rgba(8,25,47,.38);
+            box-shadow:inset 0 1px 5px rgba(0,0,0,.16),0 5px 18px rgba(0,0,0,.08);
+            transition:border-color .2s ease,background .2s ease,box-shadow .2s ease;
+        }
+        #login-modal .login-glass-field:focus-within {border-color:rgba(96,165,250,.78);background:rgba(13,39,69,.54);box-shadow:0 0 0 3px rgba(59,130,246,.15),inset 0 1px 5px rgba(0,0,0,.12)}
+        #login-modal .login-glass-field-icon {position:absolute;right:16px;width:20px;height:20px;color:#dbeafe;opacity:.88;pointer-events:none}
+        #login-modal .login-glass-field input {
+            width:100%;min-width:0;height:50px;padding:0 48px 0 15px;border:0 !important;outline:0 !important;
+            background:transparent !important;color:#f8fbff !important;-webkit-text-fill-color:#f8fbff !important;
+            font-size:13px !important;box-shadow:none !important;
+        }
+        #login-modal .login-glass-field input::placeholder {color:rgba(219,234,254,.68) !important}
+        #login-modal .login-glass-submit {
+            min-height:48px;border:1px solid rgba(191,219,254,.32);
+            background:linear-gradient(110deg,#2563eb,#0284c7) !important;
+            box-shadow:0 10px 28px rgba(37,99,235,.28),inset 0 1px 0 rgba(255,255,255,.24);letter-spacing:.12em;
+        }
+        #login-modal .login-glass-submit:hover {filter:brightness(1.10);transform:translateY(-1px)}
+        #login-modal .login-glass-footer {color:rgba(219,234,254,.52);font-size:10px;text-align:center;letter-spacing:.06em}
+        body.theme-glass.theme-light #login-modal.login-glass-overlay {
+            background:radial-gradient(ellipse at 82% 18%,rgba(56,189,248,.20),transparent 34%),radial-gradient(ellipse at 16% 82%,rgba(37,99,235,.16),transparent 38%),rgba(22,39,61,.56) !important;
+        }
+        body.theme-glass.theme-light #login-modal .login-glass-card {
+            background:linear-gradient(135deg,rgba(218,231,246,.80),rgba(190,211,235,.70) 52%,rgba(205,222,242,.80)) !important;
+            border-color:rgba(71,110,157,.34) !important;box-shadow:0 28px 80px rgba(31,55,84,.24),inset 0 1px 0 rgba(255,255,255,.72) !important;
+        }
+        body.theme-glass.theme-light #login-modal .login-glass-title {color:#173657}
+        body.theme-glass.theme-light #login-modal .login-glass-title span {color:#087eae}
+        body.theme-glass.theme-light #login-modal .login-glass-subtitle,
+        body.theme-glass.theme-light #login-modal .login-glass-footer {color:rgba(30,58,90,.70)}
+        body.theme-glass.theme-light #login-modal .login-glass-section-label {color:#1e4168}
+        body.theme-glass.theme-light #login-modal .login-glass-field {background:rgba(235,244,253,.48);border-color:rgba(71,110,157,.32)}
+        body.theme-glass.theme-light #login-modal .login-glass-field input {color:#173657 !important;-webkit-text-fill-color:#173657 !important}
+        body.theme-glass.theme-light #login-modal .login-glass-field input::placeholder {color:rgba(30,58,90,.58) !important}
+        body.theme-glass.theme-light #login-modal .login-glass-field-icon {color:#245783}
+        @media(max-width:480px) {#login-modal .login-glass-card{padding:30px 22px 24px}#login-modal .login-glass-title{font-size:18px}}
+
+</style>
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
 
@@ -1516,32 +1603,31 @@
         </main>
     </div>
 
-    <!-- LOGIN MODAL -->
-    <div id="login-modal" class="fixed inset-0 z-50 bg-dark-900/90 backdrop-blur-md hidden items-center justify-center p-4">
-        <div class="app-card max-w-md w-full p-8 rounded-3xl shadow-2xl border border-white/10 space-y-6">
-            <div class="text-center space-y-2">
-                <div class="w-14 h-14 rounded-2xl theme-accent-bg mx-auto flex items-center justify-center shadow-xl shadow-orange-500/30 text-white font-black text-2xl">
-                    G
+    <!-- LOGIN MODAL: GLASSMORPHISM BLUE -->
+    <div id="login-modal" class="login-glass-overlay fixed inset-0 z-50 hidden items-center justify-center p-4">
+        <div class="login-glass-card app-card w-full max-w-md p-7 sm:p-9 rounded-[2rem] space-y-7">
+            <div class="login-glass-heading text-center space-y-2">
+                <div class="login-glass-mark mx-auto flex items-center justify-center">
+                    <i data-lucide="boxes" class="w-7 h-7"></i>
                 </div>
-                <h3 class="font-extrabold text-lg text-gray-100 tracking-tight">LOGIN INVENTORY</h3>
-                <p class="text-xs text-gray-400">Masukkan kredensial Anda untuk masuk</p>
+                <h3 class="login-glass-title font-extrabold tracking-tight">INVENTORY <span>MANAGEMENT</span></h3>
+                <p class="login-glass-subtitle text-xs">Sistem Manajemen Inventory Gudang</p>
             </div>
-            
+            <div class="login-glass-section-label">LOGIN</div>
             <form id="form-login" autocomplete="off" onsubmit="handleLoginSubmit(event)" class="space-y-4">
-                <div>
-                    <label class="text-xs block mb-1">Username</label>
-                    <input type="text" id="login-username" name="inventory-login-user" autocomplete="off" autocapitalize="none" spellcheck="false" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Username">
+                <div class="login-glass-field">
+                    <i data-lucide="user-round" class="login-glass-field-icon"></i>
+                    <input type="text" id="login-username" name="inventory-login-user" autocomplete="off" autocapitalize="none" spellcheck="false" required placeholder="Username">
                 </div>
-                <div>
-                    <label class="text-xs block mb-1">Password</label>
-                    <input type="password" id="login-password" name="inventory-login-pass" autocomplete="off" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="••••••••">
+                <div class="login-glass-field">
+                    <i data-lucide="lock-keyhole" class="login-glass-field-icon"></i>
+                    <input type="password" id="login-password" name="inventory-login-pass" autocomplete="off" required placeholder="Password">
                 </div>
                 <div class="pt-2">
-                    <button type="submit" class="w-full py-3 rounded-xl theme-accent-bg text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-orange-500/30 hover:scale-[1.02] active:scale-95 transition-all">
-                        Masuk Sistem
-                    </button>
+                    <button type="submit" class="login-glass-submit w-full py-3 rounded-xl theme-accent-bg text-white text-xs font-bold uppercase tracking-wider transition-all">MASUK SISTEM</button>
                 </div>
             </form>
+            <div class="login-glass-footer">Akses aman • Inventory Gudang</div>
         </div>
     </div>
 
