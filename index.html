@@ -947,17 +947,13 @@
                                 <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
                                     <tr>
                                         <th class="py-3 px-2 rounded-l-xl text-center w-10">No</th>
-                                        <th class="py-3 px-3">ID Transaksi</th>
+                                        <th class="py-3 px-3">ID Transaksi / Surat Jalan</th>
                                         <th class="py-3 px-3">Tanggal</th>
-                                        <th class="py-3 px-3">ID Barang</th>
-                                        <th class="py-3 px-3">Nama Barang</th>
-                                        <th class="py-3 px-3">Kategori</th>
-                                        <th class="py-3 px-2">Lebar</th>
-                                        <th class="py-3 px-2">Ukuran</th>
-                                        <th class="py-3 px-2">Satuan</th>
-                                        <th class="py-3 px-3 text-right">Qty Keluar</th>
+                                        <th class="py-3 px-3 text-center">Jumlah Jenis Barang</th>
+                                        <th class="py-3 px-3 text-right">Total Qty Keluar</th>
                                         <th class="py-3 px-3">Customer / Tujuan</th>
-                                        <th class="py-3 px-3">No PO Ref</th>
+                                        <th class="py-3 px-3">Nomor PO</th>
+                                        <th class="py-3 px-3 text-center">Detail Barang</th>
                                         <th id="keluar-th-aksi" class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
                                     </tr>
                                 </thead>
@@ -2737,40 +2733,111 @@
             updateKeluarBatchTotal();
         };
 
+        window._expandedKeluarGroupKeys = window._expandedKeluarGroupKeys || new Set();
         window.renderKeluarTable = function() {
-            const q = document.getElementById('search-keluar')?.value.toLowerCase() || '';
+            const q = document.getElementById('search-keluar')?.value.toLowerCase().trim() || '';
             const tbody = document.getElementById('keluar-table-body');
             const badgeTotal = document.getElementById('keluar-total-badge');
             const isViewer = window.gudangAppDb.currentUser?.role === 'viewer';
+            if (!tbody) return;
 
-            const filtered = window.gudangAppDb.keluar.filter(i => 
-                String(i.transactionId||i.groupId||i.id).toLowerCase().includes(q) || i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.tujuan.toLowerCase().includes(q)
-            );
-            if (badgeTotal) badgeTotal.textContent = `${filtered.length} Transaksi`;
+            // Simpan status detail yang sedang terbuka sebelum tabel dirender ulang.
+            tbody.querySelectorAll('tr[data-keluar-group-key]').forEach(row => {
+                const key = row.dataset.keluarGroupKey;
+                if (!key) return;
+                if (row.classList.contains('hidden')) window._expandedKeluarGroupKeys.delete(key);
+                else window._expandedKeluarGroupKeys.add(key);
+            });
 
-            tbody.innerHTML = filtered.map((i, index) => `
-                <tr class="hover:bg-white/5">
-                    <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
-                    <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
-                    <td class="py-3 px-3 opacity-80">${i.tanggal}</td>
-                    <td class="py-3 px-3 font-mono opacity-80">${i.barangId}</td>
-                    <td class="py-3 px-3 font-medium">${i.nama}</td>
-                    <td class="py-3 px-3 opacity-80">${i.jenis}</td>
-                    <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
-                    <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
-                    <td class="py-3 px-2 opacity-80">${i.satuan}</td>
-                    <td class="py-3 px-3 text-right font-mono font-bold text-rose-400">-${i.qty.toLocaleString('id-ID')}</td>
-                    <td class="py-3 px-3 font-medium">${i.tujuan}</td>
-                    <td class="py-3 px-3 font-mono opacity-80">${i.poRef || '-'}</td>
-                    ${!isViewer ? `
-                        <td class="py-3 px-3 text-center">
-                            <button onclick="editKeluarItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-semibold mr-1">Edit</button>
-                            <button onclick="deleteKeluarItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
+            const allGroups = new Map();
+            (window.gudangAppDb.keluar || []).forEach(item => {
+                const transactionId = String(item.transactionId || item.groupId || item.id);
+                if (!allGroups.has(transactionId)) allGroups.set(transactionId, []);
+                allGroups.get(transactionId).push(item);
+            });
+
+            const groups = [...allGroups.entries()].map(([transactionId, rows]) => ({
+                transactionId,
+                rows: rows.slice().sort((a,b) => String(a.id).localeCompare(String(b.id), 'id')),
+                head: rows[0]
+            })).filter(group => {
+                if (!q) return true;
+                return [group.transactionId, group.head.tanggal, group.head.tujuan,
+                    ...group.rows.flatMap(r => [r.id, r.barangId, r.nama, r.jenis, r.poRef])]
+                    .some(value => String(value || '').toLowerCase().includes(q));
+            }).sort((a,b) => String(b.head.tanggal||'').localeCompare(String(a.head.tanggal||'')) ||
+                              String(b.transactionId).localeCompare(String(a.transactionId)));
+
+            const totalDetails = groups.reduce((sum, group) => sum + group.rows.length, 0);
+            if (badgeTotal) badgeTotal.textContent = `${groups.length} Transaksi / Surat Jalan • ${totalDetails} detail barang`;
+
+            const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
+                '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+            }[ch]));
+
+            tbody.innerHTML = groups.map((group, index) => {
+                const token = encodeURIComponent(group.transactionId).replace(/'/g, '%27');
+                const expanded = window._expandedKeluarGroupKeys.has(token);
+                const totalQty = group.rows.reduce((sum, row) => sum + Number(row.qty || 0), 0);
+                const poRefs = [...new Set(group.rows.map(row => {
+                    const po = (window.gudangAppDb.po || []).find(p => String(p.id) === String(row.poRef));
+                    return po?.noPoCustomer || row.poRef || '-';
+                }))];
+                const detailRows = group.rows.map((row, detailIndex) => `
+                    <tr class="border-t border-white/5 hover:bg-white/5">
+                        <td class="p-2 text-center">${detailIndex + 1}</td>
+                        <td class="p-2 font-mono">${esc(row.id)}</td>
+                        <td class="p-2 font-mono">${esc(row.barangId)}</td>
+                        <td class="p-2 font-medium">${esc(row.nama)}</td>
+                        <td class="p-2">${esc(row.jenis || '-')}</td>
+                        <td class="p-2">${esc(row.lebar || '-')}</td>
+                        <td class="p-2">${esc(row.ukuran || '-')}</td>
+                        <td class="p-2">${esc(row.satuan || '-')}</td>
+                        <td class="p-2 text-right font-mono font-bold text-rose-400">-${Number(row.qty || 0).toLocaleString('id-ID')}</td>
+                        <td class="p-2 font-mono">${esc((window.gudangAppDb.po || []).find(p => String(p.id) === String(row.poRef))?.noPoCustomer || row.poRef || '-')}</td>
+                        <td class="p-2 text-center">${!isViewer ? `
+                            <button onclick="editKeluarItem('${esc(row.id)}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-semibold mr-1">Edit</button>
+                            <button onclick="deleteKeluarItem('${esc(row.id)}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
+                        ` : '-'}</td>
+                    </tr>
+                `).join('');
+
+                return `
+                    <tr class="hover:bg-white/5 border-b border-white/5">
+                        <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
+                        <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(group.transactionId)}</td>
+                        <td class="py-3 px-3 opacity-80">${esc(group.head.tanggal || '-')}</td>
+                        <td class="py-3 px-3 text-center">${group.rows.length} barang</td>
+                        <td class="py-3 px-3 text-right font-mono font-bold text-rose-400">-${totalQty.toLocaleString('id-ID')}</td>
+                        <td class="py-3 px-3 font-medium">${esc(group.head.tujuan || '-')}</td>
+                        <td class="py-3 px-3 font-mono opacity-80">${esc(poRefs.join(', '))}</td>
+                        <td class="py-3 px-3 text-center"><button onclick="toggleKeluarDetails('${token}')" class="px-3 py-1 rounded bg-indigo-500/20 text-indigo-300 text-xs font-semibold">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button></td>
+                        <td class="py-3 px-3 text-center">${isViewer ? '-' : '<span class="text-[10px] text-gray-400">Aksi per barang</span>'}</td>
+                    </tr>
+                    <tr id="keluar-detail-${token}" data-keluar-group-key="${token}" class="${expanded ? '' : 'hidden'}">
+                        <td colspan="9" class="p-2 bg-black/10">
+                            <div class="rounded-xl border border-white/10 overflow-x-auto">
+                                <table class="w-full text-xs min-w-[900px]">
+                                    <thead class="bg-white/5 text-gray-400"><tr>
+                                        <th class="p-2 text-center">No</th><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">ID Barang</th><th class="p-2 text-left">Nama Barang</th><th class="p-2 text-left">Kategori</th><th class="p-2 text-left">Lebar</th><th class="p-2 text-left">Ukuran</th><th class="p-2 text-left">Satuan</th><th class="p-2 text-right">Qty Keluar</th><th class="p-2 text-left">No PO Ref</th><th class="p-2 text-center">Aksi</th>
+                                    </tr></thead>
+                                    <tbody>${detailRows}</tbody>
+                                    <tfoot class="bg-white/5 border-t border-white/10"><tr><td colspan="8" class="p-2 text-right font-semibold">Total Qty Surat Jalan</td><td class="p-2 text-right font-mono font-bold text-emerald-300">${totalQty.toLocaleString('id-ID')}</td><td colspan="2"></td></tr></tfoot>
+                                </table>
+                            </div>
                         </td>
-                    ` : ''}
-                </tr>
-            `).join('') || `<tr><td colspan="${isViewer ? 12 : 13}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
+                    </tr>`;
+            }).join('') || `<tr><td colspan="9" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
             lucide.createIcons();
+        };
+
+        window.toggleKeluarDetails = function(token) {
+            const row = document.getElementById(`keluar-detail-${token}`);
+            if (!row) return;
+            const willOpen = row.classList.contains('hidden');
+            row.classList.toggle('hidden', !willOpen);
+            if (willOpen) window._expandedKeluarGroupKeys.add(token);
+            else window._expandedKeluarGroupKeys.delete(token);
         };
 
         // PO CRUD
