@@ -3577,9 +3577,14 @@
                     const text = opt ? opt.textContent.trim() : '';
                     if (!value) return '-';
 
-                    // Nomor PO group: value internal berisi customer|nomor PO.
-                    // Tampilkan label option saja agar customer/nomor PO tidak berulang.
-                    if (id === 'keluar-po-group') return text || value.split('|').pop() || value;
+                    // Nilai internal group adalah customer|nomor PO.
+                    // Popup bagian atas hanya menampilkan nomor PO; customer tampil
+                    // pada baris Tujuan/Customer, jadi jangan gunakan label option
+                    // yang menggabungkan keduanya.
+                    if (id === 'keluar-po-group') {
+                        const poNumber = value.includes('|') ? value.split('|').pop().trim() : value;
+                        return poNumber || text || '-';
+                    }
 
                     // ID barang ditampilkan sendiri; nama barang ada pada baris detail terpisah.
                     const item = (window.gudangAppDb?.items || []).find(x => String(x.id) === value);
@@ -3675,8 +3680,9 @@
                         addDetailRow('Nama Barang', window.displayItemName(r.barangId, item?.nama || r.nama || r.barangId), card);
                         addDetailRow('Qty Keluar', `${r.qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
                         if (po) {
-                            addDetailRow('Nomor PO Customer', po.noPoCustomer || po.id, card);
-                            addDetailRow('Customer', po.customer || '-', card);
+                            // Nomor PO dan Customer sudah ditampilkan sekali pada
+                            // ringkasan utama popup. Di kartu detail cukup tampilkan
+                            // batas kuantitas untuk pemeriksaan pengiriman.
                             addDetailRow('Qty PO / Terkirim / Siap', `${Number(po.qty || 0).toLocaleString('id-ID')} / ${Number(po.terkirim || 0).toLocaleString('id-ID')} / ${getPoReadyQty(po).toLocaleString('id-ID')}`, card);
                         }
                         content.appendChild(card);
