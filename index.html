@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.15-glass-blue-theme-v1";
+        const APP_VERSION = "2026.11.15-glass-blue-clean-v2";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -43,146 +43,18 @@
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 9999px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
 
-        /* Dynamic Theme Variables */
+        /* Single theme foundation: Glass Blue */
         :root {
-            --theme-bg: #07090e;
-            --theme-card: #0f131a;
-            --theme-card-border: rgba(255, 255, 255, 0.06);
-            --theme-accent: #f97316; /* Orange Coral */
-            --theme-accent-hover: #ea580c;
-            --theme-accent-glow: rgba(249, 115, 22, 0.18);
-            --theme-text: #f3f4f6;
-            --theme-text-muted: #8b949e;
+            --theme-bg:#07111f;
+            --theme-card:rgba(15,31,53,.72);
+            --theme-card-border:rgba(125,180,255,.20);
+            --theme-accent:#3b82f6;
+            --theme-accent-hover:#2563eb;
+            --theme-accent-glow:rgba(59,130,246,.24);
+            --theme-text:#eaf2ff;
+            --theme-text-muted:#9fb3cc;
         }
-
-        .theme-sunset {
-            --theme-bg: #07090e;
-            --theme-card: #0f131a;
-            --theme-card-border: rgba(249, 115, 22, 0.12);
-            --theme-accent: #f97316;
-            --theme-accent-hover: #ea580c;
-            --theme-accent-glow: rgba(249, 115, 22, 0.2);
-        }
-
-        .theme-emerald {
-            --theme-bg: #051410;
-            --theme-card: #091f19;
-            --theme-card-border: rgba(16, 185, 129, 0.12);
-            --theme-accent: #10b981;
-            --theme-accent-hover: #059669;
-            --theme-accent-glow: rgba(16, 185, 129, 0.2);
-        }
-
-        .theme-midnight {
-            --theme-bg: #060a12;
-            --theme-card: #0c1424;
-            --theme-card-border: rgba(59, 130, 246, 0.12);
-            --theme-accent: #3b82f6;
-            --theme-accent-hover: #2563eb;
-            --theme-accent-glow: rgba(59, 130, 246, 0.2);
-        }
-
-        .theme-cyber {
-            --theme-bg: #09030f;
-            --theme-card: #150a21;
-            --theme-card-border: rgba(236, 72, 153, 0.15);
-            --theme-accent: #ec4899;
-            --theme-accent-hover: #db2777;
-            --theme-accent-glow: rgba(236, 72, 153, 0.25);
-        }
-
-        .theme-royal {
-            --theme-bg: #040d1a;
-            --theme-card: #0a182c;
-            --theme-card-border: rgba(234, 179, 8, 0.15);
-            --theme-accent: #eab308;
-            --theme-accent-hover: #ca8a04;
-            --theme-accent-glow: rgba(234, 179, 8, 0.25);
-        }
-
-        .theme-neon-sunset {
-            --theme-bg: #0f0717;
-            --theme-card: #1c102b;
-            --theme-card-border: rgba(244, 63, 94, 0.2);
-            --theme-accent: #f43f5e;
-            --theme-accent-hover: #e11d48;
-            --theme-accent-glow: rgba(244, 63, 94, 0.3);
-        }
-
-        .theme-aurora {
-            --theme-bg: #03141c;
-            --theme-card: #082230;
-            --theme-card-border: rgba(6, 182, 212, 0.2);
-            --theme-accent: #06b6d4;
-            --theme-accent-hover: #0891b2;
-            --theme-accent-glow: rgba(6, 182, 212, 0.3);
-        }
-
-        .theme-neon-rainbow {
-            --theme-bg: #120826;
-            --theme-card: #1f0c3f;
-            --theme-card-border: rgba(236, 72, 153, 0.3);
-            --theme-accent: #a855f7;
-            --theme-accent-hover: #9333ea;
-            --theme-accent-glow: rgba(168, 85, 247, 0.4);
-        }
-
-        .theme-cyberpunk {
-            --theme-bg: #030712;
-            --theme-card: #0f172a;
-            --theme-card-border: rgba(250, 204, 21, 0.3);
-            --theme-accent: #facc15;
-            --theme-accent-hover: #eab308;
-            --theme-accent-glow: rgba(250, 204, 21, 0.4);
-        }
-
-        /* 5 NEW VIBRANT THEMES */
-        .theme-cosmic-nebula {
-            --theme-bg: #0d0614;
-            --theme-card: #180b29;
-            --theme-card-border: rgba(192, 132, 252, 0.25);
-            --theme-accent: #c084fc;
-            --theme-accent-hover: #a855f7;
-            --theme-accent-glow: rgba(192, 132, 252, 0.35);
-        }
-
-        .theme-emerald-matrix {
-            --theme-bg: #020c08;
-            --theme-card: #061f14;
-            --theme-card-border: rgba(52, 211, 153, 0.25);
-            --theme-accent: #34d399;
-            --theme-accent-hover: #10b981;
-            --theme-accent-glow: rgba(52, 211, 153, 0.35);
-        }
-
-        .theme-sunset-horizon {
-            --theme-bg: #140804;
-            --theme-card: #261109;
-            --theme-card-border: rgba(251, 146, 60, 0.25);
-            --theme-accent: #fb923c;
-            --theme-accent-hover: #f97316;
-            --theme-accent-glow: rgba(251, 146, 60, 0.35);
-        }
-
-        .theme-midnight-amethyst {
-            --theme-bg: #050614;
-            --theme-card: #0d0f2b;
-            --theme-card-border: rgba(129, 140, 248, 0.25);
-            --theme-accent: #818cf8;
-            --theme-accent-hover: #6366f1;
-            --theme-accent-glow: rgba(129, 140, 248, 0.35);
-        }
-
-        .theme-crimson-inferno {
-            --theme-bg: #140404;
-            --theme-card: #290a0a;
-            --theme-card-border: rgba(248, 113, 113, 0.25);
-            --theme-accent: #f87171;
-            --theme-accent-hover: #ef4444;
-            --theme-accent-glow: rgba(248, 113, 113, 0.35);
-        }
-
-        body { background-color: var(--theme-bg); color: var(--theme-text); }
+        body { background-color:var(--theme-bg); color:var(--theme-text); }
         .app-card { 
             background-color: var(--theme-card); 
             border: 1px solid var(--theme-card-border);
@@ -405,9 +277,25 @@
         body.theme-glass.theme-light .theme-accent-text {color:#2563eb !important;}
         body.theme-glass.theme-light #inventory-print-options input[type="date"] {background:#fff !important;color:#111827 !important;}
 
+
+        /* PREMIUM DASHBOARD LAYOUT */
+        .premium-dashboard .dashboard-glow-card { border-radius: 1.5rem; }
+        .premium-dashboard .dashboard-glow-card:hover { transform: translateY(-3px); }
+        .premium-dashboard #chart-masuk > *, .premium-dashboard #chart-keluar > * { flex-shrink: 0; }
+        .premium-dashboard #recent-activity-body tr:hover { background: rgba(59,130,246,.07); }
+        body.theme-glass.theme-light .premium-dashboard h2,
+        body.theme-glass.theme-light .premium-dashboard h3 { color:#173253 !important; }
+        body.theme-glass.theme-light .premium-dashboard p,
+        body.theme-glass.theme-light .premium-dashboard .text-slate-400,
+        body.theme-glass.theme-light .premium-dashboard .text-slate-300 { color:#60758f !important; }
+        body.theme-glass.theme-light .premium-dashboard .text-white { color:#173253 !important; }
+        body.theme-glass.theme-light .premium-dashboard .bg-gradient-to-br { background-image:linear-gradient(135deg,rgba(219,234,254,.92),rgba(255,255,255,.82),rgba(224,242,254,.88)) !important; }
+        body.theme-glass.theme-light .premium-dashboard .border-white\/10,
+        body.theme-glass.theme-light .premium-dashboard .border-white\/5 { border-color:rgba(71,125,190,.18) !important; }
+
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-orange-500 selection:text-white theme-sunset">
+<body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
 
     <!-- TOP HEADER -->
     <header class="h-16 border-b border-white/5 bg-dark-800/90 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-6 lg:px-8">
@@ -489,26 +377,14 @@
             </nav>
 
             <div class="p-4 border-t border-white/5 space-y-3 bg-dark-900/60">
-                <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
-                        <i data-lucide="palette" class="w-3 h-3"></i> Tema Tampilan
-                    </label>
-                    <select id="theme-selector" onchange="changeTheme(this.value)" class="w-full bg-dark-700/80 border border-white/10 rounded-xl px-3 py-2 text-xs text-gray-200 theme-focus" autocomplete="off">
-                        <option value="sunset">Sunset Coral (Default)</option>
-                        <option value="emerald">Emerald Forest</option>
-                        <option value="midnight">Midnight Blue</option>
-                        <option value="cyber">Cyber Neon (Pink)</option>
-                        <option value="royal">Purple Royal Gold</option>
-                        <option value="neon-sunset">Neon Sunset (Vibrant Rose)</option>
-                        <option value="aurora">Aurora Cyan (Fresh Neon)</option>
-                        <option value="neon-rainbow">🌈 Neon Rainbow (Super Colorful)</option>
-                        <option value="cyberpunk">⚡ Electric Cyberpunk (Yellow/Blue)</option>
-                        <option value="cosmic-nebula">🌌 Cosmic Nebula (Purple Glow)</option>
-                        <option value="emerald-matrix">💚 Emerald Matrix (Fresh Green)</option>
-                        <option value="sunset-horizon">🌅 Sunset Horizon (Warm Orange)</option>
-                        <option value="midnight-amethyst">🔮 Midnight Amethyst (Indigo Blue)</option>
-                        <option value="crimson-inferno">🔥 Crimson Inferno (Bold Red)</option>
-                    </select>
+                <div class="flex items-center justify-between gap-2">
+                    <div class="min-w-0">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                            <i data-lucide="palette" class="w-3 h-3"></i> Tema Glass Blue
+                        </div>
+                        <div class="text-[10px] text-gray-500 mt-1">Tampilan kaca modern</div>
+                    </div>
+                    <span class="text-[10px] font-bold text-blue-400">GLASS</span>
                 </div>
                 <button type="button" id="theme-mode-toggle" onclick="toggleThemeMode()" class="w-full py-2 px-3 rounded-xl border border-blue-400/25 bg-blue-500/10 text-blue-300 text-xs font-semibold flex items-center justify-center gap-2 hover:bg-blue-500/15 transition-all">
                     <i data-lucide="sun-moon" class="w-4 h-4"></i>
@@ -527,154 +403,141 @@
         <main class="flex-1 overflow-y-auto px-6 lg:px-10 py-6 bg-dark-900 w-full">
 
             <!-- 1. TAB DASHBOARD -->
-            <section id="tab-dashboard" class="space-y-6 w-full">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-white/[0.04] to-transparent p-6 rounded-3xl border border-white/5 backdrop-blur-xl">
-                    <div class="space-y-1">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wider">
-                            <span class="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span> Inventory Command Center
-                        </div>
-                        <h2 class="text-2xl font-black tracking-tight text-white">DASHBOARD REALTIME</h2>
-                        <p class="text-xs text-gray-400">Ringkasan stok gudang, pergerakan transaksi, dan status PO aktif.</p>
-                    </div>
-                </div>
-
-                <!-- STAT CARDS -->
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                    <div onclick="switchTab('master')" class="dashboard-glow-card p-4 rounded-3xl relative overflow-hidden group cursor-pointer" title="Klik untuk lihat Master Barang">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-gray-400 text-[10px] font-extrabold uppercase tracking-widest">Total SKU</span>
-                            <div class="w-9 h-9 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform shadow-lg shadow-orange-500/10">
-                                <i data-lucide="package" class="w-4 h-4"></i>
+            <section id="tab-dashboard" class="premium-dashboard space-y-7 w-full">
+                <!-- PREMIUM DASHBOARD HERO -->
+                <div class="relative overflow-hidden rounded-[2rem] border border-blue-300/15 bg-gradient-to-br from-blue-600/20 via-slate-900/60 to-cyan-500/10 p-6 md:p-8 shadow-2xl shadow-blue-950/20 backdrop-blur-2xl">
+                    <div class="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full bg-blue-500/15 blur-3xl"></div>
+                    <div class="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-cyan-400/10 blur-3xl"></div>
+                    <div class="relative flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6">
+                        <div class="max-w-2xl space-y-3">
+                            <div class="inline-flex items-center gap-2 rounded-full border border-blue-300/20 bg-blue-400/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.22em] text-blue-300">
+                                <span class="h-2 w-2 rounded-full bg-blue-400 shadow-[0_0_12px_#60a5fa] animate-pulse"></span>
+                                Inventory Command Center
+                            </div>
+                            <div>
+                                <p class="mb-1 text-xs font-semibold uppercase tracking-[.2em] text-blue-200/60">Overview &amp; Analytics</p>
+                                <h2 class="text-3xl md:text-4xl font-black tracking-tight text-white">Dashboard Realtime</h2>
+                                <p class="mt-2 max-w-xl text-sm leading-6 text-slate-300/80">Pantau kondisi persediaan, pergerakan barang, purchase order, dan aktivitas gudang dalam satu tampilan.</p>
                             </div>
                         </div>
-                        <div id="stat-sku" class="text-3xl font-black font-mono text-white tracking-tight">0</div>
-                        <div class="text-[11px] text-gray-400 mt-1 font-medium">Jenis barang terdaftar</div>
-                    </div>
-                    <div onclick="switchTab('master')" id="card-stok-fisik" class="dashboard-glow-card p-4 rounded-3xl relative overflow-hidden group cursor-pointer" title="Klik untuk lihat Master Barang">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-gray-400 text-[10px] font-extrabold uppercase tracking-widest">Stok Fisik</span>
-                            <div class="w-9 h-9 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform shadow-lg shadow-emerald-500/10">
-                                <i data-lucide="layers" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                        <div id="stat-stok" class="text-3xl font-black font-mono text-white tracking-tight">0</div>
-                        <div class="text-[11px] text-gray-400 mt-1 font-medium">Akumulasi unit gudang</div>
-                    </div>
-                    <div onclick="switchTab('masuk')" class="dashboard-glow-card p-4 rounded-3xl relative overflow-hidden group cursor-pointer" title="Klik untuk lihat Barang Masuk">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-gray-400 text-[10px] font-extrabold uppercase tracking-widest">Total Masuk</span>
-                            <div class="w-9 h-9 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform shadow-lg shadow-emerald-500/10">
-                                <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                        <div id="stat-masuk" class="text-3xl font-black font-mono text-emerald-400 tracking-tight">0</div>
-                        <div class="text-[11px] text-gray-400 mt-1 font-medium">Unit barang masuk</div>
-                    </div>
-                    <div onclick="switchTab('keluar')" class="dashboard-glow-card p-4 rounded-3xl relative overflow-hidden group cursor-pointer" title="Klik untuk lihat Barang Keluar">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-gray-400 text-[10px] font-extrabold uppercase tracking-widest">Total Keluar</span>
-                            <div class="w-9 h-9 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform shadow-lg shadow-rose-500/10">
-                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                        <div id="stat-keluar" class="text-3xl font-black font-mono text-rose-400 tracking-tight">0</div>
-                        <div class="text-[11px] text-gray-400 mt-1 font-medium">Unit barang keluar</div>
-                    </div>
-                    <div onclick="switchTab('po')" class="dashboard-glow-card p-4 rounded-3xl relative overflow-hidden group cursor-pointer" title="Klik untuk lihat PO Customer">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-gray-400 text-[10px] font-extrabold uppercase tracking-widest">PO Aktif</span>
-                            <div class="w-9 h-9 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 group-hover:scale-110 transition-transform shadow-lg shadow-sky-500/10">
-                                <i data-lucide="file-text" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                        <div id="stat-po" class="text-3xl font-black font-mono text-sky-400 tracking-tight">0</div>
-                        <div class="text-[11px] text-gray-400 mt-1 font-medium">PO belum selesai</div>
-                    </div>
-                    <div onclick="switchTab('retur')" class="dashboard-glow-card p-4 rounded-3xl relative overflow-hidden group cursor-pointer" title="Klik untuk lihat Retur Barang">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-gray-400 text-[10px] font-extrabold uppercase tracking-widest">Total Retur</span>
-                            <div class="w-9 h-9 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform shadow-lg shadow-amber-500/10">
-                                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                        <div id="stat-retur" class="text-3xl font-black font-mono text-amber-400 tracking-tight">0</div>
-                        <div class="text-[11px] text-gray-400 mt-1 font-medium">Transaksi retur</div>
-                    </div>
-                </div>
-
-                <!-- GRAFIK & STOK MENIPIS -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="dashboard-glow-card p-6 rounded-3xl flex flex-col">
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                                    <i data-lucide="trending-up" class="w-4 h-4"></i>
+                        <div class="relative flex flex-wrap items-center gap-3">
+                            <div class="rounded-2xl border border-white/10 bg-slate-950/25 px-4 py-3 backdrop-blur-xl">
+                                <div class="text-[9px] font-bold uppercase tracking-[.18em] text-slate-400">Status Sistem</div>
+                                <div class="mt-1 flex items-center gap-2 text-xs font-bold text-emerald-300">
+                                    <span class="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399] animate-pulse"></span>
+                                    Realtime Monitoring
                                 </div>
-                                <h3 class="font-bold text-xs tracking-wider text-emerald-400 uppercase">GRAFIK BARANG MASUK (TOP SKU)</h3>
                             </div>
-                            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-semibold px-2.5 py-1 rounded-xl border border-emerald-500/30">Inflow Trend</span>
-                        </div>
-                        <div id="chart-masuk" class="flex-1 min-h-[220px] flex items-end gap-3 pt-6 pb-2 px-2 border-b border-white/5 overflow-x-auto">
-                        </div>
-                    </div>
-
-                    <div class="dashboard-glow-card p-6 rounded-3xl flex flex-col">
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center">
-                                    <i data-lucide="trending-down" class="w-4 h-4"></i>
-                                </div>
-                                <h3 class="font-bold text-xs tracking-wider text-rose-400 uppercase">GRAFIK BARANG KELUAR (TOP SKU)</h3>
+                            <div class="rounded-2xl border border-blue-300/15 bg-blue-400/10 px-4 py-3 backdrop-blur-xl">
+                                <div class="text-[9px] font-bold uppercase tracking-[.18em] text-blue-200/70">Workspace</div>
+                                <div class="mt-1 text-xs font-bold text-blue-100">Gudang Inventory</div>
                             </div>
-                            <span class="text-[10px] bg-rose-500/20 text-rose-300 font-semibold px-2.5 py-1 rounded-xl border border-rose-500/30">Outflow Trend</span>
-                        </div>
-                        <div id="chart-keluar" class="flex-1 min-h-[220px] flex items-end gap-3 pt-6 pb-2 px-2 border-b border-white/5 overflow-x-auto">
                         </div>
                     </div>
                 </div>
 
-                <!-- STOK MENIPIS WIDGET -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="dashboard-glow-card p-6 rounded-3xl lg:col-span-3 flex flex-col">
-                        <div class="flex items-center justify-between mb-5">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center">
-                                    <i data-lucide="alert-triangle" class="w-4 h-4"></i>
-                                </div>
-                                <h3 class="font-bold text-xs tracking-wider text-rose-400 uppercase">PERINGATAN STOK MENIPIS (CRITICAL & WARNING)</h3>
-                            </div>
-                            <span class="text-[10px] bg-rose-500/20 text-rose-300 font-semibold px-2.5 py-1 rounded-xl border border-rose-500/30">&lt; Stok Min.</span>
+                <!-- KPI OVERVIEW: keep original IDs and click navigation -->
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <h3 class="text-sm font-extrabold tracking-wide text-white">Ringkasan Inventory</h3>
+                        <p class="mt-1 text-[11px] text-slate-400">Ikhtisar data utama gudang</p>
+                    </div>
+                    <span class="rounded-full border border-blue-400/20 bg-blue-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-300">Live Overview</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <div onclick="switchTab('master')" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Master Barang">
+                        <div class="absolute -right-7 -top-7 h-24 w-24 rounded-full bg-blue-500/10 blur-2xl transition-all group-hover:bg-blue-400/20"></div>
+                        <div class="relative flex items-start justify-between">
+                            <div><div class="text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-400">Total SKU</div><div id="stat-sku" class="mt-3 text-3xl font-black font-mono tracking-tight text-white">0</div><div class="mt-1 text-[11px] text-slate-400">Jenis barang terdaftar</div></div>
+                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-blue-300/20 bg-blue-500/10 text-blue-300"><i data-lucide="package" class="h-5 w-5"></i></div>
                         </div>
-                        <div id="low-stock-list" class="flex flex-col gap-2.5 overflow-y-auto max-h-[300px] pr-1">
+                        <div class="relative mt-4 h-1 overflow-hidden rounded-full bg-white/5"><div class="h-full w-2/3 rounded-full bg-gradient-to-r from-blue-500 to-cyan-300"></div></div>
+                    </div>
+                    <div onclick="switchTab('master')" id="card-stok-fisik" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Master Barang">
+                        <div class="absolute -right-7 -top-7 h-24 w-24 rounded-full bg-cyan-500/10 blur-2xl"></div>
+                        <div class="relative flex items-start justify-between">
+                            <div><div class="text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-400">Stok Fisik</div><div id="stat-stok" class="mt-3 text-3xl font-black font-mono tracking-tight text-white">0</div><div class="mt-1 text-[11px] text-slate-400">Akumulasi unit gudang</div></div>
+                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-500/10 text-cyan-300"><i data-lucide="layers" class="h-5 w-5"></i></div>
                         </div>
+                        <div class="relative mt-4 h-1 overflow-hidden rounded-full bg-white/5"><div class="h-full w-3/4 rounded-full bg-gradient-to-r from-cyan-500 to-sky-300"></div></div>
+                    </div>
+                    <div onclick="switchTab('masuk')" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Barang Masuk">
+                        <div class="relative flex items-start justify-between">
+                            <div><div class="text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-400">Total Masuk</div><div id="stat-masuk" class="mt-3 text-3xl font-black font-mono tracking-tight text-emerald-300">0</div><div class="mt-1 text-[11px] text-slate-400">Unit barang masuk</div></div>
+                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-500/10 text-emerald-300"><i data-lucide="arrow-down-left" class="h-5 w-5"></i></div>
+                        </div>
+                        <div class="mt-4 h-1 overflow-hidden rounded-full bg-white/5"><div class="h-full w-2/3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-300"></div></div>
+                    </div>
+                    <div onclick="switchTab('keluar')" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Barang Keluar">
+                        <div class="relative flex items-start justify-between">
+                            <div><div class="text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-400">Total Keluar</div><div id="stat-keluar" class="mt-3 text-3xl font-black font-mono tracking-tight text-rose-300">0</div><div class="mt-1 text-[11px] text-slate-400">Unit barang keluar</div></div>
+                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-rose-300/20 bg-rose-500/10 text-rose-300"><i data-lucide="arrow-up-right" class="h-5 w-5"></i></div>
+                        </div>
+                        <div class="mt-4 h-1 overflow-hidden rounded-full bg-white/5"><div class="h-full w-1/2 rounded-full bg-gradient-to-r from-rose-500 to-pink-300"></div></div>
+                    </div>
+                    <div onclick="switchTab('po')" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat PO Customer">
+                        <div class="relative flex items-start justify-between">
+                            <div><div class="text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-400">PO Aktif</div><div id="stat-po" class="mt-3 text-3xl font-black font-mono tracking-tight text-sky-300">0</div><div class="mt-1 text-[11px] text-slate-400">PO belum selesai</div></div>
+                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-sky-300/20 bg-sky-500/10 text-sky-300"><i data-lucide="file-text" class="h-5 w-5"></i></div>
+                        </div>
+                        <div class="mt-4 h-1 overflow-hidden rounded-full bg-white/5"><div class="h-full w-3/5 rounded-full bg-gradient-to-r from-sky-500 to-cyan-300"></div></div>
+                    </div>
+                    <div onclick="switchTab('retur')" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Retur Barang">
+                        <div class="relative flex items-start justify-between">
+                            <div><div class="text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-400">Total Retur</div><div id="stat-retur" class="mt-3 text-3xl font-black font-mono tracking-tight text-amber-300">0</div><div class="mt-1 text-[11px] text-slate-400">Transaksi retur</div></div>
+                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-amber-300/20 bg-amber-500/10 text-amber-300"><i data-lucide="rotate-ccw" class="h-5 w-5"></i></div>
+                        </div>
+                        <div class="mt-4 h-1 overflow-hidden rounded-full bg-white/5"><div class="h-full w-1/3 rounded-full bg-gradient-to-r from-amber-500 to-yellow-300"></div></div>
                     </div>
                 </div>
 
-                <!-- AKTIVITAS TRANSAKSI TERAKHIR -->
-                <div class="dashboard-glow-card p-6 rounded-3xl">
-                    <div class="flex items-center justify-between mb-5">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center">
-                                <i data-lucide="activity" class="w-4 h-4"></i>
-                            </div>
-                            <h3 class="font-bold text-xs tracking-wider text-gray-200 uppercase">AKTIVITAS TRANSAKSI TERAKHIR (LOG)</h3>
+                <!-- MOVEMENT CHARTS: original chart target IDs retained -->
+                <div class="grid grid-cols-1 2xl:grid-cols-2 gap-5">
+                    <div class="dashboard-glow-card flex min-h-[310px] flex-col rounded-3xl p-5 md:p-6">
+                        <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+                            <div class="flex items-center gap-3"><div class="flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-500/10 text-emerald-300"><i data-lucide="trending-up" class="h-5 w-5"></i></div><div><h3 class="text-xs font-extrabold uppercase tracking-wider text-white">Barang Masuk</h3><p class="mt-1 text-[10px] text-slate-400">Top SKU berdasarkan pergerakan masuk</p></div></div>
+                            <span class="rounded-full border border-emerald-300/20 bg-emerald-500/10 px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider text-emerald-300">Inflow Trend</span>
                         </div>
+                        <div id="chart-masuk" class="flex-1 min-h-[220px] flex items-end gap-3 pt-6 pb-2 px-2 border-b border-white/5 overflow-x-auto"></div>
+                    </div>
+                    <div class="dashboard-glow-card flex min-h-[310px] flex-col rounded-3xl p-5 md:p-6">
+                        <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+                            <div class="flex items-center gap-3"><div class="flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-300/20 bg-rose-500/10 text-rose-300"><i data-lucide="trending-down" class="h-5 w-5"></i></div><div><h3 class="text-xs font-extrabold uppercase tracking-wider text-white">Barang Keluar</h3><p class="mt-1 text-[10px] text-slate-400">Top SKU berdasarkan pergerakan keluar</p></div></div>
+                            <span class="rounded-full border border-rose-300/20 bg-rose-500/10 px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider text-rose-300">Outflow Trend</span>
+                        </div>
+                        <div id="chart-keluar" class="flex-1 min-h-[220px] flex items-end gap-3 pt-6 pb-2 px-2 border-b border-white/5 overflow-x-auto"></div>
+                    </div>
+                </div>
+
+                <!-- LOW STOCK: original list target retained -->
+                <div class="dashboard-glow-card rounded-3xl p-5 md:p-6">
+                    <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center gap-3"><div class="flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-300/20 bg-rose-500/10 text-rose-300"><i data-lucide="alert-triangle" class="h-5 w-5"></i></div><div><h3 class="text-xs font-extrabold uppercase tracking-wider text-white">Peringatan Stok Menipis</h3><p class="mt-1 text-[10px] text-slate-400">Pantau barang dengan stok di bawah batas minimum</p></div></div>
+                        <span class="rounded-full border border-rose-300/20 bg-rose-500/10 px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider text-rose-300">Critical &amp; Warning</span>
+                    </div>
+                    <div id="low-stock-list" class="flex flex-col gap-2.5 overflow-y-auto max-h-[320px] pr-1"></div>
+                </div>
+
+                <!-- RECENT ACTIVITY: original tbody target and table columns retained -->
+                <div class="dashboard-glow-card overflow-hidden rounded-3xl">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-white/10 p-5 md:p-6">
+                        <div class="flex items-center gap-3"><div class="flex h-10 w-10 items-center justify-center rounded-2xl border border-blue-300/20 bg-blue-500/10 text-blue-300"><i data-lucide="activity" class="h-5 w-5"></i></div><div><h3 class="text-xs font-extrabold uppercase tracking-wider text-white">Aktivitas Transaksi Terakhir</h3><p class="mt-1 text-[10px] text-slate-400">Jejak aktivitas transaksi inventory</p></div></div>
+                        <span class="rounded-full border border-blue-300/20 bg-blue-500/10 px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider text-blue-300">Recent Activity Log</span>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-white/5 uppercase text-gray-400 border-b border-white/5 font-semibold">
+                        <table class="w-full min-w-[760px] text-left text-xs">
+                            <thead class="bg-blue-500/5 uppercase text-slate-400 border-b border-white/10 font-bold tracking-wider">
                                 <tr>
-                                    <th class="py-3 px-3 rounded-l-xl">Waktu / Tanggal</th>
-                                    <th class="py-3 px-3">Jenis Transaksi</th>
-                                    <th class="py-3 px-3">ID Referensi</th>
-                                    <th class="py-3 px-3">Nama Barang</th>
-                                    <th class="py-3 px-3 text-right">Qty</th>
-                                    <th class="py-3 px-3">Keterangan / Partner</th>
-                                    <th class="py-3 px-3 rounded-r-xl">User</th>
+                                    <th class="py-4 px-4">Waktu / Tanggal</th>
+                                    <th class="py-4 px-4">Jenis Transaksi</th>
+                                    <th class="py-4 px-4">ID Referensi</th>
+                                    <th class="py-4 px-4">Nama Barang</th>
+                                    <th class="py-4 px-4 text-right">Qty</th>
+                                    <th class="py-4 px-4">Keterangan / Partner</th>
+                                    <th class="py-4 px-4">User</th>
                                 </tr>
                             </thead>
-                            <tbody id="recent-activity-body" class="divide-y divide-white/5">
-                            </tbody>
+                            <tbody id="recent-activity-body" class="divide-y divide-white/5"></tbody>
                         </table>
                     </div>
                 </div>
@@ -2489,8 +2352,6 @@
             const savedMode = mode || localStorage.getItem(INVENTORY_THEME_KEY) || 'dark';
             const safeMode = savedMode === 'light' ? 'light' : 'dark';
             document.body.className = `min-h-screen flex flex-col antialiased theme-glass ${safeMode === 'light' ? 'theme-light' : 'theme-dark'}`;
-            const sel = document.getElementById('theme-selector');
-            if (sel) sel.value = 'midnight';
             const label = document.getElementById('theme-mode-label');
             if (label) label.textContent = safeMode === 'dark' ? 'Mode Terang' : 'Mode Gelap';
             const toggle = document.getElementById('theme-mode-toggle');
