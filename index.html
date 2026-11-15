@@ -1339,7 +1339,7 @@
                     <div><h4 class="font-bold text-sm text-gray-100">Periksa Kembali Data</h4><p id="detail-save-subtitle" class="text-[11px] text-gray-400 mt-1">Pastikan seluruh detail sudah benar.</p></div>
                 </div>
             </div>
-            <div id="detail-save-content" class="p-5 overflow-y-auto space-y-2"></div>
+            <div id="detail-save-content" class="p-5 overflow-y-auto space-y-3 bg-black/10"></div>
             <div class="p-5 border-t border-white/10 flex flex-col-reverse sm:flex-row justify-end gap-2">
                 <button type="button" id="detail-save-back" class="px-4 py-2.5 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">Periksa Lagi</button>
                 <button type="button" id="detail-save-yes" class="px-4 py-2.5 rounded-xl theme-accent-bg text-white text-xs font-semibold shadow-lg">Ya, Simpan</button>
@@ -1821,6 +1821,20 @@
             const rows = (window.gudangAppDb.po || []).filter(p =>
                 `${String(p.customer||'').toUpperCase()}|${String(p.noPoCustomer||p.id).toUpperCase()}` === groupKey
             );
+
+            // Isi Customer/Tujuan otomatis saat pengguna memilih kelompok PO.
+            // Dataset mencegah nilai tujuan tertimpa saat refresh Cloud berulang.
+            const groupSelect = document.getElementById('keluar-po-group');
+            const tujuanInput = document.getElementById('keluar-tujuan');
+            const previousCustomerGroup = groupSelect?.dataset.customerGroup || '';
+            if (groupSelect && groupKey !== previousCustomerGroup) {
+                if (groupKey && rows.length && tujuanInput) {
+                    tujuanInput.value = String(rows[0].customer || '').trim().toUpperCase();
+                } else if (!groupKey && tujuanInput && document.getElementById('keluar-edit-mode')?.value !== 'true') {
+                    tujuanInput.value = '';
+                }
+                groupSelect.dataset.customerGroup = groupKey;
+            }
 
             if (!groupKey || !rows.length) {
                 host.replaceChildren();
@@ -2467,7 +2481,11 @@
             const po=window.gudangAppDb.po.find(p=>p.id===r.poRef);
             if(po){const groupKey=`${String(po.customer||'').toUpperCase()}|${String(po.noPoCustomer||po.id).toUpperCase()}`;document.getElementById('keluar-po-group').value=groupKey;}
             beginTransactionEdit('form-keluar','keluar-edit-mode', {'keluar-id':r.id,'keluar-tanggal':r.tanggal,'keluar-po-ref':r.poRef,'keluar-barang':r.barangId,'keluar-qty':r.qty,'keluar-tujuan':r.tujuan});
+            // Tandai grup agar auto-fill tidak mengganti tujuan historis saat edit.
+            const groupSelect = document.getElementById('keluar-po-group');
+            if (groupSelect) groupSelect.dataset.customerGroup = groupSelect.value;
             populatePoItemOptions();
+            document.getElementById('keluar-tujuan').value = r.tujuan || po?.customer || '';
             document.querySelectorAll('#keluar-items-container [data-keluar-row]').forEach(card => {
                 const input = card.querySelector('[data-keluar-qty]');
                 if (input) input.value = card.dataset.poRef === r.poRef ? String(r.qty) : '0';
@@ -2712,6 +2730,9 @@
             document.getElementById('keluar-id').value = generateKeluarSequentialId();
             document.getElementById('keluar-tanggal').valueAsDate = new Date();
             const host = document.getElementById('keluar-items-container'); if (host) host.replaceChildren();
+            const groupSelect = document.getElementById('keluar-po-group');
+            if (groupSelect) groupSelect.dataset.customerGroup = '';
+            const tujuanInput = document.getElementById('keluar-tujuan'); if (tujuanInput) tujuanInput.value = '';
             const info = document.getElementById('keluar-po-ready-info'); if (info) info.textContent = 'Pilih nomor PO untuk menampilkan seluruh barang dan batas siap kirim.';
             updateKeluarBatchTotal();
         };
@@ -3478,9 +3499,9 @@
                 return String(el.value ?? '').trim() || '-';
             }
 
-            function addDetailRow(label, value) {
+            function addDetailRow(label, value, parent = content) {
                 const row = document.createElement('div');
-                row.className = 'grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-3 py-2 border-b border-white/5 text-xs';
+                row.className = 'grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-3 py-2 border-b border-white/10 text-xs';
                 const name = document.createElement('div');
                 name.className = 'text-gray-400';
                 name.textContent = label;
@@ -3488,21 +3509,50 @@
                 val.className = 'text-gray-100 font-semibold text-right break-words';
                 val.textContent = value;
                 row.append(name, val);
-                content.appendChild(row);
+                parent.appendChild(row);
             }
 
             function addSelectedItemDetails(formName) {
                 if (formName === 'saveKeluarItem') {
-                    const selected = [...document.querySelectorAll('#keluar-items-container [data-keluar-row]')].map(card => ({poRef:card.dataset.poRef,barangId:card.dataset.barangId,qty:Number(card.querySelector('[data-keluar-qty]')?.value||0)})).filter(x=>x.qty>0);
-                    selected.forEach((r,i)=>{
-                        const po=(window.gudangAppDb?.po||[]).find(x=>String(x.id)===String(r.poRef));
-                        const item=(window.gudangAppDb?.items||[]).find(x=>String(x.id)===String(r.barangId));
-                        addDetailRow(`Barang ${i+1}`,`${item?.nama||r.barangId} (${r.barangId})`);
-                        addDetailRow(`Qty Keluar ${i+1}`,`${r.qty} ${item?.satuan||''}`);
-                        if(po){addDetailRow(`Qty PO / Terkirim / Siap ${i+1}`,`${po.qty} / ${po.terkirim||0} / ${getPoReadyQty(po)}`);addDetailRow('Customer PO',po.customer||'-');}
+                    const selected = [...document.querySelectorAll('#keluar-items-container [data-keluar-row]')]
+                        .map(card => ({poRef:card.dataset.poRef,barangId:card.dataset.barangId,qty:Number(card.querySelector('[data-keluar-qty]')?.value||0)}))
+                        .filter(x => x.qty > 0);
+
+                    const heading = document.createElement('div');
+                    heading.className = 'mb-2 rounded-lg border border-sky-400/30 bg-sky-400/10 px-3 py-2 text-xs font-bold text-sky-200';
+                    heading.textContent = 'RINCIAN BARANG YANG AKAN DISIMPAN';
+                    content.appendChild(heading);
+
+                    selected.forEach((r, i) => {
+                        const po = (window.gudangAppDb?.po || []).find(x => String(x.id) === String(r.poRef));
+                        const item = (window.gudangAppDb?.items || []).find(x => String(x.id) === String(r.barangId));
+                        const card = document.createElement('section');
+                        card.className = 'mb-3 rounded-xl border border-white/20 bg-white/[0.04] p-3';
+                        const cardTitle = document.createElement('div');
+                        cardTitle.className = 'mb-2 flex items-center justify-between gap-2 border-b border-white/15 pb-2';
+                        const titleText = document.createElement('span');
+                        titleText.className = 'text-xs font-bold text-emerald-300';
+                        titleText.textContent = `BARANG ${i + 1}`;
+                        const qtyPill = document.createElement('span');
+                        qtyPill.className = 'rounded-md bg-emerald-500/15 px-2 py-1 text-xs font-bold text-emerald-300';
+                        qtyPill.textContent = `${r.qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim();
+                        cardTitle.append(titleText, qtyPill);
+                        card.appendChild(cardTitle);
+                        addDetailRow('Nama Barang', `${item?.nama || r.barangId} (${r.barangId})`, card);
+                        addDetailRow('Qty Keluar', `${r.qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
+                        if (po) {
+                            addDetailRow('Nomor PO', po.noPoCustomer || po.id, card);
+                            addDetailRow('Customer', po.customer || '-', card);
+                            addDetailRow('Qty PO / Terkirim / Siap', `${Number(po.qty || 0).toLocaleString('id-ID')} / ${Number(po.terkirim || 0).toLocaleString('id-ID')} / ${getPoReadyQty(po).toLocaleString('id-ID')}`, card);
+                        }
+                        content.appendChild(card);
                     });
-                    addDetailRow('Total Jenis Barang',String(selected.length));
-                    addDetailRow('Total Qty Keluar',String(selected.reduce((sum,x)=>sum+x.qty,0)));
+
+                    const totalCard = document.createElement('div');
+                    totalCard.className = 'mt-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-3';
+                    addDetailRow('Total Jenis Barang', String(selected.length), totalCard);
+                    addDetailRow('Total Qty Keluar', selected.reduce((sum, x) => sum + x.qty, 0).toLocaleString('id-ID'), totalCard);
+                    content.appendChild(totalCard);
                     return;
                 }
                 const itemField = ({saveMasterItem:'',savePoItem:'',saveMasukItem:'masuk-barang',saveKeluarItem:'',saveSampelItem:'',saveReturItem:'retur-barang'})[formName];
