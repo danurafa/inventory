@@ -822,7 +822,7 @@
                                 <input type="number" id="masuk-qty" min="1" value="100" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" autocomplete="off">
                             </div>
                             <div>
-                                <label class="text-xs block mb-1">Sumber *</label>
+                                <label class="text-xs block mb-1">Divisi *</label>
                                 <input type="text" id="masuk-supplier" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Divisi 1 / Divisi 2" autocomplete="off">
                             </div>
                             <div class="pt-2 flex gap-2">
@@ -1331,6 +1331,23 @@
 
     <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-container"></div>
+
+    <!-- MODAL KONFIRMASI DETAIL SEBELUM SIMPAN -->
+    <div id="detail-save-modal" class="fixed inset-0 z-[70] bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="app-card w-full max-w-xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl border border-white/10 flex flex-col">
+            <div class="p-5 border-b border-white/10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center"><i data-lucide="clipboard-check" class="w-5 h-5 text-amber-400"></i></div>
+                    <div><h4 class="font-bold text-sm text-gray-100">Periksa Kembali Data</h4><p id="detail-save-subtitle" class="text-[11px] text-gray-400 mt-1">Pastikan seluruh detail sudah benar.</p></div>
+                </div>
+            </div>
+            <div id="detail-save-content" class="p-5 overflow-y-auto space-y-2"></div>
+            <div class="p-5 border-t border-white/10 flex flex-col-reverse sm:flex-row justify-end gap-2">
+                <button type="button" id="detail-save-back" class="px-4 py-2.5 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">Periksa Lagi</button>
+                <button type="button" id="detail-save-yes" class="px-4 py-2.5 rounded-xl theme-accent-bg text-white text-xs font-semibold shadow-lg">Ya, Simpan</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL CONFIRMATION DIALOG -->
     <div id="confirm-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
@@ -3122,6 +3139,144 @@
             setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
         }
 
+
+        // KONFIRMASI DETAIL SEBELUM MENYIMPAN: berlaku untuk seluruh form utama.
+        // Fungsi simpan asli tetap dipakai agar validasi, Worker, dan sinkronisasi tidak berubah.
+        (function installDetailSaveConfirmation() {
+            const definitions = {
+                saveMasterItem: {
+                    form: 'form-master', title: 'KONFIRMASI MASTER BARANG',
+                    fields: [['master-id','ID Barang'],['master-nama','Nama Barang'],['master-jenis','Jenis Barang'],['master-lebar','Lebar'],['master-ukuran','Ukuran'],['master-berat','Berat'],['master-satuan','Satuan'],['master-min','Stok Minimum'],['master-stok','Stok Saat Ini']]
+                },
+                savePoItem: {
+                    form: 'form-po', title: 'KONFIRMASI PO CUSTOMER',
+                    fields: [['po-id','ID PO Sistem'],['po-no-customer','Nomor PO Customer'],['po-tanggal','Tanggal PO'],['po-customer','Customer'],['po-barang','ID Barang'],['po-qty','Jumlah PO']]
+                },
+                saveMasukItem: {
+                    form: 'form-masuk', title: 'KONFIRMASI BARANG MASUK',
+                    fields: [['masuk-id','ID Transaksi'],['masuk-tanggal','Tanggal'],['masuk-barang','ID Barang'],['masuk-qty','Jumlah Masuk (Qty)'],['masuk-supplier','Divisi']]
+                },
+                saveKeluarItem: {
+                    form: 'form-keluar', title: 'KONFIRMASI BARANG KELUAR',
+                    fields: [['keluar-id','ID Transaksi'],['keluar-tanggal','Tanggal'],['keluar-po-ref','Referensi PO'],['keluar-barang','ID Barang'],['keluar-qty','Jumlah Keluar (Qty)'],['keluar-tujuan','Tujuan / Customer']]
+                },
+                saveSampelItem: {
+                    form: 'form-sampel', title: 'KONFIRMASI DATA SAMPEL',
+                    fields: [['sampel-id','ID Sampel'],['sampel-tanggal','Tanggal'],['sampel-customer','Customer'],['sampel-nama','Nama Sampel'],['sampel-kategori','Kategori'],['sampel-lebar','Lebar'],['sampel-ukuran','Ukuran'],['sampel-berat','Berat'],['sampel-tebal','Tebal']]
+                },
+                saveReturItem: {
+                    form: 'form-retur', title: 'KONFIRMASI RETUR',
+                    fields: [['retur-id','ID Retur'],['retur-tanggal','Tanggal'],['retur-barang','ID Barang'],['retur-keluar-ref','Transaksi Keluar Asal'],['retur-qty','Jumlah Retur (Qty)'],['retur-keterangan','Keterangan']]
+                }
+            };
+
+            const modal = document.getElementById('detail-save-modal');
+            const content = document.getElementById('detail-save-content');
+            const subtitle = document.getElementById('detail-save-subtitle');
+            const backBtn = document.getElementById('detail-save-back');
+            const yesBtn = document.getElementById('detail-save-yes');
+            let pendingAction = null;
+
+            function fieldValue(id) {
+                const el = document.getElementById(id);
+                if (!el) return '-';
+                if (el.tagName === 'SELECT') {
+                    const opt = el.options[el.selectedIndex];
+                    const text = opt ? opt.textContent.trim() : '';
+                    return el.value ? `${el.value}${text && text !== el.value ? ' — ' + text : ''}` : '-';
+                }
+                return String(el.value ?? '').trim() || '-';
+            }
+
+            function addDetailRow(label, value) {
+                const row = document.createElement('div');
+                row.className = 'grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-3 py-2 border-b border-white/5 text-xs';
+                const name = document.createElement('div');
+                name.className = 'text-gray-400';
+                name.textContent = label;
+                const val = document.createElement('div');
+                val.className = 'text-gray-100 font-semibold text-right break-words';
+                val.textContent = value;
+                row.append(name, val);
+                content.appendChild(row);
+            }
+
+            function addSelectedItemDetails(formName) {
+                const itemField = ({saveMasterItem:'',savePoItem:'po-barang',saveMasukItem:'masuk-barang',saveKeluarItem:'keluar-barang',saveSampelItem:'',saveReturItem:'retur-barang'})[formName];
+                if (!itemField) return;
+                const itemId = document.getElementById(itemField)?.value;
+                const item = (window.gudangAppDb?.items || []).find(x => String(x.id) === String(itemId));
+                if (!item) return;
+                addDetailRow('Nama Barang', item.nama || '-');
+                addDetailRow('Jenis Barang', item.jenis || '-');
+                addDetailRow('Lebar Barang', item.lebar || '-');
+                addDetailRow('Ukuran Barang', item.ukuran || '-');
+                addDetailRow('Satuan Barang', item.satuan || '-');
+                if (formName === 'saveReturItem') {
+                    const keluar = (window.gudangAppDb?.keluar || []).find(x => String(x.id) === String(document.getElementById('retur-keluar-ref')?.value));
+                    if (keluar) {
+                        addDetailRow('Tujuan Transaksi Asal', keluar.tujuan || '-');
+                        addDetailRow('PO Asal', keluar.poRef || '-');
+                    }
+                }
+                if (formName === 'saveKeluarItem' || formName === 'savePoItem') {
+                    const poId = formName === 'saveKeluarItem' ? document.getElementById('keluar-po-ref')?.value : document.getElementById('po-id')?.value;
+                    const po = (window.gudangAppDb?.po || []).find(x => String(x.id) === String(poId));
+                    if (po) {
+                        addDetailRow('Customer PO', po.customer || '-');
+                        addDetailRow('Nomor PO Customer', po.noPoCustomer || '-');
+                        addDetailRow('Status PO Saat Ini', po.status || '-');
+                        addDetailRow('Qty Terkirim Saat Ini', String(po.terkirim || 0));
+                    }
+                }
+            }
+
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                pendingAction = null;
+                yesBtn.disabled = false;
+                yesBtn.textContent = 'Ya, Simpan';
+            }
+            backBtn.addEventListener('click', closeModal);
+            yesBtn.addEventListener('click', async () => {
+                if (!pendingAction) return;
+                const action = pendingAction;
+                yesBtn.disabled = true;
+                yesBtn.textContent = 'Menyimpan...';
+                try {
+                    closeModal();
+                    await action();
+                } catch (err) {
+                    console.error('Konfirmasi simpan gagal:', err);
+                    window.showToast?.(`Penyimpanan gagal: ${err.message || err}`, 'error');
+                }
+            });
+
+            Object.entries(definitions).forEach(([functionName, def]) => {
+                const originalSave = window[functionName];
+                if (typeof originalSave !== 'function') return;
+                window[functionName] = function(event) {
+                    if (event?.preventDefault) event.preventDefault();
+                    const role = window.gudangAppDb?.currentUser?.role;
+                    if (role === 'viewer') return originalSave.call(this, { preventDefault() {} });
+                    const form = document.getElementById(def.form);
+                    if (form && !form.checkValidity()) {
+                        form.reportValidity();
+                        return;
+                    }
+                    const isEdit = document.getElementById(def.form.replace('form-','') + '-edit-mode')?.value === 'true';
+                    content.replaceChildren();
+                    subtitle.textContent = `${def.title} • ${isEdit ? 'MODE EDIT' : 'DATA BARU'} — Periksa seluruh detail sebelum menyimpan.`;
+                    def.fields.forEach(([id, label]) => addDetailRow(label, fieldValue(id)));
+                    addSelectedItemDetails(functionName);
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    if (window.lucide) window.lucide.createIcons();
+                    pendingAction = async () => originalSave.call(this, { preventDefault() {} });
+                };
+            });
+        })();
 
         // Nonaktifkan autofill untuk seluruh form dan kontrol input,
         // termasuk elemen yang dibuat secara dinamis oleh aplikasi.
