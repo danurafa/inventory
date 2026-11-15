@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.15-glass-blue-strong-glass-v6";
+        const APP_VERSION = "2026.11.15-glass-blue-contrast-fix-v7";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -767,6 +767,138 @@
             box-shadow:0 24px 64px rgba(27,48,75,.24),inset 0 1px 0 rgba(255,255,255,.72) !important;
             backdrop-filter:blur(26px);
             -webkit-backdrop-filter:blur(26px);
+        }
+
+
+        /* ==========================================================
+           FINAL CONTRAST FIX — SELECT DROPDOWNS, LIGHT SIDEBAR FOOTER,
+           HEADER + TABLE HEADERS
+           ========================================================== */
+
+        /* Native select menus: readable option list in both modes */
+        body.theme-glass:not(.theme-light) select,
+        body.theme-glass:not(.theme-light) select option,
+        body.theme-glass:not(.theme-light) select optgroup {
+            color-scheme:dark !important;
+            background-color:#102944 !important;
+            color:#edf6ff !important;
+        }
+        body.theme-glass:not(.theme-light) select option:checked {
+            background:#2563c9 !important;
+            color:#ffffff !important;
+        }
+        body.theme-glass.theme-light select,
+        body.theme-glass.theme-light select option,
+        body.theme-glass.theme-light select optgroup {
+            color-scheme:light !important;
+            background-color:#dce8f5 !important;
+            color:#173451 !important;
+        }
+        body.theme-glass.theme-light select option:checked {
+            background:#3978c9 !important;
+            color:#ffffff !important;
+        }
+
+        /* Light mode sidebar footer: avoid the dark muddy block and faint labels */
+        body.theme-glass.theme-light aside > div:last-child {
+            background:linear-gradient(135deg,rgba(105,137,174,.72),rgba(130,158,190,.66)) !important;
+            border-top:1px solid rgba(37,68,105,.30) !important;
+            box-shadow:0 -10px 28px rgba(35,57,84,.10),inset 0 1px 0 rgba(255,255,255,.32);
+            backdrop-filter:blur(24px) saturate(145%);
+            -webkit-backdrop-filter:blur(24px) saturate(145%);
+        }
+        body.theme-glass.theme-light aside > div:last-child .text-gray-400,
+        body.theme-glass.theme-light aside > div:last-child .text-gray-500,
+        body.theme-glass.theme-light aside > div:last-child .text-blue-400 {
+            color:#173a60 !important;
+        }
+        body.theme-glass.theme-light #theme-mode-toggle {
+            color:#173b62 !important;
+            background:rgba(224,238,251,.46) !important;
+            border-color:rgba(39,83,132,.38) !important;
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.52);
+        }
+        body.theme-glass.theme-light #theme-mode-toggle:hover {
+            background:rgba(235,245,255,.64) !important;
+        }
+        body.theme-glass.theme-light #reset-btn-wrapper button {
+            color:#a52343 !important;
+            background:rgba(255,218,226,.42) !important;
+            border-color:rgba(174,54,82,.34) !important;
+        }
+
+        /* Light mode top header: deeper glass surface and stronger typography */
+        body.theme-glass.theme-light > header {
+            background:linear-gradient(105deg,rgba(135,164,196,.82),rgba(166,190,216,.78)) !important;
+            border-bottom:1px solid rgba(38,72,111,.28) !important;
+            box-shadow:0 8px 24px rgba(35,57,84,.10),inset 0 1px 0 rgba(255,255,255,.38);
+        }
+        body.theme-glass.theme-light > header h1,
+        body.theme-glass.theme-light > header .font-bold,
+        body.theme-glass.theme-light > header .font-semibold,
+        body.theme-glass.theme-light > header .text-gray-100,
+        body.theme-glass.theme-light > header .text-gray-200 {
+            color:#142f4c !important;
+        }
+        body.theme-glass.theme-light > header .text-gray-400,
+        body.theme-glass.theme-light > header .text-gray-500 {
+            color:#385675 !important;
+        }
+        body.theme-glass.theme-light #live-clock {
+            color:#203d5d !important;
+            background:linear-gradient(110deg,rgba(196,178,193,.68),rgba(185,176,218,.66)) !important;
+            border-color:rgba(86,87,130,.30) !important;
+        }
+        body.theme-glass.theme-light #current-user-banner {
+            background:rgba(222,235,248,.48) !important;
+            border-color:rgba(47,82,123,.26) !important;
+            color:#173451 !important;
+        }
+
+        /* Header rows in every module: dark ink on a clearly tinted glass strip */
+        body.theme-glass.theme-light table thead,
+        body.theme-glass.theme-light table thead tr,
+        body.theme-glass.theme-light table thead th,
+        body.theme-glass.theme-light [role="table"] [role="rowgroup"]:first-child,
+        body.theme-glass.theme-light .table-header,
+        body.theme-glass.theme-light .data-table thead th {
+            background:rgba(126,157,193,.58) !important;
+            color:#102c49 !important;
+            border-color:rgba(43,76,115,.28) !important;
+            font-weight:700 !important;
+            text-shadow:none !important;
+        }
+        body.theme-glass.theme-light table thead th *,
+        body.theme-glass.theme-light .table-header * {
+            color:#102c49 !important;
+        }
+        body.theme-glass:not(.theme-light) table thead,
+        body.theme-glass:not(.theme-light) table thead tr,
+        body.theme-glass:not(.theme-light) table thead th,
+        body.theme-glass:not(.theme-light) .table-header,
+        body.theme-glass:not(.theme-light) .data-table thead th {
+            background:rgba(35,73,113,.66) !important;
+            color:#f0f7ff !important;
+            border-color:rgba(147,197,253,.24) !important;
+            font-weight:700 !important;
+        }
+        body.theme-glass:not(.theme-light) table thead th *,
+        body.theme-glass:not(.theme-light) .table-header * {
+            color:#f0f7ff !important;
+        }
+
+        /* Improve small labels and muted text in the light-mode header/sidebar */
+        body.theme-glass.theme-light aside nav > div,
+        body.theme-glass.theme-light aside nav button,
+        body.theme-glass.theme-light aside nav button span {
+            color:#284867 !important;
+        }
+        body.theme-glass.theme-light aside nav button:hover {
+            background:rgba(255,255,255,.28) !important;
+        }
+        body.theme-glass.theme-light aside nav button.theme-accent-bg,
+        body.theme-glass.theme-light aside nav button.theme-accent-bg span {
+            color:#ffffff !important;
         }
 
 </style>
