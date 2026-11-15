@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.15-glass-blue-contrast-fix-v7";
+        const APP_VERSION = "2026.11.15-glass-blue-sidebar-v8";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -901,12 +901,159 @@
             color:#ffffff !important;
         }
 
+
+        /* COLLAPSIBLE GLASS BLUE SIDEBAR */
+        #inventory-sidebar {
+            width:16rem;
+            flex:0 0 16rem;
+            transition:width .28s ease,flex-basis .28s ease,transform .28s ease,background .25s ease;
+            overflow-x:hidden;
+        }
+        #inventory-sidebar nav { min-width:0; }
+        #inventory-sidebar .sidebar-btn {
+            min-width:0;
+            white-space:nowrap;
+            overflow:hidden;
+        }
+        #inventory-sidebar .sidebar-btn > i {
+            flex:0 0 1rem;
+        }
+        #inventory-app-layout.sidebar-collapsed #inventory-sidebar {
+            width:5rem;
+            flex-basis:5rem;
+        }
+        #inventory-app-layout.sidebar-collapsed #inventory-sidebar nav {
+            padding-left:.7rem !important;
+            padding-right:.7rem !important;
+        }
+        #inventory-app-layout.sidebar-collapsed #inventory-sidebar nav > div:first-child {
+            font-size:0;
+            height:8px;
+            padding:0 !important;
+            overflow:hidden;
+        }
+        #inventory-app-layout.sidebar-collapsed #inventory-sidebar .sidebar-btn {
+            justify-content:center;
+            gap:0 !important;
+            padding-left:0 !important;
+            padding-right:0 !important;
+            width:100%;
+        }
+        #inventory-app-layout.sidebar-collapsed #inventory-sidebar .sidebar-btn > span {
+            display:none !important;
+        }
+        #inventory-app-layout.sidebar-collapsed #inventory-sidebar .sidebar-btn > i {
+            width:1.15rem;
+            height:1.15rem;
+            margin:0;
+        }
+        #inventory-app-layout.sidebar-collapsed #inventory-sidebar nav > div[id$="-wrapper"] {
+            padding-top:.35rem !important;
+        }
+        #inventory-app-layout.sidebar-collapsed #inventory-sidebar > div:last-child {
+            padding:.65rem !important;
+        }
+        #inventory-app-layout.sidebar-collapsed #inventory-sidebar > div:last-child > div:first-child {
+            justify-content:center;
+        }
+        #inventory-app-layout.sidebar-collapsed #inventory-sidebar > div:last-child > div:first-child > div,
+        #inventory-app-layout.sidebar-collapsed #inventory-sidebar > div:last-child > div:first-child > span,
+        #inventory-app-layout.sidebar-collapsed #theme-mode-toggle span,
+        #inventory-app-layout.sidebar-collapsed #reset-btn-wrapper button span {
+            display:none !important;
+        }
+        #inventory-app-layout.sidebar-collapsed #theme-mode-toggle,
+        #inventory-app-layout.sidebar-collapsed #reset-btn-wrapper button {
+            min-height:40px;
+            padding:.55rem 0 !important;
+            gap:0 !important;
+        }
+        #inventory-app-layout.sidebar-collapsed #theme-mode-toggle i,
+        #inventory-app-layout.sidebar-collapsed #reset-btn-wrapper button i {
+            margin:0 !important;
+        }
+        .sidebar-toggle-btn:hover {
+            background:rgba(59,130,246,.20) !important;
+            border-color:rgba(96,165,250,.55) !important;
+            transform:translateY(-1px);
+        }
+        body.theme-light .sidebar-toggle-btn {
+            color:#17436d !important;
+            background:rgba(219,235,250,.58) !important;
+            border-color:rgba(54,91,135,.30) !important;
+        }
+        #sidebar-mobile-backdrop { display:none; }
+
+        @media (max-width:767px) {
+            #sidebar-toggle { display:inline-flex !important; }
+            #inventory-app-layout { position:relative; }
+            #inventory-sidebar {
+                position:fixed;
+                z-index:60;
+                top:4rem;
+                bottom:0;
+                left:0;
+                width:min(17rem,84vw) !important;
+                flex-basis:min(17rem,84vw) !important;
+                transform:translateX(-105%);
+                box-shadow:18px 0 48px rgba(0,0,0,.30);
+            }
+            #inventory-app-layout.mobile-sidebar-open #inventory-sidebar {
+                transform:translateX(0);
+            }
+            #inventory-app-layout.sidebar-collapsed #inventory-sidebar {
+                width:min(17rem,84vw) !important;
+                flex-basis:min(17rem,84vw) !important;
+            }
+            #inventory-app-layout.mobile-sidebar-open #inventory-sidebar .sidebar-btn {
+                justify-content:flex-start;
+                gap:.75rem !important;
+                padding-left:.875rem !important;
+                padding-right:.875rem !important;
+            }
+            #inventory-app-layout.mobile-sidebar-open #inventory-sidebar .sidebar-btn > span {
+                display:inline !important;
+            }
+            #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav > div:first-child {
+                font-size:10px;
+                height:auto;
+                padding:.5rem .75rem !important;
+            }
+            #inventory-app-layout.mobile-sidebar-open #inventory-sidebar > div:last-child > div:first-child > div,
+            #inventory-app-layout.mobile-sidebar-open #inventory-sidebar > div:last-child > div:first-child > span,
+            #inventory-app-layout.mobile-sidebar-open #theme-mode-toggle span,
+            #inventory-app-layout.mobile-sidebar-open #reset-btn-wrapper button span {
+                display:initial !important;
+            }
+            #inventory-app-layout.mobile-sidebar-open #inventory-sidebar > div:last-child > div:first-child {
+                justify-content:space-between;
+            }
+            #inventory-app-layout.mobile-sidebar-open #theme-mode-toggle,
+            #inventory-app-layout.mobile-sidebar-open #reset-btn-wrapper button {
+                gap:.5rem !important;
+            }
+            #sidebar-mobile-backdrop {
+                position:fixed;
+                inset:4rem 0 0;
+                z-index:55;
+                background:rgba(2,8,18,.52);
+                backdrop-filter:blur(3px);
+            }
+            #inventory-app-layout.mobile-sidebar-open #sidebar-mobile-backdrop { display:block; }
+            main.flex-1 { min-width:0; padding-left:1rem !important; padding-right:1rem !important; }
+        }
+
 </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
 
     <!-- TOP HEADER -->
     <header class="h-16 border-b border-white/5 bg-dark-800/90 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-6 lg:px-8">
+        <button type="button" id="sidebar-toggle" onclick="toggleInventorySidebar()"
+            class="sidebar-toggle-btn mr-1 w-9 h-9 rounded-xl border border-blue-400/25 bg-blue-500/10 text-blue-300 inline-flex items-center justify-center transition-all"
+            aria-label="Kecilkan atau buka menu" aria-expanded="true" title="Kecilkan menu">
+            <i data-lucide="panel-left-close" class="w-4 h-4"></i>
+        </button>
         <div class="flex items-center gap-3.5">
             <div class="w-10 h-10 rounded-xl theme-accent-bg flex items-center justify-center shadow-xl shadow-orange-500/40 text-white font-black text-xl tracking-wider brightness-125 saturate-150">
                 G
@@ -936,48 +1083,48 @@
         </div>
     </header>
 
-    <div class="flex-1 flex overflow-hidden">
+    <div id="inventory-app-layout" class="flex-1 flex overflow-hidden">
         
         <!-- SIDEBAR NAVIGATION -->
-        <aside class="w-64 border-r border-white/5 bg-dark-800/40 backdrop-blur-sm flex flex-col justify-between shrink-0 select-none">
+        <div id="sidebar-mobile-backdrop" onclick="closeInventorySidebar()" aria-hidden="true"></div>\n        <aside id="inventory-sidebar" class="w-64 border-r border-white/5 bg-dark-800/40 backdrop-blur-sm flex flex-col justify-between shrink-0 select-none">
             <nav class="p-4 space-y-1.5 overflow-y-auto">
                 <div class="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Menu Utama</div>
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard Realtime" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20">
                     <i data-lucide="layout-dashboard" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Dashboard Realtime</span>
                 </button>
-                <button onclick="switchTab('master')" id="nav-master" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                <button onclick="switchTab('master')" id="nav-master" title="Master Data Barang" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                     <i data-lucide="package" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Master Data Barang</span>
                 </button>
-                <button onclick="switchTab('po')" id="nav-po" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                <button onclick="switchTab('po')" id="nav-po" title="PO Masuk (Customer)" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                     <i data-lucide="file-text" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>PO Masuk (Customer)</span>
                 </button>
-                <button onclick="switchTab('masuk')" id="nav-masuk" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                <button onclick="switchTab('masuk')" id="nav-masuk" title="Barang Masuk" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                     <i data-lucide="plus-circle" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Barang Masuk</span>
                 </button>
-                <button onclick="switchTab('keluar')" id="nav-keluar" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                <button onclick="switchTab('keluar')" id="nav-keluar" title="Barang Keluar" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                     <i data-lucide="minus-circle" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Barang Keluar</span>
                 </button>
-                <button onclick="switchTab('sampel')" id="nav-sampel" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                <button onclick="switchTab('sampel')" id="nav-sampel" title="Sampel" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                     <i data-lucide="box" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Sampel</span>
                 </button>
-                <button onclick="switchTab('retur')" id="nav-retur" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                <button onclick="switchTab('retur')" id="nav-retur" title="Retur Barang" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                     <i data-lucide="rotate-ccw" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Retur Barang</span>
                 </button>
                 <div id="nav-users-wrapper" class="pt-2">
-                    <button onclick="switchTab('users')" id="nav-users" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                    <button onclick="switchTab('users')" id="nav-users" title="Manajemen User" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                         <i data-lucide="users" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                         <span>Manajemen User</span>
                     </button>
                 </div>
                 <div id="nav-backup-wrapper" class="pt-2">
-                    <button onclick="switchTab('backup')" id="nav-backup" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                    <button onclick="switchTab('backup')" id="nav-backup" title="Backup & Restore" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                         <i data-lucide="database-backup" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                         <span>Backup & Restore</span>
                     </button>
@@ -4834,6 +4981,60 @@
             checkAuth();
             refreshAllViews();
         });
-    </script>
+    
+        /* Sidebar collapse preference and mobile drawer controls */
+        (function initInventorySidebar() {
+            const KEY = 'gudang_inventory_sidebar_collapsed';
+            const layout = document.getElementById('inventory-app-layout');
+            const button = document.getElementById('sidebar-toggle');
+            if (!layout || !button) return;
+
+            function isMobile() {
+                return window.matchMedia('(max-width: 767px)').matches;
+            }
+            function updateToggleIcon() {
+                const icon = button.querySelector('[data-lucide]');
+                const mobileOpen = layout.classList.contains('mobile-sidebar-open');
+                const collapsed = layout.classList.contains('sidebar-collapsed');
+                const iconName = isMobile()
+                    ? (mobileOpen ? 'panel-left-close' : 'panel-left-open')
+                    : (collapsed ? 'panel-left-open' : 'panel-left-close');
+                if (icon) icon.setAttribute('data-lucide', iconName);
+                button.setAttribute('aria-expanded', String(isMobile() ? mobileOpen : !collapsed));
+                button.title = isMobile()
+                    ? (mobileOpen ? 'Tutup menu' : 'Buka menu')
+                    : (collapsed ? 'Perbesar menu' : 'Kecilkan menu');
+                if (window.lucide) window.lucide.createIcons();
+            }
+
+            const saved = localStorage.getItem(KEY);
+            if (saved === 'true') layout.classList.add('sidebar-collapsed');
+
+            window.toggleInventorySidebar = function() {
+                if (isMobile()) {
+                    layout.classList.toggle('mobile-sidebar-open');
+                } else {
+                    layout.classList.toggle('sidebar-collapsed');
+                    localStorage.setItem(KEY, String(layout.classList.contains('sidebar-collapsed')));
+                }
+                updateToggleIcon();
+            };
+            window.closeInventorySidebar = function() {
+                layout.classList.remove('mobile-sidebar-open');
+                updateToggleIcon();
+            };
+            window.addEventListener('resize', function() {
+                if (!isMobile()) layout.classList.remove('mobile-sidebar-open');
+                updateToggleIcon();
+            });
+            layout.querySelectorAll('#inventory-sidebar .sidebar-btn').forEach(function(item) {
+                item.addEventListener('click', function() {
+                    if (isMobile()) window.closeInventorySidebar();
+                });
+            });
+            updateToggleIcon();
+        })();
+
+</script>
 </body>
 </html>
