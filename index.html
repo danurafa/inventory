@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.15-glass-blue-sidebar-v8";
+        const APP_VERSION = "2026.11.15-glass-blue-sidebar-header-fix-v9";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -1043,35 +1043,60 @@
             main.flex-1 { min-width:0; padding-left:1rem !important; padding-right:1rem !important; }
         }
 
+
+        /* Header brand stays grouped with the sidebar toggle when collapsed */
+        #inventory-top-header #header-brand-group {
+            flex:0 1 auto;
+            margin-right:auto;
+        }
+        #inventory-top-header #header-brand-group > div:last-child {
+            min-width:0;
+        }
+        #inventory-top-header > div:last-child {
+            margin-left:1.25rem;
+        }
+        @media(max-width:767px) {
+            #inventory-top-header { padding-left:.75rem !important; padding-right:.75rem !important; gap:.5rem; }
+            #inventory-top-header #header-brand-group { gap:.55rem; }
+            #inventory-top-header #header-brand-group h1 { font-size:13px !important; }
+            #inventory-top-header #header-brand-group p,
+            #inventory-top-header #cloud-sync-status { display:none !important; }
+            #inventory-top-header > div:last-child { gap:.4rem; margin-left:auto; }
+            #inventory-top-header #current-user-banner { display:none !important; }
+            #inventory-top-header > div:last-child > button span { display:none; }
+        }
+
 </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
 
     <!-- TOP HEADER -->
-    <header class="h-16 border-b border-white/5 bg-dark-800/90 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-6 lg:px-8">
-        <button type="button" id="sidebar-toggle" onclick="toggleInventorySidebar()"
-            class="sidebar-toggle-btn mr-1 w-9 h-9 rounded-xl border border-blue-400/25 bg-blue-500/10 text-blue-300 inline-flex items-center justify-center transition-all"
-            aria-label="Kecilkan atau buka menu" aria-expanded="true" title="Kecilkan menu">
-            <i data-lucide="panel-left-close" class="w-4 h-4"></i>
-        </button>
-        <div class="flex items-center gap-3.5">
-            <div class="w-10 h-10 rounded-xl theme-accent-bg flex items-center justify-center shadow-xl shadow-orange-500/40 text-white font-black text-xl tracking-wider brightness-125 saturate-150">
-                G
-            </div>
-            <div>
-                <h1 class="font-bold text-base md:text-lg tracking-wide flex items-center gap-2 text-gray-100">
-                    Sistem Manajemen Inventory Gudang
-                </h1>
-                <div class="flex items-center gap-2">
-                    <p class="text-[11px] text-gray-400 font-medium tracking-wide">Professional Inventory & PO System</p>
-                    <span id="cloud-sync-status" class="inline-flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Cloud Sync Active
-                    </span>
+    <header id="inventory-top-header" class="h-16 border-b border-white/5 bg-dark-800/90 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-6 lg:px-8">
+        <div id="header-brand-group" class="flex items-center gap-3.5 min-w-0">
+            <button type="button" id="sidebar-toggle" onclick="toggleInventorySidebar()"
+                class="sidebar-toggle-btn shrink-0 w-9 h-9 rounded-xl border border-blue-400/25 bg-blue-500/10 text-blue-300 inline-flex items-center justify-center transition-all"
+                aria-label="Kecilkan atau buka menu" aria-expanded="true" title="Kecilkan menu">
+                <i data-lucide="panel-left-close" class="w-4 h-4"></i>
+            </button>
+            <div class="flex items-center gap-3.5 min-w-0">
+                <div class="w-10 h-10 rounded-xl theme-accent-bg flex items-center justify-center shadow-xl shadow-orange-500/40 text-white font-black text-xl tracking-wider brightness-125 saturate-150 shrink-0">
+                    G
+                </div>
+                <div class="min-w-0">
+                    <h1 class="font-bold text-base md:text-lg tracking-wide flex items-center gap-2 text-gray-100 whitespace-nowrap">
+                        Sistem Manajemen Inventory Gudang
+                    </h1>
+                    <div class="flex items-center gap-2 min-w-0">
+                        <p class="text-[11px] text-gray-400 font-medium tracking-wide whitespace-nowrap">Professional Inventory & PO System</p>
+                        <span id="cloud-sync-status" class="inline-flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold whitespace-nowrap">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Cloud Sync Active
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4 shrink-0">
             <div id="live-clock" class="text-sm font-mono font-bold bg-gradient-to-r from-orange-500/20 via-pink-500/20 to-purple-500/20 border border-white/20 px-4 py-2 rounded-xl text-gray-100 hidden md:flex items-center gap-2 shadow-lg shadow-orange-500/10 tracking-wider">
             </div>
             <div id="current-user-banner" class="flex items-center gap-2.5 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl">
@@ -1086,7 +1111,8 @@
     <div id="inventory-app-layout" class="flex-1 flex overflow-hidden">
         
         <!-- SIDEBAR NAVIGATION -->
-        <div id="sidebar-mobile-backdrop" onclick="closeInventorySidebar()" aria-hidden="true"></div>\n        <aside id="inventory-sidebar" class="w-64 border-r border-white/5 bg-dark-800/40 backdrop-blur-sm flex flex-col justify-between shrink-0 select-none">
+        <div id="sidebar-mobile-backdrop" onclick="closeInventorySidebar()" aria-hidden="true"></div>
+        <aside id="inventory-sidebar" class="w-64 border-r border-white/5 bg-dark-800/40 backdrop-blur-sm flex flex-col justify-between shrink-0 select-none">
             <nav class="p-4 space-y-1.5 overflow-y-auto">
                 <div class="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Menu Utama</div>
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard Realtime" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20">
