@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.15-glass-blue-clean-v2";
+        const APP_VERSION = "2026.11.15-glass-blue-softlight-v4";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -248,17 +248,17 @@
         body.theme-glass .bg-orange-500\/10 {background-color:rgba(59,130,246,.12) !important;}
         body.theme-glass .border-orange-500\/20, body.theme-glass .border-orange-500\/30 {border-color:rgba(96,165,250,.28) !important;}
         body.theme-glass.theme-light {
-            --theme-bg:#eaf1fb; --theme-card:rgba(255,255,255,.76); --theme-card-border:rgba(59,130,246,.18);
+            --theme-bg:#dce6f2; --theme-card:rgba(235,243,252,.48); --theme-card-border:rgba(59,100,150,.26);
             --theme-text:#172b45; --theme-text-muted:#60758f;
-            background:radial-gradient(ellipse at 10% 5%,rgba(96,165,250,.18),transparent 38%),radial-gradient(ellipse at 90% 85%,rgba(125,211,252,.18),transparent 35%),#eaf1fb !important;
+            background:radial-gradient(ellipse at 8% 4%,rgba(96,165,250,.20),transparent 42%),radial-gradient(ellipse at 92% 82%,rgba(56,189,248,.16),transparent 40%),linear-gradient(135deg,#dce7f5 0%,#d4e0ef 48%,#e1eaf5 100%) !important;
             color:#172b45 !important;
         }
         body.theme-glass.theme-light .app-card, body.theme-glass.theme-light .dashboard-glow-card {
-            background:rgba(255,255,255,.72) !important; border-color:rgba(59,130,246,.18) !important;
-            box-shadow:0 12px 32px rgba(30,64,120,.08),inset 0 1px 0 rgba(255,255,255,.8) !important;
+            background:rgba(222,234,248,.42) !important; border-color:rgba(71,110,157,.28) !important;
+            box-shadow:0 12px 30px rgba(30,55,90,.10),inset 0 1px 0 rgba(255,255,255,.62) !important; backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px);
         }
         body.theme-glass.theme-light aside, body.theme-glass.theme-light header, body.theme-glass.theme-light main {
-            background-color:rgba(239,246,255,.72) !important; border-color:rgba(59,130,246,.14) !important; color:#172b45 !important;
+            background-color:rgba(210,225,243,.46) !important; backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px); border-color:rgba(59,130,246,.14) !important; color:#172b45 !important;
         }
         body.theme-glass.theme-light .text-white, body.theme-glass.theme-light .text-gray-100,
         body.theme-glass.theme-light .text-gray-200, body.theme-glass.theme-light .text-gray-300 {color:#203650 !important;}
@@ -306,7 +306,7 @@
         body.theme-glass [id^="tab-"] .bg-gray-900,
         body.theme-glass [id^="tab-"] .rounded-xl.border,
         body.theme-glass [id^="tab-"] .rounded-2xl.border {
-            background-color: rgba(13, 30, 52, .64) !important;
+            background-color: rgba(13, 30, 52, .42) !important;
             border-color: rgba(125, 180, 255, .19) !important;
             box-shadow: 0 10px 30px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.035);
             backdrop-filter: blur(16px);
@@ -342,7 +342,7 @@
         body.theme-glass .modal select,
         body.theme-glass .modal textarea {
             border-radius: .8rem;
-            background: rgba(10,27,48,.72) !important;
+            background: rgba(10,27,48,.48) !important;
             border: 1px solid rgba(125,180,255,.22) !important;
             color: #eff6ff !important;
             box-shadow: inset 0 1px 3px rgba(0,0,0,.12);
@@ -371,7 +371,7 @@
         body.theme-glass [id$="-modal"] > div,
         body.theme-glass [role="dialog"],
         body.theme-glass .modal-content {
-            background: rgba(12,29,51,.91) !important;
+            background: rgba(12,29,51,.78) !important;
             border: 1px solid rgba(125,180,255,.24) !important;
             border-radius: 1.35rem !important;
             box-shadow: 0 24px 80px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.06) !important;
@@ -383,7 +383,7 @@
         body.theme-glass header,
         body.theme-glass nav,
         body.theme-glass .glass-surface {
-            background: rgba(8,20,38,.78) !important;
+            background: rgba(8,20,38,.58) !important;
             border-color: rgba(147,197,253,.16) !important;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -418,7 +418,7 @@
         body.theme-glass.theme-light [id^="tab-"] .rounded-2xl.border,
         body.theme-glass.theme-light .app-card,
         body.theme-glass.theme-light .dashboard-glow-card {
-            background: rgba(255,255,255,.72) !important;
+            background: rgba(222,234,248,.42) !important;
             border-color: rgba(59,130,246,.18) !important;
             box-shadow: 0 10px 28px rgba(30,64,120,.07), inset 0 1px 0 rgba(255,255,255,.8) !important;
         }
@@ -434,21 +434,21 @@
         body.theme-glass.theme-light [id^="tab-"] input:not([type="checkbox"]):not([type="radio"]),
         body.theme-glass.theme-light [id^="tab-"] select,
         body.theme-glass.theme-light [id^="tab-"] textarea {
-            background:rgba(255,255,255,.86) !important;
+            background:rgba(224,235,247,.54) !important;
             color:#172b45 !important;
             border-color:rgba(71,125,190,.24) !important;
         }
         body.theme-glass.theme-light [id$="-modal"] > div,
         body.theme-glass.theme-light [role="dialog"],
         body.theme-glass.theme-light .modal-content {
-            background:rgba(247,251,255,.94) !important;
+            background:rgba(222,233,246,.72) !important; backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
             color:#172b45 !important;
             border-color:rgba(59,130,246,.2) !important;
         }
         body.theme-glass.theme-light aside,
         body.theme-glass.theme-light header,
         body.theme-glass.theme-light nav {
-            background:rgba(239,246,255,.84) !important;
+            background:rgba(211,225,242,.48) !important; backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px);
             color:#203650 !important;
         }
         body.theme-glass.theme-light [id^="tab-"] .text-white,
@@ -457,6 +457,49 @@
         body.theme-glass.theme-light [id^="tab-"] .text-gray-300 { color:#203650 !important; }
         body.theme-glass.theme-light [id^="tab-"] .text-gray-400,
         body.theme-glass.theme-light [id^="tab-"] .text-gray-500 { color:#647b96 !important; }
+
+        /* LIGHT MODE: brighter, more transparent glass finish across all modules */
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-800,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-900,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-700,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-800,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-900,
+        body.theme-glass.theme-light [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-light [id^="tab-"] .rounded-2xl.border,
+        body.theme-glass.theme-light .app-card,
+        body.theme-glass.theme-light .dashboard-glow-card {
+            background-color: rgba(219,231,245,.48) !important;
+            border: 1px solid rgba(71,110,157,.28) !important;
+            box-shadow: 0 14px 34px rgba(35,58,88,.10), inset 0 1px 0 rgba(255,255,255,.68) !important;
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+        }
+        body.theme-glass.theme-light [id^="tab-"] thead,
+        body.theme-glass.theme-light [id^="tab-"] thead tr {
+            background: rgba(174,199,228,.48) !important;
+            color: #1e4775 !important;
+            backdrop-filter: blur(14px);
+        }
+        body.theme-glass.theme-light [id^="tab-"] tbody tr {
+            background: rgba(218,231,245,.18);
+        }
+        body.theme-glass.theme-light [id^="tab-"] tbody tr:hover {
+            background: rgba(96,140,190,.16) !important;
+        }
+        body.theme-glass.theme-light aside,
+        body.theme-glass.theme-light header,
+        body.theme-glass.theme-light nav,
+        body.theme-glass.theme-light main {
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        body.theme-glass.theme-light [id^="tab-"] input:not([type="checkbox"]):not([type="radio"]),
+        body.theme-glass.theme-light [id^="tab-"] select,
+        body.theme-glass.theme-light [id^="tab-"] textarea {
+            background: rgba(218,231,245,.56) !important;
+            border-color: rgba(71,110,157,.28) !important;
+            box-shadow: inset 0 1px 3px rgba(37,99,235,.05);
+        }
 
         /* PREMIUM DASHBOARD LAYOUT */
         .premium-dashboard .dashboard-glow-card { border-radius: 1.5rem; }
