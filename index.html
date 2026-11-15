@@ -366,7 +366,7 @@
                     <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
                         <i data-lucide="palette" class="w-3 h-3"></i> Tema Tampilan
                     </label>
-                    <select id="theme-selector" onchange="changeTheme(this.value)" class="w-full bg-dark-700/80 border border-white/10 rounded-xl px-3 py-2 text-xs text-gray-200 theme-focus">
+                    <select id="theme-selector" onchange="changeTheme(this.value)" class="w-full bg-dark-700/80 border border-white/10 rounded-xl px-3 py-2 text-xs text-gray-200 theme-focus" autocomplete="off">
                         <option value="sunset">Sunset Coral (Default)</option>
                         <option value="emerald">Emerald Forest</option>
                         <option value="midnight">Midnight Blue</option>
@@ -556,19 +556,19 @@
                         <h3 id="master-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="package-plus" class="w-4 h-4 text-orange-400"></i> TAMBAH MASTER BARANG
                         </h3>
-                        <form id="form-master" onsubmit="saveMasterItem(event)" class="space-y-4">
-                            <input type="hidden" id="master-edit-mode" value="false">
+                        <form id="form-master" onsubmit="saveMasterItem(event)" class="space-y-4" autocomplete="off">
+                            <input type="hidden" id="master-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Barang (SKU) *</label>
-                                <input type="text" id="master-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" placeholder="Contoh: EJ-003-03">
+                                <input type="text" id="master-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" placeholder="Contoh: EJ-003-03" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Nama Barang *</label>
-                                <input type="text" id="master-nama" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Contoh: ELASTIS LURUS">
+                                <input type="text" id="master-nama" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Contoh: ELASTIS LURUS" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Kategori *</label>
-                                <select id="master-jenis" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                <select id="master-jenis" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="">-- Pilih Kategori --</option>
                                     <option value="ELASTIS HURUF">Elastis Huruf</option>
                                     <option value="ELASTIS POLOS">Elastis Polos</option>
@@ -582,7 +582,7 @@
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label class="text-xs block mb-1">Lebar</label>
-                                    <select id="master-lebar" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <select id="master-lebar" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                         <option value="">-- Pilih --</option>
                                         <option value="7 mm">7 mm</option>
                                         <option value="10 mm">10 mm</option>
@@ -603,7 +603,7 @@
                                 </div>
                                 <div>
                                     <label class="text-xs block mb-1">Ukuran</label>
-                                    <select id="master-ukuran" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <select id="master-ukuran" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                         <option value="">-- Pilih --</option>
                                         <option value="SIZE S">SIZE S</option>
                                         <option value="SIZE M">SIZE M</option>
@@ -619,11 +619,11 @@
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label class="text-xs block mb-1">Berat (gr)</label>
-                                    <input type="text" id="master-berat" value="0" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" placeholder="Contoh: 45.5">
+                                    <input type="text" id="master-berat" value="0" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" placeholder="Contoh: 45.5" autocomplete="off">
                                 </div>
                                 <div>
                                     <label class="text-xs block mb-1">Satuan *</label>
-                                    <select id="master-satuan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <select id="master-satuan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                         <option value="PCS">PCS</option>
                                         <option value="KG">KG</option>
                                         <option value="YARD">YARD</option>
@@ -637,11 +637,11 @@
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label class="text-xs block mb-1">Stok Min. *</label>
-                                    <input type="number" id="master-min" min="0" value="50" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                                    <input type="number" id="master-min" min="0" value="50" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" autocomplete="off">
                                 </div>
                                 <div>
                                     <label class="text-xs block mb-1">Stok Awal *</label>
-                                    <input type="number" id="master-stok" min="0" value="0" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                                    <input type="number" id="master-stok" min="0" value="0" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" autocomplete="off">
                                 </div>
                             </div>
                             <div class="pt-2 flex gap-2">
@@ -664,7 +664,7 @@
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-master" oninput="renderMasterTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Nama / Kategori...">
+                                    <input type="text" id="search-master" oninput="renderMasterTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Nama / Kategori..." autocomplete="off">
                                 </div>
                                 <button onclick="printMasterTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
@@ -704,33 +704,33 @@
                         <h3 id="po-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="file-plus" class="w-4 h-4 text-orange-400"></i> INPUT PO CUSTOMER
                         </h3>
-                        <form id="form-po" onsubmit="savePoItem(event)" class="space-y-4">
-                            <input type="hidden" id="po-edit-mode" value="false">
+                        <form id="form-po" onsubmit="savePoItem(event)" class="space-y-4" autocomplete="off">
+                            <input type="hidden" id="po-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Sistem PO * (Auto)</label>
-                                <input type="text" id="po-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase">
+                                <input type="text" id="po-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">No. PO Customer *</label>
-                                <input type="text" id="po-no-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" placeholder="PO/2026/XI/001">
+                                <input type="text" id="po-no-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" placeholder="PO/2026/XI/001" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Tanggal PO *</label>
-                                <input type="date" id="po-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                <input type="date" id="po-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Nama Customer *</label>
-                                <input type="text" id="po-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA">
+                                <input type="text" id="po-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Pilih Barang *</label>
-                                <select id="po-barang" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                <select id="po-barang" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="">-- Pilih Barang —</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Jumlah Qty PO *</label>
-                                <input type="number" id="po-qty" min="1" value="500" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                                <input type="number" id="po-qty" min="1" value="500" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" autocomplete="off">
                             </div>
                             <div class="pt-2 flex gap-2">
                                 <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
@@ -752,7 +752,7 @@
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-po" oninput="renderPoTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari No PO / Customer / Barang...">
+                                    <input type="text" id="search-po" oninput="renderPoTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari No PO / Customer / Barang..." autocomplete="off">
                                 </div>
                                 <button onclick="printPoTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
@@ -797,19 +797,19 @@
                         <h3 id="masuk-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="plus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG MASUK
                         </h3>
-                        <form id="form-masuk" onsubmit="saveMasukItem(event)" class="space-y-4">
-                            <input type="hidden" id="masuk-edit-mode" value="false">
+                        <form id="form-masuk" onsubmit="saveMasukItem(event)" class="space-y-4" autocomplete="off">
+                            <input type="hidden" id="masuk-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Transaksi *</label>
-                                <input type="text" id="masuk-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase">
+                                <input type="text" id="masuk-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Tanggal *</label>
-                                <input type="date" id="masuk-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                <input type="date" id="masuk-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Pilih Barang *</label>
-                                <select id="masuk-barang" onchange="updateMasukItemInfo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                <select id="masuk-barang" onchange="updateMasukItemInfo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="">-- Pilih Barang —</option>
                                 </select>
                             </div>
@@ -819,11 +819,11 @@
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Jumlah Masuk (Qty) *</label>
-                                <input type="number" id="masuk-qty" min="1" value="100" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                                <input type="number" id="masuk-qty" min="1" value="100" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Sumber *</label>
-                                <input type="text" id="masuk-supplier" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Divisi 1 / Divisi 2">
+                                <input type="text" id="masuk-supplier" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Divisi 1 / Divisi 2" autocomplete="off">
                             </div>
                             <div class="pt-2 flex gap-2">
                                 <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
@@ -845,7 +845,7 @@
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-masuk" oninput="renderMasukTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Sumber...">
+                                    <input type="text" id="search-masuk" oninput="renderMasukTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Sumber..." autocomplete="off">
                                 </div>
                                 <button onclick="printMasukTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
@@ -886,35 +886,35 @@
                         <h3 id="keluar-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="minus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG KELUAR
                         </h3>
-                        <form id="form-keluar" onsubmit="saveKeluarItem(event)" class="space-y-4">
-                            <input type="hidden" id="keluar-edit-mode" value="false">
+                        <form id="form-keluar" onsubmit="saveKeluarItem(event)" class="space-y-4" autocomplete="off">
+                            <input type="hidden" id="keluar-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Transaksi *</label>
-                                <input type="text" id="keluar-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase">
+                                <input type="text" id="keluar-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Tanggal *</label>
-                                <input type="date" id="keluar-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                <input type="date" id="keluar-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Merujuk ke PO Aktif *</label>
-                                <select id="keluar-po-ref" onchange="updateKeluarFromPo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                <select id="keluar-po-ref" onchange="updateKeluarFromPo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="">-- Pilih PO Customer Aktif —</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Pilih Barang *</label>
-                                <select id="keluar-barang" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                <select id="keluar-barang" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="">-- Pilih Barang —</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Jumlah Keluar (Qty) *</label>
-                                <input type="number" id="keluar-qty" min="1" value="50" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                                <input type="number" id="keluar-qty" min="1" value="50" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Customer / Tujuan *</label>
-                                <input type="text" id="keluar-tujuan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA">
+                                <input type="text" id="keluar-tujuan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA" autocomplete="off">
                             </div>
                             <div class="pt-2 flex gap-2">
                                 <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
@@ -936,7 +936,7 @@
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-keluar" oninput="renderKeluarTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Customer...">
+                                    <input type="text" id="search-keluar" oninput="renderKeluarTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Customer..." autocomplete="off">
                                 </div>
                                 <button onclick="printKeluarTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
@@ -978,27 +978,27 @@
                         <h3 id="sampel-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="box" class="w-4 h-4 text-orange-400"></i> INPUT DATA SAMPEL
                         </h3>
-                        <form id="form-sampel" onsubmit="saveSampelItem(event)" class="space-y-4">
-                            <input type="hidden" id="sampel-edit-mode" value="false">
+                        <form id="form-sampel" onsubmit="saveSampelItem(event)" class="space-y-4" autocomplete="off">
+                            <input type="hidden" id="sampel-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Sampel (Auto) *</label>
-                                <input type="text" id="sampel-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase">
+                                <input type="text" id="sampel-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Tanggal *</label>
-                                <input type="date" id="sampel-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                <input type="date" id="sampel-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Customer *</label>
-                                <input type="text" id="sampel-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA">
+                                <input type="text" id="sampel-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Nama Sampel / Keterangan *</label>
-                                <input type="text" id="sampel-nama" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Contoh: Sampel Kustom A">
+                                <input type="text" id="sampel-nama" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Contoh: Sampel Kustom A" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Kategori *</label>
-                                <select id="sampel-kategori" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                <select id="sampel-kategori" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="">-- Pilih Kategori --</option>
                                     <option value="ELASTIS POLOS">Elastis Polos</option>
                                     <option value="ELASTIS HURUF">Elastis Huruf</option>
@@ -1010,7 +1010,7 @@
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label class="text-xs block mb-1">Lebar</label>
-                                    <select id="sampel-lebar" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <select id="sampel-lebar" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                         <option value="">-- Pilih --</option>
                                         <option value="7 mm">7 mm</option>
                                         <option value="10 mm">10 mm</option>
@@ -1031,7 +1031,7 @@
                                 </div>
                                 <div>
                                     <label class="text-xs block mb-1">Ukuran</label>
-                                    <select id="sampel-ukuran" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                    <select id="sampel-ukuran" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                         <option value="">-- Pilih --</option>
                                         <option value="SIZE S">SIZE S</option>
                                         <option value="SIZE M">SIZE M</option>
@@ -1047,11 +1047,11 @@
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label class="text-xs block mb-1">Berat (gr)</label>
-                                    <input type="text" id="sampel-berat" value="0" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" placeholder="Contoh: 45.5">
+                                    <input type="text" id="sampel-berat" value="0" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" placeholder="Contoh: 45.5" autocomplete="off">
                                 </div>
                                 <div>
                                     <label class="text-xs block mb-1">Tebal (mm)</label>
-                                    <input type="text" id="sampel-tebal" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="1.2 mm">
+                                    <input type="text" id="sampel-tebal" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="1.2 mm" autocomplete="off">
                                 </div>
                             </div>
                             <div class="pt-2 flex gap-2">
@@ -1074,7 +1074,7 @@
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-sampel" oninput="renderSampelTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Customer / Nama...">
+                                    <input type="text" id="search-sampel" oninput="renderSampelTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Customer / Nama..." autocomplete="off">
                                 </div>
                                 <button onclick="printSampelTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
@@ -1114,36 +1114,36 @@
                         <h3 id="retur-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="rotate-ccw" class="w-4 h-4 text-orange-400"></i> INPUT RETUR BARANG
                         </h3>
-                        <form id="form-retur" onsubmit="saveReturItem(event)" class="space-y-4">
-                            <input type="hidden" id="retur-edit-mode" value="false">
+                        <form id="form-retur" onsubmit="saveReturItem(event)" class="space-y-4" autocomplete="off">
+                            <input type="hidden" id="retur-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Retur *</label>
-                                <input type="text" id="retur-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase">
+                                <input type="text" id="retur-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Tanggal *</label>
-                                <input type="date" id="retur-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                <input type="date" id="retur-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Pilih Barang *</label>
-                                <select id="retur-barang" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                <select id="retur-barang" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="">-- Pilih Barang —</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Referensi Barang Keluar *</label>
-                                <select id="retur-keluar-ref" required onchange="updateReturReferenceInfo()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                <select id="retur-keluar-ref" required onchange="updateReturReferenceInfo()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="">-- Pilih transaksi keluar asal --</option>
                                 </select>
                                 <p id="retur-reference-info" class="text-[11px] text-gray-400 mt-1">Pilih barang terlebih dahulu untuk melihat transaksi keluar yang bisa diretur.</p>
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Jumlah Retur (Qty) *</label>
-                                <input type="number" id="retur-qty" min="1" value="1" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus">
+                                <input type="number" id="retur-qty" min="1" value="1" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Keterangan / Alasan *</label>
-                                <input type="text" id="retur-keterangan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Contoh: Barang cacat">
+                                <input type="text" id="retur-keterangan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Contoh: Barang cacat" autocomplete="off">
                             </div>
                             <div class="pt-2 flex gap-2">
                                 <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
@@ -1164,7 +1164,7 @@
                                 <p class="text-xs text-gray-300 mt-0.5" id="retur-total-badge">0 Transaksi</p>
                             </div>
                             <div class="w-full md:w-80">
-                                <input type="text" id="search-retur" oninput="renderReturTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Alasan...">
+                                <input type="text" id="search-retur" oninput="renderReturTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Alasan..." autocomplete="off">
                             </div>
                         </div>
                         <div class="fluid-table-container flex-1 pb-2">
@@ -1200,22 +1200,22 @@
                         <h3 class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="user-plus" class="w-4 h-4 text-orange-400"></i> TAMBAH USER SISTEM
                         </h3>
-                        <form id="form-user" onsubmit="saveNewUser(event)" class="space-y-4">
+                        <form id="form-user" onsubmit="saveNewUser(event)" class="space-y-4" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">Username *</label>
-                                <input type="text" id="new-user-username" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="budi_gudang">
+                                <input type="text" id="new-user-username" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="budi_gudang" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Nama Lengkap *</label>
-                                <input type="text" id="new-user-name" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Budi Santoso">
+                                <input type="text" id="new-user-name" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Budi Santoso" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Password *</label>
-                                <input type="text" id="new-user-pass" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="rahasia123">
+                                <input type="text" id="new-user-pass" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="rahasia123" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Hak Akses (Role) *</label>
-                                <select id="new-user-role" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus">
+                                <select id="new-user-role" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="admin">Admin (Full Access)</option>
                                     <option value="staff">Staff (Edit Data, No Delete User)</option>
                                     <option value="viewer">Viewer (Read-Only)</option>
@@ -1285,7 +1285,7 @@
                         <div class="flex items-center gap-2 text-amber-400"><i data-lucide="upload" class="w-5 h-5"></i><h3 class="font-bold text-sm text-gray-100">RESTORE DATA</h3></div>
                         <p class="text-xs text-gray-400">Pulihkan data dari file JSON backup. Proses ini akan mengganti data cloud saat ini.</p>
                         <label class="block text-xs text-gray-300 font-semibold">Pilih file backup (.json)</label>
-                        <input id="restore-json-file" type="file" accept=".json,application/json" class="w-full text-xs text-gray-300 file:mr-3 file:px-3 file:py-2 file:rounded-lg file:border-0 file:bg-white/10 file:text-white hover:file:bg-white/20" onchange="previewRestoreFile(this)">
+                        <input id="restore-json-file" type="file" accept=".json,application/json" class="w-full text-xs text-gray-300 file:mr-3 file:px-3 file:py-2 file:rounded-lg file:border-0 file:bg-white/10 file:text-white hover:file:bg-white/20" onchange="previewRestoreFile(this)" autocomplete="off">
                         <div id="restore-file-info" class="hidden bg-white/5 rounded-xl p-3 text-xs text-gray-300"></div>
                         <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3 text-xs text-rose-300">Restore menimpa data aktif. Aplikasi akan mengunduh backup kondisi saat ini terlebih dahulu sebelum memulihkan file pilihan.</div>
                         <button id="restore-json-btn" onclick="restoreInventoryBackup()" disabled class="w-full py-3 rounded-xl bg-rose-600/40 text-white/50 text-xs font-bold flex items-center justify-center gap-2 cursor-not-allowed"><i data-lucide="database-restore" class="w-4 h-4"></i> RESTORE DATABASE</button>
@@ -1311,14 +1311,14 @@
                 <p class="text-xs text-gray-400">Masukkan kredensial Anda untuk masuk</p>
             </div>
             
-            <form id="form-login" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+            <form id="form-login" autocomplete="off" onsubmit="handleLoginSubmit(event)" class="space-y-4">
                 <div>
                     <label class="text-xs block mb-1">Username</label>
-                    <input type="text" id="login-username" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Username">
+                    <input type="text" id="login-username" name="inventory-login-user" autocomplete="off" autocapitalize="none" spellcheck="false" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Username">
                 </div>
                 <div>
                     <label class="text-xs block mb-1">Password</label>
-                    <input type="password" id="login-password" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="••••••••">
+                    <input type="password" id="login-password" name="inventory-login-pass" autocomplete="off" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="••••••••">
                 </div>
                 <div class="pt-2">
                     <button type="submit" class="w-full py-3 rounded-xl theme-accent-bg text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-orange-500/30 hover:scale-[1.02] active:scale-95 transition-all">
@@ -2223,6 +2223,47 @@
             lucide.createIcons();
         };
 
+        // Mode edit transaksi: hanya mengisi form; perubahan stok selalu dihitung Worker.
+        function beginTransactionEdit(formId, modeId, values) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+            Object.entries(values).forEach(([id, value]) => {
+                const el = document.getElementById(id);
+                if (el) el.value = value ?? '';
+            });
+            document.getElementById(modeId).value = 'true';
+            form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            showToast('Mode edit aktif. Periksa data lalu simpan perubahan.', 'info');
+        }
+        window.editPoItem = function(id) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
+            const r = window.gudangAppDb.po.find(x => String(x.id) === String(id)); if (!r) return;
+            beginTransactionEdit('form-po','po-edit-mode', {'po-id':r.id,'po-no-customer':r.noPoCustomer,'po-tanggal':r.tanggal,'po-customer':r.customer,'po-barang':r.barangId,'po-qty':r.qty});
+        };
+        window.editMasukItem = function(id) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
+            const r = window.gudangAppDb.masuk.find(x => String(x.id) === String(id)); if (!r) return;
+            beginTransactionEdit('form-masuk','masuk-edit-mode', {'masuk-id':r.id,'masuk-tanggal':r.tanggal,'masuk-barang':r.barangId,'masuk-qty':r.qty,'masuk-supplier':r.supplier});
+            window.updateMasukItemInfo?.();
+        };
+        window.editKeluarItem = function(id) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
+            const r = window.gudangAppDb.keluar.find(x => String(x.id) === String(id)); if (!r) return;
+            beginTransactionEdit('form-keluar','keluar-edit-mode', {'keluar-id':r.id,'keluar-tanggal':r.tanggal,'keluar-po-ref':r.poRef,'keluar-barang':r.barangId,'keluar-qty':r.qty,'keluar-tujuan':r.tujuan});
+        };
+        window.editSampelItem = function(id) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
+            const r = (window.gudangAppDb.sampel||[]).find(x => String(x.id) === String(id)); if (!r) return;
+            beginTransactionEdit('form-sampel','sampel-edit-mode', {'sampel-id':r.id,'sampel-tanggal':r.tanggal,'sampel-customer':r.customer,'sampel-nama':r.nama,'sampel-kategori':r.kategori,'sampel-lebar':r.lebar,'sampel-ukuran':r.ukuran,'sampel-berat':r.berat,'sampel-tebal':r.tebal});
+        };
+        window.editReturItem = function(id) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') return;
+            const r = (window.gudangAppDb.retur||[]).find(x => String(x.id) === String(id)); if (!r) return;
+            beginTransactionEdit('form-retur','retur-edit-mode', {'retur-id':r.id,'retur-tanggal':r.tanggal,'retur-barang':r.barangId,'retur-keluar-ref':r.keluarRef,'retur-qty':r.qty,'retur-keterangan':r.keterangan});
+            window.updateReturReferenceOptions?.();
+            document.getElementById('retur-keluar-ref').value = r.keluarRef || '';
+        };
+
         // Barang Masuk CRUD
         window.updateMasukItemInfo = function() {
             const barangId = document.getElementById('masuk-barang')?.value;
@@ -2249,6 +2290,13 @@
             }
             if (!item) {
                 showToast('Barang tidak ditemukan di Master Barang.', 'error');
+                return;
+            }
+            if (document.getElementById('masuk-edit-mode').value === 'true') {
+                try {
+                    await sendOperation('masuk.update', { id, record: { tanggal, barangId, nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan, qty, supplier } });
+                    window.refreshAllViews?.(); resetMasukForm(); showToast('Barang Masuk berhasil diperbarui. Stok dikoreksi otomatis oleh Worker.');
+                } catch (error) { showToast(`Edit Barang Masuk gagal: ${error.message}`, 'error'); }
                 return;
             }
             if (window.gudangAppDb.masuk.some(x => String(x.id).toUpperCase() === id)) {
@@ -2286,6 +2334,7 @@
 
         window.resetMasukForm = function() {
             document.getElementById('form-masuk').reset();
+            document.getElementById('masuk-edit-mode').value = 'false';
             document.getElementById('masuk-id').value = generateMasukSequentialId();
             document.getElementById('masuk-tanggal').valueAsDate = new Date();
             document.getElementById('info-masuk-jenis').textContent = '-';
@@ -2318,6 +2367,7 @@
                     <td class="py-3 px-3 font-medium">${i.supplier}</td>
                     ${!isViewer ? `
                         <td class="py-3 px-3 text-center">
+                            <button onclick="editMasukItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-semibold mr-1">Edit</button>
                             <button onclick="deleteMasukItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
                         </td>
                     ` : ''}
@@ -2356,6 +2406,13 @@
             }
             if (!id || !tanggal || !poRef || !barangId || qty <= 0) {
                 showToast('Lengkapi data Barang Keluar terlebih dahulu.', 'error');
+                return;
+            }
+            if (document.getElementById('keluar-edit-mode').value === 'true') {
+                try {
+                    await sendOperation('keluar.update', { id, record: { tanggal, poRef, barangId, nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan, qty, tujuan } });
+                    window.refreshAllViews?.(); resetKeluarForm(); showToast('Barang Keluar berhasil diperbarui. Stok dan realisasi PO dikoreksi Worker.');
+                } catch (error) { showToast(`Edit Barang Keluar gagal: ${error.message}`, 'error'); }
                 return;
             }
             if (window.gudangAppDb.keluar.some(x => String(x.id).toUpperCase() === id)) {
@@ -2409,6 +2466,7 @@
 
         window.resetKeluarForm = function() {
             document.getElementById('form-keluar').reset();
+            document.getElementById('keluar-edit-mode').value = 'false';
             document.getElementById('keluar-id').value = generateKeluarSequentialId();
             document.getElementById('keluar-tanggal').valueAsDate = new Date();
         };
@@ -2440,6 +2498,7 @@
                     <td class="py-3 px-3 font-mono opacity-80">${i.poRef || '-'}</td>
                     ${!isViewer ? `
                         <td class="py-3 px-3 text-center">
+                            <button onclick="editKeluarItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-semibold mr-1">Edit</button>
                             <button onclick="deleteKeluarItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
                         </td>
                     ` : ''}
@@ -2465,6 +2524,13 @@
                 showToast('Lengkapi PO dan pastikan Qty bilangan bulat lebih dari nol.', 'error'); return;
             }
             if (!item) { showToast('Barang tidak ditemukan di Master Barang.', 'error'); return; }
+            if (document.getElementById('po-edit-mode').value === 'true') {
+                try {
+                    await sendOperation('po.update', { id, record: { noPoCustomer, tanggal, customer, barangId, nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan, qty } });
+                    window.refreshAllViews?.(); resetPoForm(); showToast('PO berhasil diperbarui oleh Worker.');
+                } catch (error) { showToast(`Edit PO gagal: ${error.message}`, 'error'); }
+                return;
+            }
             if (window.gudangAppDb.po.some(x => String(x.id).toUpperCase() === id)) {
                 showToast(`ID Sistem PO ${id} sudah digunakan.`, 'error'); return;
             }
@@ -2490,6 +2556,7 @@
 
         window.resetPoForm = function() {
             document.getElementById('form-po').reset();
+            document.getElementById('po-edit-mode').value = 'false';
             document.getElementById('po-id').value = generatePoSequentialId();
             document.getElementById('po-tanggal').valueAsDate = new Date();
         };
@@ -2528,7 +2595,8 @@
                         <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-extrabold ${statusBadge}">${i.status}</span></td>
                         ${!isViewer ? `
                             <td class="py-3 px-3 text-center">
-                                <button onclick="deletePoItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
+                                <button onclick="editPoItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-semibold mr-1">Edit</button>
+                            <button onclick="deletePoItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
                             </td>
                         ` : ''}
                     </tr>
@@ -2538,7 +2606,7 @@
         };
 
         // Sampel CRUD
-        window.saveSampelItem = function(e) {
+        window.saveSampelItem = async function(e) {
             e.preventDefault();
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
 
@@ -2553,6 +2621,13 @@
             const tebal = document.getElementById('sampel-tebal').value.trim();
 
             if (!window.gudangAppDb.sampel) window.gudangAppDb.sampel = [];
+            if (document.getElementById('sampel-edit-mode').value === 'true') {
+                try {
+                    await sendOperation('sampel.update', { id, record: { tanggal, customer, nama, kategori, lebar, ukuran, berat, tebal } });
+                    window.refreshAllViews?.(); resetSampelForm(); showToast('Data sampel berhasil diperbarui.');
+                } catch (error) { showToast(`Edit sampel gagal: ${error.message}`, 'error'); }
+                return;
+            }
             window.gudangAppDb.sampel.unshift({ id, tanggal, customer, nama, kategori, lebar, ukuran, berat, tebal });
             resetSampelForm();
             saveCloudDB();
@@ -2570,6 +2645,7 @@
 
         window.resetSampelForm = function() {
             document.getElementById('form-sampel').reset();
+            document.getElementById('sampel-edit-mode').value = 'false';
             document.getElementById('sampel-id').value = generateSampelSequentialId();
             document.getElementById('sampel-tanggal').valueAsDate = new Date();
         };
@@ -2599,6 +2675,7 @@
                     <td class="py-3 px-3 text-center opacity-80 font-mono">${i.tebal || '-'}</td>
                     ${!isViewer ? `
                         <td class="py-3 px-3 text-center">
+                            <button onclick="editSampelItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-semibold mr-1">Edit</button>
                             <button onclick="deleteSampelItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
                         </td>
                     ` : ''}
@@ -2622,7 +2699,11 @@
             const previous = select.value;
             const rows = (window.gudangAppDb.keluar || []).filter(k => {
                 if (String(k.barangId) !== String(barangId)) return false;
-                const returned = window.getReturAlreadyQty(k.id);
+                let returned = window.getReturAlreadyQty(k.id);
+                if (document.getElementById('retur-edit-mode')?.value === 'true') {
+                    const editing = (window.gudangAppDb.retur || []).find(r => String(r.id) === String(document.getElementById('retur-id')?.value));
+                    if (editing && String(editing.keluarRef) === String(k.id)) returned -= Number(editing.qty) || 0;
+                }
                 return (Number(k.qty) || 0) - returned > 0;
             });
             select.innerHTML = '<option value="">-- Pilih transaksi keluar asal --</option>' +
@@ -2649,7 +2730,12 @@
                 if (info) info.textContent = 'Pilih transaksi keluar asal.';
                 return;
             }
-            const remaining = Math.max(0, (Number(row.qty) || 0) - window.getReturAlreadyQty(ref));
+            let returned = window.getReturAlreadyQty(ref);
+            if (document.getElementById('retur-edit-mode')?.value === 'true') {
+                const editing = (window.gudangAppDb.retur || []).find(r => String(r.id) === String(document.getElementById('retur-id')?.value));
+                if (editing && String(editing.keluarRef) === String(ref)) returned -= Number(editing.qty) || 0;
+            }
+            const remaining = Math.max(0, (Number(row.qty) || 0) - returned);
             const po = (window.gudangAppDb.po || []).find(p => String(p.id) === String(row.poRef));
             if (qtyInput) qtyInput.max = String(remaining);
             if (info) info.textContent = `Customer: ${row.tujuan || '-'} | PO: ${po ? (po.noPoCustomer || po.id) : 'Tanpa PO'} | Maksimal retur: ${remaining}`;
@@ -2674,11 +2760,23 @@
             const keluar = (window.gudangAppDb.keluar || []).find(x => String(x.id) === String(keluarRef));
 
             if (!item || !keluar) return showToast('Pilih barang dan referensi transaksi keluar yang valid.', 'error');
-            const remaining = Math.max(0, (Number(keluar.qty) || 0) - window.getReturAlreadyQty(keluarRef));
+            let returned = window.getReturAlreadyQty(keluarRef);
+            if (document.getElementById('retur-edit-mode').value === 'true') {
+                const editing = (window.gudangAppDb.retur || []).find(r => String(r.id) === id);
+                if (editing && String(editing.keluarRef) === String(keluarRef)) returned -= Number(editing.qty) || 0;
+            }
+            const remaining = Math.max(0, (Number(keluar.qty) || 0) - returned);
             if (qty < 1 || qty > remaining) return showToast(`Qty retur maksimal ${remaining}.`, 'error');
             if (String(keluar.barangId) !== String(barangId)) return showToast('Barang tidak sesuai dengan transaksi keluar asal.', 'error');
 
             const po = (window.gudangAppDb.po || []).find(p => String(p.id) === String(keluar.poRef));
+            if (document.getElementById('retur-edit-mode').value === 'true') {
+                try {
+                    await sendOperation('retur.update', { id, record: { tanggal, barangId, qty, keterangan, keluarRef, poRef: keluar.poRef || '', nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan } });
+                    window.refreshAllViews?.(); resetReturForm(); showToast('Retur berhasil diperbarui. Stok dan realisasi PO dikoreksi Worker.');
+                } catch (error) { showToast(`Edit retur gagal: ${error.message}`, 'error'); }
+                return;
+            }
             item.stok += qty;
             window.gudangAppDb.retur.unshift({
                 id, tanggal, barangId, nama: item.nama, jenis: item.jenis,
@@ -2722,6 +2820,7 @@
 
         window.resetReturForm = function() {
             document.getElementById('form-retur').reset();
+            document.getElementById('retur-edit-mode').value = 'false';
             document.getElementById('retur-id').value = generateId('RTR');
             document.getElementById('retur-tanggal').valueAsDate = new Date();
             window.updateReturReferenceOptions?.();
@@ -2755,6 +2854,7 @@
                     <td class="py-3 px-3 font-medium">${i.keterangan}</td>
                     ${!isViewer ? `
                         <td class="py-3 px-3 text-center">
+                            <button onclick="editReturItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-semibold mr-1">Edit</button>
                             <button onclick="deleteReturItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
                         </td>
                     ` : ''}
@@ -3021,6 +3121,36 @@
             printWindow.focus();
             setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
         }
+
+
+        // Nonaktifkan autofill untuk seluruh form dan kontrol input,
+        // termasuk elemen yang dibuat secara dinamis oleh aplikasi.
+        function disableAllAutofill(root = document) {
+            root.querySelectorAll('form, input, select, textarea').forEach((el) => {
+                el.setAttribute('autocomplete', 'off');
+                if (el.tagName === 'FORM') {
+                    el.setAttribute('autocomplete', 'off');
+                }
+            });
+        }
+
+        disableAllAutofill();
+        const autofillObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === 1) {
+                        if (node.matches?.('form, input, select, textarea')) {
+                            node.setAttribute('autocomplete', 'off');
+                        }
+                        disableAllAutofill(node);
+                    }
+                });
+            });
+        });
+        autofillObserver.observe(document.documentElement, {
+            childList: true,
+            subtree: true
+        });
 
         window.addEventListener('load', () => {
             applyTheme('sunset');
