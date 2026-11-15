@@ -506,6 +506,20 @@
         .premium-dashboard .dashboard-glow-card:hover { transform: translateY(-3px); }
         .premium-dashboard #chart-masuk > *, .premium-dashboard #chart-keluar > * { flex-shrink: 0; }
         .premium-dashboard #recent-activity-body tr:hover { background: rgba(59,130,246,.07); }
+
+        /* RECENT ACTIVITY: tampilkan maksimal 5 baris, scroll untuk transaksi berikutnya */
+        #recent-activity-scroll {
+            max-height: 285px;
+            overflow-x: auto;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            scrollbar-gutter: stable;
+        }
+        #recent-activity-scroll thead th {
+            position: sticky;
+            top: 0;
+            z-index: 6;
+        }
         body.theme-glass.theme-light .premium-dashboard h2,
         body.theme-glass.theme-light .premium-dashboard h3 { color:#173253 !important; }
         body.theme-glass.theme-light .premium-dashboard p,
@@ -1429,7 +1443,7 @@
                         <div class="flex items-center gap-3"><div class="flex h-10 w-10 items-center justify-center rounded-2xl border border-blue-300/20 bg-blue-500/10 text-blue-300"><i data-lucide="activity" class="h-5 w-5"></i></div><div><h3 class="text-xs font-extrabold uppercase tracking-wider text-white">Aktivitas Transaksi Terakhir</h3><p class="mt-1 text-[10px] text-slate-400">Jejak aktivitas transaksi inventory</p></div></div>
                         <span class="rounded-full border border-blue-300/20 bg-blue-500/10 px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider text-blue-300">Recent Activity Log</span>
                     </div>
-                    <div class="overflow-x-auto">
+                    <div id="recent-activity-scroll" class="overflow-x-auto">
                         <table class="w-full min-w-[760px] text-left text-xs">
                             <thead class="bg-blue-500/5 uppercase text-slate-400 border-b border-white/10 font-bold tracking-wider">
                                 <tr>
