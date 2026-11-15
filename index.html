@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.15-glass-blue-login-v5";
+        const APP_VERSION = "2026.11.15-glass-blue-strong-glass-v6";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -602,6 +602,172 @@
         body.theme-glass.theme-light #login-modal .login-glass-field input::placeholder {color:rgba(30,58,90,.58) !important}
         body.theme-glass.theme-light #login-modal .login-glass-field-icon {color:#245783}
         @media(max-width:480px) {#login-modal .login-glass-card{padding:30px 22px 24px}#login-modal .login-glass-title{font-size:18px}}
+
+
+        /* ==========================================================
+           GLASS BLUE REFINEMENT — APP SHELL + ALL MODULES
+           Stronger glass visibility, darker light-mode backdrop,
+           and clearer text contrast. Visual layer only.
+           ========================================================== */
+
+        /* DARK MODE: deeper backdrop, more visible translucent glass */
+        body.theme-glass:not(.theme-light) {
+            background:
+                radial-gradient(ellipse at 8% 8%,rgba(37,99,235,.24),transparent 36%),
+                radial-gradient(ellipse at 92% 18%,rgba(14,165,233,.18),transparent 34%),
+                radial-gradient(ellipse at 55% 100%,rgba(8,145,178,.12),transparent 42%),
+                #050d19 !important;
+            color:#edf5ff !important;
+        }
+        body.theme-glass:not(.theme-light) aside,
+        body.theme-glass:not(.theme-light) header,
+        body.theme-glass:not(.theme-light) nav,
+        body.theme-glass:not(.theme-light) main,
+        body.theme-glass:not(.theme-light) .glass-surface {
+            background-color:rgba(7,20,39,.58) !important;
+            border-color:rgba(125,180,255,.24) !important;
+            backdrop-filter:blur(26px) saturate(145%);
+            -webkit-backdrop-filter:blur(26px) saturate(145%);
+        }
+        body.theme-glass:not(.theme-light) .app-card,
+        body.theme-glass:not(.theme-light) .dashboard-glow-card,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .bg-dark-800,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .bg-dark-900,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .bg-dark-700,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .bg-gray-800,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .bg-gray-900,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .rounded-xl.border,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .rounded-2xl.border {
+            background:linear-gradient(135deg,rgba(24,52,83,.58),rgba(9,27,49,.43)) !important;
+            border:1px solid rgba(125,190,255,.30) !important;
+            box-shadow:0 16px 42px rgba(0,0,0,.24),inset 0 1px 0 rgba(219,239,255,.13),inset 0 0 24px rgba(59,130,246,.035) !important;
+            backdrop-filter:blur(24px) saturate(150%);
+            -webkit-backdrop-filter:blur(24px) saturate(150%);
+        }
+        body.theme-glass:not(.theme-light) [id^="tab-"] table,
+        body.theme-glass:not(.theme-light) [id^="tab-"] th,
+        body.theme-glass:not(.theme-light) [id^="tab-"] td {
+            border-color:rgba(147,197,253,.16) !important;
+        }
+        body.theme-glass:not(.theme-light) [id^="tab-"] thead,
+        body.theme-glass:not(.theme-light) [id^="tab-"] thead tr {
+            background:rgba(38,78,119,.48) !important;
+            color:#eaf4ff !important;
+        }
+        body.theme-glass:not(.theme-light) [id^="tab-"] tbody tr:hover {
+            background:rgba(59,130,246,.13) !important;
+        }
+        body.theme-glass:not(.theme-light) input:not([type="checkbox"]):not([type="radio"]),
+        body.theme-glass:not(.theme-light) select,
+        body.theme-glass:not(.theme-light) textarea {
+            background:rgba(8,25,47,.54) !important;
+            border-color:rgba(147,197,253,.30) !important;
+            color:#f1f7ff !important;
+        }
+        body.theme-glass:not(.theme-light) input::placeholder,
+        body.theme-glass:not(.theme-light) textarea::placeholder {
+            color:#a9bfd9 !important;
+        }
+        body.theme-glass:not(.theme-light) [id^="tab-"] .text-gray-400,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .text-gray-500 {
+            color:#a9bdd5 !important;
+        }
+
+        /* LIGHT MODE: darker blue-grey backdrop makes translucent glass visible */
+        body.theme-glass.theme-light {
+            --theme-bg:#aebfd3;
+            --theme-card:rgba(226,237,249,.50);
+            --theme-card-border:rgba(54,91,135,.34);
+            --theme-text:#142b46;
+            --theme-text-muted:#405a78;
+            background:
+                radial-gradient(ellipse at 8% 8%,rgba(96,165,250,.24),transparent 38%),
+                radial-gradient(ellipse at 92% 18%,rgba(56,189,248,.18),transparent 34%),
+                radial-gradient(ellipse at 60% 100%,rgba(71,110,157,.16),transparent 42%),
+                linear-gradient(135deg,#aebfd3 0%,#c0cede 50%,#a9bbd0 100%) !important;
+            color:#142b46 !important;
+        }
+        body.theme-glass.theme-light aside,
+        body.theme-glass.theme-light header,
+        body.theme-glass.theme-light nav,
+        body.theme-glass.theme-light main,
+        body.theme-glass.theme-light .glass-surface {
+            background:rgba(151,174,201,.48) !important;
+            border-color:rgba(54,91,135,.28) !important;
+            color:#183653 !important;
+            backdrop-filter:blur(26px) saturate(145%);
+            -webkit-backdrop-filter:blur(26px) saturate(145%);
+        }
+        body.theme-glass.theme-light .app-card,
+        body.theme-glass.theme-light .dashboard-glow-card,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-800,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-900,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-700,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-800,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-900,
+        body.theme-glass.theme-light [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-light [id^="tab-"] .rounded-2xl.border {
+            background:linear-gradient(135deg,rgba(231,241,251,.62),rgba(196,216,238,.48)) !important;
+            border:1px solid rgba(54,91,135,.32) !important;
+            box-shadow:0 16px 38px rgba(35,57,84,.14),inset 0 1px 0 rgba(255,255,255,.72),inset 0 0 22px rgba(96,165,250,.045) !important;
+            backdrop-filter:blur(24px) saturate(145%);
+            -webkit-backdrop-filter:blur(24px) saturate(145%);
+        }
+        body.theme-glass.theme-light [id^="tab-"] thead,
+        body.theme-glass.theme-light [id^="tab-"] thead tr {
+            background:rgba(119,151,190,.42) !important;
+            color:#102b49 !important;
+        }
+        body.theme-glass.theme-light [id^="tab-"] tbody tr {
+            background:rgba(224,237,249,.20) !important;
+        }
+        body.theme-glass.theme-light [id^="tab-"] tbody tr:hover {
+            background:rgba(91,139,194,.18) !important;
+        }
+        body.theme-glass.theme-light [id^="tab-"] td,
+        body.theme-glass.theme-light [id^="tab-"] th,
+        body.theme-glass.theme-light [id^="tab-"] table {
+            border-color:rgba(54,91,135,.22) !important;
+            color:#183653 !important;
+        }
+        body.theme-glass.theme-light .text-white,
+        body.theme-glass.theme-light .text-gray-100,
+        body.theme-glass.theme-light .text-gray-200,
+        body.theme-glass.theme-light .text-gray-300,
+        body.theme-glass.theme-light [id^="tab-"] .text-white,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-100,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-200,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-300 {
+            color:#173451 !important;
+        }
+        body.theme-glass.theme-light .text-gray-400,
+        body.theme-glass.theme-light .text-gray-500,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-400,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-500 {
+            color:#405c7b !important;
+        }
+        body.theme-glass.theme-light input:not([type="checkbox"]):not([type="radio"]),
+        body.theme-glass.theme-light select,
+        body.theme-glass.theme-light textarea,
+        body.theme-glass.theme-light [id^="tab-"] input:not([type="checkbox"]):not([type="radio"]),
+        body.theme-glass.theme-light [id^="tab-"] select,
+        body.theme-glass.theme-light [id^="tab-"] textarea {
+            background:rgba(222,235,248,.62) !important;
+            border-color:rgba(54,91,135,.34) !important;
+            color:#142f4d !important;
+            -webkit-text-fill-color:#142f4d !important;
+        }
+        body.theme-glass.theme-light input::placeholder,
+        body.theme-glass.theme-light textarea::placeholder {
+            color:#526b88 !important;
+            -webkit-text-fill-color:#526b88 !important;
+        }
+        body.theme-glass.theme-light [id$="-modal"] > div {
+            border-color:rgba(54,91,135,.34) !important;
+            box-shadow:0 24px 64px rgba(27,48,75,.24),inset 0 1px 0 rgba(255,255,255,.72) !important;
+            backdrop-filter:blur(26px);
+            -webkit-backdrop-filter:blur(26px);
+        }
 
 </style>
 </head>
