@@ -893,22 +893,22 @@
                                     <option value="">-- Pilih Nomor PO —</option>
                                 </select>
                             </div>
-                            <div>
-                                <label class="text-xs block mb-1">Pilih Barang dari PO *</label>
-                                <select id="keluar-po-ref" onchange="updateKeluarFromPo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
-                                    <option value="">-- Pilih Barang dalam PO —</option>
-                                </select>
-                                <p id="keluar-po-ready-info" class="text-[10px] text-emerald-300 mt-1">Pilih PO untuk melihat barang yang siap dikirim.</p>
+                            <div class="rounded-xl border border-white/10 bg-white/5 p-3 space-y-2">
+                                <div class="flex items-center justify-between gap-2">
+                                    <label class="text-xs font-semibold">Daftar Barang dari PO</label>
+                                    <span class="text-[10px] text-emerald-300">Isi Qty pada barang yang dikirim</span>
+                                </div>
+                                <p id="keluar-po-ready-info" class="text-[10px] text-gray-400">Pilih nomor PO untuk menampilkan seluruh barang dan batas siap kirim.</p>
+                                <div id="keluar-items-container" class="space-y-2"></div>
+                                <div class="flex justify-between border-t border-white/10 pt-2 text-xs">
+                                    <span class="text-gray-400">Total Qty transaksi</span>
+                                    <strong id="keluar-total-qty" class="text-emerald-300">0</strong>
+                                </div>
                             </div>
-                            <div>
-                                <label class="text-xs block mb-1">Pilih Barang *</label>
-                                <select id="keluar-barang" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
-                                    <option value="">-- Pilih Barang —</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs block mb-1">Jumlah Keluar (Qty) *</label>
-                                <input type="number" id="keluar-qty" min="1" value="50" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" autocomplete="off">
+                            <div class="hidden" aria-hidden="true">
+                                <select id="keluar-po-ref" autocomplete="off"><option value="">-</option></select>
+                                <select id="keluar-barang" autocomplete="off"><option value="">-</option></select>
+                                <input type="number" id="keluar-qty" min="1" value="1" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Customer / Tujuan *</label>
@@ -1784,13 +1784,82 @@
             populatePoItemOptions();
         };
         window.populatePoItemOptions = function() {
-            const groupKey=document.getElementById('keluar-po-group')?.value||''; const sel=document.getElementById('keluar-po-ref'); if(!sel)return;
-            const current=sel.value; const rows=(window.gudangAppDb.po||[]).filter(p=>`${String(p.customer||'').toUpperCase()}|${String(p.noPoCustomer||p.id).toUpperCase()}`===groupKey && Number(p.qty||0)>Number(p.terkirim||0));
-            sel.innerHTML='<option value="">-- Pilih Barang dalam PO --</option>'+rows.map(p=>{const remain=Math.max(0,Number(p.qty||0)-Number(p.terkirim||0));const ready=getPoReadyQty(p);return `<option value="${p.id}" ${ready<=0?'disabled':''}>${p.nama||p.barangId} | Siap: ${ready} | Sisa PO: ${remain}</option>`;}).join('');
-            if(current && rows.some(p=>p.id===current)) sel.value=current;
-            if(!rows.some(p=>getPoReadyQty(p)>0)) { const info=document.getElementById('keluar-po-ready-info'); if(info)info.textContent='Belum ada barang dengan Qty Siap Dikirim. Atur dari Detail PO.'; }
-            updateKeluarFromPo();
+            const groupKey = document.getElementById('keluar-po-group')?.value || '';
+            const host = document.getElementById('keluar-items-container');
+            const info = document.getElementById('keluar-po-ready-info');
+            if (!host) return;
+            host.replaceChildren();
+            const rows = (window.gudangAppDb.po || []).filter(p =>
+                `${String(p.customer||'').toUpperCase()}|${String(p.noPoCustomer||p.id).toUpperCase()}` === groupKey
+            );
+            if (!groupKey || !rows.length) {
+                if (info) info.textContent = 'Pilih nomor PO untuk menampilkan barang.';
+                updateKeluarBatchTotal();
+                return;
+            }
+            const isEdit = document.getElementById('keluar-edit-mode')?.value === 'true';
+            const legacyPoSelect = document.getElementById('keluar-po-ref');
+            const legacyItemSelect = document.getElementById('keluar-barang');
+            if (legacyPoSelect) legacyPoSelect.innerHTML = '<option value="">-</option>' + rows.map(po => `<option value="${po.id}">${po.nama||po.barangId}</option>`).join('');
+            if (legacyItemSelect) legacyItemSelect.innerHTML = '<option value="">-</option>' + rows.map(po => `<option value="${po.barangId}">${po.barangId}</option>`).join('');
+            rows.forEach(po => {
+                const item = (window.gudangAppDb.items || []).find(x => String(x.id) === String(po.barangId));
+                const remainBase = Math.max(0, Number(po.qty||0) - Number(po.terkirim||0));
+                const isEditMode = document.getElementById('keluar-edit-mode')?.value === 'true';
+                const editingRow = isEditMode ? (window.gudangAppDb.keluar||[]).find(x => x.id === document.getElementById('keluar-id')?.value) : null;
+                const oldQtyForThisPo = editingRow && editingRow.poRef === po.id ? Number(editingRow.qty||0) : 0;
+                const ready = getPoReadyQty(po) + oldQtyForThisPo;
+                const remain = remainBase + oldQtyForThisPo;
+                const stock = Math.max(0, Number(item?.stok||0) + ((editingRow && editingRow.barangId === po.barangId) ? Number(editingRow.qty||0) : 0));
+                const max = Math.max(0, Math.min(ready, remain, stock));
+                const card = document.createElement('div');
+                card.className = 'rounded-lg border border-white/10 bg-black/10 p-2 space-y-1';
+                card.dataset.keluarRow = '1';
+                card.dataset.poRef = po.id;
+                card.dataset.barangId = po.barangId;
+                const top = document.createElement('div');
+                top.className = 'flex items-start justify-between gap-2';
+                const name = document.createElement('div');
+                name.className = 'min-w-0';
+                const title = document.createElement('div');
+                title.className = 'text-xs font-semibold text-gray-100';
+                title.textContent = `${po.nama || item?.nama || po.barangId} (${po.barangId})`;
+                const meta = document.createElement('div');
+                meta.className = 'text-[10px] text-gray-400';
+                meta.textContent = `PO: ${Number(po.qty||0).toLocaleString('id-ID')} · Terkirim: ${Number(po.terkirim||0).toLocaleString('id-ID')} · Siap: ${ready.toLocaleString('id-ID')} · Stok: ${stock.toLocaleString('id-ID')}`;
+                name.append(title, meta);
+                const inputWrap = document.createElement('div');
+                inputWrap.className = 'w-24 shrink-0';
+                const inputLabel = document.createElement('label');
+                inputLabel.className = 'block text-[10px] text-gray-400 mb-1';
+                inputLabel.textContent = 'Qty Keluar';
+                const input = document.createElement('input');
+                input.type = 'number'; input.min = '0'; input.max = String(max); input.step = '1'; input.value = '0';
+                input.className = 'w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs font-mono';
+                input.autocomplete = 'off'; input.dataset.keluarQty = '1';
+                input.disabled = max <= 0;
+                input.addEventListener('input', updateKeluarBatchTotal);
+                inputWrap.append(inputLabel, input);
+                top.append(name, inputWrap);
+                card.append(top);
+                if (max <= 0) {
+                    const note = document.createElement('div'); note.className = 'text-[10px] text-amber-300';
+                    note.textContent = remain <= 0 ? 'PO untuk barang ini sudah terpenuhi.' : 'Belum ada stok/kesiapan untuk dikirim.';
+                    card.append(note);
+                }
+                host.append(card);
+            });
+            if (info) info.textContent = isEdit ? 'Mode edit: ubah Qty pada satu detail transaksi ini.' : 'Isi Qty pada satu atau beberapa barang. Setiap baris memiliki batas kesiapan, sisa PO, dan stok sendiri.';
+            updateKeluarBatchTotal();
         };
+
+        window.updateKeluarBatchTotal = function() {
+            const total = [...document.querySelectorAll('#keluar-items-container [data-keluar-qty]')]
+                .reduce((sum, el) => sum + (Number(el.value)||0), 0);
+            const label = document.getElementById('keluar-total-qty');
+            if (label) label.textContent = total.toLocaleString('id-ID');
+        };
+
 
         window.refreshAllViews = function() {
             populateItemDropdowns();
@@ -2238,7 +2307,7 @@
                 return `
                     <tr class="hover:bg-white/5">
                         <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
-                        <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
+                        <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.transactionId || i.groupId || i.id}</td>
                         <td class="py-3 px-3 font-medium">${i.nama}</td>
                         <td class="py-3 px-3 opacity-80">${i.jenis}</td>
                         <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
@@ -2297,9 +2366,14 @@
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
             const r = window.gudangAppDb.keluar.find(x => String(x.id) === String(id)); if (!r) return;
             const po=window.gudangAppDb.po.find(p=>p.id===r.poRef);
-            if(po){const groupKey=`${String(po.customer||'').toUpperCase()}|${String(po.noPoCustomer||po.id).toUpperCase()}`;document.getElementById('keluar-po-group').value=groupKey;populatePoItemOptions();}
+            if(po){const groupKey=`${String(po.customer||'').toUpperCase()}|${String(po.noPoCustomer||po.id).toUpperCase()}`;document.getElementById('keluar-po-group').value=groupKey;}
             beginTransactionEdit('form-keluar','keluar-edit-mode', {'keluar-id':r.id,'keluar-tanggal':r.tanggal,'keluar-po-ref':r.poRef,'keluar-barang':r.barangId,'keluar-qty':r.qty,'keluar-tujuan':r.tujuan});
-            updateKeluarFromPo(); document.getElementById('keluar-qty').value=r.qty;
+            populatePoItemOptions();
+            document.querySelectorAll('#keluar-items-container [data-keluar-row]').forEach(card => {
+                const input = card.querySelector('[data-keluar-qty]');
+                if (input) input.value = card.dataset.poRef === r.poRef ? String(r.qty) : '0';
+            });
+            updateKeluarBatchTotal(); updateKeluarFromPo();
         };
         window.editSampelItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
@@ -2400,7 +2474,7 @@
             const filtered = window.gudangAppDb.masuk.filter(i => 
                 i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.supplier.toLowerCase().includes(q)
             );
-            if (badgeTotal) badgeTotal.textContent = `${filtered.length} Transaksi`;
+            if (badgeTotal) badgeTotal.textContent = `${new Set(filtered.map(i => String(i.transactionId||i.groupId||i.id))).size} Surat Jalan · ${filtered.length} Detail Barang`;
 
             tbody.innerHTML = filtered.map((i, index) => `
                 <tr class="hover:bg-white/5">
@@ -2429,93 +2503,85 @@
         // Barang Keluar CRUD
         window.updateKeluarFromPo = function() {
             const poId = document.getElementById('keluar-po-ref')?.value;
-            const po = window.gudangAppDb.po.find(x => x.id === poId);
-            if (po) {
-                const item=window.gudangAppDb.items.find(x=>x.id===po.barangId);
-                const remain=Math.max(0,Number(po.qty||0)-Number(po.terkirim||0));
-                let ready=po.siapKirim===undefined?remain:Number(po.siapKirim||0);
-                let stock=Number(item?.stok||0);
-                const isEdit=document.getElementById('keluar-edit-mode')?.value==='true';
-                const old= isEdit ? window.gudangAppDb.keluar.find(x=>x.id===document.getElementById('keluar-id')?.value) : null;
-                if(old && old.poRef===po.id) { ready += Number(old.qty||0); }
-                if(old && old.barangId===po.barangId) { stock += Number(old.qty||0); }
-                const effectiveRemain=remain + ((old && old.poRef===po.id) ? Number(old.qty||0) : 0);
-                const max=Math.max(0,Math.min(ready,stock,effectiveRemain));
-                document.getElementById('keluar-barang').value = po.barangId;
-                document.getElementById('keluar-tujuan').value = po.customer;
-                document.getElementById('keluar-qty').max = max;
-                document.getElementById('keluar-qty').value = max;
-                const info=document.getElementById('keluar-po-ready-info'); if(info) info.textContent=`Qty PO: ${po.qty} • Terkirim: ${po.terkirim||0} • Siap efektif: ${ready} • Stok efektif: ${stock} • Maksimal keluar: ${max}`;
-            } else {
-                const info=document.getElementById('keluar-po-ready-info'); if(info) info.textContent='Pilih barang dalam PO untuk melihat Qty Siap Dikirim.';
-            }
+            const po = (window.gudangAppDb.po || []).find(x => x.id === poId);
+            if (!po) return;
+            const item = (window.gudangAppDb.items || []).find(x => x.id === po.barangId);
+            const old = document.getElementById('keluar-edit-mode')?.value === 'true'
+                ? window.gudangAppDb.keluar.find(x => x.id === document.getElementById('keluar-id')?.value) : null;
+            const ready = getPoReadyQty(po) + ((old && old.poRef === po.id) ? Number(old.qty||0) : 0);
+            const stock = Number(item?.stok||0) + ((old && old.barangId === po.barangId) ? Number(old.qty||0) : 0);
+            const max = Math.max(0, Math.min(ready, stock, Number(po.qty||0)-Number(po.terkirim||0)+((old && old.poRef===po.id)?Number(old.qty||0):0)));
+            const itemSelect = document.getElementById('keluar-barang');
+            if (itemSelect) itemSelect.value = po.barangId;
+            const qtyInput = document.getElementById('keluar-qty');
+            if (qtyInput) qtyInput.max = String(max);
+            const info = document.getElementById('keluar-po-ready-info');
+            if (info) info.textContent = `Detail edit ${po.nama||po.barangId} · Maksimal: ${max}`;
         };
 
         window.saveKeluarItem = async function(e) {
             e.preventDefault();
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
-
-            const id = document.getElementById('keluar-id').value.trim().toUpperCase();
+            const baseId = document.getElementById('keluar-id').value.trim().toUpperCase();
             const tanggal = document.getElementById('keluar-tanggal').value;
-            const poRef = document.getElementById('keluar-po-ref').value;
-            const barangId = document.getElementById('keluar-barang').value;
-            const qty = parseInt(document.getElementById('keluar-qty').value) || 0;
             const tujuan = document.getElementById('keluar-tujuan').value.trim().toUpperCase();
             const username = window.gudangAppDb.currentUser?.name || 'Administrator';
+            const isEdit = document.getElementById('keluar-edit-mode').value === 'true';
+            const cards = [...document.querySelectorAll('#keluar-items-container [data-keluar-row]')];
+            const selected = cards.map(card => ({
+                poRef: card.dataset.poRef,
+                barangId: card.dataset.barangId,
+                qty: Number(card.querySelector('[data-keluar-qty]')?.value || 0)
+            })).filter(row => row.qty > 0);
+            if (!baseId || !tanggal || !tujuan) { showToast('Lengkapi ID transaksi, tanggal, dan tujuan.', 'error'); return; }
+            if (!selected.length) { showToast('Isi Qty minimal satu barang yang akan dikirim.', 'error'); return; }
+            if (selected.some(r => !Number.isSafeInteger(r.qty) || r.qty <= 0)) { showToast('Qty setiap barang harus bilangan bulat lebih dari nol.', 'error'); return; }
 
-            const item = window.gudangAppDb.items.find(x => x.id === barangId);
-            const isEditKeluar = document.getElementById('keluar-edit-mode').value === 'true';
-            const oldKeluar = isEditKeluar ? window.gudangAppDb.keluar.find(x=>x.id===id) : null;
-            const sameItemAsOld = oldKeluar && oldKeluar.barangId === barangId;
-            const availableStock = Number(item?.stok||0) + (sameItemAsOld ? Number(oldKeluar.qty||0) : 0);
-            if (!item || availableStock < qty) {
-                showToast('Stok barang tidak mencukupi untuk jumlah yang diminta!', 'error');
-                return;
+            // Validasi UI sebelum Worker; Worker tetap melakukan validasi final secara atomik.
+            for (const row of selected) {
+                const po = (window.gudangAppDb.po||[]).find(p => p.id === row.poRef);
+                const item = (window.gudangAppDb.items||[]).find(i => i.id === row.barangId);
+                if (!po || !item || String(po.barangId) !== String(row.barangId)) { showToast('Referensi PO/barang tidak valid.', 'error'); return; }
+                let ready = getPoReadyQty(po), stock = Number(item.stok||0), remain = Math.max(0, Number(po.qty||0)-Number(po.terkirim||0));
+                if (isEdit) {
+                    const old = window.gudangAppDb.keluar.find(x => x.id === baseId);
+                    if (old && old.poRef === po.id) { ready += Number(old.qty||0); remain += Number(old.qty||0); }
+                    if (old && old.barangId === item.id) stock += Number(old.qty||0);
+                }
+                const max = Math.max(0, Math.min(ready, stock, remain));
+                if (row.qty > max) { showToast(`${item.nama}: Qty ${row.qty} melebihi batas maksimal ${max}.`, 'error'); return; }
             }
-            const selectedPo = window.gudangAppDb.po.find(p=>p.id===poRef);
-            if (!selectedPo) { showToast('Detail PO tidak ditemukan.','error'); return; }
-            const poRemain=Math.max(0,Number(selectedPo.qty||0)-Number(selectedPo.terkirim||0) + ((oldKeluar && oldKeluar.poRef===poRef) ? Number(oldKeluar.qty||0) : 0));
-            let poReady=selectedPo.siapKirim===undefined?Math.max(0,Number(selectedPo.qty||0)-Number(selectedPo.terkirim||0)):Number(selectedPo.siapKirim||0);
-            if(oldKeluar && oldKeluar.poRef===poRef) poReady += Number(oldKeluar.qty||0);
-            const effectiveStock=Number(item?.stok||0) + ((oldKeluar && oldKeluar.barangId===barangId) ? Number(oldKeluar.qty||0) : 0);
-            poReady=Math.min(poReady,effectiveStock,poRemain);
-            if(qty>poReady || qty>poRemain){showToast(`Qty keluar melebihi kesiapan/sisa PO. Siap efektif: ${poReady}, Sisa efektif: ${poRemain}.`,'error');return;}
-            if (!id || !tanggal || !poRef || !barangId || qty <= 0) {
-                showToast('Lengkapi data Barang Keluar terlebih dahulu.', 'error');
-                return;
-            }
-            if (document.getElementById('keluar-edit-mode').value === 'true') {
+
+            if (isEdit) {
+                if (selected.length !== 1) { showToast('Mode edit hanya boleh mengubah satu detail transaksi. Gunakan transaksi baru untuk multi-barang.', 'error'); return; }
+                const row = selected[0];
+                const item = window.gudangAppDb.items.find(x => x.id === row.barangId);
                 try {
-                    await sendOperation('keluar.update', { id, record: { tanggal, poRef, barangId, nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan, qty, tujuan } });
-                    window.refreshAllViews?.(); resetKeluarForm(); showToast('Barang Keluar berhasil diperbarui. Stok dan realisasi PO dikoreksi Worker.');
+                    await sendOperation('keluar.update', { id: baseId, record: { tanggal, poRef: row.poRef, barangId: row.barangId, nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan, qty:row.qty, tujuan } });
+                    window.refreshAllViews?.(); resetKeluarForm(); showToast('Detail Barang Keluar berhasil diperbarui. Stok dan realisasi PO dikoreksi Worker.');
                 } catch (error) { showToast(`Edit Barang Keluar gagal: ${error.message}`, 'error'); }
                 return;
             }
-            if (window.gudangAppDb.keluar.some(x => String(x.id).toUpperCase() === id)) {
-                showToast('ID transaksi Barang Keluar sudah digunakan.', 'error');
-                return;
-            }
 
-            item.stok -= qty;
-            window.gudangAppDb.keluar.unshift({
-                id, tanggal, poRef, barangId, nama: item.nama, jenis: item.jenis,
-                lebar: item.lebar || '', ukuran: item.ukuran || '', satuan: item.satuan, qty, tujuan, user: username
+            const duplicateGroup = (window.gudangAppDb.keluar||[]).some(x => String(x.transactionId||x.groupId||x.id).toUpperCase() === baseId);
+            if (duplicateGroup) { showToast('ID transaksi/surat jalan sudah digunakan.', 'error'); return; }
+            const poGroups = new Set(selected.map(r => {
+                const po = window.gudangAppDb.po.find(p => p.id === r.poRef);
+                return `${String(po?.customer||'').toUpperCase()}|${String(po?.noPoCustomer||po?.id||'').toUpperCase()}`;
+            }));
+            if (poGroups.size !== 1) { showToast('Semua barang dalam satu transaksi harus berasal dari nomor PO dan customer yang sama.', 'error'); return; }
+            const details = selected.map((row, index) => {
+                const item = window.gudangAppDb.items.find(x => x.id === row.barangId);
+                const detailId = selected.length === 1 ? baseId : `${baseId}-D${String(index+1).padStart(2,'0')}`;
+                return { id:detailId, poRef:row.poRef, barangId:row.barangId, qty:row.qty, nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan };
             });
-
-            if (poRef) {
-                const po = window.gudangAppDb.po.find(x => x.id === poRef);
-                if (po) {
-                    po.terkirim = (po.terkirim || 0) + qty;
-                    po.status = po.terkirim >= po.qty ? 'CLOSED' : 'PARTIAL';
-                }
-            }
-
-            const saved = await saveCloudDB();
-            if (saved) {
+            try {
+                await sendOperation('keluar.batchCreate', { id:baseId, tanggal, tujuan, user:username, transactionId:baseId, items:details });
+                window.refreshAllViews?.();
                 resetKeluarForm();
-                showToast('Transaksi keluar berhasil disimpan dan dikonfirmasi Worker!');
-            } else {
-                showToast('Transaksi keluar belum terkonfirmasi tersimpan di cloud. Periksa koneksi dan riwayat sebelum mencoba ulang.', 'error');
+                showToast(`Transaksi ${baseId} berhasil disimpan: ${details.length} jenis barang. Stok dan Qty Siap Dikirim sudah diperbarui.`);
+            } catch (error) {
+                showToast(`Transaksi Barang Keluar gagal: ${error.message}`, 'error');
             }
         };
 
@@ -2545,6 +2611,9 @@
             document.getElementById('keluar-edit-mode').value = 'false';
             document.getElementById('keluar-id').value = generateKeluarSequentialId();
             document.getElementById('keluar-tanggal').valueAsDate = new Date();
+            const host = document.getElementById('keluar-items-container'); if (host) host.replaceChildren();
+            const info = document.getElementById('keluar-po-ready-info'); if (info) info.textContent = 'Pilih nomor PO untuk menampilkan seluruh barang dan batas siap kirim.';
+            updateKeluarBatchTotal();
         };
 
         window.renderKeluarTable = function() {
@@ -2554,7 +2623,7 @@
             const isViewer = window.gudangAppDb.currentUser?.role === 'viewer';
 
             const filtered = window.gudangAppDb.keluar.filter(i => 
-                i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.tujuan.toLowerCase().includes(q)
+                String(i.transactionId||i.groupId||i.id).toLowerCase().includes(q) || i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.tujuan.toLowerCase().includes(q)
             );
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Transaksi`;
 
@@ -3239,7 +3308,7 @@
                 },
                 saveKeluarItem: {
                     form: 'form-keluar', title: 'KONFIRMASI BARANG KELUAR',
-                    fields: [['keluar-id','ID Transaksi'],['keluar-tanggal','Tanggal'],['keluar-po-ref','Referensi PO'],['keluar-barang','ID Barang'],['keluar-qty','Jumlah Keluar (Qty)'],['keluar-tujuan','Tujuan / Customer']]
+                    fields: [['keluar-id','ID Transaksi / Surat Jalan'],['keluar-tanggal','Tanggal'],['keluar-po-group','Nomor PO Customer'],['keluar-tujuan','Tujuan / Customer']]
                 },
                 saveSampelItem: {
                     form: 'form-sampel', title: 'KONFIRMASI DATA SAMPEL',
@@ -3283,7 +3352,20 @@
             }
 
             function addSelectedItemDetails(formName) {
-                const itemField = ({saveMasterItem:'',savePoItem:'',saveMasukItem:'masuk-barang',saveKeluarItem:'keluar-barang',saveSampelItem:'',saveReturItem:'retur-barang'})[formName];
+                if (formName === 'saveKeluarItem') {
+                    const selected = [...document.querySelectorAll('#keluar-items-container [data-keluar-row]')].map(card => ({poRef:card.dataset.poRef,barangId:card.dataset.barangId,qty:Number(card.querySelector('[data-keluar-qty]')?.value||0)})).filter(x=>x.qty>0);
+                    selected.forEach((r,i)=>{
+                        const po=(window.gudangAppDb?.po||[]).find(x=>String(x.id)===String(r.poRef));
+                        const item=(window.gudangAppDb?.items||[]).find(x=>String(x.id)===String(r.barangId));
+                        addDetailRow(`Barang ${i+1}`,`${item?.nama||r.barangId} (${r.barangId})`);
+                        addDetailRow(`Qty Keluar ${i+1}`,`${r.qty} ${item?.satuan||''}`);
+                        if(po){addDetailRow(`Qty PO / Terkirim / Siap ${i+1}`,`${po.qty} / ${po.terkirim||0} / ${getPoReadyQty(po)}`);addDetailRow('Customer PO',po.customer||'-');}
+                    });
+                    addDetailRow('Total Jenis Barang',String(selected.length));
+                    addDetailRow('Total Qty Keluar',String(selected.reduce((sum,x)=>sum+x.qty,0)));
+                    return;
+                }
+                const itemField = ({saveMasterItem:'',savePoItem:'',saveMasukItem:'masuk-barang',saveKeluarItem:'',saveSampelItem:'',saveReturItem:'retur-barang'})[formName];
                 if (!itemField) return;
                 const itemId = document.getElementById(itemField)?.value;
                 const item = (window.gudangAppDb?.items || []).find(x => String(x.id) === String(itemId));
@@ -3302,11 +3384,6 @@
                 }
                 if (formName === 'savePoItem') {
                     readPoItemRows().forEach((r,i)=>{const item=(window.gudangAppDb?.items||[]).find(x=>x.id===r.barangId);addDetailRow(`Barang ${i+1}`,`${item?.nama||r.barangId} (${r.barangId})`);addDetailRow(`Qty PO / Siap ${i+1}`,`${r.qty} / ${r.siapKirim}`);});
-                }
-                if (formName === 'saveKeluarItem') {
-                    const poId = document.getElementById('keluar-po-ref')?.value;
-                    const po = (window.gudangAppDb?.po || []).find(x => String(x.id) === String(poId));
-                    if (po) { addDetailRow('Customer PO', po.customer || '-'); addDetailRow('Nomor PO Customer', po.noPoCustomer || '-'); addDetailRow('Qty Siap Dikirim', String(getPoReadyQty(po))); }
                 }
             }
 
