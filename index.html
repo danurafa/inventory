@@ -1788,6 +1788,12 @@
             const host = document.getElementById('keluar-items-container');
             const info = document.getElementById('keluar-po-ready-info');
             if (!host) return;
+            const previousQty = new Map(
+                [...host.querySelectorAll('[data-keluar-row]')].map(card => [
+                    `${card.dataset.poRef}|${card.dataset.barangId}`,
+                    card.querySelector('[data-keluar-qty]')?.value ?? '0'
+                ])
+            );
             host.replaceChildren();
             const rows = (window.gudangAppDb.po || []).filter(p =>
                 `${String(p.customer||'').toUpperCase()}|${String(p.noPoCustomer||p.id).toUpperCase()}` === groupKey
@@ -1834,7 +1840,7 @@
                 inputLabel.className = 'block text-[10px] text-gray-400 mb-1';
                 inputLabel.textContent = 'Qty Keluar';
                 const input = document.createElement('input');
-                input.type = 'number'; input.min = '0'; input.max = String(max); input.step = '1'; input.value = '0';
+                input.type = 'number'; input.min = '0'; input.max = String(max); input.step = '1'; input.value = previousQty.get(`${po.id}|${po.barangId}`) ?? '0';
                 input.className = 'w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs font-mono';
                 input.autocomplete = 'off'; input.dataset.keluarQty = '1';
                 input.disabled = max <= 0;
