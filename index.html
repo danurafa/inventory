@@ -1157,8 +1157,13 @@
                                 <h3 class="font-bold text-xs tracking-wider uppercase text-gray-100">RIWAYAT TRANSAKSI RETUR BARANG</h3>
                                 <p class="text-xs text-gray-300 mt-0.5" id="retur-total-badge">0 Transaksi</p>
                             </div>
-                            <div class="w-full md:w-80">
-                                <input type="text" id="search-retur" oninput="renderReturTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Alasan..." autocomplete="off">
+                            <div class="flex items-center gap-2.5 w-full md:w-auto">
+                                <div class="w-full md:w-64">
+                                    <input type="text" id="search-retur" oninput="renderReturTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Alasan..." autocomplete="off">
+                                </div>
+                                <button onclick="printReturTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
+                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i><span>Print</span>
+                                </button>
                             </div>
                         </div>
                         <div class="fluid-table-container flex-1 pb-2">
@@ -3495,39 +3500,169 @@
             showToast('Data berhasil diexport ke CSV!');
         };
 
-        window.printMasterTable = function() { printTableGeneric("LAPORAN MASTER DATA BARANG", window.gudangAppDb.items); };
-        window.printMasukTable = function() { printTableGeneric("LAPORAN BARANG MASUK", window.gudangAppDb.masuk); };
-        window.printKeluarTable = function() { printTableGeneric("LAPORAN BARANG KELUAR", window.gudangAppDb.keluar); };
-        window.printPoTable = function() { printTableGeneric("LAPORAN PURCHASE ORDER", window.gudangAppDb.po); };
-        window.printSampelTable = function() { printTableGeneric("LAPORAN DATA SAMPEL", window.gudangAppDb.sampel || []); };
+        // PRINT LAPORAN: kolom dibuat khusus per modul agar data internal tidak ikut tercetak.
+        const PRINT_REPORTS = {
+            master: {
+                title: 'LAPORAN MASTER DATA BARANG', dateFilter: false,
+                fields: [
+                    ['id','ID Barang'], ['nama','Nama Barang'], ['jenis','Jenis Barang'],
+                    ['lebar','Lebar'], ['ukuran','Ukuran'], ['berat','Berat (gr)'],
+                    ['satuan','Satuan'], ['stok','Stok'], ['min','Stok Minimum']
+                ]
+            },
+            masuk: {
+                title: 'LAPORAN BARANG MASUK', dateFilter: true, dateKey: 'tanggal',
+                fields: [
+                    ['id','ID Transaksi'], ['tanggal','Tanggal'], ['barangId','ID Barang'],
+                    ['nama','Nama Barang'], ['jenis','Kategori'], ['lebar','Lebar'],
+                    ['ukuran','Ukuran'], ['satuan','Satuan'], ['qty','Qty Masuk'], ['supplier','Divisi / Sumber']
+                ]
+            },
+            keluar: {
+                title: 'LAPORAN BARANG KELUAR', dateFilter: true, dateKey: 'tanggal',
+                fields: [
+                    ['transactionId','ID Transaksi / SJ'], ['tanggal','Tanggal'], ['id','ID Detail'],
+                    ['barangId','ID Barang'], ['nama','Nama Barang'], ['jenis','Kategori'],
+                    ['lebar','Lebar'], ['ukuran','Ukuran'], ['satuan','Satuan'],
+                    ['qty','Qty Keluar'], ['tujuan','Customer / Tujuan'], ['poNumber','No. PO']
+                ],
+                prepare: rows => rows.map(r => ({ ...r,
+                    transactionId: r.transactionId || r.groupId || r.id,
+                    poNumber: (window.gudangAppDb.po || []).find(p => String(p.id) === String(r.poRef))?.noPoCustomer || r.poRef || '-'
+                }))
+            },
+            po: {
+                title: 'LAPORAN PURCHASE ORDER CUSTOMER', dateFilter: true, dateKey: 'tanggal',
+                fields: [
+                    ['noPoCustomer','No. PO Customer'], ['tanggal','Tanggal PO'], ['customer','Customer'],
+                    ['id','ID Detail PO'], ['barangId','ID Barang'], ['nama','Nama Barang'],
+                    ['jenis','Kategori'], ['lebar','Lebar'], ['ukuran','Ukuran'], ['satuan','Satuan'],
+                    ['qty','Qty PO'], ['terkirim','Qty Terkirim'], ['sisa','Sisa PO'], ['status','Status']
+                ],
+                prepare: rows => rows.map(r => {
+                    const terkirim = Number(r.terkirim || 0);
+                    const qty = Number(r.qty || 0);
+                    return { ...r, noPoCustomer: r.noPoCustomer || r.id, sisa: Math.max(0, qty - terkirim),
+                        status: terkirim >= qty ? 'CLOSED' : (terkirim > 0 ? 'PARTIAL' : 'OPEN') };
+                })
+            },
+            sampel: {
+                title: 'LAPORAN DATA SAMPEL', dateFilter: true, dateKey: 'tanggal',
+                fields: [
+                    ['id','ID Sampel'], ['tanggal','Tanggal'], ['customer','Customer'], ['nama','Nama Sampel / Barang'],
+                    ['kategori','Kategori'], ['lebar','Lebar'], ['ukuran','Ukuran'], ['berat','Berat (gr)'], ['tebal','Tebal']
+                ]
+            },
+            retur: {
+                title: 'LAPORAN RETUR BARANG', dateFilter: true, dateKey: 'tanggal',
+                fields: [
+                    ['id','ID Retur'], ['tanggal','Tanggal'], ['barangId','ID Barang'], ['nama','Nama Barang'],
+                    ['jenis','Kategori'], ['lebar','Lebar'], ['ukuran','Ukuran'], ['satuan','Satuan'],
+                    ['qty','Qty Retur'], ['keterangan','Alasan Retur']
+                ]
+            }
+        };
 
-        function printTableGeneric(title, dataArr) {
+        window.printMasterTable = function() { openPrintOptions('master', window.gudangAppDb.items || []); };
+        window.printMasukTable = function() { openPrintOptions('masuk', window.gudangAppDb.masuk || []); };
+        window.printKeluarTable = function() { openPrintOptions('keluar', window.gudangAppDb.keluar || []); };
+        window.printPoTable = function() { openPrintOptions('po', window.gudangAppDb.po || []); };
+        window.printSampelTable = function() { openPrintOptions('sampel', window.gudangAppDb.sampel || []); };
+        window.printReturTable = function() { openPrintOptions('retur', window.gudangAppDb.retur || []); };
+
+        function openPrintOptions(reportKey, sourceRows) {
+            const config = PRINT_REPORTS[reportKey];
+            if (!config) return;
+            document.getElementById('inventory-print-options')?.remove();
+            const overlay = document.createElement('div');
+            overlay.id = 'inventory-print-options';
+            overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:16px;';
+            overlay.innerHTML = `
+                <div style="width:min(440px,100%);background:#172033;color:#f8fafc;border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.45);font-family:Arial,sans-serif">
+                    <div style="font-size:17px;font-weight:700;margin-bottom:6px">${config.title}</div>
+                    <div style="font-size:12px;color:#cbd5e1;margin-bottom:18px">Pilih data yang ingin dicetak.</div>
+                    <label style="display:flex;gap:9px;align-items:center;padding:10px;border:1px solid rgba(255,255,255,.15);border-radius:10px;margin-bottom:9px;cursor:pointer">
+                        <input type="radio" name="print-mode" value="all" checked> <span>Semua Data</span>
+                    </label>
+                    ${config.dateFilter ? `
+                    <label style="display:flex;gap:9px;align-items:center;padding:10px;border:1px solid rgba(255,255,255,.15);border-radius:10px;cursor:pointer">
+                        <input type="radio" name="print-mode" value="range"> <span>Filter Rentang Tanggal</span>
+                    </label>
+                    <div id="print-date-fields" style="display:none;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+                        <label style="font-size:11px;color:#cbd5e1">Tanggal Awal<input id="print-date-start" type="date" style="display:block;width:100%;margin-top:5px;padding:9px;border-radius:8px;background:#fff;color:#111827;border:1px solid #cbd5e1"></label>
+                        <label style="font-size:11px;color:#cbd5e1">Tanggal Akhir<input id="print-date-end" type="date" style="display:block;width:100%;margin-top:5px;padding:9px;border-radius:8px;background:#fff;color:#111827;border:1px solid #cbd5e1"></label>
+                    </div>` : '<div style="font-size:11px;color:#94a3b8;margin:10px 2px 0">Master Barang tidak menggunakan filter tanggal.</div>'}
+                    <div style="display:flex;justify-content:flex-end;gap:9px;margin-top:22px">
+                        <button type="button" id="print-cancel" style="padding:9px 15px;border-radius:8px;background:#334155;color:white;border:0;cursor:pointer">Batal</button>
+                        <button type="button" id="print-continue" style="padding:9px 15px;border-radius:8px;background:#ea580c;color:white;border:0;font-weight:700;cursor:pointer">Lanjut Cetak</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(overlay);
+            const dateFields = overlay.querySelector('#print-date-fields');
+            overlay.querySelectorAll('input[name="print-mode"]').forEach(radio => radio.addEventListener('change', () => {
+                if (dateFields) dateFields.style.display = radio.value === 'range' && radio.checked ? 'grid' : 'none';
+            }));
+            overlay.querySelector('#print-cancel').onclick = () => overlay.remove();
+            overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+            overlay.querySelector('#print-continue').onclick = () => {
+                const mode = overlay.querySelector('input[name="print-mode"]:checked')?.value || 'all';
+                let rows = sourceRows.slice();
+                let periodLabel = 'Semua Data';
+                if (mode === 'range' && config.dateFilter) {
+                    const start = overlay.querySelector('#print-date-start').value;
+                    const end = overlay.querySelector('#print-date-end').value;
+                    if (!start || !end) { showToast('Tanggal awal dan tanggal akhir wajib diisi.', 'error'); return; }
+                    if (start > end) { showToast('Tanggal awal tidak boleh melewati tanggal akhir.', 'error'); return; }
+                    rows = rows.filter(row => {
+                        const date = normalizePrintDate(row[config.dateKey]);
+                        return date && date >= start && date <= end;
+                    });
+                    periodLabel = `${formatPrintDate(start)} s.d. ${formatPrintDate(end)}`;
+                    if (!rows.length) { showToast('Tidak ada transaksi pada rentang tanggal tersebut.', 'error'); return; }
+                }
+                overlay.remove();
+                if (typeof config.prepare === 'function') rows = config.prepare(rows);
+                renderPrintDocument(config, rows, periodLabel);
+            };
+        }
+
+        function normalizePrintDate(value) {
+            if (!value) return '';
+            const raw = String(value).trim();
+            if (/^\d{4}-\d{2}-\d{2}/.test(raw)) return raw.slice(0, 10);
+            const dmy = raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+            if (dmy) return `${dmy[3]}-${String(dmy[2]).padStart(2,'0')}-${String(dmy[1]).padStart(2,'0')}`;
+            return '';
+        }
+        function formatPrintDate(iso) {
+            const [y,m,d] = iso.split('-');
+            return `${d}-${m}-${y}`;
+        }
+        function escapePrintHtml(value) {
+            return String(value ?? '-').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+        }
+        function renderPrintDocument(config, rows, periodLabel) {
             const printWindow = window.open('', '_blank');
+            if (!printWindow) { showToast('Popup cetak diblokir browser. Izinkan popup lalu coba lagi.', 'error'); return; }
             const nowStr = new Date().toLocaleString('id-ID');
-            const headers = dataArr.length > 0 ? Object.keys(dataArr[0]) : [];
-            const rows = dataArr.map((i, index) => `
-                <tr>
-                    <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">${index + 1}</td>
-                    ${Object.values(i).map(val => `<td style="border: 1px solid #ddd; padding: 6px;">${val}</td>`).join('')}
-                </tr>
-            `).join('');
-
-            printWindow.document.write(`
-                <html>
-                <head><title>${title}</title><style>body{font-family:sans-serif;padding:20px;} table{width:100%;border-collapse:collapse;font-size:11px;} th{background:#eee;border:1px solid #ddd;padding:6px;text-align:left;}</style></head>
-                <body>
-                    <h2>${title}</h2>
-                    <p style="font-size:12px;color:#666;">Dicetak: ${nowStr} | Total: ${dataArr.length}</p>
-                    <table>
-                        <thead><tr><th style="width:30px;text-align:center;">No</th>${headers.map(h => `<th>${h.toUpperCase()}</th>`).join('')}</tr></thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                </body>
-                </html>
-            `);
+            const headers = config.fields;
+            const bodyRows = rows.map((row, index) => `<tr><td class="no">${index + 1}</td>${headers.map(([key]) => `<td>${escapePrintHtml(key === 'nama' && row.barangId ? window.displayItemName(row.barangId, row.nama) : row[key])}</td>`).join('')}</tr>`).join('');
+            printWindow.document.open();
+            printWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${escapePrintHtml(config.title)}</title>
+                <style>
+                    @page{size:A4 landscape;margin:12mm}*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#111;margin:0}
+                    h2{font-size:18px;margin:0 0 7px;text-align:center} .meta{text-align:center;font-size:10px;color:#444;margin:0 0 14px}
+                    table{width:100%;border-collapse:collapse;font-size:9px}thead{display:table-header-group}tr{break-inside:avoid;page-break-inside:avoid}
+                    th,td{border:1px solid #777;padding:5px 6px;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+                    th{background:#e5e7eb;font-weight:700;text-transform:uppercase}.no{text-align:center;width:28px}
+                    @media screen{body{padding:18px}table{font-size:11px}}
+                </style></head><body><h2>${escapePrintHtml(config.title)}</h2>
+                <p class="meta">Periode: ${escapePrintHtml(periodLabel)} &nbsp; | &nbsp; Total: ${rows.length} data &nbsp; | &nbsp; Dicetak: ${escapePrintHtml(nowStr)}</p>
+                <table><thead><tr><th class="no">No</th>${headers.map(([,label])=>`<th>${escapePrintHtml(label)}</th>`).join('')}</tr></thead><tbody>${bodyRows}</tbody></table>
+                </body></html>`);
+            printWindow.onload = () => { printWindow.focus(); printWindow.print(); };
             printWindow.document.close();
             printWindow.focus();
-            setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
         }
 
 
