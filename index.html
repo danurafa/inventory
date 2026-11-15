@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.15-glass-blue-sidebar-toggle-stable-v11";
+        const APP_VERSION = "2026.11.15-glass-blue-dashboard-layout-fix-v12";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -1136,6 +1136,55 @@
             #inventory-sidebar { overflow:visible !important; }
         }
 
+
+        /* DASHBOARD LAYOUT FIX V12: constrain the flex child to the space
+           remaining after the sidebar; keep hero columns from collapsing. */
+        #inventory-app-layout {
+            min-width: 0;
+            width: 100%;
+        }
+        #inventory-main-content {
+            flex: 1 1 0%;
+            min-width: 0 !important;
+            width: auto !important;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        #tab-dashboard,
+        #dashboard-hero {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        #dashboard-hero > .relative.flex {
+            position: relative;
+            z-index: 1;
+            min-width: 0;
+            width: 100%;
+        }
+        #dashboard-hero > .relative.flex > div:first-child {
+            flex: 1 1 0%;
+            min-width: 0;
+            max-width: 42rem;
+        }
+        #dashboard-hero > .relative.flex > div:last-child {
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 100%;
+        }
+        #tab-dashboard .grid {
+            min-width: 0;
+        }
+        #tab-dashboard .dashboard-glow-card {
+            min-width: 0;
+        }
+        @media (max-width: 1279px) {
+            #dashboard-hero > .relative.flex > div:last-child {
+                width: 100%;
+            }
+        }
+
 </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
@@ -1256,12 +1305,12 @@
         </aside>
 
         <!-- MAIN CONTENT CONTAINER -->
-        <main class="flex-1 overflow-y-auto px-6 lg:px-10 py-6 bg-dark-900 w-full">
+        <main id="inventory-main-content" class="flex-1 min-w-0 overflow-y-auto px-6 lg:px-10 py-6 bg-dark-900">
 
             <!-- 1. TAB DASHBOARD -->
             <section id="tab-dashboard" class="premium-dashboard space-y-7 w-full">
                 <!-- PREMIUM DASHBOARD HERO -->
-                <div class="relative overflow-hidden rounded-[2rem] border border-blue-300/15 bg-gradient-to-br from-blue-600/20 via-slate-900/60 to-cyan-500/10 p-6 md:p-8 shadow-2xl shadow-blue-950/20 backdrop-blur-2xl">
+                <div id="dashboard-hero" class="relative w-full min-w-0 overflow-hidden rounded-[2rem] border border-blue-300/15 bg-gradient-to-br from-blue-600/20 via-slate-900/60 to-cyan-500/10 p-6 md:p-8 shadow-2xl shadow-blue-950/20 backdrop-blur-2xl">
                     <div class="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full bg-blue-500/15 blur-3xl"></div>
                     <div class="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-cyan-400/10 blur-3xl"></div>
                     <div class="relative flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6">
