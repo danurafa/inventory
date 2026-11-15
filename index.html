@@ -1674,6 +1674,15 @@
                 !same(local.sampel, lastSyncedData.sampel) ||
                 !same(local.retur, lastSyncedData.retur);
         }
+        // Jangan render ulang tabel PO saat pengguna sedang mengedit Qty Siap.
+        // Polling berjalan setiap 7 detik; applyWorkerData() memanggil refreshAllViews(),
+        // lalu renderPoTable() mengganti tbody.innerHTML dan menghilangkan fokus input.
+        function isEditingPoReadyInput() {
+            const active = document.activeElement;
+            return !!active && active.matches('#po-table-body input[id^="ready-"]');
+        }
+        let workerRefreshPendingWhileEditing = false;
+
         async function refreshFromWorkerIfChanged() {
             if (!workerToken || !cloudReady || workerPollBusy || document.hidden) return;
             workerPollBusy = true;
@@ -1681,7 +1690,12 @@
                 const result = await workerRequest('/api/data', { method:'GET' });
                 const incoming = publicData(result.data);
                 if (!same(incoming, lastSyncedData)) {
-                    if (!hasUnsavedLocalChanges()) {
+                    // Tunda penerapan data cloud selama input Qty Siap sedang aktif.
+                    // Data tidak dibuang; polling berikutnya akan mengambil versi terbaru.
+                    if (isEditingPoReadyInput()) {
+                        workerRefreshPendingWhileEditing = true;
+                    } else if (!hasUnsavedLocalChanges()) {
+                        workerRefreshPendingWhileEditing = false;
                         applyWorkerData(incoming);
                         updateCloudStatusBadge('active');
                     }
@@ -1695,6 +1709,18 @@
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) refreshFromWorkerIfChanged();
         });
+        // Setelah pengguna meninggalkan kolom Qty Siap, sinkronisasi cloud boleh dilanjutkan.
+        // Jika fokus berpindah ke tombol Atur, biarkan updatePoReady yang menyelesaikan simpan.
+        document.addEventListener('focusout', (event) => {
+            if (!event.target?.matches?.('#po-table-body input[id^="ready-"]')) return;
+            const next = event.relatedTarget;
+            if (next && next.closest?.('#po-table-body button')) return;
+            if (workerRefreshPendingWhileEditing) {
+                setTimeout(() => {
+                    if (!isEditingPoReadyInput()) refreshFromWorkerIfChanged();
+                }, 150);
+            }
+        }, true);
 
         // Backup: Admin dan Staff boleh mengunduh; Restore hanya Admin/Super Admin.
         function isAdminForBackup() {
