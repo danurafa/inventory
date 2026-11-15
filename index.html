@@ -1363,11 +1363,13 @@
         window.displayItemName = function(barangId, nama) {
             const id = String(barangId ?? '').trim();
             let text = String(nama ?? '').trim();
-            if (!id || !text) return text;
+            if (!text) return '-';
+            if (!id) return text;
             const escapedId = id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const prefix = new RegExp('^' + escapedId + '\\s*[-–—:]\\s*', 'i');
-            if (prefix.test(text)) text = text.replace(prefix, '').trim();
-            return text || String(nama ?? '').trim();
+            // Hapus awalan ID berulang, misalnya: ID - ID - NAMA.
+            while (prefix.test(text)) text = text.replace(prefix, '').trim();
+            return text || '-';
         };
 
         const DEFAULT_DATA = {
@@ -3570,9 +3572,20 @@
                 const el = document.getElementById(id);
                 if (!el) return '-';
                 if (el.tagName === 'SELECT') {
+                    const value = String(el.value ?? '').trim();
                     const opt = el.options[el.selectedIndex];
                     const text = opt ? opt.textContent.trim() : '';
-                    return el.value ? `${el.value}${text && text !== el.value ? ' — ' + text : ''}` : '-';
+                    if (!value) return '-';
+
+                    // Untuk dropdown barang, ambil nama kanonis dari Master Barang.
+                    // Jangan gabungkan value ID dengan label option yang sudah memuat ID.
+                    const item = (window.gudangAppDb?.items || []).find(x => String(x.id) === value);
+                    if (item) return `${value} — ${window.displayItemName(value, item.nama)}`;
+
+                    // Dropdown non-barang: hindari mengulang value jika label sudah diawali value.
+                    const escaped = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const startsWithValue = new RegExp('^' + escaped + '\\s*(?:[-–—:]\\s*)?', 'i');
+                    return startsWithValue.test(text) ? text : (text ? `${value} — ${text}` : value);
                 }
                 return String(el.value ?? '').trim() || '-';
             }
@@ -3651,7 +3664,7 @@
                     }
                 }
                 if (formName === 'savePoItem') {
-                    readPoItemRows().forEach((r,i)=>{const item=(window.gudangAppDb?.items||[]).find(x=>x.id===r.barangId);addDetailRow(`Barang ${i+1}`,`${item?.nama||r.barangId} (${r.barangId})`);addDetailRow(`Qty PO / Siap ${i+1}`,`${r.qty} / ${r.siapKirim}`);});
+                    readPoItemRows().forEach((r,i)=>{const item=(window.gudangAppDb?.items||[]).find(x=>x.id===r.barangId);addDetailRow(`Barang ${i+1}`,`${window.displayItemName(r.barangId, item?.nama || r.barangId)} (${r.barangId})`);addDetailRow(`Qty PO / Siap ${i+1}`,`${r.qty} / ${r.siapKirim}`);});
                 }
             }
 
