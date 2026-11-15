@@ -2111,7 +2111,7 @@
             const ukuran = document.getElementById('master-ukuran').value;
             const beratRaw = document.getElementById('master-berat').value.trim();
             // Berat menerima angka bulat atau desimal dengan TITIK, contoh 45 atau 45.5.
-            if (!/^\\d+(?:\\.\\d+)?$/.test(beratRaw)) {
+            if (!/^\d+(?:\.\d+)?$/.test(beratRaw)) {
                 showToast('Berat harus berupa angka. Gunakan titik (.) untuk desimal, contoh 45.5.', 'error');
                 document.getElementById('master-berat').focus();
                 return;
