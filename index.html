@@ -1789,99 +1789,141 @@
             const info = document.getElementById('keluar-po-ready-info');
             if (!host) return;
 
-            // Simpan nilai Qty yang sedang diinput sebelum daftar dirender ulang.
-            // Ini penting karena refresh data Cloud dapat memanggil fungsi ini kembali.
-            const previousQty = new Map(
-                [...host.querySelectorAll('[data-keluar-row]')].map(card => [
-                    `${card.dataset.poRef}|${card.dataset.barangId}`,
-                    card.querySelector('[data-keluar-qty]')?.value ?? '0'
-                ])
-            );
-
-            // Catat input yang sedang aktif agar fokus tidak hilang saat elemen dibuat ulang.
-            const activeInput = document.activeElement;
-            const hadFocusInsideHost = !!activeInput && host.contains(activeInput) &&
-                activeInput.hasAttribute('data-keluar-qty');
-            const activeCard = hadFocusInsideHost ? activeInput.closest('[data-keluar-row]') : null;
-            const activePoRef = activeCard?.dataset.poRef || '';
-            const activeBarangId = activeCard?.dataset.barangId || '';
-
-            host.replaceChildren();
+            // PENTING: jangan mengganti seluruh isi host setiap refresh.
+            // Elemen input yang sama dipakai kembali agar fokus/kursor tidak terlepas
+            // ketika Cloud Sync atau refresh tampilan memanggil fungsi ini.
             const rows = (window.gudangAppDb.po || []).filter(p =>
                 `${String(p.customer||'').toUpperCase()}|${String(p.noPoCustomer||p.id).toUpperCase()}` === groupKey
             );
+
             if (!groupKey || !rows.length) {
+                host.replaceChildren();
                 if (info) info.textContent = 'Pilih nomor PO untuk menampilkan barang.';
                 updateKeluarBatchTotal();
                 return;
             }
+
             const isEdit = document.getElementById('keluar-edit-mode')?.value === 'true';
             const legacyPoSelect = document.getElementById('keluar-po-ref');
             const legacyItemSelect = document.getElementById('keluar-barang');
-            if (legacyPoSelect) legacyPoSelect.innerHTML = '<option value="">-</option>' + rows.map(po => `<option value="${po.id}">${po.nama||po.barangId}</option>`).join('');
-            if (legacyItemSelect) legacyItemSelect.innerHTML = '<option value="">-</option>' + rows.map(po => `<option value="${po.barangId}">${po.barangId}</option>`).join('');
-            rows.forEach(po => {
+            if (legacyPoSelect) {
+                const current = legacyPoSelect.value;
+                legacyPoSelect.innerHTML = '<option value="">-</option>' + rows.map(po => `<option value="${po.id}">${po.nama||po.barangId}</option>`).join('');
+                if (rows.some(po => String(po.id) === String(current))) legacyPoSelect.value = current;
+            }
+            if (legacyItemSelect) {
+                const current = legacyItemSelect.value;
+                legacyItemSelect.innerHTML = '<option value="">-</option>' + rows.map(po => `<option value="${po.barangId}">${po.barangId}</option>`).join('');
+                if (rows.some(po => String(po.barangId) === String(current))) legacyItemSelect.value = current;
+            }
+
+            const existingCards = new Map(
+                [...host.querySelectorAll('[data-keluar-row]')].map(card => [
+                    `${card.dataset.poRef}|${card.dataset.barangId}`, card
+                ])
+            );
+            const keepKeys = new Set();
+            const editingRow = isEdit
+                ? (window.gudangAppDb.keluar||[]).find(x => x.id === document.getElementById('keluar-id')?.value)
+                : null;
+
+            rows.forEach((po, index) => {
+                const key = `${po.id}|${po.barangId}`;
+                keepKeys.add(key);
                 const item = (window.gudangAppDb.items || []).find(x => String(x.id) === String(po.barangId));
                 const remainBase = Math.max(0, Number(po.qty||0) - Number(po.terkirim||0));
-                const isEditMode = document.getElementById('keluar-edit-mode')?.value === 'true';
-                const editingRow = isEditMode ? (window.gudangAppDb.keluar||[]).find(x => x.id === document.getElementById('keluar-id')?.value) : null;
-                const oldQtyForThisPo = editingRow && editingRow.poRef === po.id ? Number(editingRow.qty||0) : 0;
+                const oldQtyForThisPo = editingRow && String(editingRow.poRef) === String(po.id)
+                    ? Number(editingRow.qty||0) : 0;
                 const ready = getPoReadyQty(po) + oldQtyForThisPo;
                 const remain = remainBase + oldQtyForThisPo;
-                const stock = Math.max(0, Number(item?.stok||0) + ((editingRow && editingRow.barangId === po.barangId) ? Number(editingRow.qty||0) : 0));
+                const stock = Math.max(0, Number(item?.stok||0) +
+                    ((editingRow && String(editingRow.barangId) === String(po.barangId)) ? Number(editingRow.qty||0) : 0));
                 const max = Math.max(0, Math.min(ready, remain, stock));
-                const card = document.createElement('div');
-                card.className = 'rounded-lg border border-white/10 bg-black/10 p-2 space-y-1';
-                card.dataset.keluarRow = '1';
-                card.dataset.poRef = po.id;
-                card.dataset.barangId = po.barangId;
-                const top = document.createElement('div');
-                top.className = 'flex items-start justify-between gap-2';
-                const name = document.createElement('div');
-                name.className = 'min-w-0';
-                const title = document.createElement('div');
-                title.className = 'text-xs font-semibold text-gray-100';
-                title.textContent = `${po.nama || item?.nama || po.barangId} (${po.barangId})`;
-                const meta = document.createElement('div');
-                meta.className = 'text-[10px] text-gray-400';
-                meta.textContent = `PO: ${Number(po.qty||0).toLocaleString('id-ID')} · Terkirim: ${Number(po.terkirim||0).toLocaleString('id-ID')} · Siap: ${ready.toLocaleString('id-ID')} · Stok: ${stock.toLocaleString('id-ID')}`;
-                name.append(title, meta);
-                const inputWrap = document.createElement('div');
-                inputWrap.className = 'w-24 shrink-0';
-                const inputLabel = document.createElement('label');
-                inputLabel.className = 'block text-[10px] text-gray-400 mb-1';
-                inputLabel.textContent = 'Qty Keluar';
-                const input = document.createElement('input');
-                input.type = 'number'; input.min = '0'; input.max = String(max); input.step = '1';
-                input.value = previousQty.get(`${po.id}|${po.barangId}`) ?? '0';
-                input.className = 'w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs font-mono';
-                input.autocomplete = 'off'; input.dataset.keluarQty = '1';
-                input.disabled = max <= 0;
-                input.addEventListener('input', updateKeluarBatchTotal);
-                inputWrap.append(inputLabel, input);
-                top.append(name, inputWrap);
-                card.append(top);
-                if (max <= 0) {
-                    const note = document.createElement('div'); note.className = 'text-[10px] text-amber-300';
-                    note.textContent = remain <= 0 ? 'PO untuk barang ini sudah terpenuhi.' : 'Belum ada stok/kesiapan untuk dikirim.';
+
+                let card = existingCards.get(key);
+                if (!card) {
+                    card = document.createElement('div');
+                    card.className = 'rounded-lg border border-white/10 bg-black/10 p-2 space-y-1';
+                    card.dataset.keluarRow = '1';
+                    card.dataset.poRef = po.id;
+                    card.dataset.barangId = po.barangId;
+
+                    const top = document.createElement('div');
+                    top.className = 'flex items-start justify-between gap-2';
+                    const name = document.createElement('div');
+                    name.className = 'min-w-0';
+                    const title = document.createElement('div');
+                    title.className = 'text-xs font-semibold text-gray-100';
+                    title.dataset.keluarTitle = '1';
+                    const meta = document.createElement('div');
+                    meta.className = 'text-[10px] text-gray-400';
+                    meta.dataset.keluarMeta = '1';
+                    name.append(title, meta);
+
+                    const inputWrap = document.createElement('div');
+                    inputWrap.className = 'w-24 shrink-0';
+                    const inputLabel = document.createElement('label');
+                    inputLabel.className = 'block text-[10px] text-gray-400 mb-1';
+                    inputLabel.textContent = 'Qty Keluar';
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.min = '0';
+                    input.step = '1';
+                    input.className = 'w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs font-mono';
+                    input.autocomplete = 'off';
+                    input.dataset.keluarQty = '1';
+                    input.value = '0';
+                    input.addEventListener('input', updateKeluarBatchTotal);
+                    inputWrap.append(inputLabel, input);
+                    top.append(name, inputWrap);
+                    card.append(top);
+                    const note = document.createElement('div');
+                    note.className = 'text-[10px] text-amber-300';
+                    note.dataset.keluarNote = '1';
                     card.append(note);
                 }
-                host.append(card);
-            });
-            if (info) info.textContent = isEdit ? 'Mode edit: ubah Qty pada satu detail transaksi ini.' : 'Isi Qty pada satu atau beberapa barang. Setiap baris memiliki batas kesiapan, sisa PO, dan stok sendiri.';
-            updateKeluarBatchTotal();
 
-            // Pulihkan fokus ke kolom Qty yang sebelumnya sedang digunakan.
-            if (hadFocusInsideHost) {
-                const targetCard = [...host.querySelectorAll('[data-keluar-row]')].find(card =>
-                    card.dataset.poRef === activePoRef &&
-                    card.dataset.barangId === activeBarangId
-                );
-                const targetInput = targetCard?.querySelector('[data-keluar-qty]');
-                if (targetInput && !targetInput.disabled) {
-                    targetInput.focus({ preventScroll: true });
+                // Perbarui teks dan batas tanpa mengganti node input.
+                const title = card.querySelector('[data-keluar-title]');
+                const meta = card.querySelector('[data-keluar-meta]');
+                const input = card.querySelector('[data-keluar-qty]');
+                const note = card.querySelector('[data-keluar-note]');
+                if (title) title.textContent = `${po.nama || item?.nama || po.barangId} (${po.barangId})`;
+                if (meta) meta.textContent = `PO: ${Number(po.qty||0).toLocaleString('id-ID')} · Terkirim: ${Number(po.terkirim||0).toLocaleString('id-ID')} · Siap: ${ready.toLocaleString('id-ID')} · Stok: ${stock.toLocaleString('id-ID')}`;
+                if (input) {
+                    input.max = String(max);
+                    input.disabled = max <= 0;
+                    // Jangan menimpa input.value saat refresh. Nilai yang sedang diketik
+                    // harus tetap hidup pada elemen input yang sama.
                 }
-            }
+                if (note) {
+                    if (max <= 0) {
+                        note.textContent = remain <= 0
+                            ? 'PO untuk barang ini sudah terpenuhi.'
+                            : 'Belum ada stok/kesiapan untuk dikirim.';
+                        note.classList.remove('hidden');
+                    } else {
+                        note.textContent = '';
+                        note.classList.add('hidden');
+                    }
+                }
+
+                // Pindahkan hanya jika urutan benar-benar berubah. Menghindari detach
+                // pada input aktif yang dapat menyebabkan browser kehilangan fokus.
+                const currentAtIndex = host.children[index];
+                if (currentAtIndex !== card) host.insertBefore(card, currentAtIndex || null);
+            });
+
+            // Hapus hanya baris yang memang sudah tidak termasuk PO terpilih.
+            [...host.querySelectorAll('[data-keluar-row]')].forEach(card => {
+                const key = `${card.dataset.poRef}|${card.dataset.barangId}`;
+                if (!keepKeys.has(key)) card.remove();
+            });
+
+            if (info) info.textContent = isEdit
+                ? 'Mode edit: ubah Qty pada satu detail transaksi ini.'
+                : 'Isi Qty pada satu atau beberapa barang. Setiap baris memiliki batas kesiapan, sisa PO, dan stok sendiri.';
+            updateKeluarBatchTotal();
         };
 
         window.updateKeluarBatchTotal = function() {
