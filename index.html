@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.15-glass-blue-sidebar-header-fix-v9";
+        const APP_VERSION = "2026.11.15-glass-blue-sidebar-toggle-center-v10";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -1066,6 +1066,53 @@
             #inventory-top-header > div:last-child > button span { display:none; }
         }
 
+
+        /* Move sidebar toggle to the user's marked green position:
+           vertically centered, attached to the sidebar's right edge. */
+        #inventory-sidebar {
+            position:relative;
+        }
+        #inventory-sidebar .sidebar-mid-toggle {
+            position:absolute;
+            z-index:15;
+            top:50%;
+            right:9px;
+            transform:translateY(-50%);
+            box-shadow:0 8px 22px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.12);
+        }
+        #inventory-sidebar .sidebar-mid-toggle:hover {
+            transform:translateY(calc(-50% - 1px));
+        }
+        #inventory-app-layout.sidebar-collapsed #inventory-sidebar .sidebar-mid-toggle {
+            right:9px;
+        }
+        /* Header brand now begins at the left edge without the toggle occupying space. */
+        #inventory-top-header #header-brand-group {
+            margin-left:0;
+            gap:0;
+        }
+        #inventory-top-header #header-brand-group > div {
+            margin-left:0;
+        }
+        @media(max-width:767px) {
+            /* Keep the control reachable while the mobile drawer is closed. */
+            #inventory-sidebar .sidebar-mid-toggle {
+                position:fixed;
+                top:50%;
+                left:8px;
+                right:auto;
+                transform:translateY(-50%);
+                z-index:70;
+            }
+            #inventory-app-layout.mobile-sidebar-open #inventory-sidebar .sidebar-mid-toggle {
+                position:absolute;
+                top:50%;
+                left:auto;
+                right:9px;
+                transform:translateY(-50%);
+            }
+        }
+
 </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
@@ -1073,11 +1120,7 @@
     <!-- TOP HEADER -->
     <header id="inventory-top-header" class="h-16 border-b border-white/5 bg-dark-800/90 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-6 lg:px-8">
         <div id="header-brand-group" class="flex items-center gap-3.5 min-w-0">
-            <button type="button" id="sidebar-toggle" onclick="toggleInventorySidebar()"
-                class="sidebar-toggle-btn shrink-0 w-9 h-9 rounded-xl border border-blue-400/25 bg-blue-500/10 text-blue-300 inline-flex items-center justify-center transition-all"
-                aria-label="Kecilkan atau buka menu" aria-expanded="true" title="Kecilkan menu">
-                <i data-lucide="panel-left-close" class="w-4 h-4"></i>
-            </button>
+            
             <div class="flex items-center gap-3.5 min-w-0">
                 <div class="w-10 h-10 rounded-xl theme-accent-bg flex items-center justify-center shadow-xl shadow-orange-500/40 text-white font-black text-xl tracking-wider brightness-125 saturate-150 shrink-0">
                     G
@@ -1113,6 +1156,12 @@
         <!-- SIDEBAR NAVIGATION -->
         <div id="sidebar-mobile-backdrop" onclick="closeInventorySidebar()" aria-hidden="true"></div>
         <aside id="inventory-sidebar" class="w-64 border-r border-white/5 bg-dark-800/40 backdrop-blur-sm flex flex-col justify-between shrink-0 select-none">
+            <button type="button" id="sidebar-toggle" onclick="toggleInventorySidebar()"
+                class="sidebar-toggle-btn sidebar-mid-toggle w-9 h-9 rounded-xl border border-blue-400/25 bg-blue-500/10 text-blue-300 inline-flex items-center justify-center transition-all"
+                aria-label="Kecilkan atau buka menu" aria-expanded="true" title="Kecilkan menu">
+                <i data-lucide="panel-left-close" class="w-4 h-4"></i>
+            </button>
+
             <nav class="p-4 space-y-1.5 overflow-y-auto">
                 <div class="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Menu Utama</div>
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard Realtime" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20">
