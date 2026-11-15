@@ -835,7 +835,7 @@
                             <input type="hidden" id="masuk-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Transaksi *</label>
-                                <input type="text" id="masuk-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" autocomplete="off">
+                                <input type="text" id="masuk-id" required readonly title="ID transaksi dibuat otomatis" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Tanggal *</label>
@@ -924,7 +924,7 @@
                             <input type="hidden" id="keluar-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Transaksi *</label>
-                                <input type="text" id="keluar-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" autocomplete="off">
+                                <input type="text" id="keluar-id" required readonly title="ID transaksi dibuat otomatis" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Tanggal *</label>
@@ -2296,20 +2296,25 @@
             return `${prefix}-${yy}${mm}-${rand}`;
         };
 
+        // ID transaksi selalu mengambil nomor terbesar yang sudah tersimpan
+        // pada periode bulan/tahun berjalan, bukan menghitung jumlah baris.
         window.generateMasukSequentialId = function() {
             const now = new Date();
             const yy = String(now.getFullYear()).slice(-2);
             const mm = String(now.getMonth() + 1).padStart(2, '0');
             const prefix = `IN-${yy}${mm}-`;
             const rows = Array.isArray(window.gudangAppDb?.masuk) ? window.gudangAppDb.masuk : [];
+            const usedIds = new Set();
             let maxNumber = 0;
             rows.forEach(row => {
-                const value = String(row?.id || '').trim().toUpperCase();
-                if (!value.startsWith(prefix)) return;
-                const suffix = value.slice(prefix.length);
-                if (/^\d+$/.test(suffix)) maxNumber = Math.max(maxNumber, Number(suffix));
+                [row?.id, row?.transactionId, row?.groupId].forEach(raw => {
+                    const value = String(raw || '').trim().toUpperCase();
+                    if (!value.startsWith(prefix)) return;
+                    usedIds.add(value);
+                    const match = value.match(/^IN-\d{4}-(\d+)(?:-D\d+)?$/);
+                    if (match) maxNumber = Math.max(maxNumber, Number(match[1]));
+                });
             });
-            const usedIds = new Set(rows.map(row => String(row?.id || '').trim().toUpperCase()));
             let nextNumber = maxNumber + 1;
             let candidate = `${prefix}${String(nextNumber).padStart(4, '0')}`;
             while (usedIds.has(candidate)) {
@@ -2325,24 +2330,21 @@
             const mm = String(now.getMonth() + 1).padStart(2, '0');
             const prefix = `OT-${yy}${mm}-`;
             const rows = Array.isArray(window.gudangAppDb?.keluar) ? window.gudangAppDb.keluar : [];
+            const usedIds = new Set();
             let maxNumber = 0;
-
             rows.forEach(row => {
-                const value = String(row?.id || '').trim().toUpperCase();
-                if (!value.startsWith(prefix)) return;
-                const suffix = value.slice(prefix.length);
-                if (/^\d+$/.test(suffix)) {
-                    maxNumber = Math.max(maxNumber, Number(suffix));
-                }
+                [row?.id, row?.transactionId, row?.groupId].forEach(raw => {
+                    const value = String(raw || '').trim().toUpperCase();
+                    if (!value.startsWith(prefix)) return;
+                    usedIds.add(value);
+                    // ID detail multi-barang berbentuk OT-YYMM-0001-D01.
+                    // Ambil nomor induk agar semua detail dihitung sebagai satu transaksi.
+                    const match = value.match(/^OT-\d{4}-(\d+)(?:-D\d+)?$/);
+                    if (match) maxNumber = Math.max(maxNumber, Number(match[1]));
+                });
             });
-
-            // Pakai nomor terbesar + 1, bukan jumlah baris + 1,
-            // sehingga ID tetap berurutan walaupun ada data terhapus/gap.
             let nextNumber = maxNumber + 1;
             let candidate = `${prefix}${String(nextNumber).padStart(4, '0')}`;
-            const usedIds = new Set(rows.map(row => String(row?.id || '').trim().toUpperCase()));
-
-            // Jaga-jaga jika ada ID lama dengan pola tidak standar.
             while (usedIds.has(candidate)) {
                 nextNumber++;
                 candidate = `${prefix}${String(nextNumber).padStart(4, '0')}`;
@@ -2574,7 +2576,11 @@
             e.preventDefault();
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
 
-            const id = document.getElementById('masuk-id').value.trim().toUpperCase();
+            const isEdit = document.getElementById('masuk-edit-mode').value === 'true';
+            const id = isEdit
+                ? document.getElementById('masuk-id').value.trim().toUpperCase()
+                : generateMasukSequentialId();
+            document.getElementById('masuk-id').value = id;
             const tanggal = document.getElementById('masuk-tanggal').value;
             const barangId = document.getElementById('masuk-barang').value;
             const qty = parseInt(document.getElementById('masuk-qty').value) || 0;
@@ -2696,11 +2702,14 @@
         window.saveKeluarItem = async function(e) {
             e.preventDefault();
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
-            const baseId = document.getElementById('keluar-id').value.trim().toUpperCase();
+            const isEdit = document.getElementById('keluar-edit-mode').value === 'true';
+            const baseId = isEdit
+                ? document.getElementById('keluar-id').value.trim().toUpperCase()
+                : generateKeluarSequentialId();
+            document.getElementById('keluar-id').value = baseId;
             const tanggal = document.getElementById('keluar-tanggal').value;
             const tujuan = document.getElementById('keluar-tujuan').value.trim().toUpperCase();
             const username = window.gudangAppDb.currentUser?.name || 'Administrator';
-            const isEdit = document.getElementById('keluar-edit-mode').value === 'true';
             const cards = [...document.querySelectorAll('#keluar-items-container [data-keluar-row]')];
             const selected = cards.map(card => ({
                 poRef: card.dataset.poRef,
