@@ -1421,6 +1421,8 @@
         <div class="app-card max-w-sm w-full p-6 rounded-2xl shadow-2xl border border-white/10 space-y-4">
             <h4 id="confirm-title" class="font-bold text-sm text-gray-100 uppercase tracking-wide">Konfirmasi Aksi</h4>
             <p id="confirm-message" class="text-xs text-gray-300 leading-relaxed">Apakah Anda yakin ingin melanjutkan tindakan ini?</p>
+            <div id="confirm-details" class="hidden rounded-xl border border-white/10 bg-black/20 p-3 space-y-2"></div>
+            <div id="confirm-warning" class="hidden rounded-xl border border-rose-400/20 bg-rose-500/10 px-3 py-2 text-[11px] text-rose-200 leading-relaxed"></div>
             <div class="flex justify-end gap-2.5 pt-2">
                 <button id="confirm-cancel-btn" class="px-4 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20 transition-all">Batal</button>
                 <button id="confirm-ok-btn" class="px-4 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold shadow-lg transition-all">Ya, Lanjutkan</button>
@@ -2287,30 +2289,74 @@
             }, 3500);
         };
 
-        window.showConfirm = function(title, message, onConfirm) {
+        window.showConfirm = function(title, message, onConfirm, options = {}) {
             const modal = document.getElementById('confirm-modal');
-            document.getElementById('confirm-title').textContent = title;
-            document.getElementById('confirm-message').textContent = message;
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-
+            const detailsBox = document.getElementById('confirm-details');
+            const warningBox = document.getElementById('confirm-warning');
             const okBtn = document.getElementById('confirm-ok-btn');
             const cancelBtn = document.getElementById('confirm-cancel-btn');
 
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            okBtn.textContent = options.confirmLabel || 'Ya, Lanjutkan';
+
+            // Rincian dibuat memakai textContent agar nilai data tidak dieksekusi sebagai HTML.
+            detailsBox.replaceChildren();
+            const record = options.record && typeof options.record === 'object' ? options.record : null;
+            const labels = {
+                id:'ID / Nomor', tanggal:'Tanggal', nama:'Nama Barang', barangId:'ID Barang',
+                jenis:'Jenis', satuan:'Satuan', qty:'Jumlah', stok:'Stok', min:'Stok Minimum',
+                customer:'Customer', supplier:'Supplier', noPoCustomer:'No. PO Customer',
+                poRef:'Referensi PO', terkirim:'Qty Terkirim', siapKirim:'Siap Kirim',
+                status:'Status', kategori:'Kategori', lebar:'Lebar', ukuran:'Ukuran',
+                berat:'Berat', tebal:'Tebal', username:'Username', role:'Hak Akses',
+                user:'User', keterangan:'Keterangan', noSj:'No. Surat Jalan'
+            };
+            const preferred = ['id','tanggal','nama','barangId','jenis','satuan','qty','customer','supplier','noPoCustomer','poRef','status','kategori','username','role'];
+            const entries = record ? preferred.filter(key => record[key] !== undefined && record[key] !== null && String(record[key]).trim() !== '').map(key => [key, record[key]]) : [];
+            if (record) {
+                Object.entries(record).forEach(([key,value]) => {
+                    if (entries.length >= 8 || preferred.includes(key) || value === undefined || value === null || typeof value === 'object' || String(value).trim() === '') return;
+                    if (/password|token|secret|uid|createdAt|updatedAt/i.test(key)) return;
+                    entries.push([key,value]);
+                });
+            }
+            if (entries.length) {
+                entries.slice(0,8).forEach(([key,value]) => {
+                    const row = document.createElement('div');
+                    row.className = 'flex items-start justify-between gap-3 text-[11px]';
+                    const label = document.createElement('span');
+                    label.className = 'text-gray-400 shrink-0';
+                    label.textContent = labels[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
+                    const val = document.createElement('span');
+                    val.className = 'text-gray-100 font-semibold text-right break-all';
+                    val.textContent = String(value);
+                    row.append(label,val);
+                    detailsBox.appendChild(row);
+                });
+                detailsBox.classList.remove('hidden');
+            } else {
+                detailsBox.classList.add('hidden');
+            }
+
+            if (options.warning) {
+                warningBox.textContent = options.warning;
+                warningBox.classList.remove('hidden');
+            } else {
+                warningBox.textContent = '';
+                warningBox.classList.add('hidden');
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
             const cleanup = () => {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
                 okBtn.onclick = null;
                 cancelBtn.onclick = null;
             };
-
-            okBtn.onclick = () => {
-                cleanup();
-                onConfirm();
-            };
-            cancelBtn.onclick = () => {
-                cleanup();
-            };
+            okBtn.onclick = () => { cleanup(); if (typeof onConfirm === 'function') onConfirm(); };
+            cancelBtn.onclick = cleanup;
         };
 
         window.generateId = function(prefix) {
@@ -2469,12 +2515,14 @@
             if (!['admin','superadmin'].includes(window.gudangAppDb.currentUser?.role)) {
                 showToast('Hanya Admin dan Super Admin yang dapat menghapus Master Barang.', 'error'); return;
             }
-            showConfirm('Hapus Barang', `Yakin ingin menghapus ${id}?`, async () => {
+            const record = window.gudangAppDb.items.find(x => x.id === id);
+            if (!record) { showToast('Data barang tidak ditemukan.', 'error'); return; }
+            showConfirm('Konfirmasi Hapus Master Barang', `Anda akan menghapus data Master Barang dengan ID ${id}.`, async () => {
                 window.gudangAppDb.items = window.gudangAppDb.items.filter(x => x.id !== id);
                 const saved = await saveCloudDB();
                 if (saved) showToast(`Barang ${id} berhasil dihapus dan dikonfirmasi Worker.`, 'warning');
                 else showToast(`Penghapusan ${id} belum dikonfirmasi Worker. Periksa kembali data.`, 'error');
-            });
+            }, { record, confirmLabel:'Ya, Hapus Barang', warning:'Data Master Barang akan dihapus dari daftar inventory. Pastikan tidak ada transaksi yang masih membutuhkan data ini.' });
         };
 
         window.resetMasterForm = function() {
@@ -2651,14 +2699,16 @@
 
         window.deleteMasukItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
-            showConfirm('Hapus Barang Masuk', `Yakin ingin menghapus ${id}?`, async () => {
+            const record = window.gudangAppDb.masuk.find(x => x.id === id);
+            if (!record) { showToast('Transaksi Barang Masuk tidak ditemukan.', 'error'); return; }
+            showConfirm('Konfirmasi Hapus Barang Masuk', `Anda akan menghapus transaksi Barang Masuk ${id}.`, async () => {
                 const m = window.gudangAppDb.masuk.find(x => x.id === id);
                 if (!m) return;
                 window.gudangAppDb.masuk = window.gudangAppDb.masuk.filter(x => x.id !== id);
                 const saved = await saveCloudDB();
                 if (saved) showToast('Barang Masuk dihapus dan stok dikoreksi oleh Worker.', 'warning');
                 else showToast('Penghapusan Barang Masuk belum dikonfirmasi Worker. Periksa kembali data.', 'error');
-            });
+            }, { record, confirmLabel:'Ya, Hapus Transaksi', warning:'Menghapus transaksi Barang Masuk dapat memengaruhi perhitungan stok. Perubahan stok akan diproses oleh Worker.' });
         };
 
         window.resetMasukForm = function() {
@@ -2795,7 +2845,9 @@
 
         window.deleteKeluarItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
-            showConfirm('Hapus Barang Keluar', `Yakin ingin menghapus ${id}?`, async () => {
+            const record = window.gudangAppDb.keluar.find(x => x.id === id);
+            if (!record) { showToast('Transaksi Barang Keluar tidak ditemukan.', 'error'); return; }
+            showConfirm('Konfirmasi Hapus Barang Keluar', `Anda akan menghapus transaksi Barang Keluar ${id}.`, async () => {
                 const k = window.gudangAppDb.keluar.find(x => x.id === id);
                 if (k) {
                     const item = window.gudangAppDb.items.find(x => x.id === k.barangId);
@@ -2812,7 +2864,7 @@
                     if (saved) showToast('Transaksi Barang Keluar berhasil dihapus dan stok/PO dikoreksi Worker.', 'warning');
                     else showToast('Penghapusan belum dikonfirmasi Worker. Periksa kembali data.', 'error');
                 }
-            });
+            }, { record, confirmLabel:'Ya, Hapus Transaksi', warning:'Menghapus Barang Keluar dapat memengaruhi stok dan riwayat pengiriman. Pastikan transaksi yang dipilih sudah benar.' });
         };
 
         window.resetKeluarForm = function() {
@@ -2999,12 +3051,14 @@
 
         window.deletePoItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
-            showConfirm('Hapus PO', `Yakin ingin menghapus ${id}?`, async () => {
+            const record = window.gudangAppDb.po.find(x => x.id === id);
+            if (!record) { showToast('Data PO tidak ditemukan.', 'error'); return; }
+            showConfirm('Konfirmasi Hapus PO Customer', `Anda akan menghapus detail PO ${id}.`, async () => {
                 window.gudangAppDb.po = window.gudangAppDb.po.filter(x => x.id !== id);
                 const saved = await saveCloudDB();
                 if (saved) showToast('PO berhasil dihapus dan dikonfirmasi Worker.', 'warning');
                 else showToast('Penghapusan PO belum dikonfirmasi Worker. Periksa kembali data.', 'error');
-            });
+            }, { record, confirmLabel:'Ya, Hapus PO', warning:'Pastikan PO ini memang boleh dihapus. Penghapusan detail PO tidak dapat dibatalkan dari popup ini.' });
         };
 
         window.resetPoForm = function() {
@@ -3115,12 +3169,14 @@
 
         window.deleteSampelItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
-            showConfirm('Hapus Sampel', `Yakin ingin menghapus ${id}?`, async () => {
+            const record = window.gudangAppDb.sampel.find(x => x.id === id);
+            if (!record) { showToast('Data sampel tidak ditemukan.', 'error'); return; }
+            showConfirm('Konfirmasi Hapus Data Sampel', `Anda akan menghapus data sampel ${id}.`, async () => {
                 window.gudangAppDb.sampel = window.gudangAppDb.sampel.filter(x => x.id !== id);
                 const saved = await saveCloudDB();
                 if (saved) showToast('Sampel berhasil dihapus dan dikonfirmasi Worker.', 'warning');
                 else showToast('Penghapusan Sampel belum dikonfirmasi Worker. Periksa kembali data.', 'error');
-            });
+            }, { record, confirmLabel:'Ya, Hapus Sampel', warning:'Data sampel akan dihapus dari riwayat dan tidak dapat dipulihkan melalui tombol Batal.' });
         };
 
         window.resetSampelForm = function() {
@@ -3287,7 +3343,9 @@
 
         window.deleteReturItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
-            showConfirm('Hapus Retur', `Yakin ingin menghapus ${id}? Stok dan PO akan dikembalikan seperti sebelum retur.`, async () => {
+            const record = window.gudangAppDb.retur.find(x => x.id === id);
+            if (!record) { showToast('Data retur tidak ditemukan.', 'error'); return; }
+            showConfirm('Konfirmasi Hapus Retur', `Anda akan menghapus transaksi retur ${id}.`, async () => {
                 try {
                     const r = window.gudangAppDb.retur.find(x => x.id === id);
                     if (!r) return;
@@ -3305,7 +3363,7 @@
                 } catch (error) {
                     showToast(`Retur gagal dihapus: ${error.message}`, 'error');
                 }
-            });
+            }, { record, confirmLabel:'Ya, Hapus Retur', warning:'PERHATIAN: penghapusan retur akan mengurangi kembali stok dan mengoreksi realisasi PO. Pastikan dampaknya sudah diperiksa.' });
         };
 
         window.resetReturForm = function() {
@@ -3415,14 +3473,15 @@
         window.deleteUser = function(username) {
             const actorRole = window.gudangAppDb.currentUser?.role;
             if (!['admin','superadmin'].includes(actorRole)) return;
-            showConfirm('Hapus User', `Yakin ingin menghapus user ${username}?`, async () => {
+            const record = window.gudangAppDb.users.find(x => x.username === username) || { username, role:'-' };
+            showConfirm('Konfirmasi Hapus User', `Anda akan menghapus akun pengguna ${username}.`, async () => {
                 try {
                     await workerRequest(`/api/users/${encodeURIComponent(username)}`, { method:'DELETE' });
                     await loadUsersFromWorker();
                     window.refreshAllViews?.();
                     showToast(`User ${username} dihapus.`, 'warning');
                 } catch (error) { showToast(error.message, 'error'); }
-            });
+            }, { record, confirmLabel:'Ya, Hapus User', warning:'Akun pengguna akan dihapus dari sistem. Pengguna tersebut tidak dapat masuk kembali menggunakan akun ini.' });
         };
 
         window.renderUserTable = function() {
