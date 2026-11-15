@@ -3620,28 +3620,45 @@
                 parent.appendChild(row);
             }
 
+            function makeNoticeCard(title, pillText = '') {
+                const card = document.createElement('section');
+                card.className = 'mb-3 rounded-xl border border-white/20 bg-white/[0.04] p-3';
+                const head = document.createElement('div');
+                head.className = 'mb-2 flex items-center justify-between gap-2 border-b border-white/15 pb-2';
+                const label = document.createElement('span');
+                label.className = 'text-xs font-bold text-emerald-300';
+                label.textContent = title;
+                head.appendChild(label);
+                if (pillText) {
+                    const pill = document.createElement('span');
+                    pill.className = 'rounded-md bg-emerald-500/15 px-2 py-1 text-xs font-bold text-emerald-300';
+                    pill.textContent = pillText;
+                    head.appendChild(pill);
+                }
+                card.appendChild(head);
+                return card;
+            }
+
             function addSelectedItemDetails(formName) {
-                // PO Customer: tampilkan semua detail barang sebelum return umum.
-                // Sebelumnya savePoItem tidak memiliki itemField sehingga fungsi berhenti
-                // sebelum daftar barang PO sempat dirender.
+                const db = window.gudangAppDb || {};
+                const items = db.items || [];
+
+                // PO CUSTOMER: setiap barang ditampilkan dalam kartu seragam seperti Barang Keluar.
                 if (formName === 'savePoItem') {
                     const rows = readPoItemRows();
                     const heading = document.createElement('div');
                     heading.className = 'mb-2 rounded-lg border border-sky-400/30 bg-sky-400/10 px-3 py-2 text-xs font-bold text-sky-200';
                     heading.textContent = 'RINCIAN BARANG DALAM PO';
                     content.appendChild(heading);
-
                     rows.forEach((r, i) => {
-                        const item = (window.gudangAppDb?.items || []).find(x => String(x.id) === String(r.barangId));
-                        const card = document.createElement('section');
-                        card.className = 'mb-3 rounded-xl border border-white/20 bg-white/[0.04] p-3';
-                        addDetailRow(`BARANG ${i + 1} · ID`, r.barangId || '-', card);
+                        const item = items.find(x => String(x.id) === String(r.barangId));
+                        const card = makeNoticeCard(`BARANG ${i + 1}`, `${Number(r.qty || 0).toLocaleString('id-ID')} ${item?.satuan || ''}`.trim());
+                        addDetailRow('ID Barang', r.barangId || '-', card);
                         addDetailRow('Nama Barang', window.displayItemName(r.barangId, item?.nama || r.nama || r.barangId), card);
                         addDetailRow('Qty PO', `${Number(r.qty || 0).toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
                         addDetailRow('Qty Siap Dikirim', `${Number(r.siapKirim || 0).toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
                         content.appendChild(card);
                     });
-
                     const total = document.createElement('div');
                     total.className = 'mt-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-3';
                     addDetailRow('Total Jenis Barang', String(rows.length), total);
@@ -3651,43 +3668,25 @@
                     return;
                 }
 
+                // BARANG KELUAR: pertahankan format kartu acuan yang sudah disetujui.
                 if (formName === 'saveKeluarItem') {
                     const selected = [...document.querySelectorAll('#keluar-items-container [data-keluar-row]')]
                         .map(card => ({poRef:card.dataset.poRef,barangId:card.dataset.barangId,qty:Number(card.querySelector('[data-keluar-qty]')?.value||0)}))
                         .filter(x => x.qty > 0);
-
                     const heading = document.createElement('div');
                     heading.className = 'mb-2 rounded-lg border border-sky-400/30 bg-sky-400/10 px-3 py-2 text-xs font-bold text-sky-200';
                     heading.textContent = 'RINCIAN BARANG YANG AKAN DISIMPAN';
                     content.appendChild(heading);
-
                     selected.forEach((r, i) => {
-                        const po = (window.gudangAppDb?.po || []).find(x => String(x.id) === String(r.poRef));
-                        const item = (window.gudangAppDb?.items || []).find(x => String(x.id) === String(r.barangId));
-                        const card = document.createElement('section');
-                        card.className = 'mb-3 rounded-xl border border-white/20 bg-white/[0.04] p-3';
-                        const cardTitle = document.createElement('div');
-                        cardTitle.className = 'mb-2 flex items-center justify-between gap-2 border-b border-white/15 pb-2';
-                        const titleText = document.createElement('span');
-                        titleText.className = 'text-xs font-bold text-emerald-300';
-                        titleText.textContent = `BARANG ${i + 1}`;
-                        const qtyPill = document.createElement('span');
-                        qtyPill.className = 'rounded-md bg-emerald-500/15 px-2 py-1 text-xs font-bold text-emerald-300';
-                        qtyPill.textContent = `${r.qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim();
-                        cardTitle.append(titleText, qtyPill);
-                        card.appendChild(cardTitle);
+                        const po = (db.po || []).find(x => String(x.id) === String(r.poRef));
+                        const item = items.find(x => String(x.id) === String(r.barangId));
+                        const card = makeNoticeCard(`BARANG ${i + 1}`, `${r.qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim());
                         addDetailRow('ID Barang', r.barangId, card);
                         addDetailRow('Nama Barang', window.displayItemName(r.barangId, item?.nama || r.nama || r.barangId), card);
                         addDetailRow('Qty Keluar', `${r.qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
-                        if (po) {
-                            // Nomor PO dan Customer sudah ditampilkan sekali pada
-                            // ringkasan utama popup. Di kartu detail cukup tampilkan
-                            // batas kuantitas untuk pemeriksaan pengiriman.
-                            addDetailRow('Qty PO / Terkirim / Siap', `${Number(po.qty || 0).toLocaleString('id-ID')} / ${Number(po.terkirim || 0).toLocaleString('id-ID')} / ${getPoReadyQty(po).toLocaleString('id-ID')}`, card);
-                        }
+                        if (po) addDetailRow('Qty PO / Terkirim / Siap', `${Number(po.qty || 0).toLocaleString('id-ID')} / ${Number(po.terkirim || 0).toLocaleString('id-ID')} / ${getPoReadyQty(po).toLocaleString('id-ID')}`, card);
                         content.appendChild(card);
                     });
-
                     const totalCard = document.createElement('div');
                     totalCard.className = 'mt-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-3';
                     addDetailRow('Total Jenis Barang', String(selected.length), totalCard);
@@ -3696,35 +3695,71 @@
                     return;
                 }
 
-                const itemField = ({saveMasterItem:'',saveMasukItem:'masuk-barang',saveSampelItem:'',saveReturItem:'retur-barang'})[formName];
-                if (!itemField) return;
-                const itemId = document.getElementById(itemField)?.value;
-                const item = (window.gudangAppDb?.items || []).find(x => String(x.id) === String(itemId));
-                if (!item) return;
-
-                if (formName === 'saveReturItem') {
-                    addDetailRow('Nama Barang', window.displayItemName(item.id, item.nama) || '-');
-                    addDetailRow('Jenis Barang', item.jenis || '-');
-                    addDetailRow('Lebar Barang', item.lebar || '-');
-                    addDetailRow('Ukuran Barang', item.ukuran || '-');
-                    addDetailRow('Satuan Barang', item.satuan || '-');
-
-                    const keluarRef = document.getElementById('retur-keluar-ref')?.value;
-                    const keluar = (window.gudangAppDb?.keluar || []).find(x => String(x.id) === String(keluarRef));
-                    if (keluar) {
-                        const po = (window.gudangAppDb?.po || []).find(x => String(x.id) === String(keluar.poRef));
-                        addDetailRow('Tujuan Transaksi Asal', keluar.tujuan || '-');
-                        addDetailRow('Nomor PO Asal', po?.noPoCustomer || po?.id || '-');
-                        addDetailRow('Customer PO', po?.customer || keluar.tujuan || '-');
-                    }
+                // MASTER BARANG: satu kartu ringkas untuk seluruh spesifikasi barang.
+                if (formName === 'saveMasterItem') {
+                    const id = document.getElementById('master-id')?.value || '-';
+                    const card = makeNoticeCard('DETAIL MASTER BARANG', id);
+                    [['Nama Barang','master-nama'],['Jenis Barang','master-jenis'],['Lebar Barang','master-lebar'],['Ukuran Barang','master-ukuran'],['Berat','master-berat'],['Satuan','master-satuan'],['Stok Minimum','master-min'],['Stok Saat Ini','master-stok']]
+                        .forEach(([label,idField]) => addDetailRow(label, document.getElementById(idField)?.value || '-', card));
+                    content.appendChild(card);
                     return;
                 }
 
-                addDetailRow('Nama Barang', window.displayItemName(item.id, item.nama) || '-');
-                addDetailRow('Jenis Barang', item.jenis || '-');
-                addDetailRow('Lebar Barang', item.lebar || '-');
-                addDetailRow('Ukuran Barang', item.ukuran || '-');
-                addDetailRow('Satuan Barang', item.satuan || '-');
+                // BARANG MASUK: data transaksi dan spesifikasi barang berada dalam satu kartu.
+                if (formName === 'saveMasukItem') {
+                    const barangId = document.getElementById('masuk-barang')?.value || '';
+                    const item = items.find(x => String(x.id) === String(barangId));
+                    const qty = Number(document.getElementById('masuk-qty')?.value || 0);
+                    const card = makeNoticeCard('DETAIL BARANG MASUK', `${qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim());
+                    addDetailRow('ID Barang', barangId || '-', card);
+                    addDetailRow('Nama Barang', window.displayItemName(barangId, item?.nama || barangId), card);
+                    addDetailRow('Jumlah Masuk', `${qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
+                    addDetailRow('Divisi', document.getElementById('masuk-supplier')?.value || '-', card);
+                    if (item) {
+                        addDetailRow('Jenis Barang', item.jenis || '-', card);
+                        addDetailRow('Lebar Barang', item.lebar || '-', card);
+                        addDetailRow('Ukuran Barang', item.ukuran || '-', card);
+                    }
+                    content.appendChild(card);
+                    return;
+                }
+
+                // SAMPEL: satu kartu pemberitahuan untuk detail sampel, tanpa bergantung pada master barang.
+                if (formName === 'saveSampelItem') {
+                    const card = makeNoticeCard('DETAIL DATA SAMPEL', document.getElementById('sampel-id')?.value || '-');
+                    [['Customer','sampel-customer'],['Nama Sampel','sampel-nama'],['Kategori','sampel-kategori'],['Lebar','sampel-lebar'],['Ukuran','sampel-ukuran'],['Berat','sampel-berat'],['Tebal','sampel-tebal']]
+                        .forEach(([label,idField]) => addDetailRow(label, document.getElementById(idField)?.value || '-', card));
+                    content.appendChild(card);
+                    return;
+                }
+
+                // RETUR: data barang dan transaksi asal dikemas dalam kartu yang sama.
+                if (formName === 'saveReturItem') {
+                    const barangId = document.getElementById('retur-barang')?.value || '';
+                    const item = items.find(x => String(x.id) === String(barangId));
+                    const qty = Number(document.getElementById('retur-qty')?.value || 0);
+                    const card = makeNoticeCard('DETAIL BARANG RETUR', `${qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim());
+                    addDetailRow('ID Barang', barangId || '-', card);
+                    addDetailRow('Nama Barang', window.displayItemName(barangId, item?.nama || barangId), card);
+                    addDetailRow('Jumlah Retur', `${qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
+                    addDetailRow('Keterangan', document.getElementById('retur-keterangan')?.value || '-', card);
+                    if (item) {
+                        addDetailRow('Jenis Barang', item.jenis || '-', card);
+                        addDetailRow('Lebar Barang', item.lebar || '-', card);
+                        addDetailRow('Ukuran Barang', item.ukuran || '-', card);
+                    }
+                    const keluarRef = document.getElementById('retur-keluar-ref')?.value;
+                    const keluar = (db.keluar || []).find(x => String(x.id) === String(keluarRef));
+                    if (keluar) {
+                        const po = (db.po || []).find(x => String(x.id) === String(keluar.poRef));
+                        addDetailRow('Transaksi Keluar Asal', keluar.id || '-', card);
+                        addDetailRow('Tujuan Transaksi Asal', keluar.tujuan || '-', card);
+                        addDetailRow('Nomor PO Asal', po?.noPoCustomer || po?.id || '-', card);
+                        addDetailRow('Customer PO', po?.customer || keluar.tujuan || '-', card);
+                    }
+                    content.appendChild(card);
+                    return;
+                }
             }
 
             function closeModal() {
