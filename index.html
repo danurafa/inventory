@@ -1355,7 +1355,7 @@
                         <input id="restore-json-file" type="file" accept=".json,application/json" class="w-full text-xs text-gray-300 file:mr-3 file:px-3 file:py-2 file:rounded-lg file:border-0 file:bg-white/10 file:text-white hover:file:bg-white/20" onchange="previewRestoreFile(this)" autocomplete="off">
                         <div id="restore-file-info" class="hidden bg-white/5 rounded-xl p-3 text-xs text-gray-300"></div>
                         <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3 text-xs text-rose-300">Restore menimpa data aktif. Aplikasi akan mengunduh backup kondisi saat ini terlebih dahulu sebelum memulihkan file pilihan.</div>
-                        <button id="restore-json-btn" onclick="restoreInventoryBackup()" disabled class="w-full py-3 rounded-xl bg-rose-600/40 text-white/50 text-xs font-bold flex items-center justify-center gap-2 cursor-not-allowed"><i data-lucide="database-backup" class="w-4 h-4"></i> RESTORE DATABASE</button>
+                        <button id="restore-json-btn" onclick="restoreInventoryBackup()" disabled class="w-full py-3 rounded-xl bg-rose-600/40 text-white/50 text-xs font-bold flex items-center justify-center gap-2 cursor-not-allowed"><i data-lucide="database-restore" class="w-4 h-4"></i> RESTORE DATABASE</button>
                     </div>
                 </div>
                 <div class="app-card p-5 rounded-2xl text-xs text-gray-400 space-y-2">
@@ -1393,6 +1393,37 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- AUTO LOGOUT WARNING MODAL -->
+    <div id="auto-logout-modal" class="fixed inset-0 z-[95] bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="app-card w-full max-w-md rounded-2xl border border-amber-400/30 p-6 shadow-2xl space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center">
+                    <i data-lucide="shield-alert" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-base text-gray-100">Sesi Akan Berakhir</h3>
+                    <p class="text-xs text-gray-400">Peringatan keamanan otomatis</p>
+                </div>
+            </div>
+            <div class="rounded-xl bg-black/20 border border-white/10 p-4 text-center">
+                <div id="auto-logout-countdown" class="text-3xl font-black tracking-wider text-amber-400 tabular-nums">05:00</div>
+                <div class="text-xs text-gray-400 mt-1">Sisa waktu sebelum logout otomatis</div>
+            </div>
+            <p class="text-sm text-gray-300 leading-relaxed">
+                Tidak ada aktivitas selama 25 menit. Demi keamanan, Anda akan otomatis logout setelah 5 menit lagi.
+                Pilih <strong>Tetap Login</strong> untuk melanjutkan sesi.
+            </p>
+            <div class="flex gap-2">
+                <button type="button" onclick="autoLogoutNow()" class="flex-1 py-2.5 rounded-xl border border-white/15 text-gray-300 text-xs font-bold hover:bg-white/5 transition-colors">
+                    Logout Sekarang
+                </button>
+                <button type="button" onclick="keepSessionAlive()" class="flex-1 py-2.5 rounded-xl theme-accent-bg text-white text-xs font-bold shadow-lg transition-all">
+                    Tetap Login
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1723,6 +1754,7 @@
                     cloudReady = true;
                     updateCloudStatusBadge('active');
                     window.hideLoginModal?.();
+                    startAutoLogoutTimer();
                 } else {
                     cloudReady = false;
                     updateCloudStatusBadge('connecting', 'Silakan login untuk mengaktifkan sinkronisasi.');
@@ -2138,6 +2170,7 @@
                 await loadUsersFromWorker();
                 window.refreshAllViews?.();
                 hideLoginModal();
+                startAutoLogoutTimer();
                 document.getElementById('login-password').value = '';
                 showToast(`Login berhasil sebagai ${result.user.name} (${result.user.role.toUpperCase()}).`);
                 updateCloudStatusBadge('active');
@@ -2146,24 +2179,149 @@
             }
         };
 
+        // AUTO LOGOUT: 30 menit tidak aktif, peringatan pada menit ke-25.
+        const AUTO_LOGOUT_IDLE_MS = 30 * 60 * 1000;
+        const AUTO_LOGOUT_WARNING_MS = 5 * 60 * 1000;
+        let autoLogoutLastActivity = Date.now();
+        let autoLogoutTicker = null;
+        let autoLogoutHasWarned = false;
+        let autoLogoutInProgress = false;
+
+        function hideAutoLogoutWarning() {
+            const modal = document.getElementById('auto-logout-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function showAutoLogoutWarning() {
+            const modal = document.getElementById('auto-logout-modal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            if (window.lucide?.createIcons) window.lucide.createIcons();
+        }
+
+        function updateAutoLogoutCountdown(remainingMs) {
+            const el = document.getElementById('auto-logout-countdown');
+            if (!el) return;
+            const totalSeconds = Math.max(0, Math.ceil(remainingMs / 1000));
+            const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+            const seconds = String(totalSeconds % 60).padStart(2, '0');
+            el.textContent = `${minutes}:${seconds}`;
+        }
+
+        function resetAutoLogoutActivity() {
+            if (!workerToken || !window.gudangAppDb?.currentUser || autoLogoutInProgress) return;
+            autoLogoutLastActivity = Date.now();
+            autoLogoutHasWarned = false;
+            hideAutoLogoutWarning();
+        }
+
+        function startAutoLogoutTimer() {
+            stopAutoLogoutTimer();
+            if (!workerToken || !window.gudangAppDb?.currentUser) return;
+            autoLogoutLastActivity = Date.now();
+            autoLogoutHasWarned = false;
+            autoLogoutInProgress = false;
+            hideAutoLogoutWarning();
+            autoLogoutTicker = window.setInterval(() => {
+                if (!workerToken || !window.gudangAppDb?.currentUser || autoLogoutInProgress) return;
+                const idleMs = Date.now() - autoLogoutLastActivity;
+                const warningAtMs = AUTO_LOGOUT_IDLE_MS - AUTO_LOGOUT_WARNING_MS;
+
+                if (idleMs >= AUTO_LOGOUT_IDLE_MS) {
+                    performLogout('auto');
+                    return;
+                }
+                if (idleMs >= warningAtMs) {
+                    autoLogoutHasWarned = true;
+                    updateAutoLogoutCountdown(AUTO_LOGOUT_IDLE_MS - idleMs);
+                    showAutoLogoutWarning();
+                } else if (autoLogoutHasWarned) {
+                    autoLogoutHasWarned = false;
+                    hideAutoLogoutWarning();
+                }
+            }, 1000);
+        }
+
+        function stopAutoLogoutTimer() {
+            if (autoLogoutTicker) {
+                window.clearInterval(autoLogoutTicker);
+                autoLogoutTicker = null;
+            }
+            autoLogoutHasWarned = false;
+            hideAutoLogoutWarning();
+        }
+
+        window.keepSessionAlive = function() {
+            resetAutoLogoutActivity();
+            showToast('Sesi diperpanjang. Anda tetap login.', 'success');
+        };
+
+        window.autoLogoutNow = function() {
+            performLogout('auto');
+        };
+
+        async function performLogout(reason = 'manual') {
+            if (autoLogoutInProgress) return;
+            autoLogoutInProgress = true;
+            stopAutoLogoutTimer();
+            try { if (workerToken) await workerRequest('/api/logout', { method: 'POST' }); } catch (_) {}
+            workerToken = '';
+            localStorage.removeItem('gudang_pro_worker_token');
+            localStorage.removeItem('gudang_pro_session');
+            window.activeUserSession = null;
+            window.gudangAppDb.currentUser = null;
+            cloudReady = false;
+            const userInp = document.getElementById('login-username');
+            const passInp = document.getElementById('login-password');
+            if (userInp) userInp.value = '';
+            if (passInp) passInp.value = '';
+            window.showLoginModal();
+            updateCloudStatusBadge('connecting', 'Login diperlukan.');
+            showToast(
+                reason === 'auto'
+                    ? 'Sesi berakhir otomatis karena tidak ada aktivitas selama 30 menit.'
+                    : 'Berhasil logout.',
+                'warning'
+            );
+            autoLogoutInProgress = false;
+        }
+
         window.logoutUser = function() {
             showConfirm('Logout Sistem', 'Apakah Anda yakin ingin keluar dari sesi saat ini?', async () => {
-                try { if (workerToken) await workerRequest('/api/logout', { method: 'POST' }); } catch (_) {}
-                workerToken = '';
-                localStorage.removeItem('gudang_pro_worker_token');
-                localStorage.removeItem('gudang_pro_session');
-                window.activeUserSession = null;
-                window.gudangAppDb.currentUser = null;
-                cloudReady = false;
-                const userInp = document.getElementById('login-username');
-                const passInp = document.getElementById('login-password');
-                if (userInp) userInp.value = '';
-                if (passInp) passInp.value = '';
-                window.showLoginModal();
-                updateCloudStatusBadge('connecting', 'Login diperlukan.');
-                showToast('Berhasil logout.', 'warning');
+                await performLogout('manual');
             });
         };
+
+        // Aktivitas pengguna memperbarui hitung mundur. Gerakan mouse dibatasi agar timer tidak terlalu sering ditulis.
+        let autoLogoutLastPointerUpdate = 0;
+        ['click', 'keydown', 'touchstart', 'scroll', 'mousemove'].forEach(eventName => {
+            window.addEventListener(eventName, event => {
+                if (eventName === 'mousemove') {
+                    const now = Date.now();
+                    if (now - autoLogoutLastPointerUpdate < 1000) return;
+                    autoLogoutLastPointerUpdate = now;
+                }
+                const loginModal = document.getElementById('login-modal');
+                if (loginModal && !loginModal.classList.contains('hidden')) return;
+                const warningModal = document.getElementById('auto-logout-modal');
+                if (warningModal && event.target && warningModal.contains(event.target)) return;
+                resetAutoLogoutActivity();
+            }, { passive: true });
+        });
+        window.addEventListener('focus', () => {
+            if (workerToken && window.gudangAppDb?.currentUser && !autoLogoutInProgress) {
+                if (Date.now() - autoLogoutLastActivity >= AUTO_LOGOUT_IDLE_MS) {
+                    performLogout('auto');
+                } else {
+                    resetAutoLogoutActivity();
+                }
+            }
+        });
+
 
         window.renderCurrentUserBanner = function() {
             const banner = document.getElementById('current-user-banner');
@@ -2306,7 +2464,7 @@
             const labels = {
                 id:'ID / Nomor', tanggal:'Tanggal', nama:'Nama Barang', barangId:'ID Barang',
                 jenis:'Jenis', satuan:'Satuan', qty:'Jumlah', stok:'Stok', min:'Stok Minimum',
-                customer:'Customer', supplier:'Divisi', noPoCustomer:'No. PO Customer',
+                customer:'Customer', supplier:'Supplier', noPoCustomer:'No. PO Customer',
                 poRef:'Referensi PO', terkirim:'Qty Terkirim', siapKirim:'Siap Kirim',
                 status:'Status', kategori:'Kategori', lebar:'Lebar', ukuran:'Ukuran',
                 berat:'Berat', tebal:'Tebal', username:'Username', role:'Hak Akses',
