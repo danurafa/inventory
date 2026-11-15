@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.14-worker-v1";
+        const APP_VERSION = "2026.11.15-confirmation-fix-v2";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -3577,17 +3577,29 @@
                     const text = opt ? opt.textContent.trim() : '';
                     if (!value) return '-';
 
-                    // Untuk dropdown barang, ambil nama kanonis dari Master Barang.
-                    // Jangan gabungkan value ID dengan label option yang sudah memuat ID.
-                    const item = (window.gudangAppDb?.items || []).find(x => String(x.id) === value);
-                    if (item) return `${value} — ${window.displayItemName(value, item.nama)}`;
+                    // Nomor PO group: value internal berisi customer|nomor PO.
+                    // Tampilkan label option saja agar customer/nomor PO tidak berulang.
+                    if (id === 'keluar-po-group') return text || value.split('|').pop() || value;
 
-                    // Dropdown non-barang: hindari mengulang value jika label sudah diawali value.
-                    const escaped = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                    const startsWithValue = new RegExp('^' + escaped + '\\s*(?:[-–—:]\\s*)?', 'i');
-                    return startsWithValue.test(text) ? text : (text ? `${value} — ${text}` : value);
+                    // ID barang ditampilkan sendiri; nama barang ada pada baris detail terpisah.
+                    const item = (window.gudangAppDb?.items || []).find(x => String(x.id) === value);
+                    if (item) return value;
+
+                    // Dropdown lain cukup gunakan label yang terlihat oleh pengguna.
+                    return text || value;
                 }
-                return String(el.value ?? '').trim() || '-';
+                const raw = String(el.value ?? '').trim();
+                if (!raw) return '-';
+
+                // Normalisasi nomor PO lama jika tersimpan sebagai customer|nomor.
+                if (id === 'po-no-customer') {
+                    let poNumber = raw.includes('|') ? raw.split('|').pop().trim() : raw;
+                    const customer = String(document.getElementById('po-customer')?.value || '').trim().toUpperCase();
+                    const parts = poNumber.split(/[—–]/).map(part => part.trim()).filter(Boolean);
+                    const uniqueParts = [...new Set(parts.filter(part => part.toUpperCase() !== customer))];
+                    return uniqueParts[0] || poNumber || raw;
+                }
+                return raw;
             }
 
             function addDetailRow(label, value, parent = content) {
@@ -3604,6 +3616,36 @@
             }
 
             function addSelectedItemDetails(formName) {
+                // PO Customer: tampilkan semua detail barang sebelum return umum.
+                // Sebelumnya savePoItem tidak memiliki itemField sehingga fungsi berhenti
+                // sebelum daftar barang PO sempat dirender.
+                if (formName === 'savePoItem') {
+                    const rows = readPoItemRows();
+                    const heading = document.createElement('div');
+                    heading.className = 'mb-2 rounded-lg border border-sky-400/30 bg-sky-400/10 px-3 py-2 text-xs font-bold text-sky-200';
+                    heading.textContent = 'RINCIAN BARANG DALAM PO';
+                    content.appendChild(heading);
+
+                    rows.forEach((r, i) => {
+                        const item = (window.gudangAppDb?.items || []).find(x => String(x.id) === String(r.barangId));
+                        const card = document.createElement('section');
+                        card.className = 'mb-3 rounded-xl border border-white/20 bg-white/[0.04] p-3';
+                        addDetailRow(`BARANG ${i + 1} · ID`, r.barangId || '-', card);
+                        addDetailRow('Nama Barang', window.displayItemName(r.barangId, item?.nama || r.nama || r.barangId), card);
+                        addDetailRow('Qty PO', `${Number(r.qty || 0).toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
+                        addDetailRow('Qty Siap Dikirim', `${Number(r.siapKirim || 0).toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
+                        content.appendChild(card);
+                    });
+
+                    const total = document.createElement('div');
+                    total.className = 'mt-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-3';
+                    addDetailRow('Total Jenis Barang', String(rows.length), total);
+                    addDetailRow('Total Qty PO', rows.reduce((n, r) => n + Number(r.qty || 0), 0).toLocaleString('id-ID'), total);
+                    addDetailRow('Total Qty Siap Dikirim', rows.reduce((n, r) => n + Number(r.siapKirim || 0), 0).toLocaleString('id-ID'), total);
+                    content.appendChild(total);
+                    return;
+                }
+
                 if (formName === 'saveKeluarItem') {
                     const selected = [...document.querySelectorAll('#keluar-items-container [data-keluar-row]')]
                         .map(card => ({poRef:card.dataset.poRef,barangId:card.dataset.barangId,qty:Number(card.querySelector('[data-keluar-qty]')?.value||0)}))
@@ -3629,10 +3671,11 @@
                         qtyPill.textContent = `${r.qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim();
                         cardTitle.append(titleText, qtyPill);
                         card.appendChild(cardTitle);
-                        addDetailRow('Nama Barang', `${window.displayItemName(r.barangId, item?.nama || r.nama || r.barangId)} (${r.barangId})`, card);
+                        addDetailRow('ID Barang', r.barangId, card);
+                        addDetailRow('Nama Barang', window.displayItemName(r.barangId, item?.nama || r.nama || r.barangId), card);
                         addDetailRow('Qty Keluar', `${r.qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
                         if (po) {
-                            addDetailRow('Nomor PO', po.noPoCustomer || po.id, card);
+                            addDetailRow('Nomor PO Customer', po.noPoCustomer || po.id, card);
                             addDetailRow('Customer', po.customer || '-', card);
                             addDetailRow('Qty PO / Terkirim / Siap', `${Number(po.qty || 0).toLocaleString('id-ID')} / ${Number(po.terkirim || 0).toLocaleString('id-ID')} / ${getPoReadyQty(po).toLocaleString('id-ID')}`, card);
                         }
@@ -3646,26 +3689,36 @@
                     content.appendChild(totalCard);
                     return;
                 }
-                const itemField = ({saveMasterItem:'',savePoItem:'',saveMasukItem:'masuk-barang',saveKeluarItem:'',saveSampelItem:'',saveReturItem:'retur-barang'})[formName];
+
+                const itemField = ({saveMasterItem:'',saveMasukItem:'masuk-barang',saveSampelItem:'',saveReturItem:'retur-barang'})[formName];
                 if (!itemField) return;
                 const itemId = document.getElementById(itemField)?.value;
                 const item = (window.gudangAppDb?.items || []).find(x => String(x.id) === String(itemId));
                 if (!item) return;
+
+                if (formName === 'saveReturItem') {
+                    addDetailRow('Nama Barang', window.displayItemName(item.id, item.nama) || '-');
+                    addDetailRow('Jenis Barang', item.jenis || '-');
+                    addDetailRow('Lebar Barang', item.lebar || '-');
+                    addDetailRow('Ukuran Barang', item.ukuran || '-');
+                    addDetailRow('Satuan Barang', item.satuan || '-');
+
+                    const keluarRef = document.getElementById('retur-keluar-ref')?.value;
+                    const keluar = (window.gudangAppDb?.keluar || []).find(x => String(x.id) === String(keluarRef));
+                    if (keluar) {
+                        const po = (window.gudangAppDb?.po || []).find(x => String(x.id) === String(keluar.poRef));
+                        addDetailRow('Tujuan Transaksi Asal', keluar.tujuan || '-');
+                        addDetailRow('Nomor PO Asal', po?.noPoCustomer || po?.id || '-');
+                        addDetailRow('Customer PO', po?.customer || keluar.tujuan || '-');
+                    }
+                    return;
+                }
+
                 addDetailRow('Nama Barang', window.displayItemName(item.id, item.nama) || '-');
                 addDetailRow('Jenis Barang', item.jenis || '-');
                 addDetailRow('Lebar Barang', item.lebar || '-');
                 addDetailRow('Ukuran Barang', item.ukuran || '-');
                 addDetailRow('Satuan Barang', item.satuan || '-');
-                if (formName === 'saveReturItem') {
-                    const keluar = (window.gudangAppDb?.keluar || []).find(x => String(x.id) === String(document.getElementById('retur-keluar-ref')?.value));
-                    if (keluar) {
-                        addDetailRow('Tujuan Transaksi Asal', keluar.tujuan || '-');
-                        addDetailRow('PO Asal', keluar.poRef || '-');
-                    }
-                }
-                if (formName === 'savePoItem') {
-                    readPoItemRows().forEach((r,i)=>{const item=(window.gudangAppDb?.items||[]).find(x=>x.id===r.barangId);addDetailRow(`Barang ${i+1}`,`${window.displayItemName(r.barangId, item?.nama || r.barangId)} (${r.barangId})`);addDetailRow(`Qty PO / Siap ${i+1}`,`${r.qty} / ${r.siapKirim}`);});
-                }
             }
 
             function closeModal() {
