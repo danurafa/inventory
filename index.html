@@ -1609,6 +1609,151 @@
             background-color: rgba(68, 112, 154, .10) !important;
         }
 
+
+        /* ==========================================================
+           LIGHT MODE — FINAL GLOBAL FONT CONTRAST PATCH
+           Fixes remaining white/pale text in right-side panels,
+           action columns, badges and navigation. Dark Mode untouched.
+           ========================================================== */
+
+        body.theme-glass.theme-light .text-white,
+        body.theme-glass.theme-light .text-gray-100,
+        body.theme-glass.theme-light .text-gray-200,
+        body.theme-glass.theme-light .text-gray-300,
+        body.theme-glass.theme-light .text-slate-50,
+        body.theme-glass.theme-light .text-slate-100,
+        body.theme-glass.theme-light .text-slate-200,
+        body.theme-glass.theme-light .text-slate-300,
+        body.theme-glass.theme-light .text-zinc-50,
+        body.theme-glass.theme-light .text-zinc-100,
+        body.theme-glass.theme-light .text-neutral-50,
+        body.theme-glass.theme-light .text-neutral-100,
+        body.theme-glass.theme-light .text-stone-50,
+        body.theme-glass.theme-light .text-stone-100 {
+            color: #24415f !important;
+            -webkit-text-fill-color: #24415f !important;
+        }
+
+        /* Pale semantic colors are darkened, while retaining their meaning */
+        body.theme-glass.theme-light .text-sky-300,
+        body.theme-glass.theme-light .text-sky-200,
+        body.theme-glass.theme-light .text-cyan-300 {
+            color: #075985 !important;
+            -webkit-text-fill-color: #075985 !important;
+        }
+
+        body.theme-glass.theme-light .text-indigo-300,
+        body.theme-glass.theme-light .text-indigo-200,
+        body.theme-glass.theme-light .text-violet-300 {
+            color: #3730a3 !important;
+            -webkit-text-fill-color: #3730a3 !important;
+        }
+
+        body.theme-glass.theme-light .text-emerald-300,
+        body.theme-glass.theme-light .text-green-300,
+        body.theme-glass.theme-light .text-teal-300 {
+            color: #047857 !important;
+            -webkit-text-fill-color: #047857 !important;
+        }
+
+        body.theme-glass.theme-light .text-rose-300,
+        body.theme-glass.theme-light .text-rose-200,
+        body.theme-glass.theme-light .text-red-300 {
+            color: #be123c !important;
+            -webkit-text-fill-color: #be123c !important;
+        }
+
+        body.theme-glass.theme-light .text-amber-300,
+        body.theme-glass.theme-light .text-yellow-300,
+        body.theme-glass.theme-light .text-orange-300 {
+            color: #92400e !important;
+            -webkit-text-fill-color: #92400e !important;
+        }
+
+        body.theme-glass.theme-light .text-gray-400,
+        body.theme-glass.theme-light .text-gray-500,
+        body.theme-glass.theme-light .text-slate-400,
+        body.theme-glass.theme-light .text-slate-500 {
+            color: #526d8a !important;
+            -webkit-text-fill-color: #526d8a !important;
+        }
+
+        /* Explicitly fix the white text on the right-side/action navigation */
+        body.theme-glass.theme-light aside nav button.theme-accent-bg,
+        body.theme-glass.theme-light aside nav button.theme-accent-bg span,
+        body.theme-glass.theme-light aside nav button.theme-accent-bg i,
+        body.theme-glass.theme-light aside nav button.theme-accent-bg svg {
+            color: #173451 !important;
+            -webkit-text-fill-color: #173451 !important;
+        }
+
+        /* Catch inline white text declarations */
+        body.theme-glass.theme-light [style*="color: white"],
+        body.theme-glass.theme-light [style*="color:white"],
+        body.theme-glass.theme-light [style*="color: #fff"],
+        body.theme-glass.theme-light [style*="color:#fff"],
+        body.theme-glass.theme-light [style*="color: #ffffff"],
+        body.theme-glass.theme-light [style*="color:#ffffff"] {
+            color: #24415f !important;
+            -webkit-text-fill-color: #24415f !important;
+        }
+
+        /* Ensure labels and rightmost table/action cells remain legible */
+        body.theme-glass.theme-light label,
+        body.theme-glass.theme-light [id^="tab-"] th,
+        body.theme-glass.theme-light [id^="tab-"] td {
+            text-shadow: none !important;
+        }
+
+
+        /* DASHBOARD HERO — DARK TEXT FOR LIGHT GLASS MODE */
+        body.theme-glass.theme-light #dashboard-hero {
+            color: #1d3b5a !important;
+        }
+
+        body.theme-glass.theme-light #dashboard-hero h2,
+        body.theme-glass.theme-light #dashboard-hero .text-white,
+        body.theme-glass.theme-light #dashboard-hero .text-blue-100,
+        body.theme-glass.theme-light #dashboard-hero .text-blue-200,
+        body.theme-glass.theme-light #dashboard-hero .text-blue-200\/60,
+        body.theme-glass.theme-light #dashboard-hero .text-blue-200\/70,
+        body.theme-glass.theme-light #dashboard-hero .text-slate-300,
+        body.theme-glass.theme-light #dashboard-hero .text-slate-300\/80,
+        body.theme-glass.theme-light #dashboard-hero .text-slate-400 {
+            color: #244766 !important;
+            -webkit-text-fill-color: #244766 !important;
+            opacity: 1 !important;
+        }
+
+        /* Hero title gets the strongest contrast */
+        body.theme-glass.theme-light #dashboard-hero h2 {
+            color: #183957 !important;
+            -webkit-text-fill-color: #183957 !important;
+        }
+
+        /* Small command-center label and workspace/status labels */
+        body.theme-glass.theme-light #dashboard-hero > div .text-blue-300,
+        body.theme-glass.theme-light #dashboard-hero .text-\[9px\],
+        body.theme-glass.theme-light #dashboard-hero .text-\[10px\],
+        body.theme-glass.theme-light #dashboard-hero .text-xs {
+            color: #315574 !important;
+            -webkit-text-fill-color: #315574 !important;
+        }
+
+        /* Keep realtime status green to communicate active state */
+        body.theme-glass.theme-light #dashboard-hero .text-emerald-300 {
+            color: #047857 !important;
+            -webkit-text-fill-color: #047857 !important;
+        }
+
+        /* Right-side glass status/workspace cards: blue-tinted, not white */
+        body.theme-glass.theme-light #dashboard-hero .rounded-2xl.border {
+            background: rgba(76, 119, 160, .13) !important;
+            border-color: rgba(48, 87, 128, .25) !important;
+            backdrop-filter: blur(18px) saturate(150%) !important;
+            -webkit-backdrop-filter: blur(18px) saturate(150%) !important;
+        }
+
 </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
