@@ -191,45 +191,70 @@
             pointer-events: auto;
         }
 
-        /* LOW STOCK BLINK FIX
-           Glass theme memakai background/border/box-shadow !important,
-           jadi animasi memakai opacity + filter agar tidak tertimpa aturan tema. */
-        @keyframes lowStockBlinkRed {
-            0%, 100% {
-                opacity: 1;
-                filter: brightness(1.5) saturate(1.5);
-                background-color: rgba(220, 38, 38, .30);
-                border-color: #ef4444;
+       
+            /* =====================================================
+               LOW STOCK BORDER BLINK FIX
+               Background tetap solid, hanya border yang berkedip
+               ===================================================== */
+            
+            /* Pengaturan dasar */
+            .blink-low-stock-red,
+            .blink-low-stock-orange {
+                position: relative;
+                isolation: isolate;
             }
-            50% {
-                opacity: .65;
-                filter: brightness(.8) saturate(1.2);
-                background-color: rgba(220, 38, 38, .05);
-                border-color: rgba(239, 68, 68, .25);
+            
+            /* Lapisan border animasi */
+            .blink-low-stock-red::after,
+            .blink-low-stock-orange::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                border: 1.5px solid;
+                border-radius: inherit;
+                pointer-events: none;
+                z-index: 2;
             }
-        }
-        @keyframes lowStockBlinkOrange {
-            0%, 100% {
-                opacity: 1;
-                filter: brightness(1.5) saturate(1.5);
-                background-color: rgba(249, 115, 22, .30);
-                border-color: #f97316;
+            
+            /* =====================================================
+               MERAH - STOK KRITIS
+               ===================================================== */
+            
+            .blink-low-stock-red::after {
+                animation: borderBlinkRed 1.2s infinite ease-in-out;
             }
-        
-            50% {
-                opacity: .65;
-                filter: brightness(.8) saturate(1.2);
-                background-color: rgba(249, 115, 22, .05);
-                border-color: rgba(249, 115, 22, .25);
+            
+            @keyframes borderBlinkRed {
+                0%, 100% {
+                    border-color: #f43f5e;
+                    box-shadow: 0 0 12px rgba(244, 63, 94, 0.65);
+                }
+            
+                50% {
+                    border-color: rgba(244, 63, 94, 0.2);
+                    box-shadow: none;
+                }
             }
-        }
-        .blink-low-stock-red {
-            animation: lowStockBlinkRed 1.3s infinite ease-in-out !important;
-        }
-        .blink-low-stock-orange {
-            animation: lowStockBlinkOrange 1.3s infinite ease-in-out !important;
-        }
-
+            
+            /* =====================================================
+               ORANGE - STOK MENIPIS
+               ===================================================== */
+            
+            .blink-low-stock-orange::after {
+                animation: borderBlinkOrange 1.2s infinite ease-in-out;
+            }
+            
+            @keyframes borderBlinkOrange {
+                0%, 100% {
+                    border-color: #f97316;
+                    box-shadow: 0 0 12px rgba(249, 115, 22, 0.65);
+                }
+            
+                50% {
+                    border-color: rgba(249, 115, 22, 0.2);
+                    box-shadow: none;
+                }
+            }
         .role-badge-admin { background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
         .role-badge-staff { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
         .role-badge-viewer { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
