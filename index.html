@@ -1774,7 +1774,320 @@
             z-index: 10;
         }
 
-</style>
+
+
+        /* ==========================================================
+           INVENTORY UI — CRYSTAL LIGHT / DEEP DARK FOUNDATION
+           Tahap 1: visual-only theme foundation.
+           Tidak mengubah HTML, ID, event handler, maupun JavaScript.
+           ========================================================== */
+
+        body.theme-glass {
+            --ui-radius: 18px;
+            --ui-blur: 22px;
+            --ui-transition: .22s ease;
+            background-attachment: fixed !important;
+            min-height: 100vh;
+        }
+
+        /* DEEP DARK */
+        body.theme-glass.theme-dark,
+        body.theme-glass:not(.theme-light) {
+            --theme-bg: #071426;
+            --theme-card: rgba(22, 45, 72, .46);
+            --theme-card-border: rgba(125, 180, 225, .24);
+            --theme-accent: #38bdf8;
+            --theme-accent-hover: #0ea5e9;
+            --theme-accent-glow: rgba(56, 189, 248, .22);
+            --theme-text: #f1f7ff;
+            --theme-text-muted: #a9bfd6;
+            color: var(--theme-text) !important;
+            background:
+                radial-gradient(ellipse at 12% 8%, rgba(35, 105, 170, .24), transparent 38%),
+                radial-gradient(ellipse at 88% 18%, rgba(14, 165, 233, .14), transparent 36%),
+                linear-gradient(145deg, #071426 0%, #0a1b30 52%, #061222 100%) !important;
+        }
+
+        body.theme-glass.theme-dark aside,
+        body.theme-glass.theme-dark header,
+        body.theme-glass.theme-dark nav,
+        body.theme-glass.theme-dark .glass-surface,
+        body.theme-glass:not(.theme-light) aside,
+        body.theme-glass:not(.theme-light) header,
+        body.theme-glass:not(.theme-light) nav,
+        body.theme-glass:not(.theme-light) .glass-surface {
+            background: rgba(8, 25, 45, .58) !important;
+            border-color: rgba(125, 180, 225, .22) !important;
+            color: #eaf4ff !important;
+            backdrop-filter: blur(26px) saturate(145%);
+            -webkit-backdrop-filter: blur(26px) saturate(145%);
+        }
+
+        body.theme-glass.theme-dark .app-card,
+        body.theme-glass.theme-dark .dashboard-glow-card,
+        body.theme-glass.theme-dark [id^="tab-"] .bg-dark-800,
+        body.theme-glass.theme-dark [id^="tab-"] .bg-dark-900,
+        body.theme-glass.theme-dark [id^="tab-"] .bg-dark-700,
+        body.theme-glass.theme-dark [id^="tab-"] .bg-gray-800,
+        body.theme-glass.theme-dark [id^="tab-"] .bg-gray-900,
+        body.theme-glass.theme-dark [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-dark [id^="tab-"] .rounded-2xl.border,
+        body.theme-glass:not(.theme-light) .app-card,
+        body.theme-glass:not(.theme-light) .dashboard-glow-card,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .bg-dark-800,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .bg-dark-900,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .bg-dark-700,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .bg-gray-800,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .bg-gray-900,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .rounded-xl.border,
+        body.theme-glass:not(.theme-light) [id^="tab-"] .rounded-2xl.border {
+            background: linear-gradient(135deg, rgba(31, 62, 94, .54), rgba(12, 31, 53, .42)) !important;
+            border: 1px solid rgba(125, 180, 225, .24) !important;
+            border-radius: var(--ui-radius);
+            box-shadow: 0 14px 36px rgba(0, 0, 0, .20),
+                        inset 0 1px 0 rgba(235, 246, 255, .10) !important;
+            backdrop-filter: blur(var(--ui-blur)) saturate(145%);
+            -webkit-backdrop-filter: blur(var(--ui-blur)) saturate(145%);
+        }
+
+        body.theme-glass.theme-dark input:not([type="checkbox"]):not([type="radio"]),
+        body.theme-glass.theme-dark select,
+        body.theme-glass.theme-dark textarea,
+        body.theme-glass:not(.theme-light) input:not([type="checkbox"]):not([type="radio"]),
+        body.theme-glass:not(.theme-light) select,
+        body.theme-glass:not(.theme-light) textarea {
+            color: #f1f7ff !important;
+            -webkit-text-fill-color: #f1f7ff !important;
+            background: rgba(7, 25, 46, .58) !important;
+            border: 1px solid rgba(125, 180, 225, .28) !important;
+            border-radius: 12px;
+        }
+
+        body.theme-glass.theme-dark input::placeholder,
+        body.theme-glass.theme-dark textarea::placeholder,
+        body.theme-glass:not(.theme-light) input::placeholder,
+        body.theme-glass:not(.theme-light) textarea::placeholder {
+            color: #a9bfd6 !important;
+            -webkit-text-fill-color: #a9bfd6 !important;
+        }
+
+        body.theme-glass.theme-dark select,
+        body.theme-glass.theme-dark select option,
+        body.theme-glass:not(.theme-light) select,
+        body.theme-glass:not(.theme-light) select option {
+            color-scheme: dark !important;
+            background-color: #102944 !important;
+            color: #edf6ff !important;
+        }
+
+        /* CRYSTAL LIGHT */
+        body.theme-glass.theme-light {
+            --theme-bg: #b8d0e8;
+            --theme-card: rgba(235, 245, 255, .16);
+            --theme-card-border: rgba(45, 90, 140, .25);
+            --theme-accent: #2584d8;
+            --theme-accent-hover: #176dbb;
+            --theme-accent-glow: rgba(37, 132, 216, .18);
+            --theme-text: #173957;
+            --theme-text-muted: #526f8b;
+            color: var(--theme-text) !important;
+            background:
+                radial-gradient(ellipse at 10% 8%, rgba(255, 255, 255, .42), transparent 38%),
+                radial-gradient(ellipse at 90% 16%, rgba(104, 177, 230, .24), transparent 36%),
+                linear-gradient(140deg, #b8d0e8 0%, #c8dcef 52%, #aec8e2 100%) !important;
+            background-attachment: fixed !important;
+        }
+
+        body.theme-glass.theme-light aside,
+        body.theme-glass.theme-light header,
+        body.theme-glass.theme-light nav,
+        body.theme-glass.theme-light .glass-surface {
+            background: rgba(189, 213, 237, .30) !important;
+            border-color: rgba(45, 90, 140, .22) !important;
+            color: #173957 !important;
+            backdrop-filter: blur(26px) saturate(150%);
+            -webkit-backdrop-filter: blur(26px) saturate(150%);
+        }
+
+        body.theme-glass.theme-light .app-card,
+        body.theme-glass.theme-light .dashboard-glow-card,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-800,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-900,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-700,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-800,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-900,
+        body.theme-glass.theme-light [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-light [id^="tab-"] .rounded-2xl.border {
+            background: linear-gradient(135deg, rgba(245, 250, 255, .28), rgba(205, 225, 245, .18)) !important;
+            border: 1px solid rgba(45, 90, 140, .24) !important;
+            border-radius: var(--ui-radius);
+            box-shadow: 0 14px 34px rgba(35, 70, 110, .10),
+                        inset 0 1px 0 rgba(255, 255, 255, .52) !important;
+            backdrop-filter: blur(var(--ui-blur)) saturate(150%);
+            -webkit-backdrop-filter: blur(var(--ui-blur)) saturate(150%);
+        }
+
+        body.theme-glass.theme-light,
+        body.theme-glass.theme-light label,
+        body.theme-glass.theme-light h1,
+        body.theme-glass.theme-light h2,
+        body.theme-glass.theme-light h3,
+        body.theme-glass.theme-light p,
+        body.theme-glass.theme-light span,
+        body.theme-glass.theme-light [id^="tab-"] {
+            color: #173957;
+        }
+
+        body.theme-glass.theme-light .text-white,
+        body.theme-glass.theme-light .text-gray-100,
+        body.theme-glass.theme-light .text-gray-200,
+        body.theme-glass.theme-light .text-gray-300,
+        body.theme-glass.theme-light [id^="tab-"] .text-white,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-100,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-200,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-300 {
+            color: #173957 !important;
+        }
+
+        body.theme-glass.theme-light .text-gray-400,
+        body.theme-glass.theme-light .text-gray-500,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-400,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-500 {
+            color: #526f8b !important;
+        }
+
+        body.theme-glass.theme-light input:not([type="checkbox"]):not([type="radio"]),
+        body.theme-glass.theme-light select,
+        body.theme-glass.theme-light textarea {
+            color: #173957 !important;
+            -webkit-text-fill-color: #173957 !important;
+            background: rgba(245, 250, 255, .34) !important;
+            border: 1px solid rgba(45, 90, 140, .25) !important;
+            border-radius: 12px;
+            box-shadow: inset 0 1px 3px rgba(45, 90, 140, .05);
+        }
+
+        body.theme-glass.theme-light input::placeholder,
+        body.theme-glass.theme-light textarea::placeholder {
+            color: #607d99 !important;
+            -webkit-text-fill-color: #607d99 !important;
+        }
+
+        body.theme-glass.theme-light select,
+        body.theme-glass.theme-light select option {
+            color-scheme: light !important;
+            background-color: #e5f0fa !important;
+            color: #173957 !important;
+        }
+
+        /* SHARED TABLE, BUTTON, FOCUS AND DIALOG FOUNDATION */
+        body.theme-glass table,
+        body.theme-glass th,
+        body.theme-glass td {
+            border-color: var(--theme-card-border) !important;
+        }
+
+        body.theme-glass.theme-light table { color: #173957 !important; }
+        body.theme-glass.theme-dark table,
+        body.theme-glass:not(.theme-light) table { color: #eaf4ff !important; }
+
+        body.theme-glass.theme-light table thead,
+        body.theme-glass.theme-light table thead tr,
+        body.theme-glass.theme-light table thead th {
+            background: rgba(91, 135, 180, .28) !important;
+            color: #173957 !important;
+            border-color: rgba(45, 90, 140, .25) !important;
+        }
+
+        body.theme-glass.theme-dark table thead,
+        body.theme-glass.theme-dark table thead tr,
+        body.theme-glass.theme-dark table thead th,
+        body.theme-glass:not(.theme-light) table thead,
+        body.theme-glass:not(.theme-light) table thead tr,
+        body.theme-glass:not(.theme-light) table thead th {
+            background: rgba(38, 78, 119, .48) !important;
+            color: #edf6ff !important;
+            border-color: rgba(125, 180, 225, .22) !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] tbody tr:hover {
+            background: rgba(37, 132, 216, .09) !important;
+        }
+        body.theme-glass.theme-dark [id^="tab-"] tbody tr:hover,
+        body.theme-glass:not(.theme-light) [id^="tab-"] tbody tr:hover {
+            background: rgba(56, 189, 248, .10) !important;
+        }
+
+        body.theme-glass .theme-focus:focus,
+        body.theme-glass input:focus,
+        body.theme-glass select:focus,
+        body.theme-glass textarea:focus {
+            outline: none;
+            border-color: var(--theme-accent) !important;
+            box-shadow: 0 0 0 3px var(--theme-accent-glow) !important;
+        }
+
+        body.theme-glass .theme-accent-bg {
+            background: linear-gradient(135deg, var(--theme-accent), var(--theme-accent-hover)) !important;
+            color: #fff !important;
+            border-color: rgba(255, 255, 255, .22) !important;
+        }
+        body.theme-glass .theme-accent-text { color: var(--theme-accent) !important; }
+
+        body.theme-glass [id$="-modal"] > div,
+        body.theme-glass [role="dialog"],
+        body.theme-glass .modal-content {
+            border-radius: 22px !important;
+            backdrop-filter: blur(28px) saturate(150%);
+            -webkit-backdrop-filter: blur(28px) saturate(150%);
+        }
+
+        body.theme-glass.theme-light [id$="-modal"] > div,
+        body.theme-glass.theme-light [role="dialog"],
+        body.theme-glass.theme-light .modal-content {
+            background: rgba(218, 234, 249, .72) !important;
+            color: #173957 !important;
+            border: 1px solid rgba(45, 90, 140, .28) !important;
+            box-shadow: 0 24px 64px rgba(31, 62, 96, .20), inset 0 1px 0 rgba(255,255,255,.58) !important;
+        }
+
+        body.theme-glass.theme-dark [id$="-modal"] > div,
+        body.theme-glass.theme-dark [role="dialog"],
+        body.theme-glass.theme-dark .modal-content,
+        body.theme-glass:not(.theme-light) [id$="-modal"] > div,
+        body.theme-glass:not(.theme-light) [role="dialog"],
+        body.theme-glass:not(.theme-light) .modal-content {
+            background: rgba(10, 29, 51, .82) !important;
+            color: #edf6ff !important;
+            border: 1px solid rgba(125, 180, 225, .26) !important;
+            box-shadow: 0 24px 70px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.08) !important;
+        }
+
+        body.theme-glass.theme-light label { color: #294966 !important; }
+        body.theme-glass.theme-dark label,
+        body.theme-glass:not(.theme-light) label { color: #dcecff !important; }
+
+        body.theme-glass ::-webkit-scrollbar-thumb {
+            background: rgba(90, 137, 184, .42);
+            border-radius: 999px;
+        }
+        body.theme-glass.theme-dark ::-webkit-scrollbar-thumb,
+        body.theme-glass:not(.theme-light) ::-webkit-scrollbar-thumb {
+            background: rgba(125, 180, 225, .38);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body.theme-glass *,
+            body.theme-glass *::before,
+            body.theme-glass *::after {
+                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+
+    </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
 
