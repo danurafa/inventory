@@ -548,6 +548,21 @@
         .premium-dashboard .dashboard-glow-card:hover { transform: translateY(-3px); }
         .premium-dashboard #chart-masuk > *, .premium-dashboard #chart-keluar > * { flex-shrink: 0; }
         .premium-dashboard #recent-activity-body tr:hover { background: rgba(59,130,246,.07); }
+        /* BATASI TINGGI LOG AKTIVITAS */
+        .premium-dashboard #recent-activity-scroll {
+            max-height: 285px;
+            overflow-y: auto;
+            overflow-x: auto;
+            overscroll-behavior: contain;
+            scrollbar-gutter: stable;
+        }
+        
+        /* HEADER TETAP TERLIHAT SAAT SCROLL */
+        .premium-dashboard #recent-activity-scroll thead th {
+            position: sticky;
+            top: 0;
+            z-index: 6;
+        }
         body.theme-glass.theme-light .premium-dashboard h2,
         body.theme-glass.theme-light .premium-dashboard h3 { color:#173253 !important; }
         body.theme-glass.theme-light .premium-dashboard p,
