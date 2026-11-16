@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.15-glass-blue-dashboard-layout-fix-v12";
+        const APP_VERSION = "2026.11.16-dual-ui-classic-glass-premium-crystal-v20-native-scroll";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -2087,7 +2087,426 @@
             }
         }
 
-    </style>
+    
+
+        /* Appearance selector: panel terpisah agar sidebar tetap bersih */
+        .appearance-open-btn{width:100%;display:flex;align-items:center;gap:11px;padding:11px 10px;border:1px solid rgba(125,165,210,.16);border-radius:13px;background:rgba(255,255,255,.045);color:#c7d7e8;text-align:left;transition:.2s;}
+        .appearance-open-btn:hover{background:rgba(59,130,246,.13);border-color:rgba(96,165,250,.38);transform:translateY(-1px)}
+        .appearance-open-btn>span{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+        .appearance-open-btn strong{font-size:11px;font-weight:750;letter-spacing:.02em}
+        .appearance-open-btn small{font-size:10px;color:#829bb5}
+        .appearance-open-arrow{margin-left:auto;opacity:.65}
+        #inventory-app-layout.sidebar-collapsed #open-appearance-btn{justify-content:center;padding:12px 0}
+        #inventory-app-layout.sidebar-collapsed #open-appearance-btn>span,#inventory-app-layout.sidebar-collapsed #open-appearance-btn>.appearance-open-arrow{display:none}
+        .appearance-overlay{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(3,12,25,.68);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+        .appearance-overlay.hidden{display:none!important}
+        .appearance-dialog{width:min(760px,100%);max-height:min(90vh,760px);overflow:auto;border:1px solid rgba(148,185,226,.25);border-radius:24px;padding:25px;background:linear-gradient(145deg,rgba(13,31,53,.98),rgba(7,19,35,.98));box-shadow:0 30px 100px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.08);color:#e8f2ff}
+        .appearance-dialog-header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}
+        .appearance-eyebrow{display:flex;align-items:center;gap:7px;color:#76baff;font-size:10px;font-weight:800;letter-spacing:.14em}
+        .appearance-dialog-header h2{font-size:23px;font-weight:800;letter-spacing:-.035em;margin:8px 0 4px}
+        .appearance-dialog-header p{font-size:12px;color:#93a9c1;margin:0}
+        .appearance-close{width:36px;height:36px;display:grid;place-items:center;border:1px solid rgba(148,185,226,.2);border-radius:11px;color:#b8cbe0;background:rgba(255,255,255,.05)}
+        .appearance-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+        .appearance-theme-card{display:flex;flex-direction:column;gap:12px;text-align:left;padding:15px;border-radius:17px;border:1px solid rgba(148,185,226,.2);background:rgba(255,255,255,.045);color:inherit;transition:border-color .2s,background .2s,transform .2s;min-width:0}
+        .appearance-theme-card:hover{transform:translateY(-2px);border-color:rgba(96,165,250,.6);background:rgba(59,130,246,.09)}
+        .appearance-theme-card.active{border-color:#55aaff;background:rgba(42,119,199,.15);box-shadow:0 0 0 2px rgba(75,160,255,.13),0 12px 30px rgba(0,0,0,.14)}
+        .appearance-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+        .appearance-theme-name{font-size:14px;font-weight:800}
+        .appearance-selected-mark{display:none;align-items:center;gap:4px;color:#7fc2ff;font-size:9px;font-weight:800;letter-spacing:.06em}
+        .appearance-theme-card.active .appearance-selected-mark{display:flex}
+        .appearance-preview{height:148px;display:flex;overflow:hidden;border-radius:11px;border:1px solid rgba(255,255,255,.12);padding:8px;gap:7px}
+        .classic-large-preview{background:linear-gradient(140deg,#071a30,#102c49)}
+        .preview-sidebar{width:24%;display:flex;flex-direction:column;gap:8px;padding:8px 6px;border-radius:6px;background:#0b2139;border:1px solid rgba(125,183,235,.15)}
+        .preview-sidebar i{height:7px;border-radius:4px;background:rgba(118,178,235,.5)}
+        .preview-sidebar i:first-child{background:#3e8bd1}
+        .preview-workspace{flex:1;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:27px 1fr 1fr;gap:7px;padding:5px}
+        .preview-workspace i{border-radius:6px;background:rgba(67,133,190,.3);border:1px solid rgba(122,184,236,.16)}
+        .preview-workspace i:first-child{grid-column:1/-1;background:linear-gradient(90deg,rgba(46,126,197,.55),rgba(46,126,197,.12))}
+        .crystal-large-preview{flex-direction:column;background:linear-gradient(145deg,#eaf3ff,#d9e8f8)}
+        .preview-topbar{height:22px;display:flex;align-items:center;gap:7px;padding:4px 7px;border-radius:6px;background:rgba(255,255,255,.9);border:1px solid #c7d9ee}
+        .preview-topbar i{width:30px;height:6px;border-radius:4px;background:#a9c3e1}.preview-topbar i:first-child{background:#4f8dcc}
+        .preview-crystal-workspace{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:5px}
+        .preview-crystal-workspace i{border-radius:7px;background:rgba(255,255,255,.85);border:1px solid rgba(150,181,216,.6);box-shadow:0 4px 10px rgba(83,123,168,.09)}
+        .appearance-card-description{font-size:10px;line-height:1.5;color:#9db2c9;min-height:30px}
+        .appearance-card-action{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid rgba(148,185,226,.13);font-size:10px;font-weight:750;color:#8fc7ff}
+        .appearance-dialog-footer{display:flex;align-items:center;gap:8px;margin-top:18px;padding:11px 13px;border-radius:11px;background:rgba(65,130,195,.1);color:#9bb6d2;font-size:10px;line-height:1.5}
+        body.theme-crystal .appearance-dialog{background:linear-gradient(145deg,rgba(250,253,255,.99),rgba(231,241,252,.99));border-color:rgba(112,153,199,.3);color:#193b5f;box-shadow:0 30px 90px rgba(50,83,122,.25)}
+        body.theme-crystal .appearance-dialog-header p,body.theme-crystal .appearance-card-description{color:#66819e}
+        body.theme-crystal .appearance-theme-card{background:rgba(255,255,255,.65);border-color:rgba(114,153,195,.28)}
+        body.theme-crystal .appearance-theme-card.active{background:#edf6ff;border-color:#5b9de0}
+        body.theme-crystal .appearance-theme-name{color:#1d4269}
+        body.theme-crystal .appearance-card-action{color:#2767a8;border-color:rgba(112,153,199,.2)}
+        body.theme-crystal .appearance-close{color:#456887;border-color:rgba(112,153,199,.25);background:#f4f8fd}
+        body.theme-crystal .appearance-dialog-footer{background:#e4effb;color:#567797}
+        @media(max-width:600px){.appearance-overlay{padding:12px}.appearance-dialog{padding:18px;border-radius:19px}.appearance-options{grid-template-columns:1fr;gap:10px}.appearance-preview{height:112px}.appearance-dialog-header h2{font-size:20px}}
+
+        /* =========================================================
+           DUAL UI DESIGN LAYER — CLASSIC GLASS / PREMIUM CRYSTAL
+           Hanya mengubah presentasi visual; tidak menyentuh data/transaksi.
+           ========================================================= */
+        .theme-choice-btn{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;padding:9px 5px;border:1px solid rgba(125,180,255,.22);border-radius:13px;background:rgba(15,35,60,.42);color:#cbdcf2;transition:all .2s ease}
+        .theme-choice-btn:hover{transform:translateY(-1px);border-color:rgba(96,165,250,.65)}
+        .theme-choice-btn.active{border-color:#60a5fa;background:rgba(59,130,246,.18);box-shadow:0 0 0 2px rgba(59,130,246,.12),0 8px 20px rgba(0,0,0,.12)}
+        .theme-choice-preview{width:100%;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+        .classic-preview{color:#bfdbfe;background:linear-gradient(135deg,#0b1b31,#1e4d82);border:1px solid rgba(147,197,253,.28)}
+        .crystal-preview{color:#2563eb;background:linear-gradient(135deg,#fff,#c9ddf4);border:1px solid rgba(71,125,190,.25)}
+        .theme-choice-title{font-size:9px;font-weight:800;line-height:1.2;text-align:center}
+        .theme-choice-subtitle{font-size:8px;opacity:.72;line-height:1.2;text-align:center}
+
+        /* Classic Glass: deeper navy, stronger contrast, restrained glass. */
+        body.theme-glass.theme-classic{--theme-bg:#07111f;--theme-card:rgba(13,29,49,.94);--theme-card-border:rgba(96,165,250,.22);--theme-accent:#3b82f6;--theme-text:#eaf2ff;--theme-text-muted:#9fb3cc;background:radial-gradient(ellipse at 10% 0%,rgba(37,99,235,.17),transparent 38%),linear-gradient(145deg,#07111f,#0b1728 62%,#081321)!important;color:#eaf2ff!important}
+        body.theme-glass.theme-classic .app-card,body.theme-glass.theme-classic .dashboard-glow-card{background:linear-gradient(145deg,rgba(19,39,64,.96),rgba(10,25,44,.96))!important;border:1px solid rgba(125,180,255,.2)!important;box-shadow:0 12px 28px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.045)!important;backdrop-filter:blur(12px)}
+        body.theme-glass.theme-classic aside,body.theme-glass.theme-classic header{background:rgba(6,18,34,.96)!important;border-color:rgba(125,180,255,.16)!important}
+        body.theme-glass.theme-classic #dashboard-hero{background:linear-gradient(125deg,rgba(20,65,120,.68),rgba(12,29,51,.96) 58%,rgba(8,40,62,.9))!important;border-color:rgba(96,165,250,.24)!important}
+        body.theme-glass.theme-classic .theme-choice-btn{color:#dbeafe}
+
+        /* Premium Crystal: brighter pearl surfaces, crisp blue accents, layered highlights. */
+        body.theme-glass.theme-crystal{--theme-bg:#eaf1fb;--theme-card:rgba(255,255,255,.78);--theme-card-border:rgba(105,145,195,.3);--theme-accent:#2563eb;--theme-text:#18304e;--theme-text-muted:#607895;background:radial-gradient(ellipse at 8% 0%,rgba(255,255,255,.98),transparent 38%),radial-gradient(ellipse at 92% 88%,rgba(125,190,255,.3),transparent 42%),linear-gradient(135deg,#eaf2fc 0%,#dce8f7 48%,#f5f8fd 100%)!important;color:#18304e!important}
+        body.theme-glass.theme-crystal .app-card,body.theme-glass.theme-crystal .dashboard-glow-card{background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(231,241,253,.68))!important;border:1px solid rgba(102,143,190,.28)!important;box-shadow:0 14px 34px rgba(42,75,116,.12),inset 0 1px 0 rgba(255,255,255,.95)!important;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+        body.theme-glass.theme-crystal aside,body.theme-glass.theme-crystal header{background:rgba(239,246,255,.88)!important;border-color:rgba(91,139,195,.2)!important;box-shadow:0 8px 26px rgba(49,84,125,.07)}
+        body.theme-glass.theme-crystal #dashboard-hero{background:linear-gradient(125deg,rgba(255,255,255,.94),rgba(215,232,252,.88) 56%,rgba(231,245,255,.94))!important;border-color:rgba(89,139,198,.28)!important;box-shadow:0 18px 42px rgba(45,88,140,.12)!important}
+        body.theme-glass.theme-crystal #dashboard-hero .text-white,body.theme-glass.theme-crystal #dashboard-hero .text-blue-100,body.theme-glass.theme-crystal #dashboard-hero .text-blue-200{color:#24466f!important}
+        body.theme-glass.theme-crystal .theme-choice-btn{color:#274566;background:rgba(255,255,255,.62);border-color:rgba(91,139,195,.25)}
+        body.theme-glass.theme-crystal .theme-choice-btn.active{background:rgba(219,235,255,.92);border-color:#3b82f6;box-shadow:0 0 0 2px rgba(59,130,246,.12),0 8px 20px rgba(49,84,125,.1)}
+        body.theme-glass.theme-crystal .theme-choice-subtitle{color:#607895}
+        body.theme-glass.theme-crystal [id^="tab-"] table{color:#24415f}
+        body.theme-glass.theme-crystal [id^="tab-"] thead,body.theme-glass.theme-crystal [id^="tab-"] thead tr{background:rgba(191,219,254,.58)!important;color:#23466f!important}
+        body.theme-glass.theme-crystal [id^="tab-"] tbody tr:hover{background:rgba(96,165,250,.11)!important}
+        @media(max-width:640px){.theme-choice-btn{padding:7px 3px}.theme-choice-title{font-size:8px}}
+
+
+        /* =========================================================
+           DISTINCT LAYOUTS — bukan sekadar pergantian warna.
+           Classic: sidebar vertikal + dashboard padat.
+           Crystal: top navigation + workspace lebar + panel premium.
+           ========================================================= */
+        /* CLASSIC GLASS: mempertahankan pola aplikasi klasik yang tegas. */
+        body.theme-classic #inventory-app-layout{display:flex;flex-direction:row;}
+        body.theme-classic #inventory-sidebar{width:16rem;min-width:16rem;flex:0 0 16rem;border-right:1px solid rgba(96,165,250,.18);border-bottom:0;}
+        body.theme-classic #inventory-main-content{padding:1.5rem 2rem;background:linear-gradient(160deg,#081525 0%,#0b1728 100%);}
+        body.theme-classic #dashboard-hero{border-radius:18px!important;}
+        body.theme-classic .app-card,body.theme-classic .dashboard-glow-card{border-radius:16px!important;}
+
+        /* PREMIUM CRYSTAL: navigasi horizontal seperti workspace modern. */
+        body.theme-crystal #inventory-app-layout{display:flex;flex-direction:column;overflow:visible;background:linear-gradient(180deg,#edf4fd 0%,#e5eef9 100%);}
+        body.theme-crystal #inventory-sidebar{width:100%!important;min-width:0!important;max-width:none!important;flex:0 0 auto!important;height:auto!important;min-height:76px;display:flex!important;flex-direction:row!important;align-items:center;justify-content:space-between!important;gap:12px;padding:8px 18px!important;border-right:0!important;border-bottom:1px solid rgba(91,139,195,.2)!important;background:rgba(248,251,255,.88)!important;box-shadow:0 8px 28px rgba(56,91,132,.08)!important;backdrop-filter:blur(24px)!important;-webkit-backdrop-filter:blur(24px)!important;z-index:30;}
+        body.theme-crystal #inventory-sidebar #sidebar-toggle{display:none!important;}
+        body.theme-crystal #inventory-sidebar nav{display:flex!important;flex:1 1 auto;align-items:center;gap:6px!important;min-width:0;padding:0!important;overflow-x:auto!important;overflow-y:hidden!important;}
+        body.theme-crystal #inventory-sidebar nav>div:first-child{display:none!important;}
+        body.theme-crystal #inventory-sidebar .sidebar-btn{width:auto!important;flex:0 0 auto;display:inline-flex!important;align-items:center;justify-content:center;gap:8px;padding:10px 13px!important;border:1px solid transparent;border-radius:12px!important;color:#55708e!important;background:transparent!important;box-shadow:none!important;white-space:nowrap;font-size:11px!important;}
+        body.theme-crystal #inventory-sidebar .sidebar-btn:hover{background:rgba(219,234,254,.72)!important;color:#1d4f91!important;border-color:rgba(96,145,205,.16)!important;}
+        body.theme-crystal #inventory-sidebar .sidebar-btn.theme-accent-bg,body.theme-crystal #inventory-sidebar .sidebar-btn.active{background:linear-gradient(135deg,#dcecff,#c8def8)!important;color:#17477f!important;border:1px solid rgba(70,130,200,.28)!important;box-shadow:0 5px 14px rgba(54,105,166,.12)!important;}
+        body.theme-crystal #inventory-sidebar>div:last-child{display:flex!important;flex:0 0 auto;align-items:center;gap:10px;width:auto!important;padding:0!important;border:0!important;background:transparent!important;}
+        body.theme-crystal #inventory-sidebar>div:last-child>div:first-child{display:none!important;}
+        body.theme-crystal #inventory-sidebar #theme-picker{display:flex!important;gap:5px!important;width:auto;}
+        body.theme-crystal #inventory-sidebar .theme-choice-btn{width:112px;min-width:112px;padding:5px 7px!important;gap:2px!important;border-radius:10px!important;}
+        body.theme-crystal #inventory-sidebar .theme-choice-preview{height:15px!important;border-radius:5px!important;}
+        body.theme-crystal #inventory-sidebar .theme-choice-title{font-size:8px!important;}
+        body.theme-crystal #inventory-sidebar .theme-choice-subtitle{display:none!important;}
+        body.theme-crystal #inventory-sidebar #reset-btn-wrapper{display:none!important;}
+        body.theme-crystal #inventory-main-content{width:100%;min-width:0;flex:1 1 auto;overflow-y:auto!important;padding:26px clamp(18px,3vw,48px)!important;background:transparent!important;}
+        body.theme-crystal #dashboard-hero{border-radius:28px!important;padding:30px!important;min-height:220px;box-shadow:0 22px 48px rgba(49,91,145,.13)!important;}
+        body.theme-crystal .app-card,body.theme-crystal .dashboard-glow-card{border-radius:22px!important;border:1px solid rgba(255,255,255,.82)!important;box-shadow:0 12px 30px rgba(58,91,130,.09),inset 0 1px 0 rgba(255,255,255,.95)!important;}
+        body.theme-crystal #inventory-top-header{height:76px!important;padding-left:clamp(18px,3vw,48px)!important;padding-right:clamp(18px,3vw,48px)!important;background:rgba(250,252,255,.9)!important;border-bottom:1px solid rgba(107,146,190,.18)!important;box-shadow:0 5px 22px rgba(55,88,128,.06)!important;}
+        body.theme-crystal #inventory-top-header h1{color:#183b61!important;letter-spacing:-.025em!important;}
+        body.theme-crystal #inventory-top-header p{color:#6983a0!important;}
+        body.theme-crystal #live-clock{background:rgba(224,238,255,.72)!important;border:1px solid rgba(113,157,207,.25)!important;color:#315b87!important;box-shadow:none!important;}
+        body.theme-crystal #current-user-banner{background:rgba(230,240,252,.72)!important;border-color:rgba(113,157,207,.2)!important;color:#315477!important;}
+        body.theme-crystal #inventory-main-content [id^="tab-"] table{border-collapse:separate;border-spacing:0;}
+        body.theme-crystal #inventory-main-content [id^="tab-"] thead th{font-size:10px;letter-spacing:.045em;text-transform:uppercase;}
+        @media(max-width:900px){
+          body.theme-crystal #inventory-sidebar{align-items:stretch!important;flex-direction:column!important;gap:7px!important;padding:8px 12px!important;}
+          body.theme-crystal #inventory-sidebar nav{width:100%;}
+          body.theme-crystal #inventory-sidebar>div:last-child{position:absolute;right:12px;top:8px;}
+          body.theme-crystal #inventory-sidebar .sidebar-btn{padding:8px 10px!important;}
+          body.theme-crystal #inventory-sidebar .theme-choice-btn{width:76px;min-width:76px;}
+          body.theme-crystal #inventory-main-content{padding:18px 14px!important;}
+        }
+        @media(max-width:560px){
+          body.theme-crystal #inventory-top-header{height:auto!important;min-height:68px;padding:10px 12px!important;}
+          body.theme-crystal #inventory-top-header h1{font-size:12px!important;white-space:normal!important;}
+          body.theme-crystal #inventory-top-header #live-clock{display:none!important;}
+          body.theme-crystal #inventory-sidebar>div:last-child{display:none!important;}
+          body.theme-crystal #inventory-sidebar nav{padding-right:0!important;}
+          body.theme-crystal #inventory-sidebar .sidebar-btn span{font-size:10px!important;}
+          body.theme-crystal #dashboard-hero{padding:20px!important;border-radius:20px!important;}
+        }
+
+
+        /* =========================================================
+           V16 VISUAL POLISH — hierarchy, spacing, responsive navigation,
+           table/forms readability. Presentation only; no data logic changed.
+           ========================================================= */
+        #inventory-top-header{z-index:45;transition:background .25s ease,border-color .25s ease}
+        #header-brand-group{flex:1 1 auto}
+        #inventory-app-layout{min-height:0;align-items:stretch}
+        #inventory-sidebar{position:relative;z-index:35;min-height:0;transition:width .25s ease,background .25s ease,border-color .25s ease}
+        #inventory-sidebar nav{scrollbar-width:thin}
+        #inventory-sidebar .sidebar-btn{min-height:42px;letter-spacing:.005em}
+        #inventory-sidebar .sidebar-btn i{flex:0 0 auto}
+        #inventory-main-content{scrollbar-gutter:stable;overscroll-behavior:contain}
+        #dashboard-hero{isolation:isolate}
+        #dashboard-hero h2,#dashboard-hero h1{letter-spacing:-.035em;line-height:1.08}
+        .app-card,.dashboard-glow-card{position:relative;overflow:hidden;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+        .app-card:focus-within,.dashboard-glow-card:focus-within{outline:2px solid rgba(59,130,246,.35);outline-offset:2px}
+        #inventory-main-content [id^="tab-"]{min-width:0}
+        #inventory-main-content [id^="tab-"] table{width:100%;min-width:680px;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:13px}
+        #inventory-main-content [id^="tab-"] thead th{position:sticky;top:0;z-index:2;font-weight:800;letter-spacing:.035em}
+        #inventory-main-content [id^="tab-"] tbody tr{transition:background .16s ease}
+        #inventory-main-content input:not([type=checkbox]),#inventory-main-content select,#inventory-main-content textarea{min-height:39px;border-radius:10px;transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
+        #inventory-main-content input:focus,#inventory-main-content select:focus,#inventory-main-content textarea:focus{outline:none;box-shadow:0 0 0 3px rgba(59,130,246,.16)!important}
+        #inventory-main-content button:not(.sidebar-btn):not(.theme-choice-btn){transition:transform .16s ease,box-shadow .16s ease,filter .16s ease}
+        #inventory-main-content button:not(:disabled):active{transform:translateY(1px)}
+        .theme-choice-btn{min-height:76px;cursor:pointer}
+        .theme-choice-btn:focus-visible{outline:3px solid rgba(59,130,246,.55);outline-offset:3px}
+
+        /* Classic Glass — compact command-center composition. */
+        body.theme-classic #inventory-top-header{background:linear-gradient(100deg,rgba(5,16,31,.98),rgba(11,31,54,.96))!important;border-bottom:1px solid rgba(96,165,250,.2)!important;box-shadow:0 8px 28px rgba(0,0,0,.2)}
+        body.theme-classic #inventory-sidebar{box-shadow:12px 0 34px rgba(0,0,0,.13);background:linear-gradient(180deg,rgba(8,24,43,.98),rgba(6,17,31,.98))!important}
+        body.theme-classic #inventory-sidebar nav{padding:16px 12px 12px}
+        body.theme-classic #inventory-sidebar .sidebar-btn{border:1px solid transparent;border-radius:11px!important;color:#a9bdd5!important}
+        body.theme-classic #inventory-sidebar .sidebar-btn:hover{background:rgba(59,130,246,.11)!important;border-color:rgba(96,165,250,.16);color:#eff6ff!important}
+        body.theme-classic #inventory-sidebar .sidebar-btn.active,body.theme-classic #inventory-sidebar .sidebar-btn.theme-accent-bg{background:linear-gradient(100deg,rgba(37,99,235,.3),rgba(14,116,144,.16))!important;border:1px solid rgba(96,165,250,.3)!important;box-shadow:inset 3px 0 #60a5fa,0 8px 20px rgba(0,0,0,.14)!important}
+        body.theme-classic #inventory-main-content{background:radial-gradient(ellipse at 80% 0%,rgba(30,64,110,.14),transparent 35%),linear-gradient(160deg,#081525,#0a1728 70%,#07111f)!important}
+        body.theme-classic #dashboard-hero{min-height:205px;padding:30px!important;border-radius:21px!important;box-shadow:0 22px 52px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.06)!important}
+        body.theme-classic .app-card,body.theme-classic .dashboard-glow-card{border-radius:17px!important}
+        body.theme-classic .app-card:hover,body.theme-classic .dashboard-glow-card:hover{transform:translateY(-2px);border-color:rgba(96,165,250,.34)!important;box-shadow:0 18px 38px rgba(0,0,0,.28)!important}
+        body.theme-classic #inventory-main-content [id^="tab-"] thead th{background:#142b46;color:#cfe3ff}
+        body.theme-classic #inventory-main-content [id^="tab-"] tbody tr:nth-child(even){background:rgba(255,255,255,.018)}
+        body.theme-classic #inventory-main-content [id^="tab-"] tbody tr:hover{background:rgba(59,130,246,.1)}
+
+        /* Premium Crystal — airy workspace with a real top-navigation bar. */
+        body.theme-crystal #inventory-top-header{position:relative!important;top:auto!important;background:rgba(250,253,255,.94)!important;border-bottom:1px solid rgba(123,157,194,.2)!important;box-shadow:0 7px 24px rgba(50,83,120,.07)!important}
+        body.theme-crystal #inventory-sidebar{position:sticky;top:0;box-shadow:0 10px 28px rgba(61,95,137,.08)!important}
+        body.theme-crystal #inventory-sidebar nav{padding:0 4px!important;scrollbar-width:none}
+        body.theme-crystal #inventory-sidebar nav::-webkit-scrollbar{display:none}
+        body.theme-crystal #inventory-sidebar .sidebar-btn{min-height:42px!important;font-weight:750!important;color:#54708e!important}
+        body.theme-crystal #inventory-sidebar .sidebar-btn.active,body.theme-crystal #inventory-sidebar .sidebar-btn.theme-accent-bg{background:linear-gradient(135deg,#e5f1ff,#d4e7fc)!important;color:#164a82!important;box-shadow:inset 0 -2px #4388d2,0 5px 14px rgba(59,110,165,.1)!important}
+        body.theme-crystal #inventory-main-content{background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.95),transparent 44%),linear-gradient(180deg,#edf4fc,#e6eff9)!important}
+        body.theme-crystal #dashboard-hero{min-height:230px!important;padding:clamp(24px,3vw,40px)!important;border-radius:28px!important;box-shadow:0 24px 58px rgba(55,98,148,.14),inset 0 1px 0 #fff!important}
+        body.theme-crystal .app-card,body.theme-crystal .dashboard-glow-card{border-radius:23px!important;background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(239,246,254,.8))!important;border-color:rgba(255,255,255,.95)!important;box-shadow:0 13px 32px rgba(55,91,132,.09),inset 0 1px 0 #fff!important}
+        body.theme-crystal .app-card:hover,body.theme-crystal .dashboard-glow-card:hover{transform:translateY(-3px);box-shadow:0 20px 42px rgba(55,91,132,.14),inset 0 1px 0 #fff!important}
+        body.theme-crystal #inventory-main-content [id^="tab-"] thead th{background:linear-gradient(180deg,#e7f1fc,#dceafa)!important;color:#315779!important;border-bottom:1px solid #c8daee}
+        body.theme-crystal #inventory-main-content [id^="tab-"] tbody tr:nth-child(even){background:rgba(218,233,249,.23)}
+        body.theme-crystal #inventory-main-content [id^="tab-"] tbody tr:hover{background:rgba(111,169,225,.13)!important}
+        body.theme-crystal #inventory-main-content input:not([type=checkbox]),body.theme-crystal #inventory-main-content select,body.theme-crystal #inventory-main-content textarea{background:rgba(255,255,255,.82)!important;border:1px solid rgba(116,153,193,.3)!important;color:#1e3d5d!important}
+
+        /* Responsive safeguards: preserve access to theme choices and navigation. */
+        @media(max-width:900px){
+          body.theme-classic #inventory-sidebar{width:13.5rem;min-width:13.5rem;flex-basis:13.5rem}
+          body.theme-crystal #inventory-sidebar{position:relative;min-height:0!important}
+          body.theme-crystal #inventory-sidebar nav{flex-wrap:nowrap!important}
+          body.theme-crystal #inventory-sidebar>div:last-child{position:static!important;right:auto!important;top:auto!important}
+          body.theme-crystal #inventory-sidebar #theme-picker{display:flex!important}
+        }
+        @media(max-width:640px){
+          body.theme-classic #inventory-app-layout{overflow:visible}
+          body.theme-classic #inventory-sidebar{width:min(84vw,18rem);min-width:min(84vw,18rem);flex-basis:min(84vw,18rem)}
+          body.theme-classic #inventory-main-content{padding:16px 12px!important}
+          body.theme-classic #dashboard-hero{padding:20px!important;min-height:180px!important;border-radius:18px!important}
+          body.theme-crystal #inventory-sidebar{padding:9px 10px!important;gap:8px!important}
+          body.theme-crystal #inventory-sidebar nav{padding-right:0!important}
+          body.theme-crystal #inventory-sidebar .sidebar-btn{padding:8px 10px!important;min-height:38px!important}
+          body.theme-crystal #inventory-sidebar>div:last-child{display:flex!important;width:100%!important;justify-content:flex-end!important}
+          body.theme-crystal #inventory-sidebar #theme-picker{display:flex!important;gap:6px!important}
+          body.theme-crystal #inventory-sidebar .theme-choice-btn{width:94px!important;min-width:94px!important;min-height:50px!important;padding:5px!important}
+          body.theme-crystal #inventory-sidebar .theme-choice-preview{height:14px!important}
+          body.theme-crystal #inventory-sidebar .theme-choice-title{font-size:8px!important}
+          body.theme-crystal #inventory-sidebar .theme-choice-subtitle{display:none!important}
+          body.theme-crystal #inventory-sidebar #reset-btn-wrapper{display:none!important}
+          body.theme-crystal #inventory-main-content{padding:14px 10px!important}
+          body.theme-crystal #dashboard-hero{padding:19px!important;min-height:180px!important;border-radius:20px!important}
+          #inventory-main-content [id^="tab-"]{overflow-x:auto}
+        }
+        @media(hover:none){.app-card:hover,.dashboard-glow-card:hover{transform:none!important}}
+
+
+
+        /* V17 FIX: sidebar collapse width must win over per-theme layout widths.
+           The previous Classic width override kept the sidebar wide while the
+           collapsed state hid every label, leaving only centered icons. */
+        body.theme-classic #inventory-app-layout.sidebar-collapsed #inventory-sidebar {
+            width:5rem !important;
+            min-width:5rem !important;
+            max-width:5rem !important;
+            flex:0 0 5rem !important;
+        }
+        body.theme-classic #inventory-app-layout:not(.sidebar-collapsed) #inventory-sidebar {
+            width:16rem;
+            min-width:16rem;
+            flex:0 0 16rem;
+        }
+        /* Premium Crystal uses a horizontal menu, so the vertical collapse
+           preference must never hide its navigation labels. */
+        body.theme-crystal #inventory-app-layout #inventory-sidebar .sidebar-btn > span {
+            display:inline !important;
+        }
+        body.theme-crystal #inventory-app-layout #inventory-sidebar .sidebar-btn {
+            justify-content:center !important;
+            gap:8px !important;
+            padding-left:13px !important;
+            padding-right:13px !important;
+        }
+        @media (max-width:767px) {
+            body.theme-classic #inventory-app-layout #inventory-sidebar {
+                width:min(17rem,84vw) !important;
+                min-width:min(17rem,84vw) !important;
+                max-width:min(17rem,84vw) !important;
+                flex-basis:min(17rem,84vw) !important;
+            }
+            body.theme-classic #inventory-app-layout.mobile-sidebar-open #inventory-sidebar .sidebar-btn > span {
+                display:inline !important;
+            }
+        }
+
+
+        /* ==========================================================
+           V20 — NATIVE PAGE SCROLL
+           Wheel/trackpad anywhere on the app scrolls the document.
+           Only transaction history containers keep independent scroll.
+           No wheel-event interception or forced scrollTop scripting.
+           ========================================================== */
+        html {
+            min-height: 100%;
+            height: auto !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            scroll-behavior: auto;
+        }
+        body {
+            display: block !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            overflow-y: visible !important;
+            overflow-x: hidden !important;
+        }
+        #inventory-top-header {
+            position: sticky;
+            top: 0;
+            z-index: 45;
+        }
+        #inventory-app-layout {
+            display: flex;
+            flex: 0 0 auto !important;
+            width: 100%;
+            min-height: calc(100vh - 4rem) !important;
+            height: auto !important;
+            overflow: visible !important;
+            align-items: stretch;
+        }
+        #inventory-sidebar {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+            align-self: stretch;
+        }
+        #inventory-sidebar nav {
+            overflow: visible !important;
+            max-height: none !important;
+        }
+        #inventory-main-content {
+            flex: 1 1 0% !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+            overscroll-behavior: auto !important;
+            scrollbar-gutter: auto !important;
+        }
+        /* Riwayat transaksi tetap menjadi satu-satunya area scroll vertikal lokal. */
+        .fluid-table-container,
+        #recent-activity-scroll {
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+            overscroll-behavior: contain !important;
+            scrollbar-gutter: stable;
+        }
+        /* List dashboard lain mengikuti scroll halaman, bukan membuat scroll bersarang. */
+        #low-stock-list {
+            max-height: none !important;
+            overflow-y: visible !important;
+        }
+        @media (max-width: 767px) {
+            #inventory-app-layout {
+                min-height: calc(100vh - 4rem) !important;
+                overflow: visible !important;
+            }
+            #inventory-sidebar {
+                max-height: none !important;
+            }
+            #inventory-sidebar nav {
+                overflow: visible !important;
+            }
+            #inventory-main-content {
+                overflow: visible !important;
+            }
+        }
+
+
+
+        /* ==========================================================
+           V22 — STABLE PREMIUM MOTION / SHADOW FLICKER FIX
+           Keep the exclusive lift animation. Stop animating box-shadow
+           and keep glass filters stable during hover/repaint.
+           Applies to dashboard cards and cards inside every module.
+           ========================================================== */
+        body.theme-glass .app-card,
+        body.theme-glass .dashboard-glow-card,
+        body.theme-classic .app-card,
+        body.theme-classic .dashboard-glow-card,
+        body.theme-crystal .app-card,
+        body.theme-crystal .dashboard-glow-card {
+            transition-property: transform, border-color !important;
+            transition-duration: .22s, .22s !important;
+            transition-timing-function: ease, ease !important;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+        }
+
+        /* Keep the lift on hover, but do not animate/recalculate a dark shadow. */
+        body.theme-classic .app-card:hover,
+        body.theme-classic .dashboard-glow-card:hover {
+            transform: translate3d(0,-2px,0) !important;
+            border-color: rgba(96,165,250,.38) !important;
+            box-shadow: 0 12px 28px rgba(0,12,28,.22), inset 0 1px 0 rgba(255,255,255,.045) !important;
+        }
+        body.theme-crystal .app-card:hover,
+        body.theme-crystal .dashboard-glow-card:hover {
+            transform: translate3d(0,-3px,0) !important;
+            border-color: rgba(102,153,210,.42) !important;
+            box-shadow: 0 13px 32px rgba(42,75,116,.12), inset 0 1px 0 rgba(255,255,255,.95) !important;
+        }
+
+        /* Avoid competing generic hover rules from older theme layers. */
+        body.theme-glass .app-card,
+        body.theme-glass .dashboard-glow-card {
+            background-clip: padding-box;
+            isolation: isolate;
+        }
+        body.theme-glass.theme-classic .app-card,
+        body.theme-glass.theme-classic .dashboard-glow-card {
+            box-shadow: 0 12px 28px rgba(0,12,28,.22), inset 0 1px 0 rgba(255,255,255,.045) !important;
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+        }
+        body.theme-glass.theme-crystal .app-card,
+        body.theme-glass.theme-crystal .dashboard-glow-card {
+            box-shadow: 0 13px 32px rgba(42,75,116,.12), inset 0 1px 0 rgba(255,255,255,.95) !important;
+            -webkit-backdrop-filter: blur(18px) saturate(145%);
+            backdrop-filter: blur(18px) saturate(145%);
+        }
+
+        /* Respect reduced-motion preferences without changing normal motion. */
+        @media (prefers-reduced-motion: reduce) {
+            body.theme-glass .app-card,
+            body.theme-glass .dashboard-glow-card {
+                transition-duration: .01ms !important;
+            }
+        }
+
+</style>
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
 
@@ -2183,18 +2602,17 @@
                 </div>
             </nav>
 
-            <div class="p-4 border-t border-white/5 space-y-3 bg-dark-900/60">
-                <div class="flex items-center justify-between gap-2">
-                    <div class="min-w-0">
-                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                            <i data-lucide="palette" class="w-3 h-3"></i> Tema Glass Blue
-                        </div>
-                        <div class="text-[10px] text-gray-500 mt-1">Tampilan kaca modern</div>
-                    </div>
-                    <span class="text-[10px] font-bold text-blue-400">GLASS</span>
+            <div class="p-3 border-t border-white/5 space-y-3 bg-dark-900/60">
+                <button type="button" id="open-appearance-btn" onclick="openAppearancePanel()" class="appearance-open-btn" aria-haspopup="dialog" aria-controls="appearance-panel">
+                    <i data-lucide="palette" class="w-4 h-4"></i>
+                    <span><strong>Tampilan Aplikasi</strong><small id="appearance-current-label">Classic Glass</small></span>
+                    <i data-lucide="sliders-horizontal" class="appearance-open-arrow w-4 h-4"></i>
+                </button>
+                <div class="hidden" id="theme-picker" aria-hidden="true">
+                    <button type="button" id="theme-classic-btn" onclick="selectAccountUiTheme('classic')" aria-pressed="false"></button>
+                    <button type="button" id="theme-crystal-btn" onclick="selectAccountUiTheme('crystal')" aria-pressed="false"></button>
                 </div>
-                <button type="button" id="theme-mode-toggle" onclick="toggleThemeMode()" class="w-full py-2 px-3 rounded-xl border border-blue-400/25 bg-blue-500/10 text-blue-300 text-xs font-semibold flex items-center justify-center gap-2 hover:bg-blue-500/15 transition-all">
-                    <i data-lucide="sun-moon" class="w-4 h-4"></i>
+                <button type="button" id="theme-mode-toggle" onclick="toggleThemeMode()" class="hidden" aria-hidden="true" tabindex="-1">
                     <span id="theme-mode-label">Mode Terang</span>
                 </button>
                 <div id="reset-btn-wrapper">
@@ -2205,6 +2623,35 @@
                 </div>
             </div>
         </aside>
+
+        <!-- APPEARANCE PANEL: dibuka saat pengguna menekan tombol Tampilan Aplikasi -->
+        <div id="appearance-panel" class="appearance-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="appearance-title" onclick="if(event.target===this)closeAppearancePanel()">
+            <section class="appearance-dialog">
+                <header class="appearance-dialog-header">
+                    <div>
+                        <div class="appearance-eyebrow"><i data-lucide="palette" class="w-3.5 h-3.5"></i> PERSONALISASI</div>
+                        <h2 id="appearance-title">Tampilan Aplikasi</h2>
+                        <p>Pilih desain ruang kerja yang paling nyaman digunakan.</p>
+                    </div>
+                    <button type="button" class="appearance-close" onclick="closeAppearancePanel()" aria-label="Tutup"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </header>
+                <div class="appearance-options">
+                    <button type="button" id="theme-classic-card" class="appearance-theme-card" onclick="selectAccountUiTheme('classic')">
+                        <span class="appearance-card-top"><span class="appearance-theme-name">Classic Glass</span><span class="appearance-selected-mark"><i data-lucide="check" class="w-3.5 h-3.5"></i> AKTIF</span></span>
+                        <span class="appearance-preview classic-large-preview"><span class="preview-sidebar"><i></i><i></i><i></i><i></i></span><span class="preview-workspace"><i></i><i></i><i></i><i></i></span></span>
+                        <span class="appearance-card-description">Sidebar vertikal · Dashboard klasik · Nuansa dark glass</span>
+                        <span class="appearance-card-action">Gunakan Classic Glass <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                    </button>
+                    <button type="button" id="theme-crystal-card" class="appearance-theme-card" onclick="selectAccountUiTheme('crystal')">
+                        <span class="appearance-card-top"><span class="appearance-theme-name">Premium Crystal</span><span class="appearance-selected-mark"><i data-lucide="check" class="w-3.5 h-3.5"></i> AKTIF</span></span>
+                        <span class="appearance-preview crystal-large-preview"><span class="preview-topbar"><i></i><i></i><i></i><i></i></span><span class="preview-crystal-workspace"><i></i><i></i><i></i></span></span>
+                        <span class="appearance-card-description">Navigasi horizontal · Workspace luas · Nuansa pearl crystal</span>
+                        <span class="appearance-card-action">Gunakan Premium Crystal <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                    </button>
+                </div>
+                <footer class="appearance-dialog-footer"><i data-lucide="cloud" class="w-4 h-4"></i><span>Pilihan tersimpan pada akun dan akan digunakan saat login di perangkat lain.</span></footer>
+            </section>
+        </div>
 
         <!-- MAIN CONTENT CONTAINER -->
         <main id="inventory-main-content" class="flex-1 min-w-0 overflow-y-auto px-6 lg:px-10 py-6 bg-dark-900">
@@ -3314,6 +3761,47 @@
             if (!response.ok) throw new Error(body.error || `Worker error (${response.status})`);
             return body;
         }
+        // Preferensi desain UI disimpan pada akun Worker:
+        // classic = Classic Glass (dark), crystal = Premium Crystal (light).
+        function normalizeAccountUiPreference(value) {
+            return value === 'crystal' ? 'crystal' : 'classic';
+        }
+
+        function accountPreferenceFromMode(mode) {
+            return mode === 'light' ? 'crystal' : 'classic';
+        }
+
+        function applyAccountUiPreference(user) {
+            if (!user) return;
+            const preference = normalizeAccountUiPreference(user.uiPreference);
+            user.uiPreference = preference;
+            const mode = preference === 'crystal' ? 'light' : 'dark';
+            localStorage.setItem(INVENTORY_THEME_KEY, mode);
+            window.applyTheme?.('glass', mode, preference);
+            window.activeUserSession = user;
+            if (window.gudangAppDb) window.gudangAppDb.currentUser = user;
+            localStorage.setItem('gudang_pro_session', JSON.stringify(user));
+        }
+
+        async function saveAccountUiPreference(preference) {
+            if (!workerToken || !window.gudangAppDb?.currentUser) return;
+            const uiPreference = normalizeAccountUiPreference(preference);
+            try {
+                const result = await workerRequest('/api/me/ui-preference', {
+                    method: 'PUT',
+                    body: JSON.stringify({ uiPreference })
+                });
+                if (result.user) {
+                    window.gudangAppDb.currentUser = result.user;
+                    window.activeUserSession = result.user;
+                    localStorage.setItem('gudang_pro_session', JSON.stringify(result.user));
+                }
+            } catch (error) {
+                console.error('[UI Preference] Gagal menyimpan preferensi:', error);
+                showToast(`Tampilan berubah di perangkat ini, tetapi gagal disimpan ke akun: ${error.message}`, 'error');
+            }
+        }
+
         function applyWorkerData(data) {
             if (!data || !Array.isArray(data.items)) throw new Error('Data dari Worker tidak valid.');
             const theme = window.gudangAppDb?.theme || data.theme || 'sunset';
@@ -3475,6 +3963,7 @@
                     window.activeUserSession = me.user;
                     window.gudangAppDb.currentUser = me.user;
                     localStorage.setItem('gudang_pro_session', JSON.stringify(me.user));
+                    applyAccountUiPreference(me.user);
                     const result = await workerRequest('/api/data', { method: 'GET' });
                     applyWorkerData(result.data);
                     const masukIdField = document.getElementById('masuk-id');
@@ -3896,6 +4385,7 @@
                 window.activeUserSession = result.user;
                 window.gudangAppDb.currentUser = result.user;
                 localStorage.setItem('gudang_pro_session', JSON.stringify(result.user));
+                applyAccountUiPreference(result.user);
                 const dataResult = await workerRequest('/api/data', { method: 'GET' });
                 applyWorkerData(dataResult.data);
                 cloudReady = true;
@@ -4139,33 +4629,85 @@
         };
 
         const INVENTORY_THEME_KEY = 'gudang_inventory_theme_mode';
+        const INVENTORY_UI_PREFERENCE_KEY = 'gudang_inventory_ui_preference';
+
+        window.openAppearancePanel = function() {
+            const panel = document.getElementById('appearance-panel');
+            if (!panel) return;
+            panel.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            if (window.lucide?.createIcons) lucide.createIcons();
+            const closeBtn = panel.querySelector('.appearance-close');
+            if (closeBtn) closeBtn.focus();
+        };
+        window.closeAppearancePanel = function() {
+            const panel = document.getElementById('appearance-panel');
+            if (!panel) return;
+            panel.classList.add('hidden');
+            document.body.style.overflow = '';
+            const trigger = document.getElementById('open-appearance-btn');
+            if (trigger) trigger.focus();
+        };
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') window.closeAppearancePanel();
+        });
 
         window.changeTheme = function(themeName) {
-            // Kompatibilitas selector lama; tampilan aktif memakai Glass Blue.
-            localStorage.setItem('gudang_inventory_theme_name', 'glass');
-            applyTheme('glass', localStorage.getItem(INVENTORY_THEME_KEY) || 'dark');
-            showToast('Tema Glass Blue berhasil diterapkan.');
+            const preference = themeName === 'crystal' ? 'crystal' : 'classic';
+            window.selectAccountUiTheme(preference);
         };
 
-        window.toggleThemeMode = function() {
-            const nextMode = document.body.classList.contains('theme-light') ? 'dark' : 'light';
-            localStorage.setItem(INVENTORY_THEME_KEY, nextMode);
-            applyTheme('glass', nextMode);
-            showToast(nextMode === 'light' ? 'Mode terang diaktifkan.' : 'Mode gelap diaktifkan.');
-        };
+        window.selectAccountUiTheme = async function(preference) {
+            const selected = preference === 'crystal' ? 'crystal' : 'classic';
+            const mode = selected === 'crystal' ? 'light' : 'dark';
+            localStorage.setItem(INVENTORY_UI_PREFERENCE_KEY, selected);
+            localStorage.setItem(INVENTORY_THEME_KEY, mode);
+            window.applyTheme('glass', mode, selected);
 
-        window.applyTheme = function(themeName = 'glass', mode = null) {
-            const savedMode = mode || localStorage.getItem(INVENTORY_THEME_KEY) || 'dark';
-            const safeMode = savedMode === 'light' ? 'light' : 'dark';
-            document.body.className = `min-h-screen flex flex-col antialiased theme-glass ${safeMode === 'light' ? 'theme-light' : 'theme-dark'}`;
-            const label = document.getElementById('theme-mode-label');
-            if (label) label.textContent = safeMode === 'dark' ? 'Mode Terang' : 'Mode Gelap';
-            const toggle = document.getElementById('theme-mode-toggle');
-            if (toggle) {
-                toggle.setAttribute('aria-label', safeMode === 'dark' ? 'Aktifkan mode terang' : 'Aktifkan mode gelap');
-                const icon = toggle.querySelector('[data-lucide]');
-                if (icon) icon.setAttribute('data-lucide', safeMode === 'dark' ? 'sun' : 'moon');
+            if (window.gudangAppDb?.currentUser) {
+                window.gudangAppDb.currentUser.uiPreference = selected;
+                window.activeUserSession = window.gudangAppDb.currentUser;
+                localStorage.setItem('gudang_pro_session', JSON.stringify(window.gudangAppDb.currentUser));
+                await saveAccountUiPreference(selected);
             }
+            window.closeAppearancePanel();
+            showToast(selected === 'crystal' ? 'Premium Crystal UI diaktifkan.' : 'Classic Glass UI diaktifkan.');
+        };
+
+        // Kompatibilitas tombol mode lama; pilihan desain menentukan mode warnanya.
+        window.toggleThemeMode = function() {
+            const next = document.body.classList.contains('theme-crystal') ? 'classic' : 'crystal';
+            window.selectAccountUiTheme(next);
+        };
+
+        window.applyTheme = function(themeName = 'glass', mode = null, preference = null) {
+            const savedPreference = preference || localStorage.getItem(INVENTORY_UI_PREFERENCE_KEY) || accountPreferenceFromMode(mode || localStorage.getItem(INVENTORY_THEME_KEY) || 'dark');
+            const selected = savedPreference === 'crystal' ? 'crystal' : 'classic';
+            const safeMode = selected === 'crystal' ? 'light' : 'dark';
+            localStorage.setItem(INVENTORY_UI_PREFERENCE_KEY, selected);
+            localStorage.setItem(INVENTORY_THEME_KEY, safeMode);
+            document.body.className = `min-h-screen flex flex-col antialiased theme-glass ${safeMode === 'light' ? 'theme-light theme-crystal' : 'theme-dark theme-classic'}`;
+
+            const classicBtn = document.getElementById('theme-classic-btn');
+            const crystalBtn = document.getElementById('theme-crystal-btn');
+            if (classicBtn) {
+                classicBtn.classList.toggle('active', selected === 'classic');
+                classicBtn.setAttribute('aria-pressed', String(selected === 'classic'));
+            }
+            if (crystalBtn) {
+                crystalBtn.classList.toggle('active', selected === 'crystal');
+                crystalBtn.setAttribute('aria-pressed', String(selected === 'crystal'));
+            }
+            const classicCard = document.getElementById('theme-classic-card');
+            const crystalCard = document.getElementById('theme-crystal-card');
+            if (classicCard) classicCard.classList.toggle('active', selected === 'classic');
+            if (crystalCard) crystalCard.classList.toggle('active', selected === 'crystal');
+            const appearanceLabel = document.getElementById('appearance-current-label');
+            if (appearanceLabel) appearanceLabel.textContent = selected === 'classic' ? 'Classic Glass aktif' : 'Premium Crystal aktif';
+            const legacyLabel = document.getElementById('theme-mode-label');
+            if (legacyLabel) legacyLabel.textContent = selected === 'classic' ? 'Classic Glass' : 'Premium Crystal';
+            const legacyToggle = document.getElementById('theme-mode-toggle');
+            if (legacyToggle) legacyToggle.setAttribute('aria-label', selected === 'classic' ? 'Classic Glass aktif' : 'Premium Crystal aktif');
         };
 
         window.updateClock = function() {
@@ -5916,6 +6458,56 @@
             text-shadow: none !important;
         }
 
+
+
+        /* V21: GLOBAL SOFT SHADOW REFINEMENT — all inventory modules.
+           Remove heavy black cast shadows that create dark horizontal bands.
+           Keep gentle cool-blue elevation and subtle top highlights. */
+        body.theme-glass #inventory-main-content .app-card,
+        body.theme-glass #inventory-main-content .dashboard-glow-card,
+        body.theme-glass #inventory-main-content [id^="tab-"] .rounded-xl.border,
+        body.theme-glass #inventory-main-content [id^="tab-"] .rounded-2xl.border,
+        body.theme-glass #inventory-main-content [id^="tab-"] .bg-dark-800,
+        body.theme-glass #inventory-main-content [id^="tab-"] .bg-dark-900,
+        body.theme-glass #inventory-main-content [id^="tab-"] .bg-gray-800,
+        body.theme-glass #inventory-main-content [id^="tab-"] .bg-gray-900 {
+            box-shadow: 0 5px 18px rgba(35, 75, 120, .075),
+                        inset 0 1px 0 rgba(255, 255, 255, .10) !important;
+        }
+
+        /* Classic Glass: restrained navy-blue shadow, never a dense black band. */
+        body.theme-glass.theme-classic #inventory-main-content .app-card,
+        body.theme-glass.theme-classic #inventory-main-content .dashboard-glow-card,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .rounded-2xl.border {
+            box-shadow: 0 6px 20px rgba(0, 12, 28, .16),
+                        inset 0 1px 0 rgba(190, 220, 255, .075) !important;
+        }
+        body.theme-glass.theme-classic #inventory-main-content .app-card:hover,
+        body.theme-glass.theme-classic #inventory-main-content .dashboard-glow-card:hover {
+            box-shadow: 0 9px 24px rgba(0, 15, 35, .19),
+                        0 0 0 1px rgba(96, 165, 250, .08) !important;
+        }
+
+        /* Premium Crystal: soft blue-grey ambient shadow. */
+        body.theme-glass.theme-crystal #inventory-main-content .app-card,
+        body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .rounded-2xl.border {
+            box-shadow: 0 6px 20px rgba(64, 103, 148, .085),
+                        inset 0 1px 0 rgba(255, 255, 255, .72) !important;
+        }
+        body.theme-glass.theme-crystal #inventory-main-content .app-card:hover,
+        body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card:hover {
+            box-shadow: 0 10px 25px rgba(64, 103, 148, .12),
+                        inset 0 1px 0 rgba(255, 255, 255, .78) !important;
+        }
+
+        /* Avoid clipping or dark overlay-like effects on module card tops. */
+        body.theme-glass #inventory-main-content .app-card::before,
+        body.theme-glass #inventory-main-content .dashboard-glow-card::before {
+            box-shadow: none !important;
+        }
 </style></head><body><h2>${escapePrintHtml(config.title)}</h2>
                 <p class="meta">Periode: ${escapePrintHtml(periodLabel)} &nbsp; | &nbsp; Total: ${rows.length} data &nbsp; | &nbsp; Dicetak: ${escapePrintHtml(nowStr)}</p>
                 <table><thead><tr><th class="no">No</th>${headers.map(([,label])=>`<th>${escapePrintHtml(label)}</th>`).join('')}</tr></thead><tbody>${bodyRows}</tbody></table>
@@ -6303,5 +6895,6 @@
         })();
 
 </script>
+
 </body>
 </html>
