@@ -197,28 +197,37 @@
         @keyframes lowStockBlinkRed {
             0%, 100% {
                 opacity: 1;
-                filter: brightness(1.22);
+                filter: brightness(1.5) saturate(1.5);
+                background-color: rgba(220, 38, 38, .30);
+                border-color: #ef4444;
             }
             50% {
-                opacity: .68;
-                filter: brightness(.82);
+                opacity: .65;
+                filter: brightness(.8) saturate(1.2);
+                background-color: rgba(220, 38, 38, .05);
+                border-color: rgba(239, 68, 68, .25);
             }
         }
         @keyframes lowStockBlinkOrange {
             0%, 100% {
                 opacity: 1;
-                filter: brightness(1.18);
+                filter: brightness(1.5) saturate(1.5);
+                background-color: rgba(249, 115, 22, .30);
+                border-color: #f97316;
             }
+        
             50% {
-                opacity: .72;
-                filter: brightness(.84);
+                opacity: .65;
+                filter: brightness(.8) saturate(1.2);
+                background-color: rgba(249, 115, 22, .05);
+                border-color: rgba(249, 115, 22, .25);
             }
         }
         .blink-low-stock-red {
-            animation: lowStockBlinkRed 1.2s infinite ease-in-out !important;
+            animation: lowStockBlinkRed 1.3s infinite ease-in-out !important;
         }
         .blink-low-stock-orange {
-            animation: lowStockBlinkOrange 1.2s infinite ease-in-out !important;
+            animation: lowStockBlinkOrange 1.3s infinite ease-in-out !important;
         }
 
         .role-badge-admin { background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
