@@ -8,11 +8,31 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        // OPTIMASI: banyak fungsi render memanggil lucide.createIcons() berurutan, dan tiap
+        // panggilan memindai seluruh DOM. Panggilan tanpa argumen digabung menjadi satu per frame.
+        (function () {
+            try {
+                if (!window.lucide || typeof window.lucide.createIcons !== 'function') return;
+                const original = window.lucide.createIcons.bind(window.lucide);
+                let queued = false;
+                window.lucide.createIcons = function (options) {
+                    if (options) return original(options);
+                    if (queued) return;
+                    queued = true;
+                    requestAnimationFrame(function () {
+                        queued = false;
+                        try { original(); } catch (e) { console.warn('[lucide]', e); }
+                    });
+                };
+            } catch (e) { /* abaikan: perilaku bawaan tetap berjalan */ }
+        })();
+    </script>
     <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.16-dual-ui-classic-glass-premium-crystal-v27-native-scroll";
+        const APP_VERSION = "2026.11.16-dual-ui-classic-glass-premium-crystal-v41-light-save-button-font";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -143,12 +163,11 @@
 
         .fluid-table-container {
             width: 100%;
-            /* Area riwayat dibatasi kira-kira 12 baris; scroll berada di dalam tabel. */
-            max-height: 580px;
+            max-height: none;
             overflow-x: auto;
-            overflow-y: auto;
-            overscroll-behavior: contain;
-            scrollbar-gutter: stable;
+            overflow-y: clip;
+            overscroll-behavior: auto;
+            scrollbar-gutter: auto;
         }
         .fluid-table-container thead th {
             position: sticky;
@@ -168,7 +187,7 @@
             background: rgba(15, 23, 42, .25);
         }
         @media (max-width: 768px) {
-            .fluid-table-container { max-height: 460px; }
+            .fluid-table-container { max-height: none; }
         }
         .fluid-table {
             width: 100%;
@@ -2204,7 +2223,7 @@
         body.theme-crystal #inventory-sidebar .theme-choice-title{font-size:8px!important;}
         body.theme-crystal #inventory-sidebar .theme-choice-subtitle{display:none!important;}
         body.theme-crystal #inventory-sidebar #reset-btn-wrapper{display:none!important;}
-        body.theme-crystal #inventory-main-content{width:100%;min-width:0;flex:1 1 auto;overflow-y:auto!important;padding:26px clamp(18px,3vw,48px)!important;background:transparent!important;}
+        body.theme-crystal #inventory-main-content{width:100%;min-width:0;flex:1 1 auto;overflow-y:visible!important;padding:26px clamp(18px,3vw,48px)!important;background:transparent!important;}
         body.theme-crystal #dashboard-hero{border-radius:28px!important;padding:30px!important;min-height:220px;box-shadow:0 22px 48px rgba(49,91,145,.13)!important;}
         body.theme-crystal .app-card,body.theme-crystal .dashboard-glow-card{border-radius:22px!important;border:1px solid rgba(255,255,255,.82)!important;box-shadow:0 12px 30px rgba(58,91,130,.09),inset 0 1px 0 rgba(255,255,255,.95)!important;}
         body.theme-crystal #inventory-top-header{height:76px!important;padding-left:clamp(18px,3vw,48px)!important;padding-right:clamp(18px,3vw,48px)!important;background:rgba(250,252,255,.9)!important;border-bottom:1px solid rgba(107,146,190,.18)!important;box-shadow:0 5px 22px rgba(55,88,128,.06)!important;}
@@ -2358,91 +2377,6 @@
                 display:inline !important;
             }
         }
-
-
-        /* ==========================================================
-           V20 — NATIVE PAGE SCROLL
-           Wheel/trackpad anywhere on the app scrolls the document.
-           Only transaction history containers keep independent scroll.
-           No wheel-event interception or forced scrollTop scripting.
-           ========================================================== */
-        html {
-            min-height: 100%;
-            height: auto !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-            scroll-behavior: auto;
-        }
-        body {
-            display: block !important;
-            min-height: 100vh !important;
-            height: auto !important;
-            overflow-y: visible !important;
-            overflow-x: hidden !important;
-        }
-        #inventory-top-header {
-            position: sticky;
-            top: 0;
-            z-index: 45;
-        }
-        #inventory-app-layout {
-            display: flex;
-            flex: 0 0 auto !important;
-            width: 100%;
-            min-height: calc(100vh - 4rem) !important;
-            height: auto !important;
-            overflow: visible !important;
-            align-items: stretch;
-        }
-        #inventory-sidebar {
-            height: auto !important;
-            min-height: 0 !important;
-            max-height: none !important;
-            overflow: visible !important;
-            align-self: stretch;
-        }
-        #inventory-sidebar nav {
-            overflow: visible !important;
-            max-height: none !important;
-        }
-        #inventory-main-content {
-            flex: 1 1 0% !important;
-            height: auto !important;
-            min-height: 0 !important;
-            max-height: none !important;
-            overflow: visible !important;
-            overscroll-behavior: auto !important;
-            scrollbar-gutter: auto !important;
-        }
-        /* Riwayat transaksi tetap menjadi satu-satunya area scroll vertikal lokal. */
-        .fluid-table-container,
-        #recent-activity-scroll {
-            overflow-x: auto !important;
-            overflow-y: auto !important;
-            overscroll-behavior: contain !important;
-            scrollbar-gutter: stable;
-        }
-        /* List dashboard lain mengikuti scroll halaman, bukan membuat scroll bersarang. */
-        #low-stock-list {
-            max-height: none !important;
-            overflow-y: visible !important;
-        }
-        @media (max-width: 767px) {
-            #inventory-app-layout {
-                min-height: calc(100vh - 4rem) !important;
-                overflow: visible !important;
-            }
-            #inventory-sidebar {
-                max-height: none !important;
-            }
-            #inventory-sidebar nav {
-                overflow: visible !important;
-            }
-            #inventory-main-content {
-                overflow: visible !important;
-            }
-        }
-
 
 
         /* ==========================================================
@@ -3163,6 +3097,401 @@
         }
 
 
+
+
+
+        /* ==========================================================
+           V35 — CLEAN SINGLE-PAGE SCROLL MODEL
+           One document scrollbar. The only intentional vertical
+           inner scroller is the Dashboard Recent Activity panel.
+           Wide tables may scroll horizontally without creating a
+           vertical scroll container.
+           ========================================================== */
+
+        html {
+            height: auto !important;
+            min-height: 100% !important;
+            overflow-x: clip !important;
+            overflow-y: auto !important;
+            scroll-behavior: auto;
+        }
+
+        body {
+            display: block !important;
+            position: relative;
+            width: 100%;
+            height: auto !important;
+            min-height: 100vh !important;
+            min-height: 100svh !important;
+            overflow-x: clip !important;
+            overflow-y: visible !important;
+        }
+
+        #inventory-top-header {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 45 !important;
+            flex: none !important;
+        }
+
+        #inventory-app-layout,
+        body.theme-crystal #inventory-app-layout {
+            display: flex !important;
+            flex: none !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+            align-items: stretch !important;
+        }
+
+        #inventory-sidebar,
+        #inventory-sidebar nav {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow-x: clip !important;
+            overflow-y: visible !important;
+        }
+
+        #inventory-main-content,
+        body.theme-crystal #inventory-main-content {
+            flex: 1 1 0% !important;
+            width: auto !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow-x: clip !important;
+            overflow-y: visible !important;
+            overscroll-behavior: auto !important;
+            scrollbar-gutter: auto !important;
+        }
+
+        /* Table wrappers: horizontal overflow only.
+           'clip' prevents overflow-y:visible from computing to auto
+           when overflow-x is auto, avoiding a nested vertical scroller. */
+        .fluid-table-container {
+            width: 100% !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow-x: auto !important;
+            overflow-y: clip !important;
+            overscroll-behavior: auto !important;
+            scrollbar-gutter: auto !important;
+        }
+
+        #inventory-main-content [id^="tab-"] .overflow-auto,
+        #inventory-main-content [id^="tab-"] .overflow-y-auto,
+        #inventory-main-content [id^="tab-"] .overflow-x-auto {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow-x: auto !important;
+            overflow-y: clip !important;
+            overscroll-behavior: auto !important;
+        }
+
+        /* Sole intentional inner vertical scroller: dashboard history. */
+        #recent-activity-scroll {
+            height: auto !important;
+            max-height: 270px !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            overscroll-behavior: contain !important;
+            scrollbar-gutter: stable !important;
+        }
+
+        /* Stock alert list grows naturally with the document. */
+        #low-stock-list {
+            height: auto !important;
+            max-height: none !important;
+            overflow-x: clip !important;
+            overflow-y: visible !important;
+        }
+
+        /* Dialog content may scroll independently when the dialog is tall. */
+        #detail-save-content {
+            max-height: min(70vh, 640px);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+        }
+
+        @media (max-width: 767px) {
+            #inventory-app-layout,
+            body.theme-crystal #inventory-app-layout,
+            #inventory-sidebar,
+            #inventory-sidebar nav,
+            #inventory-main-content {
+                height: auto !important;
+                min-height: 0 !important;
+                max-height: none !important;
+            }
+        }
+
+        /* ==========================================================
+           V38 — EXCESS SCROLL / EMPTY SPACE FIX (CSS only)
+           Penyebab: dua dekorasi blur (#inventory-main-content::before/::after)
+           menjorok keluar area konten (bottom:-170px, dsb.). Karena overflow-y
+           main = visible, bagian yang menjorok ikut menambah tinggi dokumen,
+           sehingga muncul scroll ekstra dan ruang kosong di bawah semua modul.
+           Solusi: potong (clip) dekorasi di batas main. 'clip' tidak membuat
+           scroll container baru, sehingga tetap hanya ada satu scrollbar halaman.
+           ========================================================== */
+        #inventory-main-content,
+        body.theme-glass #inventory-main-content,
+        body.theme-crystal #inventory-main-content {
+            overflow: clip !important;
+        }
+
+        /* Mobile: section modul sebelumnya menjadi scroll container vertikal
+           (overflow-x:auto membuat overflow-y ikut auto). Pertahankan scroll
+           horizontal, buang scroll vertikal bersarang. */
+        @media (max-width: 640px) {
+            #inventory-main-content > section[id^="tab-"] {
+                overflow-x: auto !important;
+                overflow-y: clip !important;
+            }
+        }
+
+        /* ==========================================================
+           V39 — POPUP LEGIBILITY + RENDER COST (CSS only)
+           Masalah: panel popup memakai kaca transparan di atas overlay gelap
+           dan warna font diatur oleh aturan global Light Mode, sehingga teks
+           tombol/label/toast sering gelap-di-atas-gelap atau pucat.
+           Solusi: panel hampir solid + warna font eksplisit per tema.
+           Dark = Classic Glass, Light = Premium Crystal.
+           ========================================================== */
+
+        /* ---- Panel konfirmasi / detail simpan / auto-logout ---- */
+        body.theme-glass :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) {
+            background: rgba(2, 8, 18, .78) !important;
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+        body.theme-glass :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) > div {
+            background: #0e2038 !important;
+            background-image: none !important;
+            border: 1px solid rgba(125, 180, 225, .38) !important;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, .5) !important;
+            -webkit-backdrop-filter: none !important;
+            backdrop-filter: none !important;
+            color: #f1f7ff !important;
+        }
+        body.theme-glass :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) :is(h3, h4, p, strong, .text-gray-100, .text-gray-200, .text-gray-300) {
+            color: #f1f7ff !important;
+            -webkit-text-fill-color: #f1f7ff !important;
+        }
+        body.theme-glass :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) :is(.text-gray-400, .text-gray-500) {
+            color: #b9cbe0 !important;
+            -webkit-text-fill-color: #b9cbe0 !important;
+        }
+        body.theme-glass :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) :is(.text-emerald-300, .text-emerald-400) {
+            color: #6ee7b7 !important;
+            -webkit-text-fill-color: #6ee7b7 !important;
+        }
+        body.theme-glass :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) :is(.text-sky-200, .text-sky-300) {
+            color: #bae6fd !important;
+            -webkit-text-fill-color: #bae6fd !important;
+        }
+        body.theme-glass :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) :is(.text-amber-300, .text-amber-400) {
+            color: #fcd34d !important;
+            -webkit-text-fill-color: #fcd34d !important;
+        }
+        body.theme-glass :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) :is(.text-rose-200, .text-rose-300) {
+            color: #fecdd3 !important;
+            -webkit-text-fill-color: #fecdd3 !important;
+        }
+        body.theme-glass #confirm-message { font-size: 13px; line-height: 1.65; }
+        body.theme-glass #detail-save-content .text-xs,
+        body.theme-glass #confirm-details .text-\[11px\] { font-size: 12.5px; }
+        body.theme-glass #confirm-warning {
+            background: rgba(244, 63, 94, .16) !important;
+            border-color: rgba(251, 113, 133, .45) !important;
+            color: #fecdd3 !important;
+            -webkit-text-fill-color: #fecdd3 !important;
+            font-size: 12px;
+        }
+
+        /* Tombol sekunder */
+        body.theme-glass #confirm-cancel-btn,
+        body.theme-glass #detail-save-back,
+        body.theme-glass #auto-logout-modal button[onclick="autoLogoutNow()"] {
+            background: rgba(255, 255, 255, .10) !important;
+            border: 1px solid rgba(255, 255, 255, .26) !important;
+            color: #f1f7ff !important;
+            -webkit-text-fill-color: #f1f7ff !important;
+        }
+        /* Tombol utama: putih di atas biru tua (kontras >= 5:1) */
+        body.theme-glass #confirm-ok-btn,
+        body.theme-glass #detail-save-yes,
+        body.theme-glass #auto-logout-modal button[onclick="keepSessionAlive()"] {
+            background: linear-gradient(135deg, #1d5fd1, #0a6aa3) !important;
+            border: 1px solid rgba(255, 255, 255, .28) !important;
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            font-weight: 700;
+        }
+        body.theme-glass #detail-save-yes:disabled { opacity: .7; cursor: wait; }
+        body.theme-glass :is(#confirm-cancel-btn, #confirm-ok-btn, #detail-save-back, #detail-save-yes,
+            #auto-logout-modal button):focus-visible {
+            outline: 3px solid rgba(56, 189, 248, .75);
+            outline-offset: 2px;
+        }
+
+        /* ---- Premium Crystal (terang) ---- */
+        body.theme-glass.theme-crystal :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) {
+            background: rgba(20, 38, 62, .55) !important;
+        }
+        body.theme-glass.theme-crystal :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) > div {
+            background: #f3f8fe !important;
+            border: 1px solid rgba(45, 90, 140, .38) !important;
+            box-shadow: 0 24px 64px rgba(27, 48, 75, .30) !important;
+            color: #14304f !important;
+        }
+        body.theme-glass.theme-crystal :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) :is(h3, h4, p, strong, .text-gray-100, .text-gray-200, .text-gray-300) {
+            color: #14304f !important;
+            -webkit-text-fill-color: #14304f !important;
+        }
+        body.theme-glass.theme-crystal :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) :is(.text-gray-400, .text-gray-500) {
+            color: #46627f !important;
+            -webkit-text-fill-color: #46627f !important;
+        }
+        body.theme-glass.theme-crystal :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) :is(.text-emerald-300, .text-emerald-400) {
+            color: #047857 !important;
+            -webkit-text-fill-color: #047857 !important;
+        }
+        body.theme-glass.theme-crystal :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) :is(.text-sky-200, .text-sky-300) {
+            color: #075985 !important;
+            -webkit-text-fill-color: #075985 !important;
+        }
+        body.theme-glass.theme-crystal :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) :is(.text-amber-300, .text-amber-400) {
+            color: #92400e !important;
+            -webkit-text-fill-color: #92400e !important;
+        }
+        body.theme-glass.theme-crystal :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) :is(.text-rose-200, .text-rose-300) {
+            color: #9f1239 !important;
+            -webkit-text-fill-color: #9f1239 !important;
+        }
+        body.theme-glass.theme-crystal :is(#confirm-modal, #detail-save-modal, #auto-logout-modal) :is(.border-white\/10, .border-white\/15, .border-white\/20) {
+            border-color: rgba(45, 90, 140, .24) !important;
+        }
+        body.theme-glass.theme-crystal :is(#detail-save-content, #confirm-details, #auto-logout-modal .bg-black\/20) {
+            background: #e6eff9 !important;
+        }
+        body.theme-glass.theme-crystal #detail-save-content section {
+            background: #ffffff !important;
+        }
+        body.theme-glass.theme-crystal #confirm-warning {
+            background: #ffe4e6 !important;
+            border-color: rgba(190, 18, 60, .40) !important;
+            color: #9f1239 !important;
+            -webkit-text-fill-color: #9f1239 !important;
+        }
+        body.theme-glass.theme-crystal #confirm-cancel-btn,
+        body.theme-glass.theme-crystal #detail-save-back,
+        body.theme-glass.theme-crystal #auto-logout-modal button[onclick="autoLogoutNow()"] {
+            background: #e2edf9 !important;
+            border: 1px solid #a9c1db !important;
+            color: #17304d !important;
+            -webkit-text-fill-color: #17304d !important;
+        }
+
+        /* ---- Tombol utama Premium Crystal di seluruh modul:
+               teks putih (bukan navy) di atas biru yang cukup tua ---- */
+        body.theme-glass.theme-crystal .theme-accent-bg:not(.sidebar-btn),
+        body.theme-glass.theme-crystal .theme-accent-bg:not(.sidebar-btn) * {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+        body.theme-glass.theme-crystal .theme-accent-bg:not(.sidebar-btn) {
+            background: linear-gradient(135deg, #1f6fd0, #0f5fa8) !important;
+        }
+
+        /* ---- Login ---- */
+        #login-modal .login-glass-submit,
+        #login-modal .login-glass-submit * {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+        #login-modal .login-glass-subtitle { color: rgba(219, 234, 254, .90); }
+        #login-modal .login-glass-footer { color: rgba(219, 234, 254, .80); font-size: 11px; }
+        body.theme-glass.theme-light #login-modal .login-glass-subtitle { color: rgba(23, 54, 87, .88); }
+        body.theme-glass.theme-light #login-modal .login-glass-footer { color: rgba(23, 54, 87, .82); }
+
+        /* ---- Panel Tampilan Aplikasi ---- */
+        .appearance-card-description { font-size: 11px; color: #b4c7dc; }
+        .appearance-dialog-header p { color: #aebfd4; font-size: 12.5px; }
+        .appearance-dialog-footer { font-size: 11px; color: #b4c7dc; }
+        body.theme-crystal .appearance-card-description { color: #46627f; }
+        body.theme-crystal .appearance-dialog-header p { color: #46627f; }
+        body.theme-crystal .appearance-dialog-footer { color: #3f5d7d; }
+
+        /* ---- Dialog Print (dibuat lewat JS dengan style inline) ----
+               Di Light Mode aturan global membuat label jadi navy di atas panel
+               #172033 yang gelap; kunci warna agar selalu terbaca. ---- */
+        #inventory-print-options *:not(input):not(button) {
+            color: #f1f5f9 !important;
+            -webkit-text-fill-color: #f1f5f9 !important;
+        }
+        #inventory-print-options label { border-color: rgba(255, 255, 255, .30) !important; }
+        #inventory-print-options button {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+        #inventory-print-options #print-cancel { background: #3b4a63 !important; }
+        #inventory-print-options #print-continue { background: #c2410c !important; }
+
+        /* ---- Toast: putih di atas warna status yang lebih tua; tanpa bounce tanpa henti ---- */
+        #toast-container > div,
+        #toast-container > div * {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+        #toast-container > div {
+            font-size: 13px;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, .25);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, .28);
+            animation: toastIn .28s ease-out both !important;
+        }
+        #toast-container .bg-emerald-500\/90 { background-color: #047857 !important; }
+        #toast-container .bg-amber-500\/90 { background-color: #b45309 !important; }
+        #toast-container .bg-rose-500\/90 { background-color: #be123c !important; }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---- OPTIMASI RENDER: blur bersarang sangat mahal pada tabel besar.
+               Kartu tetap kaca; wadah tabel di dalamnya tidak perlu blur lagi,
+               dan radius blur kartu diturunkan 28px -> 18px. ---- */
+        body.theme-glass #inventory-main-content [id^="tab-"] :is(.overflow-x-auto, .overflow-auto, .overflow-y-auto, .fluid-table-container) {
+            -webkit-backdrop-filter: none !important;
+            backdrop-filter: none !important;
+        }
+        body.theme-glass #inventory-main-content :is(.app-card, .dashboard-glow-card),
+        body.theme-glass #inventory-main-content :is(.app-card, .dashboard-glow-card):hover {
+            -webkit-backdrop-filter: blur(18px) saturate(130%) !important;
+            backdrop-filter: blur(18px) saturate(130%) !important;
+        }
+
+
+
+        /* V41: readable save-button text in Light Mode. */
+        body.theme-glass.theme-light [id^="tab-"] form button[type="submit"].theme-accent-bg,
+        body.theme-glass.theme-light #detail-save-yes {
+            color: #17324f !important;
+            -webkit-text-fill-color: #17324f !important;
+            text-shadow: none !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] form button[type="submit"].theme-accent-bg *,
+        body.theme-glass.theme-light #detail-save-yes * {
+            color: #17324f !important;
+            -webkit-text-fill-color: #17324f !important;
+        }
+
 </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
@@ -3215,7 +3544,7 @@
                 </svg>
             </button>
 
-            <nav class="p-4 space-y-1.5 overflow-y-auto">
+            <nav class="p-4 space-y-1.5">
                 <div class="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Menu Utama</div>
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard Realtime" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20">
                     <i data-lucide="layout-dashboard" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
@@ -3311,7 +3640,7 @@
         </div>
 
         <!-- MAIN CONTENT CONTAINER -->
-        <main id="inventory-main-content" class="flex-1 min-w-0 overflow-y-auto px-6 lg:px-10 py-6 bg-dark-900">
+        <main id="inventory-main-content" class="flex-1 min-w-0 px-6 lg:px-10 py-6 bg-dark-900">
 
             <!-- 1. TAB DASHBOARD -->
             <section id="tab-dashboard" class="premium-dashboard space-y-7 w-full">
@@ -3426,7 +3755,7 @@
                         <div class="flex items-center gap-3"><div class="flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-300/20 bg-rose-500/10 text-rose-300"><i data-lucide="alert-triangle" class="h-5 w-5"></i></div><div><h3 class="text-xs font-extrabold uppercase tracking-wider text-white">Peringatan Stok Menipis</h3><p class="mt-1 text-[10px] text-slate-400">Pantau barang dengan stok di bawah batas minimum</p></div></div>
                         <span class="rounded-full border border-rose-300/20 bg-rose-500/10 px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider text-rose-300">Critical &amp; Warning</span>
                     </div>
-                    <div id="low-stock-list" class="flex flex-col gap-2.5 overflow-y-auto max-h-[320px] pr-1"></div>
+                    <div id="low-stock-list" class="flex flex-col gap-2.5 pr-1"></div>
                 </div>
 
                 <!-- RECENT ACTIVITY: original tbody target and table columns retained -->
@@ -5370,11 +5699,19 @@
         window.updateClock = function() {
             const clockEl = document.getElementById('live-clock');
             if (clockEl) {
+                if (document.hidden) return;
                 const now = new Date();
                 const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
                 const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
-                clockEl.innerHTML = `<i data-lucide="clock" class="w-4 h-4 text-orange-400"></i> <span>${dateStr} &bull; ${timeStr}</span>`;
-                lucide.createIcons();
+                // OPTIMASI: ikon jam dibuat sekali; tiap detik hanya teks yang diperbarui
+                // (sebelumnya seluruh DOM dipindai ulang oleh lucide.createIcons setiap detik).
+                let textEl = clockEl.querySelector('[data-clock-text]');
+                if (!textEl) {
+                    clockEl.innerHTML = `<i data-lucide="clock" class="w-4 h-4 text-orange-400"></i> <span data-clock-text></span>`;
+                    textEl = clockEl.querySelector('[data-clock-text]');
+                    lucide.createIcons();
+                }
+                textEl.textContent = `${dateStr} • ${timeStr}`;
             }
         };
         setInterval(updateClock, 1000);
@@ -6644,15 +6981,17 @@
 
             // Charts
             const chartMasuk = document.getElementById('chart-masuk');
-            const topMasuk = [...window.gudangAppDb.items].sort((a,b) => {
-                const sumA = window.gudangAppDb.masuk.filter(m => m.barangId === a.id).reduce((s,m) => s + m.qty, 0);
-                const sumB = window.gudangAppDb.masuk.filter(m => m.barangId === b.id).reduce((s,m) => s + m.qty, 0);
-                return sumB - sumA;
-            }).slice(0, 5);
-            const maxMasuk = Math.max(...topMasuk.map(i => window.gudangAppDb.masuk.filter(m => m.barangId === i.id).reduce((s,m) => s + m.qty, 0)), 1);
+            // OPTIMASI: total per barang dihitung sekali (O(n)) lalu dipakai ulang,
+            // bukan di-filter ulang di dalam setiap perbandingan sort.
+            const sumMasukByItem = new Map();
+            window.gudangAppDb.masuk.forEach(m => sumMasukByItem.set(m.barangId, (sumMasukByItem.get(m.barangId) || 0) + m.qty));
+            const topMasuk = [...window.gudangAppDb.items].sort((a,b) =>
+                (sumMasukByItem.get(b.id) || 0) - (sumMasukByItem.get(a.id) || 0)
+            ).slice(0, 5);
+            const maxMasuk = Math.max(...topMasuk.map(i => sumMasukByItem.get(i.id) || 0), 1);
 
             chartMasuk.innerHTML = topMasuk.map(i => {
-                const qty = window.gudangAppDb.masuk.filter(m => m.barangId === i.id).reduce((s,m) => s + m.qty, 0);
+                const qty = sumMasukByItem.get(i.id) || 0;
                 const pct = Math.max(12, Math.round((qty / maxMasuk) * 100));
                 return `
                     <div class="flex-1 flex flex-col items-center justify-end h-full group">
@@ -6664,15 +7003,15 @@
             }).join('') || '<div class="text-xs text-gray-500 m-auto">Belum ada data masuk</div>';
 
             const chartKeluar = document.getElementById('chart-keluar');
-            const topKeluar = [...window.gudangAppDb.items].sort((a,b) => {
-                const sumA = window.gudangAppDb.keluar.filter(m => m.barangId === a.id).reduce((s,m) => s + m.qty, 0);
-                const sumB = window.gudangAppDb.keluar.filter(m => m.barangId === b.id).reduce((s,m) => s + m.qty, 0);
-                return sumB - sumA;
-            }).slice(0, 5);
-            const maxKeluar = Math.max(...topKeluar.map(i => window.gudangAppDb.keluar.filter(m => m.barangId === i.id).reduce((s,m) => s + m.qty, 0)), 1);
+            const sumKeluarByItem = new Map();
+            window.gudangAppDb.keluar.forEach(m => sumKeluarByItem.set(m.barangId, (sumKeluarByItem.get(m.barangId) || 0) + m.qty));
+            const topKeluar = [...window.gudangAppDb.items].sort((a,b) =>
+                (sumKeluarByItem.get(b.id) || 0) - (sumKeluarByItem.get(a.id) || 0)
+            ).slice(0, 5);
+            const maxKeluar = Math.max(...topKeluar.map(i => sumKeluarByItem.get(i.id) || 0), 1);
 
             chartKeluar.innerHTML = topKeluar.map(i => {
-                const qty = window.gudangAppDb.keluar.filter(m => m.barangId === i.id).reduce((s,m) => s + m.qty, 0);
+                const qty = sumKeluarByItem.get(i.id) || 0;
                 const pct = Math.max(12, Math.round((qty / maxKeluar) * 100));
                 return `
                     <div class="flex-1 flex flex-col items-center justify-end h-full group">
@@ -7165,6 +7504,364 @@
         body.theme-glass #inventory-main-content .dashboard-glow-card::before {
             box-shadow: none !important;
         }
+
+
+        /* ==========================================================
+           V36 — NORMAL SPACING REFINEMENT
+           Adjust only layout rhythm and outer gutters.
+           Scroll ownership and component functionality remain intact.
+           ========================================================== */
+
+        #inventory-main-content {
+            padding: 22px 32px !important;
+        }
+
+        /* Standard module sections: reduce excessive vertical gaps
+           while retaining the original card padding and dimensions. */
+        #inventory-main-content > section[id^="tab-"]:not(#tab-dashboard)
+        > :not([hidden]) ~ :not([hidden]) {
+            margin-top: 20px !important;
+        }
+
+        #inventory-main-content > #tab-dashboard
+        > :not([hidden]) ~ :not([hidden]) {
+            margin-top: 24px !important;
+        }
+
+        /* Bring form/list columns slightly closer without changing
+           their 12-column proportions or responsive breakpoints. */
+        #inventory-main-content .grid.gap-6 {
+            gap: 20px !important;
+        }
+
+        #inventory-main-content .grid.gap-5 {
+            gap: 18px !important;
+        }
+
+        #inventory-main-content .premium-dashboard {
+            --dashboard-section-gap: 24px;
+        }
+
+        #inventory-main-content .premium-dashboard > :not([hidden]) ~ :not([hidden]) {
+            margin-top: 24px !important;
+        }
+
+        @media (max-width: 1023px) {
+            #inventory-main-content {
+                padding: 20px 22px !important;
+            }
+        }
+
+        @media (max-width: 767px) {
+            #inventory-main-content {
+                padding: 16px 14px !important;
+            }
+
+            #inventory-main-content > section[id^="tab-"]:not(#tab-dashboard)
+            > :not([hidden]) ~ :not([hidden]),
+            #inventory-main-content > #tab-dashboard
+            > :not([hidden]) ~ :not([hidden]),
+            #inventory-main-content .premium-dashboard > :not([hidden]) ~ :not([hidden]) {
+                margin-top: 18px !important;
+            }
+
+            #inventory-main-content .grid.gap-6,
+            #inventory-main-content .grid.gap-5 {
+                gap: 14px !important;
+            }
+        }
+
+
+        /* ==========================================================
+           V37 — CONTENT-DRIVEN MODULE HEIGHT
+           Root cause: Crystal uses a column flex layout. The previous
+           #inventory-main-content flex:1 1 0% could stretch the module
+           area vertically, leaving a large empty tail on every module.
+           Keep width responsive, but let height follow active content.
+           ========================================================== */
+
+        #inventory-app-layout,
+        body.theme-crystal #inventory-app-layout {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            align-items: stretch !important;
+        }
+
+        #inventory-main-content,
+        body.theme-crystal #inventory-main-content {
+            flex: 0 0 auto !important;
+            align-self: stretch !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            width: 100% !important;
+            overflow-x: clip !important;
+            overflow-y: visible !important;
+        }
+
+        /* Every module panel follows its own content height.
+           Hidden tabs remain hidden; active tabs do not fill the viewport. */
+        #inventory-main-content > section[id^="tab-"] {
+            flex: 0 0 auto !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            align-self: stretch !important;
+        }
+
+        #inventory-main-content > section[id^="tab-"][hidden] {
+            display: none !important;
+        }
+
+        #inventory-main-content > section[id^="tab-"]:not([hidden]) {
+            display: block;
+        }
+
+        /* Prevent generic utility classes from forcing module-height
+           expansion, without changing grid columns or card dimensions. */
+        #inventory-main-content > section[id^="tab-"] .h-full,
+        #inventory-main-content > section[id^="tab-"] .min-h-screen,
+        #inventory-main-content > section[id^="tab-"] .min-h-full {
+            min-height: 0 !important;
+            height: auto !important;
+        }
+
+        @media (max-width: 767px) {
+            #inventory-main-content,
+            body.theme-crystal #inventory-main-content {
+                flex: 0 0 auto !important;
+                width: 100% !important;
+            }
+        }
+
+
+        /* ==========================================================
+           V40 — LIGHT GLASS CONTRAST + DEEPER BACKDROP
+           Visual-only refinement for every module. Preserve semantic
+           status colors, controls, events, data, and app behavior.
+           ========================================================== */
+
+        body.theme-glass.theme-light {
+            --theme-bg: #9eafc4;
+            --theme-card: rgba(222, 234, 248, .40);
+            --theme-card-border: rgba(42, 72, 108, .34);
+            --theme-text: #142b45;
+            --theme-text-muted: #405873;
+            background:
+                radial-gradient(ellipse at 9% 7%, rgba(76, 132, 204, .25), transparent 39%),
+                radial-gradient(ellipse at 91% 19%, rgba(39, 145, 190, .19), transparent 36%),
+                radial-gradient(ellipse at 58% 100%, rgba(54, 88, 130, .18), transparent 43%),
+                linear-gradient(135deg, #9eafc4 0%, #b1c1d4 48%, #9aadc3 100%) !important;
+            background-attachment: fixed !important;
+            color: #142b45 !important;
+        }
+
+        /* Main shell: darker translucent glass, not an opaque pale sheet. */
+        body.theme-glass.theme-light #inventory-main-content,
+        body.theme-glass.theme-light #inventory-app-layout {
+            background: transparent !important;
+            color: #142b45 !important;
+        }
+
+        body.theme-glass.theme-light aside,
+        body.theme-glass.theme-light header,
+        body.theme-glass.theme-light nav,
+        body.theme-glass.theme-light .glass-surface {
+            background: linear-gradient(135deg,
+                rgba(128, 153, 184, .62),
+                rgba(157, 179, 205, .54)) !important;
+            border-color: rgba(42, 72, 108, .30) !important;
+            color: #142b45 !important;
+            backdrop-filter: blur(28px) saturate(150%);
+            -webkit-backdrop-filter: blur(28px) saturate(150%);
+        }
+
+        /* All module cards and panels use a clearer crystal edge. */
+        body.theme-glass.theme-light .app-card,
+        body.theme-glass.theme-light .dashboard-glow-card,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-800,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-900,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-700,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-800,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-900,
+        body.theme-glass.theme-light [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-light [id^="tab-"] .rounded-2xl.border,
+        body.theme-glass.theme-light [id^="tab-"] [class*="bg-white/"] {
+            background: linear-gradient(135deg,
+                rgba(226, 237, 249, .53),
+                rgba(188, 208, 232, .38)) !important;
+            border-color: rgba(42, 72, 108, .31) !important;
+            box-shadow:
+                0 16px 38px rgba(28, 48, 73, .16),
+                inset 0 1px 0 rgba(255, 255, 255, .68),
+                inset 0 0 24px rgba(73, 126, 190, .055) !important;
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+        }
+
+        /* Strong readable ink for neutral text utilities in every module. */
+        body.theme-glass.theme-light [id^="tab-"],
+        body.theme-glass.theme-light [id^="tab-"] p,
+        body.theme-glass.theme-light [id^="tab-"] span,
+        body.theme-glass.theme-light [id^="tab-"] div,
+        body.theme-glass.theme-light [id^="tab-"] small,
+        body.theme-glass.theme-light [id^="tab-"] label,
+        body.theme-glass.theme-light [id^="tab-"] th,
+        body.theme-glass.theme-light [id^="tab-"] td {
+            text-shadow: none;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] .text-white,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-50,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-100,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-200,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-300,
+        body.theme-glass.theme-light [id^="tab-"] .text-slate-50,
+        body.theme-glass.theme-light [id^="tab-"] .text-slate-100,
+        body.theme-glass.theme-light [id^="tab-"] .text-slate-200,
+        body.theme-glass.theme-light [id^="tab-"] .text-slate-300 {
+            color: #172f4b !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-400,
+        body.theme-glass.theme-light [id^="tab-"] .text-gray-500,
+        body.theme-glass.theme-light [id^="tab-"] .text-slate-400,
+        body.theme-glass.theme-light [id^="tab-"] .text-slate-500,
+        body.theme-glass.theme-light [id^="tab-"] .text-zinc-400,
+        body.theme-glass.theme-light [id^="tab-"] .text-zinc-500,
+        body.theme-glass.theme-light [id^="tab-"] .text-neutral-400,
+        body.theme-glass.theme-light [id^="tab-"] .text-neutral-500 {
+            color: #405873 !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] h1,
+        body.theme-glass.theme-light [id^="tab-"] h2,
+        body.theme-glass.theme-light [id^="tab-"] h3,
+        body.theme-glass.theme-light [id^="tab-"] h4,
+        body.theme-glass.theme-light [id^="tab-"] .font-semibold,
+        body.theme-glass.theme-light [id^="tab-"] .font-bold {
+            color: #122b47;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] label,
+        body.theme-glass.theme-light [id^="tab-"] .form-label {
+            color: #203b5a !important;
+            font-weight: 600 !important;
+        }
+
+        /* Table text: dark body ink and distinct, darker glass header. */
+        body.theme-glass.theme-light [id^="tab-"] table,
+        body.theme-glass.theme-light [id^="tab-"] tbody,
+        body.theme-glass.theme-light [id^="tab-"] tbody tr,
+        body.theme-glass.theme-light [id^="tab-"] tbody td {
+            color: #193552 !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] thead,
+        body.theme-glass.theme-light [id^="tab-"] thead tr,
+        body.theme-glass.theme-light [id^="tab-"] thead th {
+            background: rgba(105, 137, 174, .62) !important;
+            color: #102944 !important;
+            border-color: rgba(37, 66, 101, .34) !important;
+            font-weight: 700 !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] thead th * {
+            color: #102944 !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] tbody tr {
+            background: rgba(225, 237, 249, .20) !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] tbody tr:hover {
+            background: rgba(81, 128, 181, .17) !important;
+        }
+
+        /* Inputs, dropdowns, and placeholders across all modules. */
+        body.theme-glass.theme-light input:not([type="checkbox"]):not([type="radio"]),
+        body.theme-glass.theme-light select,
+        body.theme-glass.theme-light textarea,
+        body.theme-glass.theme-light [id^="tab-"] input:not([type="checkbox"]):not([type="radio"]),
+        body.theme-glass.theme-light [id^="tab-"] select,
+        body.theme-glass.theme-light [id^="tab-"] textarea {
+            background: rgba(225, 237, 249, .66) !important;
+            color: #142d49 !important;
+            -webkit-text-fill-color: #142d49 !important;
+            border-color: rgba(42, 76, 116, .38) !important;
+        }
+
+        body.theme-glass.theme-light input::placeholder,
+        body.theme-glass.theme-light textarea::placeholder {
+            color: #526984 !important;
+            -webkit-text-fill-color: #526984 !important;
+            opacity: 1 !important;
+        }
+
+        body.theme-glass.theme-light select,
+        body.theme-glass.theme-light select option,
+        body.theme-glass.theme-light select optgroup {
+            color-scheme: light !important;
+            background-color: #dce8f5 !important;
+            color: #142d49 !important;
+        }
+
+        /* Header and sidebar labels, including collapsed navigation icons. */
+        body.theme-glass.theme-light > header,
+        body.theme-glass.theme-light #inventory-sidebar {
+            color: #142d49 !important;
+        }
+
+        body.theme-glass.theme-light > header h1,
+        body.theme-glass.theme-light > header .font-bold,
+        body.theme-glass.theme-light > header .font-semibold,
+        body.theme-glass.theme-light #inventory-sidebar nav button,
+        body.theme-glass.theme-light #inventory-sidebar nav button span {
+            color: #183653 !important;
+        }
+
+        body.theme-glass.theme-light > header .text-gray-400,
+        body.theme-glass.theme-light > header .text-gray-500,
+        body.theme-glass.theme-light #inventory-sidebar .text-gray-400,
+        body.theme-glass.theme-light #inventory-sidebar .text-gray-500 {
+            color: #405873 !important;
+        }
+
+        body.theme-glass.theme-light #inventory-sidebar nav button.theme-accent-bg,
+        body.theme-glass.theme-light #inventory-sidebar nav button.theme-accent-bg span {
+            color: #ffffff !important;
+        }
+
+        /* Preserve semantic feedback colors (success, warning, danger, info). */
+        body.theme-glass.theme-light .text-red-500,
+        body.theme-glass.theme-light .text-red-600,
+        body.theme-glass.theme-light .text-rose-500,
+        body.theme-glass.theme-light .text-rose-600,
+        body.theme-glass.theme-light .text-green-500,
+        body.theme-glass.theme-light .text-green-600,
+        body.theme-glass.theme-light .text-emerald-500,
+        body.theme-glass.theme-light .text-emerald-600,
+        body.theme-glass.theme-light .text-amber-500,
+        body.theme-glass.theme-light .text-orange-500,
+        body.theme-glass.theme-light .text-blue-600,
+        body.theme-glass.theme-light .text-sky-600 {
+            /* Keep the original semantic utility color. */
+            color: inherit;
+        }
+
+        body.theme-glass.theme-light [id$="-modal"] > div,
+        body.theme-glass.theme-light [role="dialog"],
+        body.theme-glass.theme-light .modal-content {
+            color: #172f4b !important;
+            background: linear-gradient(135deg,
+                rgba(220, 233, 247, .88),
+                rgba(174, 196, 221, .82)) !important;
+            border-color: rgba(42, 72, 108, .34) !important;
+            backdrop-filter: blur(26px) saturate(150%);
+            -webkit-backdrop-filter: blur(26px) saturate(150%);
+        }
+
 </style></head><body><h2>${escapePrintHtml(config.title)}</h2>
                 <p class="meta">Periode: ${escapePrintHtml(periodLabel)} &nbsp; | &nbsp; Total: ${rows.length} data &nbsp; | &nbsp; Dicetak: ${escapePrintHtml(nowStr)}</p>
                 <table><thead><tr><th class="no">No</th>${headers.map(([,label])=>`<th>${escapePrintHtml(label)}</th>`).join('')}</tr></thead><tbody>${bodyRows}</tbody></table>
@@ -7465,17 +8162,32 @@
         }
 
         disableAllAutofill();
+        // OPTIMASI: node baru dikumpulkan lalu diproses sekali per frame, bukan satu per satu
+        // pada setiap render tabel (yang menambahkan ratusan node sekaligus).
+        let autofillQueue = [];
+        let autofillScheduled = false;
+        function flushAutofillQueue() {
+            autofillScheduled = false;
+            const nodes = autofillQueue;
+            autofillQueue = [];
+            nodes.forEach((node) => {
+                if (!node.isConnected) return;
+                if (node.matches?.('form, input, select, textarea')) {
+                    node.setAttribute('autocomplete', 'off');
+                }
+                disableAllAutofill(node);
+            });
+        }
         const autofillObserver = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 mutation.addedNodes.forEach((node) => {
-                    if (node.nodeType === 1) {
-                        if (node.matches?.('form, input, select, textarea')) {
-                            node.setAttribute('autocomplete', 'off');
-                        }
-                        disableAllAutofill(node);
-                    }
+                    if (node.nodeType === 1) autofillQueue.push(node);
                 });
             });
+            if (autofillQueue.length && !autofillScheduled) {
+                autofillScheduled = true;
+                requestAnimationFrame(flushAutofillQueue);
+            }
         });
         autofillObserver.observe(document.documentElement, {
             childList: true,
