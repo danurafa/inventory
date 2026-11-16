@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.16-dual-ui-classic-glass-premium-crystal-v20-native-scroll";
+        const APP_VERSION = "2026.11.16-dual-ui-classic-glass-premium-crystal-v27-native-scroll";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -2505,6 +2505,663 @@
                 transition-duration: .01ms !important;
             }
         }
+
+
+
+        /* ==========================================================
+           V23 — LOCAL HOVER ISOLATION
+           Root cause addressed:
+           - V21 rules were placed after V22 and changed card shadows
+             again on hover, overriding V22's stable-shadow intention.
+           - Generic buttons still transitioned box-shadow, allowing
+             hover repaint to affect adjacent glass layers.
+           Keep the lift animation; keep each hover effect local.
+           ========================================================== */
+
+        /* Cards retain their premium lift, but their shadow is identical
+           in normal and hover states. Only transform/border animate. */
+        body.theme-glass #inventory-main-content .app-card,
+        body.theme-glass #inventory-main-content .dashboard-glow-card {
+            position: relative;
+            isolation: isolate;
+            transition-property: transform, border-color !important;
+            transition-duration: .22s, .22s !important;
+            transition-timing-function: ease, ease !important;
+        }
+
+        body.theme-glass.theme-classic #inventory-main-content .app-card,
+        body.theme-glass.theme-classic #inventory-main-content .dashboard-glow-card,
+        body.theme-glass.theme-classic #inventory-main-content .app-card:hover,
+        body.theme-glass.theme-classic #inventory-main-content .dashboard-glow-card:hover {
+            box-shadow: 0 6px 20px rgba(0, 12, 28, .16),
+                        inset 0 1px 0 rgba(190, 220, 255, .075) !important;
+        }
+
+        body.theme-glass.theme-crystal #inventory-main-content .app-card,
+        body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card,
+        body.theme-glass.theme-crystal #inventory-main-content .app-card:hover,
+        body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card:hover {
+            box-shadow: 0 6px 20px rgba(64, 103, 148, .085),
+                        inset 0 1px 0 rgba(255, 255, 255, .72) !important;
+        }
+
+        body.theme-glass.theme-classic #inventory-main-content .app-card:hover,
+        body.theme-glass.theme-classic #inventory-main-content .dashboard-glow-card:hover {
+            transform: translate3d(0, -2px, 0) !important;
+            border-color: rgba(96, 165, 250, .38) !important;
+        }
+
+        body.theme-glass.theme-crystal #inventory-main-content .app-card:hover,
+        body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card:hover {
+            transform: translate3d(0, -3px, 0) !important;
+            border-color: rgba(102, 153, 210, .42) !important;
+        }
+
+        /* Hovering a control raises only that control above nearby surfaces.
+           Do not animate box-shadow; preserve any existing visual hover color. */
+        body.theme-glass #inventory-main-content button,
+        body.theme-glass #inventory-main-content a,
+        body.theme-glass #inventory-main-content [role="button"] {
+            transition-property: transform, border-color, background-color,
+                                 color, filter !important;
+        }
+
+        body.theme-glass #inventory-main-content button:hover,
+        body.theme-glass #inventory-main-content a:hover,
+        body.theme-glass #inventory-main-content [role="button"]:hover {
+            position: relative;
+            z-index: 3;
+            isolation: isolate;
+        }
+
+        /* Prevent nested panel/card shadows from being altered by a
+           neighboring control's hover state. Focus rings remain available. */
+        body.theme-glass #inventory-main-content .app-card:focus-within,
+        body.theme-glass #inventory-main-content .dashboard-glow-card:focus-within {
+            outline-offset: 3px;
+        }
+
+
+
+
+        /* ==========================================================
+           V24 — LOGIN-STYLE GLASS BLUR ACROSS ALL MODULES
+           Extend the login card's translucent layered-glass treatment
+           to module surfaces while preserving layout, hover lift,
+           stable shadows, table scrolling and all application logic.
+           ========================================================== */
+
+        /* Shared glass treatment for cards and module surface panels. */
+        body.theme-glass #inventory-main-content .app-card,
+        body.theme-glass #inventory-main-content .dashboard-glow-card,
+        body.theme-glass #inventory-main-content [id^="tab-"] .rounded-xl.border,
+        body.theme-glass #inventory-main-content [id^="tab-"] .rounded-2xl.border,
+        body.theme-glass #inventory-main-content [id^="tab-"] .bg-dark-800,
+        body.theme-glass #inventory-main-content [id^="tab-"] .bg-dark-900,
+        body.theme-glass #inventory-main-content [id^="tab-"] .bg-gray-800,
+        body.theme-glass #inventory-main-content [id^="tab-"] .bg-gray-900 {
+            -webkit-backdrop-filter: blur(26px) saturate(145%) !important;
+            backdrop-filter: blur(26px) saturate(145%) !important;
+            background-clip: padding-box;
+        }
+
+        /* Classic Glass — login-card inspired navy translucent layers. */
+        body.theme-glass.theme-classic #inventory-main-content .app-card,
+        body.theme-glass.theme-classic #inventory-main-content .dashboard-glow-card,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .rounded-2xl.border,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .bg-dark-800,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .bg-dark-900,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .bg-gray-800,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .bg-gray-900 {
+            background-color: rgba(15, 35, 59, .68) !important;
+            border-color: rgba(147, 197, 253, .24) !important;
+        }
+
+        /* Premium Crystal — pearl-blue translucent layers. */
+        body.theme-glass.theme-crystal #inventory-main-content .app-card,
+        body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .rounded-2xl.border,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .bg-dark-800,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .bg-dark-900,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .bg-gray-800,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .bg-gray-900 {
+            background-color: rgba(239, 247, 255, .66) !important;
+            border-color: rgba(112, 153, 199, .27) !important;
+        }
+
+        /* Keep module cards' premium motion and the isolated hover shadow.
+           Blur remains constant across hover to avoid flicker/repaint jumps. */
+        body.theme-glass #inventory-main-content .app-card,
+        body.theme-glass #inventory-main-content .dashboard-glow-card,
+        body.theme-glass #inventory-main-content .app-card:hover,
+        body.theme-glass #inventory-main-content .dashboard-glow-card:hover {
+            -webkit-backdrop-filter: blur(26px) saturate(145%) !important;
+            backdrop-filter: blur(26px) saturate(145%) !important;
+        }
+
+        /* Login-like soft highlight on the top edge of major module surfaces. */
+        body.theme-glass #inventory-main-content .app-card,
+        body.theme-glass #inventory-main-content .dashboard-glow-card {
+            border-top-color: rgba(210, 231, 255, .42) !important;
+        }
+        body.theme-glass.theme-crystal #inventory-main-content .app-card,
+        body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card {
+            border-top-color: rgba(255, 255, 255, .92) !important;
+        }
+
+
+
+
+        /* ==========================================================
+           V25 — LOGIN-INSPIRED AMBIENT BACKGROUND FOR MODULES
+           Recreate the soft, blurred blue atmosphere from the login
+           screen behind every module. Content stays crisp and readable:
+           no backdrop-filter is applied to the whole workspace.
+           ========================================================== */
+
+        #inventory-main-content {
+            position: relative;
+            isolation: isolate;
+            background-attachment: fixed !important;
+            background-repeat: no-repeat !important;
+        }
+
+        /* Classic Glass: deep slate-blue haze with two soft blue orbs. */
+        body.theme-glass.theme-classic #inventory-main-content,
+        body.theme-classic #inventory-main-content {
+            background-color: #091a2d !important;
+            background-image:
+                radial-gradient(ellipse 48rem 34rem at 100% 2%,
+                    rgba(56, 145, 220, .25) 0%,
+                    rgba(36, 105, 174, .12) 38%,
+                    transparent 72%),
+                radial-gradient(ellipse 42rem 38rem at 0% 100%,
+                    rgba(24, 111, 190, .24) 0%,
+                    rgba(20, 77, 139, .10) 45%,
+                    transparent 74%),
+                radial-gradient(ellipse 70rem 45rem at 50% 42%,
+                    rgba(34, 78, 125, .16) 0%,
+                    transparent 72%),
+                linear-gradient(135deg, #0b1d32 0%, #102943 48%, #091a2d 100%) !important;
+        }
+
+        /* Premium Crystal: frosted pearl-blue atmosphere from login screen. */
+        body.theme-glass.theme-crystal #inventory-main-content,
+        body.theme-crystal #inventory-main-content {
+            background-color: #eaf2fb !important;
+            background-image:
+                radial-gradient(ellipse 48rem 34rem at 100% 2%,
+                    rgba(87, 169, 226, .25) 0%,
+                    rgba(103, 166, 218, .12) 38%,
+                    transparent 72%),
+                radial-gradient(ellipse 42rem 38rem at 0% 100%,
+                    rgba(57, 143, 211, .22) 0%,
+                    rgba(82, 145, 203, .10) 45%,
+                    transparent 74%),
+                radial-gradient(ellipse 70rem 45rem at 50% 42%,
+                    rgba(255, 255, 255, .72) 0%,
+                    transparent 72%),
+                linear-gradient(135deg, #edf4fc 0%, #dfeaf7 48%, #eaf2fb 100%) !important;
+        }
+
+        /* Decorative background treatment must never cover controls or text. */
+        #inventory-main-content > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Keep the top-level hero and cards translucent so the ambient
+           background softly shows through, like the login glass card. */
+        body.theme-glass.theme-classic #inventory-main-content #dashboard-hero {
+            background:
+                linear-gradient(135deg, rgba(37, 77, 119, .66),
+                    rgba(16, 44, 75, .48) 56%,
+                    rgba(10, 30, 53, .62)) !important;
+            border-color: rgba(147, 197, 253, .28) !important;
+        }
+        body.theme-glass.theme-crystal #inventory-main-content #dashboard-hero {
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, .74),
+                    rgba(218, 235, 252, .58) 56%,
+                    rgba(232, 243, 254, .72)) !important;
+            border-color: rgba(112, 153, 199, .30) !important;
+        }
+
+        /* Avoid an opaque legacy background hiding the new atmosphere
+           on module wrappers while retaining each card's own glass fill. */
+        body.theme-glass #inventory-main-content [id^="tab-"] {
+            background-color: transparent;
+            background-image: none;
+        }
+
+        @media (max-width: 700px) {
+            #inventory-main-content {
+                background-attachment: scroll !important;
+            }
+        }
+
+
+
+
+        /* ==========================================================
+           V26 — FULL LOGIN GLASS LANGUAGE FOR EVERY MODULE
+           Match the login overlay atmosphere, translucent surfaces,
+           frosted blur, soft orb lighting and glass highlights.
+           Content remains sharp; only the backdrop behind surfaces blurs.
+           ========================================================== */
+
+        #inventory-main-content {
+            position: relative !important;
+            isolation: isolate !important;
+            overflow: clip;
+            background: transparent !important;
+            -webkit-backdrop-filter: none !important;
+            backdrop-filter: none !important;
+        }
+
+        #inventory-main-content::before,
+        #inventory-main-content::after {
+            content: "";
+            position: absolute;
+            z-index: 0;
+            width: min(54vw, 520px);
+            height: min(54vw, 520px);
+            border-radius: 44% 56% 62% 38% / 42% 42% 58% 58%;
+            pointer-events: none;
+            filter: blur(1px);
+            opacity: .72;
+        }
+
+        #inventory-main-content::before {
+            top: -100px;
+            right: -110px;
+            background:
+                radial-gradient(ellipse at 35% 35%, rgba(96,165,250,.34), transparent 60%),
+                linear-gradient(135deg, rgba(59,130,246,.12), rgba(34,211,238,.20), transparent 72%);
+            border: 1px solid rgba(147,197,253,.20);
+            transform: rotate(-24deg);
+        }
+
+        #inventory-main-content::after {
+            bottom: -170px;
+            left: -130px;
+            background:
+                radial-gradient(ellipse at 55% 45%, rgba(14,165,233,.24), transparent 62%),
+                linear-gradient(135deg, rgba(30,64,175,.12), rgba(56,189,248,.14), transparent 72%);
+            border: 1px solid rgba(125,211,252,.16);
+            transform: rotate(18deg);
+        }
+
+        #inventory-main-content > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Classic Glass: same translucent navy overlay and blue ambience
+           as the dark login screen. */
+        body.theme-glass.theme-classic #inventory-main-content,
+        body.theme-classic #inventory-main-content {
+            background:
+                radial-gradient(ellipse at 82% 18%, rgba(56,189,248,.22), transparent 34%),
+                radial-gradient(ellipse at 16% 82%, rgba(37,99,235,.20), transparent 38%),
+                rgba(3,10,22,.58) !important;
+            color: #eaf4ff;
+        }
+
+        body.theme-glass.theme-classic #inventory-main-content .app-card,
+        body.theme-glass.theme-classic #inventory-main-content .dashboard-glow-card,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .rounded-2xl.border,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .bg-dark-800,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .bg-dark-900,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .bg-gray-800,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .bg-gray-900 {
+            background:
+                linear-gradient(135deg,
+                    rgba(30,55,85,.70),
+                    rgba(12,31,56,.54) 52%,
+                    rgba(7,20,39,.72)) !important;
+            border: 1px solid rgba(147,197,253,.30) !important;
+            -webkit-backdrop-filter: blur(28px) saturate(145%) !important;
+            backdrop-filter: blur(28px) saturate(145%) !important;
+            background-clip: padding-box;
+        }
+
+        /* Premium Crystal: same frosted translucent pearl treatment
+           as the light login screen. */
+        body.theme-glass.theme-crystal #inventory-main-content,
+        body.theme-crystal #inventory-main-content {
+            background:
+                radial-gradient(ellipse at 82% 18%, rgba(56,189,248,.20), transparent 34%),
+                radial-gradient(ellipse at 16% 82%, rgba(37,99,235,.16), transparent 38%),
+                rgba(222,235,249,.48) !important;
+            color: #173657;
+        }
+
+        body.theme-glass.theme-crystal #inventory-main-content .app-card,
+        body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .rounded-2xl.border,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .bg-dark-800,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .bg-dark-900,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .bg-gray-800,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .bg-gray-900 {
+            background:
+                linear-gradient(135deg,
+                    rgba(218,231,246,.80),
+                    rgba(190,211,235,.70) 52%,
+                    rgba(205,222,242,.80)) !important;
+            border: 1px solid rgba(147,176,210,.38) !important;
+            -webkit-backdrop-filter: blur(28px) saturate(145%) !important;
+            backdrop-filter: blur(28px) saturate(145%) !important;
+            background-clip: padding-box;
+        }
+
+        /* Login-card style glass highlight: subtle luminous top edge,
+           without adding hover shadow changes or affecting card lift. */
+        body.theme-glass #inventory-main-content .app-card::before,
+        body.theme-glass #inventory-main-content .dashboard-glow-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            z-index: 0;
+            background: linear-gradient(120deg,
+                rgba(255,255,255,.12),
+                transparent 34%,
+                transparent 68%,
+                rgba(96,165,250,.08));
+        }
+
+        body.theme-glass.theme-crystal #inventory-main-content .app-card::before,
+        body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card::before {
+            background: linear-gradient(120deg,
+                rgba(255,255,255,.34),
+                transparent 36%,
+                transparent 70%,
+                rgba(96,165,250,.10));
+        }
+
+        /* Preserve clear table readability over the transparent glass. */
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] table {
+            background: rgba(5,18,34,.20);
+        }
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] table {
+            background: rgba(255,255,255,.20);
+        }
+
+        @media (max-width: 700px) {
+            #inventory-main-content::before,
+            #inventory-main-content::after {
+                width: min(78vw, 360px);
+                height: min(78vw, 360px);
+            }
+        }
+
+
+
+
+        /* ==========================================================
+           V27 — LOGIN DESIGN SYSTEM APPLIED TO ALL MODULES
+           Reuse the login's complete visual language:
+           ambient orbs, translucent gradient surfaces, 28px frosted
+           glass, glass highlights, inset fields, blue gradient actions,
+           fine borders and layered soft shadows.
+           No application logic or DOM structure is changed.
+           ========================================================== */
+
+        #inventory-main-content {
+            position: relative !important;
+            isolation: isolate !important;
+            background: transparent !important;
+        }
+
+        /* Ambient login backdrop: two soft blue light sources. */
+        #inventory-main-content::before,
+        #inventory-main-content::after {
+            content: "" !important;
+            position: absolute !important;
+            z-index: 0 !important;
+            display: block !important;
+            width: min(54vw, 520px) !important;
+            height: min(54vw, 520px) !important;
+            border-radius: 44% 56% 62% 38% / 42% 42% 58% 58% !important;
+            pointer-events: none !important;
+            filter: blur(1px) !important;
+            opacity: .72 !important;
+        }
+        #inventory-main-content::before {
+            top: -100px !important;
+            right: -110px !important;
+            left: auto !important;
+            bottom: auto !important;
+            background:
+                radial-gradient(ellipse at 35% 35%,rgba(96,165,250,.34),transparent 60%),
+                linear-gradient(135deg,rgba(59,130,246,.12),rgba(34,211,238,.20),transparent 72%) !important;
+            border: 1px solid rgba(147,197,253,.20) !important;
+        }
+        #inventory-main-content::after {
+            bottom: -170px !important;
+            left: -130px !important;
+            top: auto !important;
+            right: auto !important;
+            background:
+                radial-gradient(ellipse at 55% 45%,rgba(14,165,233,.24),transparent 62%),
+                linear-gradient(135deg,rgba(30,64,175,.12),rgba(56,189,248,.14),transparent 72%) !important;
+            border: 1px solid rgba(125,211,252,.16) !important;
+        }
+        #inventory-main-content > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Shared surface foundation. Keep content crisp; blur only the
+           background seen through each glass surface. */
+        body.theme-glass #inventory-main-content .app-card,
+        body.theme-glass #inventory-main-content .dashboard-glow-card,
+        body.theme-glass #inventory-main-content [id^="tab-"] .rounded-lg.border,
+        body.theme-glass #inventory-main-content [id^="tab-"] .rounded-xl.border,
+        body.theme-glass #inventory-main-content [id^="tab-"] .rounded-2xl.border,
+        body.theme-glass #inventory-main-content [id^="tab-"] .rounded-3xl.border,
+        body.theme-glass #inventory-main-content [id^="tab-"] .shadow-sm,
+        body.theme-glass #inventory-main-content [id^="tab-"] .shadow-md,
+        body.theme-glass #inventory-main-content [id^="tab-"] .shadow-lg {
+            position: relative;
+            isolation: isolate;
+            background-clip: padding-box !important;
+            -webkit-backdrop-filter: blur(28px) saturate(145%) !important;
+            backdrop-filter: blur(28px) saturate(145%) !important;
+            border-width: 1px;
+        }
+
+        /* Classic Glass: mirror the dark login card. */
+        body.theme-glass.theme-classic #inventory-main-content,
+        body.theme-classic #inventory-main-content {
+            color: #eaf4ff !important;
+            background:
+                radial-gradient(ellipse at 82% 18%,rgba(56,189,248,.22),transparent 34%),
+                radial-gradient(ellipse at 16% 82%,rgba(37,99,235,.20),transparent 38%),
+                rgba(3,10,22,.76) !important;
+        }
+        body.theme-glass.theme-classic #inventory-main-content .app-card,
+        body.theme-glass.theme-classic #inventory-main-content .dashboard-glow-card,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .rounded-lg.border,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .rounded-2xl.border,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .rounded-3xl.border,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .shadow-sm,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .shadow-md,
+        body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .shadow-lg {
+            color: #eaf4ff;
+            border: 1px solid rgba(147,197,253,.30) !important;
+            background: linear-gradient(135deg,
+                rgba(30,55,85,.70),
+                rgba(12,31,56,.54) 52%,
+                rgba(7,20,39,.72)) !important;
+            box-shadow:
+                0 28px 54px rgba(0,0,0,.20),
+                inset 0 1px 0 rgba(255,255,255,.16),
+                0 0 28px rgba(59,130,246,.07) !important;
+        }
+
+        /* Premium Crystal: same login treatment translated to pearl glass. */
+        body.theme-glass.theme-crystal #inventory-main-content,
+        body.theme-crystal #inventory-main-content {
+            color: #173657 !important;
+            background:
+                radial-gradient(ellipse at 82% 18%,rgba(56,189,248,.20),transparent 34%),
+                radial-gradient(ellipse at 16% 82%,rgba(37,99,235,.16),transparent 38%),
+                rgba(226,238,251,.76) !important;
+        }
+        body.theme-glass.theme-crystal #inventory-main-content .app-card,
+        body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .rounded-lg.border,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .rounded-2xl.border,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .rounded-3xl.border,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .shadow-sm,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .shadow-md,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .shadow-lg {
+            color: #173657;
+            border: 1px solid rgba(147,176,210,.38) !important;
+            background: linear-gradient(135deg,
+                rgba(255,255,255,.72),
+                rgba(219,233,249,.56) 52%,
+                rgba(237,245,253,.70)) !important;
+            box-shadow:
+                0 24px 54px rgba(54,88,128,.12),
+                inset 0 1px 0 rgba(255,255,255,.78),
+                0 0 28px rgba(59,130,246,.055) !important;
+        }
+
+        /* Glass reflection layer, similar to login-card ::before. */
+        body.theme-glass #inventory-main-content .app-card::before,
+        body.theme-glass #inventory-main-content .dashboard-glow-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            background: linear-gradient(120deg,
+                rgba(255,255,255,.12),
+                transparent 34%,
+                transparent 68%,
+                rgba(96,165,250,.08));
+        }
+        body.theme-glass.theme-crystal #inventory-main-content .app-card::before,
+        body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card::before {
+            background: linear-gradient(120deg,
+                rgba(255,255,255,.34),
+                transparent 34%,
+                transparent 68%,
+                rgba(96,165,250,.10));
+        }
+
+        /* Form fields mirror the login inset-glass inputs. */
+        body.theme-glass #inventory-main-content input:not([type=checkbox]):not([type=radio]),
+        body.theme-glass #inventory-main-content select,
+        body.theme-glass #inventory-main-content textarea {
+            min-height: 42px;
+            border-radius: 13px !important;
+            border: 1px solid rgba(191,219,254,.28) !important;
+            background: rgba(8,25,47,.38) !important;
+            box-shadow: inset 0 1px 5px rgba(0,0,0,.16),
+                        0 5px 18px rgba(0,0,0,.08) !important;
+            transition: border-color .2s ease, background-color .2s ease !important;
+        }
+        body.theme-glass #inventory-main-content input:focus,
+        body.theme-glass #inventory-main-content select:focus,
+        body.theme-glass #inventory-main-content textarea:focus {
+            outline: none !important;
+            border-color: rgba(96,165,250,.78) !important;
+            box-shadow: 0 0 0 3px rgba(59,130,246,.15),
+                        inset 0 1px 5px rgba(0,0,0,.12) !important;
+        }
+        body.theme-glass.theme-classic #inventory-main-content input,
+        body.theme-glass.theme-classic #inventory-main-content select,
+        body.theme-glass.theme-classic #inventory-main-content textarea {
+            color: #f8fbff !important;
+        }
+        body.theme-glass.theme-classic #inventory-main-content input::placeholder,
+        body.theme-glass.theme-classic #inventory-main-content textarea::placeholder {
+            color: rgba(219,234,254,.68) !important;
+        }
+        body.theme-glass.theme-crystal #inventory-main-content input:not([type=checkbox]):not([type=radio]),
+        body.theme-glass.theme-crystal #inventory-main-content select,
+        body.theme-glass.theme-crystal #inventory-main-content textarea {
+            color: #173657 !important;
+            border-color: rgba(116,153,193,.34) !important;
+            background: rgba(255,255,255,.48) !important;
+            box-shadow: inset 0 1px 5px rgba(55,91,132,.08),
+                        0 5px 18px rgba(55,91,132,.055) !important;
+        }
+        body.theme-glass.theme-crystal #inventory-main-content input::placeholder,
+        body.theme-glass.theme-crystal #inventory-main-content textarea::placeholder {
+            color: rgba(49,83,120,.58) !important;
+        }
+
+        /* Primary actions mirror the login blue-gradient submit button. */
+        body.theme-glass #inventory-main-content button:not(.sidebar-btn):not(.theme-choice-btn),
+        body.theme-glass #inventory-main-content .btn-primary {
+            border-radius: 12px;
+            border-color: rgba(191,219,254,.32) !important;
+            box-shadow: 0 10px 24px rgba(37,99,235,.16),
+                        inset 0 1px 0 rgba(255,255,255,.20);
+        }
+        body.theme-glass #inventory-main-content button.bg-blue-600,
+        body.theme-glass #inventory-main-content button.bg-blue-500,
+        body.theme-glass #inventory-main-content .btn-primary {
+            background: linear-gradient(110deg,#2563eb,#0284c7) !important;
+        }
+
+        /* Table containers become glass; table cells remain readable. */
+        body.theme-glass #inventory-main-content [id^="tab-"] .overflow-x-auto,
+        body.theme-glass #inventory-main-content [id^="tab-"] .overflow-auto,
+        body.theme-glass #inventory-main-content [id^="tab-"] .overflow-y-auto {
+            border-radius: 13px;
+            border: 1px solid rgba(147,197,253,.20);
+            background: rgba(8,25,47,.20);
+            -webkit-backdrop-filter: blur(18px) saturate(135%);
+            backdrop-filter: blur(18px) saturate(135%);
+        }
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .overflow-x-auto,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .overflow-auto,
+        body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] .overflow-y-auto {
+            border-color: rgba(112,153,199,.24);
+            background: rgba(255,255,255,.24);
+        }
+        body.theme-glass #inventory-main-content [id^="tab-"] table {
+            background: transparent !important;
+        }
+
+        /* Preserve the premium lift while keeping hover shadows unchanged. */
+        body.theme-glass.theme-classic #inventory-main-content .app-card:hover,
+        body.theme-glass.theme-classic #inventory-main-content .dashboard-glow-card:hover {
+            transform: translate3d(0,-2px,0) !important;
+            box-shadow: 0 28px 54px rgba(0,0,0,.20),
+                        inset 0 1px 0 rgba(255,255,255,.16),
+                        0 0 28px rgba(59,130,246,.07) !important;
+        }
+        body.theme-glass.theme-crystal #inventory-main-content .app-card:hover,
+        body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card:hover {
+            transform: translate3d(0,-3px,0) !important;
+            box-shadow: 0 24px 54px rgba(54,88,128,.12),
+                        inset 0 1px 0 rgba(255,255,255,.78),
+                        0 0 28px rgba(59,130,246,.055) !important;
+        }
+
+        @media (max-width: 700px) {
+            #inventory-main-content::before,
+            #inventory-main-content::after {
+                width: min(78vw,360px) !important;
+                height: min(78vw,360px) !important;
+            }
+        }
+
 
 </style>
 </head>
