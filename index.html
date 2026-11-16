@@ -191,70 +191,59 @@
             pointer-events: auto;
         }
 
-       
-            /* =====================================================
-               LOW STOCK BORDER BLINK FIX
-               Background tetap solid, hanya border yang berkedip
-               ===================================================== */
-            
-            /* Pengaturan dasar */
-            .blink-low-stock-red,
-            .blink-low-stock-orange {
-                position: relative;
-                isolation: isolate;
+        /* =====================================================
+           LOW STOCK BORDER BLINK FIX
+           Background tetap solid, hanya border yang berkedip
+           ===================================================== */
+        .blink-low-stock-red,
+        .blink-low-stock-orange {
+            position: relative;
+            isolation: isolate;
+        }
+
+        .blink-low-stock-red::after,
+        .blink-low-stock-orange::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border: 1.5px solid;
+            border-radius: inherit;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* MERAH - STOK KRITIS (< 50% dari stok minimum) */
+        .blink-low-stock-red::after {
+            animation: borderBlinkRed 1.2s infinite ease-in-out;
+        }
+
+        @keyframes borderBlinkRed {
+            0%, 100% {
+                border-color: #f43f5e;
+                box-shadow: 0 0 12px rgba(244, 63, 94, 0.65);
             }
-            
-            /* Lapisan border animasi */
-            .blink-low-stock-red::after,
-            .blink-low-stock-orange::after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                border: 1.5px solid;
-                border-radius: inherit;
-                pointer-events: none;
-                z-index: 2;
+            50% {
+                border-color: rgba(244, 63, 94, 0.2);
+                box-shadow: none;
             }
-            
-            /* =====================================================
-               MERAH - STOK KRITIS
-               ===================================================== */
-            
-            .blink-low-stock-red::after {
-                animation: borderBlinkRed 1.2s infinite ease-in-out;
+        }
+
+        /* ORANGE - STOK MENIPIS (50% sampai di bawah minimum) */
+        .blink-low-stock-orange::after {
+            animation: borderBlinkOrange 1.2s infinite ease-in-out;
+        }
+
+        @keyframes borderBlinkOrange {
+            0%, 100% {
+                border-color: #f97316;
+                box-shadow: 0 0 12px rgba(249, 115, 22, 0.65);
             }
-            
-            @keyframes borderBlinkRed {
-                0%, 100% {
-                    border-color: #f43f5e;
-                    box-shadow: 0 0 12px rgba(244, 63, 94, 0.65);
-                }
-            
-                50% {
-                    border-color: rgba(244, 63, 94, 0.2);
-                    box-shadow: none;
-                }
+            50% {
+                border-color: rgba(249, 115, 22, 0.2);
+                box-shadow: none;
             }
-            
-            /* =====================================================
-               ORANGE - STOK MENIPIS
-               ===================================================== */
-            
-            .blink-low-stock-orange::after {
-                animation: borderBlinkOrange 1.2s infinite ease-in-out;
-            }
-            
-            @keyframes borderBlinkOrange {
-                0%, 100% {
-                    border-color: #f97316;
-                    box-shadow: 0 0 12px rgba(249, 115, 22, 0.65);
-                }
-            
-                50% {
-                    border-color: rgba(249, 115, 22, 0.2);
-                    box-shadow: none;
-                }
-            }
+        }
+
         .role-badge-admin { background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
         .role-badge-staff { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
         .role-badge-viewer { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
@@ -1236,6 +1225,388 @@
             #dashboard-hero > .relative.flex > div:last-child {
                 width: 100%;
             }
+        }
+
+
+    /* ==========================================================
+       APP LIGHT MODE — LABEL/JUDUL DI ATAS SETIAP KOLOM INPUT
+       Berlaku untuk semua modul, bukan hanya halaman tertentu.
+       ========================================================== */
+    body.theme-glass.theme-light label,
+    body.theme-light label,
+    html body.theme-glass.theme-light [id^="tab-"] form label,
+    html body.theme-light [id^="tab-"] form label {
+        color: #244766 !important;
+        -webkit-text-fill-color: #244766 !important;
+        opacity: 1 !important;
+        text-shadow: none !important;
+        font-weight: 600 !important;
+    }
+
+    /* Heading modul yang memakai utility text putih */
+    body.theme-glass.theme-light [id^="tab-"] h1.text-white,
+    body.theme-glass.theme-light [id^="tab-"] h2.text-white,
+    body.theme-glass.theme-light [id^="tab-"] h3.text-white,
+    body.theme-glass.theme-light [id^="tab-"] h1.text-gray-100,
+    body.theme-glass.theme-light [id^="tab-"] h2.text-gray-100,
+    body.theme-glass.theme-light [id^="tab-"] h3.text-gray-100 {
+        color: #1d3b5a !important;
+        -webkit-text-fill-color: #1d3b5a !important;
+    }
+
+
+        /* LIGHT MODE — STATUS BADGES & DETAIL BUTTONS (HIGH CONTRAST) */
+        body.theme-glass.theme-light .text-sky-300,
+        body.theme-light .text-sky-300 {
+            color: #075985 !important;
+            -webkit-text-fill-color: #075985 !important;
+        }
+
+        body.theme-glass.theme-light .text-indigo-300,
+        body.theme-light .text-indigo-300 {
+            color: #3730a3 !important;
+            -webkit-text-fill-color: #3730a3 !important;
+        }
+
+        body.theme-glass.theme-light .text-emerald-300,
+        body.theme-light .text-emerald-300 {
+            color: #047857 !important;
+            -webkit-text-fill-color: #047857 !important;
+        }
+
+        /* Status pill backgrounds get a slightly stronger tint in Light Mode */
+        body.theme-glass.theme-light .bg-sky-500\/20,
+        body.theme-light .bg-sky-500\/20 {
+            background-color: rgba(14, 165, 233, 0.22) !important;
+        }
+
+        body.theme-glass.theme-light .bg-indigo-500\/20,
+        body.theme-light .bg-indigo-500\/20 {
+            background-color: rgba(99, 102, 241, 0.20) !important;
+        }
+
+        body.theme-glass.theme-light .bg-emerald-500\/20,
+        body.theme-light .bg-emerald-500\/20 {
+            background-color: rgba(16, 185, 129, 0.22) !important;
+        }
+
+
+        /* ==========================================================
+           ULTRA GLASS — LIGHT MODE ONLY
+           Preserve dark typography, status contrast and stock blink.
+           Dark Mode selectors are intentionally untouched.
+           ========================================================== */
+
+        body.theme-glass.theme-light {
+            background:
+                radial-gradient(ellipse at 12% 8%, rgba(125, 185, 245, .22), transparent 38%),
+                radial-gradient(ellipse at 88% 18%, rgba(110, 205, 230, .18), transparent 34%),
+                radial-gradient(ellipse at 55% 100%, rgba(105, 145, 205, .16), transparent 42%),
+                linear-gradient(135deg, #c5d8ec 0%, #d8e6f4 48%, #c6d9ed 100%) !important;
+            background-attachment: fixed !important;
+            color: #173451 !important;
+        }
+
+        /* Large app surfaces: more transparent glass + stronger blur */
+        body.theme-glass.theme-light aside,
+        body.theme-glass.theme-light header,
+        body.theme-glass.theme-light nav,
+        body.theme-glass.theme-light main,
+        body.theme-glass.theme-light .glass-surface {
+            background: rgba(220, 235, 250, .24) !important;
+            border-color: rgba(55, 99, 148, .22) !important;
+            color: #173451 !important;
+            backdrop-filter: blur(30px) saturate(175%) !important;
+            -webkit-backdrop-filter: blur(30px) saturate(175%) !important;
+        }
+
+        /* Cards and module panels */
+        body.theme-glass.theme-light .app-card,
+        body.theme-glass.theme-light .dashboard-glow-card,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-800,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-900,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-700,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-800,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-900,
+        body.theme-glass.theme-light [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-light [id^="tab-"] .rounded-2xl.border {
+            background: linear-gradient(
+                135deg,
+                rgba(245, 250, 255, .34),
+                rgba(190, 215, 241, .22)
+            ) !important;
+            border: 1px solid rgba(57, 105, 158, .25) !important;
+            box-shadow:
+                0 16px 38px rgba(37, 67, 105, .10),
+                inset 0 1px 0 rgba(255, 255, 255, .62),
+                inset 0 0 24px rgba(255, 255, 255, .12) !important;
+            backdrop-filter: blur(28px) saturate(170%) !important;
+            -webkit-backdrop-filter: blur(28px) saturate(170%) !important;
+        }
+
+        /* Table surfaces remain readable while showing the glass underneath */
+        body.theme-glass.theme-light [id^="tab-"] table {
+            background: rgba(230, 241, 252, .12) !important;
+            color: #24415f !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] thead,
+        body.theme-glass.theme-light [id^="tab-"] thead tr {
+            background: rgba(111, 151, 192, .30) !important;
+            color: #1e4268 !important;
+            backdrop-filter: blur(20px) saturate(160%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] tbody tr {
+            background: rgba(232, 243, 253, .13) !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] tbody tr:hover {
+            background: rgba(95, 150, 207, .19) !important;
+        }
+
+        /* Form controls: translucent but still high contrast */
+        body.theme-glass.theme-light [id^="tab-"] input:not([type="checkbox"]):not([type="radio"]),
+        body.theme-glass.theme-light [id^="tab-"] select,
+        body.theme-glass.theme-light [id^="tab-"] textarea {
+            background: rgba(235, 245, 255, .34) !important;
+            border-color: rgba(55, 99, 148, .32) !important;
+            color: #1e3b59 !important;
+            -webkit-text-fill-color: #1e3b59 !important;
+            box-shadow:
+                inset 0 1px 4px rgba(39, 78, 124, .07),
+                0 1px 0 rgba(255, 255, 255, .42) !important;
+            backdrop-filter: blur(18px) !important;
+            -webkit-backdrop-filter: blur(18px) !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] input::placeholder,
+        body.theme-glass.theme-light [id^="tab-"] textarea::placeholder {
+            color: #526d8a !important;
+            -webkit-text-fill-color: #526d8a !important;
+            opacity: 1 !important;
+        }
+
+        /* Keep labels, headings and data text dark and crisp */
+        body.theme-glass.theme-light [id^="tab-"] label {
+            color: #244766 !important;
+            -webkit-text-fill-color: #244766 !important;
+            opacity: 1 !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] h1,
+        body.theme-glass.theme-light [id^="tab-"] h2,
+        body.theme-glass.theme-light [id^="tab-"] h3,
+        body.theme-glass.theme-light [id^="tab-"] h4,
+        body.theme-glass.theme-light [id^="tab-"] th,
+        body.theme-glass.theme-light [id^="tab-"] td {
+            text-shadow: none !important;
+        }
+
+        /* Modals and dropdown panels */
+        body.theme-glass.theme-light [id$="-modal"] > div,
+        body.theme-glass.theme-light [role="dialog"],
+        body.theme-glass.theme-light .modal-content {
+            background: rgba(226, 239, 252, .62) !important;
+            border-color: rgba(55, 99, 148, .28) !important;
+            color: #173451 !important;
+            backdrop-filter: blur(30px) saturate(175%) !important;
+            -webkit-backdrop-filter: blur(30px) saturate(175%) !important;
+            box-shadow: 0 24px 64px rgba(27, 48, 75, .16) !important;
+        }
+
+        /* Status pills and stock alert borders retain their semantic colors */
+        body.theme-glass.theme-light .bg-sky-500\/20 { background-color: rgba(14, 165, 233, .22) !important; }
+        body.theme-glass.theme-light .bg-indigo-500\/20 { background-color: rgba(99, 102, 241, .20) !important; }
+        body.theme-glass.theme-light .bg-emerald-500\/20 { background-color: rgba(16, 185, 129, .22) !important; }
+
+
+        /* ==========================================================
+           LIGHT MODE — PHOTO-INSPIRED TRANSLUCENT GLASS
+           Lebih tembus pandang seperti referensi, tetap bernuansa
+           light blue glass dan menjaga kontras teks.
+           ========================================================== */
+
+        body.theme-glass.theme-light {
+            background:
+                radial-gradient(ellipse at 12% 10%, rgba(118, 174, 226, .18), transparent 42%),
+                radial-gradient(ellipse at 88% 16%, rgba(126, 204, 218, .14), transparent 38%),
+                linear-gradient(135deg, #c4d7e9 0%, #d3e2ef 52%, #c4d8eb 100%) !important;
+            background-attachment: fixed !important;
+        }
+
+        /* Main navigation and structural surfaces: light, translucent glass */
+        body.theme-glass.theme-light aside,
+        body.theme-glass.theme-light header,
+        body.theme-glass.theme-light nav,
+        body.theme-glass.theme-light main,
+        body.theme-glass.theme-light .glass-surface {
+            background: rgba(218, 232, 246, .16) !important;
+            border-color: rgba(62, 102, 143, .20) !important;
+            backdrop-filter: blur(22px) saturate(155%) !important;
+            -webkit-backdrop-filter: blur(22px) saturate(155%) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.34) !important;
+        }
+
+        /* Cards: more transparent than previous Ultra preset, but still frosted */
+        body.theme-glass.theme-light .app-card,
+        body.theme-glass.theme-light .dashboard-glow-card,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-800,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-900,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-700,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-800,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-900,
+        body.theme-glass.theme-light [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-light [id^="tab-"] .rounded-2xl.border {
+            background: linear-gradient(
+                135deg,
+                rgba(239, 247, 255, .25),
+                rgba(177, 205, 233, .13)
+            ) !important;
+            border: 1px solid rgba(56, 99, 145, .23) !important;
+            box-shadow:
+                0 12px 30px rgba(35, 62, 94, .09),
+                inset 0 1px 0 rgba(255,255,255,.46),
+                inset 0 0 20px rgba(255,255,255,.08) !important;
+            backdrop-filter: blur(23px) saturate(160%) !important;
+            -webkit-backdrop-filter: blur(23px) saturate(160%) !important;
+        }
+
+        /* Tables stay transparent; header remains distinct for readability */
+        body.theme-glass.theme-light [id^="tab-"] table {
+            background: rgba(225, 239, 251, .07) !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] thead,
+        body.theme-glass.theme-light [id^="tab-"] thead tr {
+            background: rgba(104, 145, 185, .25) !important;
+            backdrop-filter: blur(16px) saturate(145%) !important;
+            -webkit-backdrop-filter: blur(16px) saturate(145%) !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] tbody tr {
+            background: rgba(232, 243, 253, .08) !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] tbody tr:hover {
+            background: rgba(89, 145, 199, .16) !important;
+        }
+
+        /* Inputs: slightly more opaque than cards so values remain easy to read */
+        body.theme-glass.theme-light [id^="tab-"] input:not([type="checkbox"]):not([type="radio"]),
+        body.theme-glass.theme-light [id^="tab-"] select,
+        body.theme-glass.theme-light [id^="tab-"] textarea {
+            background: rgba(235, 245, 255, .30) !important;
+            border-color: rgba(55, 99, 148, .31) !important;
+            color: #1e3b59 !important;
+            -webkit-text-fill-color: #1e3b59 !important;
+            box-shadow:
+                inset 0 1px 4px rgba(39, 78, 124, .06),
+                0 1px 0 rgba(255,255,255,.36) !important;
+            backdrop-filter: blur(15px) !important;
+            -webkit-backdrop-filter: blur(15px) !important;
+        }
+
+        /* Preserve dark typography and status colors from previous fixes */
+        body.theme-glass.theme-light [id^="tab-"] label {
+            color: #244766 !important;
+            -webkit-text-fill-color: #244766 !important;
+        }
+
+        body.theme-glass.theme-light .text-sky-300 {
+            color: #075985 !important;
+            -webkit-text-fill-color: #075985 !important;
+        }
+
+        body.theme-glass.theme-light .text-indigo-300 {
+            color: #3730a3 !important;
+            -webkit-text-fill-color: #3730a3 !important;
+        }
+
+        body.theme-glass.theme-light .text-emerald-300 {
+            color: #047857 !important;
+            -webkit-text-fill-color: #047857 !important;
+        }
+
+        /* Keep low-stock border blink visible over translucent surfaces */
+        body.theme-glass.theme-light .blink-low-stock-red::after,
+        body.theme-glass.theme-light .blink-low-stock-orange::after {
+            z-index: 5;
+        }
+
+
+        /* ==========================================================
+           LIGHT MODE — CLEAR TRANSPARENT GLASS (NO WHITE MILKY FILL)
+           Panel surfaces use cool blue/grey tint with low opacity.
+           The page background stays soft blue so transparency is visible.
+           ========================================================== */
+
+        body.theme-glass.theme-light {
+            background:
+                radial-gradient(ellipse at 10% 12%, rgba(75, 132, 190, .16), transparent 42%),
+                radial-gradient(ellipse at 90% 18%, rgba(63, 151, 173, .12), transparent 40%),
+                linear-gradient(135deg, #b9cfe3 0%, #c9d9e8 52%, #b8cde1 100%) !important;
+            background-attachment: fixed !important;
+        }
+
+        /* Avoid opaque white surfaces across all module cards */
+        body.theme-glass.theme-light .app-card,
+        body.theme-glass.theme-light .dashboard-glow-card,
+        body.theme-glass.theme-light [id^="tab-"] .bg-white,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-50,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-100,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-800,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-900,
+        body.theme-glass.theme-light [id^="tab-"] .bg-dark-700,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-800,
+        body.theme-glass.theme-light [id^="tab-"] .bg-gray-900,
+        body.theme-glass.theme-light [id^="tab-"] .rounded-xl.border,
+        body.theme-glass.theme-light [id^="tab-"] .rounded-2xl.border {
+            background: rgba(82, 125, 166, .12) !important;
+            border-color: rgba(45, 83, 122, .24) !important;
+            box-shadow:
+                0 12px 30px rgba(27, 53, 82, .10),
+                inset 0 1px 0 rgba(255, 255, 255, .20) !important;
+            backdrop-filter: blur(24px) saturate(155%) !important;
+            -webkit-backdrop-filter: blur(24px) saturate(155%) !important;
+        }
+
+        /* Keep cards and modules transparent rather than milky white */
+        body.theme-glass.theme-light [id^="tab-"] .app-card,
+        body.theme-glass.theme-light [id^="tab-"] .dashboard-glow-card {
+            background: rgba(75, 119, 161, .10) !important;
+        }
+
+        /* Inputs remain a little denser for readability, but not white */
+        body.theme-glass.theme-light [id^="tab-"] input:not([type="checkbox"]):not([type="radio"]),
+        body.theme-glass.theme-light [id^="tab-"] select,
+        body.theme-glass.theme-light [id^="tab-"] textarea {
+            background: rgba(91, 137, 179, .13) !important;
+            border-color: rgba(43, 82, 122, .32) !important;
+            color: #173b5a !important;
+            -webkit-text-fill-color: #173b5a !important;
+            box-shadow: inset 0 1px 4px rgba(23, 52, 81, .08) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+        }
+
+        /* Table rows stay transparent; header has a deeper blue glass tint */
+        body.theme-glass.theme-light [id^="tab-"] table,
+        body.theme-glass.theme-light [id^="tab-"] tbody tr {
+            background: transparent !important;
+        }
+
+        body.theme-glass.theme-light [id^="tab-"] thead,
+        body.theme-glass.theme-light [id^="tab-"] thead tr {
+            background: rgba(55, 101, 145, .24) !important;
+        }
+
+        /* Do not let generic light-mode rules turn these surfaces white */
+        body.theme-glass.theme-light .bg-white\/5,
+        body.theme-glass.theme-light .bg-white\/10,
+        body.theme-glass.theme-light .bg-white\/20 {
+            background-color: rgba(68, 112, 154, .10) !important;
         }
 
 </style>
@@ -3606,7 +3977,12 @@
 
             tbody.innerHTML = filtered.map((i, index) => {
                 const isLow = i.stok < i.min;
-                const isCritical = i.stok < (i.min * 0.5);const blinkClass = isLow? (isCritical? 'blink-low-stock-red text-rose-400 font-bold': 'blink-low-stock-orange text-amber-400 font-bold'): '';
+                const isCritical = isLow && i.stok < (i.min * 0.5);
+                const blinkClass = isLow
+                    ? (isCritical
+                        ? 'blink-low-stock-red text-rose-400 font-bold'
+                        : 'blink-low-stock-orange text-amber-400 font-bold')
+                    : '';
                 return `
                     <tr class="hover:bg-white/5">
                         <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
@@ -4850,7 +5226,219 @@
                     th,td{border:1px solid #777;padding:5px 6px;text-align:left;vertical-align:top;overflow-wrap:anywhere}
                     th{background:#e5e7eb;font-weight:700;text-transform:uppercase}.no{text-align:center;width:28px}
                     @media screen{body{padding:18px}table{font-size:11px}}
-                </style></head><body><h2>${escapePrintHtml(config.title)}</h2>
+                
+        /* ==========================================================
+           MASTER BARANG — LIGHT MODE FONT CONTRAST FIX
+           Dark blue typography for labels, headings and table content
+           ========================================================== */
+        body.theme-glass.theme-light #tab-master {
+            color: #24415f !important;
+        }
+
+        body.theme-glass.theme-light #tab-master label {
+            color: #365574 !important;
+            font-weight: 600 !important;
+        }
+
+        body.theme-glass.theme-light #tab-master h3,
+        body.theme-glass.theme-light #tab-master h4,
+        body.theme-glass.theme-light #tab-master .font-bold,
+        body.theme-glass.theme-light #tab-master .font-semibold {
+            color: #1d3b5a !important;
+        }
+
+        body.theme-glass.theme-light #tab-master p,
+        body.theme-glass.theme-light #tab-master small,
+        body.theme-glass.theme-light #tab-master .text-gray-300,
+        body.theme-glass.theme-light #tab-master .text-gray-400,
+        body.theme-glass.theme-light #tab-master .text-gray-500 {
+            color: #526d8a !important;
+        }
+
+        body.theme-glass.theme-light #tab-master table {
+            color: #24415f !important;
+        }
+
+        body.theme-glass.theme-light #tab-master thead th {
+            color: #1e4268 !important;
+        }
+
+        body.theme-glass.theme-light #tab-master tbody td {
+            color: #294967 !important;
+        }
+
+        body.theme-glass.theme-light #tab-master tbody td .text-rose-400 {
+            color: #d12f50 !important;
+        }
+
+        body.theme-glass.theme-light #tab-master tbody td .text-amber-400 {
+            color: #bd650d !important;
+        }
+
+        body.theme-glass.theme-light #tab-master input:not([type="checkbox"]):not([type="radio"]),
+        body.theme-glass.theme-light #tab-master select,
+        body.theme-glass.theme-light #tab-master textarea {
+            color: #1e3b59 !important;
+            -webkit-text-fill-color: #1e3b59 !important;
+        }
+
+        body.theme-glass.theme-light #tab-master input::placeholder,
+        body.theme-glass.theme-light #tab-master textarea::placeholder {
+            color: #647d99 !important;
+            -webkit-text-fill-color: #647d99 !important;
+            opacity: 1 !important;
+        }
+
+        body.theme-glass.theme-light #tab-master button:not(.theme-accent-bg) {
+            color: #244766 !important;
+        }
+
+        body.theme-glass.theme-light #tab-master #form-master button[type="submit"] {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+
+
+        /* MASTER FORM LABELS — LIGHT MODE CONTRAST PATCH */
+        body.theme-glass.theme-light #tab-master #master-form-card #form-master label,
+        body.theme-glass.theme-light #tab-master #master-form-card label {
+            color: #315574 !important;
+            -webkit-text-fill-color: #315574 !important;
+            opacity: 1 !important;
+            font-weight: 600 !important;
+        }
+
+
+        /* GLOBAL LIGHT MODE LABEL CONTRAST — ALL MODULES */
+        body.theme-glass.theme-light [id^="tab-"] label,
+        body.theme-glass.theme-light [id^="tab-"] .form-label {
+            color: #315574 !important;
+            -webkit-text-fill-color: #315574 !important;
+            opacity: 1 !important;
+            font-weight: 600 !important;
+        }
+
+
+        /* ==========================================================
+           GLOBAL LIGHT MODE TYPOGRAPHY AUDIT FIX
+           Tidak ada teks putih/pucat di seluruh aplikasi saat Light Mode.
+           Warna tombol/status tetap terbaca dengan tinta biru gelap.
+           ========================================================== */
+
+        body.theme-glass.theme-light,
+        body.theme-glass.theme-light * {
+            -webkit-text-fill-color: currentColor;
+        }
+
+        body.theme-glass.theme-light .text-white,
+        body.theme-glass.theme-light .text-gray-50,
+        body.theme-glass.theme-light .text-gray-100,
+        body.theme-glass.theme-light .text-gray-200,
+        body.theme-glass.theme-light .text-gray-300,
+        body.theme-glass.theme-light .text-slate-50,
+        body.theme-glass.theme-light .text-slate-100,
+        body.theme-glass.theme-light .text-slate-200,
+        body.theme-glass.theme-light .text-slate-300,
+        body.theme-glass.theme-light .text-zinc-50,
+        body.theme-glass.theme-light .text-zinc-100,
+        body.theme-glass.theme-light .text-zinc-200,
+        body.theme-glass.theme-light .text-neutral-50,
+        body.theme-glass.theme-light .text-neutral-100,
+        body.theme-glass.theme-light .text-stone-50,
+        body.theme-glass.theme-light .text-stone-100 {
+            color: #24415f !important;
+            -webkit-text-fill-color: #24415f !important;
+        }
+
+        /* Utility colors in muted text positions */
+        body.theme-glass.theme-light .text-gray-400,
+        body.theme-glass.theme-light .text-gray-500,
+        body.theme-glass.theme-light .text-slate-400,
+        body.theme-glass.theme-light .text-slate-500 {
+            color: #526d8a !important;
+            -webkit-text-fill-color: #526d8a !important;
+        }
+
+        /* Inputs, labels and native controls in every module */
+        body.theme-glass.theme-light label,
+        body.theme-glass.theme-light input,
+        body.theme-glass.theme-light select,
+        body.theme-glass.theme-light textarea,
+        body.theme-glass.theme-light option,
+        body.theme-glass.theme-light button,
+        body.theme-glass.theme-light th,
+        body.theme-glass.theme-light td,
+        body.theme-glass.theme-light p,
+        body.theme-glass.theme-light h1,
+        body.theme-glass.theme-light h2,
+        body.theme-glass.theme-light h3,
+        body.theme-glass.theme-light h4,
+        body.theme-glass.theme-light h5,
+        body.theme-glass.theme-light h6,
+        body.theme-glass.theme-light span,
+        body.theme-glass.theme-light a {
+            -webkit-text-fill-color: currentColor;
+        }
+
+        body.theme-glass.theme-light label {
+            color: #315574 !important;
+        }
+
+        body.theme-glass.theme-light input,
+        body.theme-glass.theme-light select,
+        body.theme-glass.theme-light textarea {
+            color: #1e3b59 !important;
+        }
+
+        body.theme-glass.theme-light input::placeholder,
+        body.theme-glass.theme-light textarea::placeholder {
+            color: #647d99 !important;
+            -webkit-text-fill-color: #647d99 !important;
+            opacity: 1 !important;
+        }
+
+        /* White text on colored buttons/status badges becomes dark ink too */
+        body.theme-glass.theme-light button.text-white,
+        body.theme-glass.theme-light a.text-white,
+        body.theme-glass.theme-light .theme-accent-bg,
+        body.theme-glass.theme-light .theme-accent-bg * {
+            color: #173451 !important;
+            -webkit-text-fill-color: #173451 !important;
+        }
+
+        /* Keep icon glyphs inheriting their parent text color */
+        body.theme-glass.theme-light [data-lucide],
+        body.theme-glass.theme-light svg {
+            color: inherit;
+        }
+
+
+        /* Override inline white text as well (including print dialog controls) */
+        body.theme-glass.theme-light [style*="color:white"],
+        body.theme-glass.theme-light [style*="color: white"],
+        body.theme-glass.theme-light [style*="color:#fff"],
+        body.theme-glass.theme-light [style*="color: #fff"],
+        body.theme-glass.theme-light [style*="color:#ffffff"],
+        body.theme-glass.theme-light [style*="color: #ffffff"] {
+            color: #24415f !important;
+            -webkit-text-fill-color: #24415f !important;
+        }
+
+
+        /* FINAL LABEL FIX — RETUR AND ALL MODULES IN LIGHT MODE */
+        body.theme-light label,
+        body.theme-glass.theme-light label,
+        body.theme-light [id^="tab-"] label,
+        body.theme-glass.theme-light [id^="tab-"] label,
+        body.theme-light #tab-retur label,
+        body.theme-glass.theme-light #tab-retur label {
+            color: #244766 !important;
+            -webkit-text-fill-color: #244766 !important;
+            opacity: 1 !important;
+            text-shadow: none !important;
+        }
+
+</style></head><body><h2>${escapePrintHtml(config.title)}</h2>
                 <p class="meta">Periode: ${escapePrintHtml(periodLabel)} &nbsp; | &nbsp; Total: ${rows.length} data &nbsp; | &nbsp; Dicetak: ${escapePrintHtml(nowStr)}</p>
                 <table><thead><tr><th class="no">No</th>${headers.map(([,label])=>`<th>${escapePrintHtml(label)}</th>`).join('')}</tr></thead><tbody>${bodyRows}</tbody></table>
                 </body></html>`);
