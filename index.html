@@ -32,7 +32,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.16-dual-ui-classic-glass-premium-crystal-v41.1-mobile-logout-fix";
+        const APP_VERSION = "2026.11.16-dual-ui-classic-glass-premium-crystal-v41.4-mobile-breakpoint-fix";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -3512,6 +3512,301 @@
             color: #17324f !important;
             -webkit-text-fill-color: #17324f !important;
         }
+
+
+
+/* V41.2 — Mobile usability refinements.
+   CSS-only, breakpoint-scoped; no new scripts, timers, listeners or visual effects. */
+@media screen and (max-width: 767px) {
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden !important;
+    }
+
+    #inventory-top-header {
+        min-height: 60px !important;
+        height: auto !important;
+        padding: 8px 10px !important;
+        gap: 8px !important;
+    }
+    #inventory-top-header #header-brand-group {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        gap: 8px !important;
+    }
+    #inventory-top-header #header-brand-group h1 {
+        max-width: 48vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap !important;
+        font-size: 13px !important;
+        line-height: 1.25 !important;
+    }
+    #inventory-top-header > div:last-child {
+        flex: 0 0 auto !important;
+        gap: 5px !important;
+    }
+    #inventory-top-header #current-user-banner > button {
+        min-width: 40px !important;
+        min-height: 40px !important;
+    }
+
+    #inventory-app-layout {
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+    #inventory-main-content {
+        min-width: 0 !important;
+        width: 100% !important;
+        padding: 14px 11px !important;
+    }
+    #inventory-main-content > section[id^="tab-"] {
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+    #inventory-main-content > section[id^="tab-"] > :not([hidden]) ~ :not([hidden]) {
+        margin-top: 14px !important;
+    }
+
+    /* Stack form and data panels without changing their desktop layout. */
+    #inventory-main-content .grid.grid-cols-1.lg\:grid-cols-12,
+    #inventory-main-content .grid.grid-cols-1.md\:grid-cols-2,
+    #inventory-main-content .grid.grid-cols-2.lg\:grid-cols-4 {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 12px !important;
+    }
+    #inventory-main-content .app-card,
+    #inventory-main-content .dashboard-glow-card,
+    #inventory-main-content .premium-dashboard > *,
+    #inventory-main-content [class*="rounded-"] {
+        min-width: 0;
+    }
+
+    /* Comfortable touch targets and full-width form controls. */
+    #inventory-main-content input:not([type="checkbox"]):not([type="radio"]),
+    #inventory-main-content select,
+    #inventory-main-content textarea {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        min-height: 42px;
+        box-sizing: border-box !important;
+        font-size: 16px !important;
+    }
+    #inventory-main-content button,
+    #inventory-main-content [role="button"] {
+        min-height: 38px;
+        max-width: 100%;
+        touch-action: manipulation;
+    }
+    #inventory-main-content .flex.flex-wrap {
+        row-gap: 8px !important;
+    }
+
+    /* Keep wide tables inside their own horizontal scroll area. */
+    #inventory-main-content .fluid-table-container,
+    #inventory-main-content .overflow-x-auto,
+    #inventory-main-content [class*="overflow-x-auto"] {
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    #inventory-main-content table {
+        max-width: none !important;
+    }
+
+    #inventory-main-content #dashboard-hero {
+        min-height: 0 !important;
+        padding: 17px !important;
+    }
+
+    /* Dialogs remain usable on short phone screens. */
+    [role="dialog"],
+    .modal-content,
+    .appearance-dialog {
+        max-width: calc(100vw - 20px) !important;
+        max-height: 88vh !important;
+        max-height: 88dvh !important;
+        overflow-y: auto !important;
+        box-sizing: border-box !important;
+    }
+}
+
+/* Crystal's compact horizontal navigation on phones. */
+@media screen and (max-width: 640px) {
+    body.theme-crystal #inventory-sidebar {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        padding: 8px 9px !important;
+        gap: 7px !important;
+        overflow: hidden !important;
+    }
+    body.theme-crystal #inventory-sidebar nav {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 6px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        padding: 2px 1px 7px !important;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+    body.theme-crystal #inventory-sidebar nav > * {
+        flex: 0 0 auto !important;
+    }
+    body.theme-crystal #inventory-sidebar .sidebar-btn {
+        min-height: 40px !important;
+        padding: 8px 11px !important;
+        white-space: nowrap !important;
+    }
+    body.theme-crystal #inventory-sidebar .sidebar-btn span {
+        font-size: 11px !important;
+    }
+    body.theme-crystal #inventory-sidebar > div:last-child {
+        display: flex !important;
+        position: static !important;
+        width: 100% !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 2px 1px 0 !important;
+    }
+    body.theme-crystal #inventory-sidebar #theme-picker {
+        display: none !important;
+    }
+    body.theme-crystal #inventory-sidebar #reset-btn-wrapper {
+        display: none !important;
+    }
+    body.theme-crystal #inventory-main-content {
+        padding: 12px 10px !important;
+    }
+}
+
+
+
+/* V41.3 — Restore the existing sidebar toggle on phone/tablet widths.
+   Preserve the original button and toggleInventorySidebar() behavior. */
+@media screen and (max-width: 900px) {
+    body.theme-crystal #inventory-sidebar #sidebar-toggle,
+    body.theme-glass #inventory-sidebar #sidebar-toggle,
+    #inventory-sidebar #sidebar-toggle.sidebar-mid-toggle {
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        position: fixed !important;
+        top: 78px !important;
+        left: 0 !important;
+        right: auto !important;
+        z-index: 120 !important;
+        width: 38px !important;
+        height: 42px !important;
+        min-width: 38px !important;
+        min-height: 42px !important;
+        padding: 8px !important;
+        border-radius: 0 12px 12px 0 !important;
+        transform: none !important;
+        box-shadow: 0 5px 18px rgba(0,0,0,.28) !important;
+    }
+    #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #sidebar-toggle {
+        position: absolute !important;
+        top: 12px !important;
+        left: auto !important;
+        right: -18px !important;
+        border-radius: 0 10px 10px 0 !important;
+        z-index: 125 !important;
+    }
+    #inventory-sidebar #sidebar-toggle .sidebar-toggle-svg {
+        display: block !important;
+        width: 18px !important;
+        height: 18px !important;
+    }
+}
+
+
+
+/* V41.4 — Use the mobile drawer at narrow phone/tablet CSS viewport widths.
+   Align the visual breakpoint with the existing sidebar interaction logic. */
+@media screen and (max-width: 900px) {
+    #inventory-app-layout {
+        position: relative !important;
+        display: flex !important;
+        flex-direction: row !important;
+        min-width: 0 !important;
+        width: 100% !important;
+        overflow: visible !important;
+    }
+    #inventory-sidebar {
+        position: fixed !important;
+        z-index: 110 !important;
+        top: 4rem !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: min(17rem, 84vw) !important;
+        min-width: min(17rem, 84vw) !important;
+        max-width: min(17rem, 84vw) !important;
+        flex: 0 0 min(17rem, 84vw) !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        transform: translateX(-105%) !important;
+        transition: transform .22s ease !important;
+    }
+    #inventory-app-layout.mobile-sidebar-open #inventory-sidebar {
+        transform: translateX(0) !important;
+    }
+    #inventory-main-content {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        flex: 1 1 100% !important;
+        margin-left: 0 !important;
+    }
+    #inventory-sidebar #sidebar-toggle {
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        position: fixed !important;
+        top: 4.75rem !important;
+        left: 0 !important;
+        right: auto !important;
+        z-index: 130 !important;
+        width: 40px !important;
+        height: 44px !important;
+        min-width: 40px !important;
+        min-height: 44px !important;
+        border-radius: 0 12px 12px 0 !important;
+        transform: none !important;
+    }
+    #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #sidebar-toggle {
+        position: absolute !important;
+        top: 12px !important;
+        left: auto !important;
+        right: -18px !important;
+        z-index: 135 !important;
+    }
+    #sidebar-mobile-backdrop {
+        display: none;
+    }
+    #inventory-app-layout.mobile-sidebar-open #sidebar-mobile-backdrop {
+        display: block !important;
+        position: fixed !important;
+        inset: 4rem 0 0 !important;
+        z-index: 100 !important;
+        background: rgba(2, 8, 18, .52) !important;
+    }
+    #inventory-sidebar nav {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        max-height: calc(100dvh - 11rem) !important;
+    }
+}
+
 
 </style>
 </head>
@@ -8241,7 +8536,7 @@
             if (!layout || !button) return;
 
             function isMobile() {
-                return window.matchMedia('(max-width: 767px)').matches;
+                return window.matchMedia('(max-width: 900px)').matches;
             }
             function updateToggleIcon() {
                 const mobileOpen = layout.classList.contains('mobile-sidebar-open');
