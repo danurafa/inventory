@@ -191,16 +191,35 @@
             pointer-events: auto;
         }
 
+        /* LOW STOCK BLINK FIX
+           Glass theme memakai background/border/box-shadow !important,
+           jadi animasi memakai opacity + filter agar tidak tertimpa aturan tema. */
         @keyframes lowStockBlinkRed {
-            0%, 100% { border-color: rgba(244, 63, 94, 0.9); box-shadow: inset 0 0 15px rgba(244, 63, 94, 0.35), 0 0 15px rgba(244, 63, 94, 0.45); background-color: rgba(244, 63, 94, 0.12); }
-            50% { border-color: rgba(244, 63, 94, 0.25); box-shadow: inset 0 0 3px rgba(244, 63, 94, 0.05), 0 0 3px rgba(244, 63, 94, 0.1); background-color: rgba(244, 63, 94, 0.03); }
+            0%, 100% {
+                opacity: 1;
+                filter: brightness(1.22);
+            }
+            50% {
+                opacity: .68;
+                filter: brightness(.82);
+            }
         }
         @keyframes lowStockBlinkOrange {
-            0%, 100% { border-color: rgba(245, 158, 11, 0.9); box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.35), 0 0 15px rgba(245, 158, 11, 0.45); background-color: rgba(245, 158, 11, 0.12); }
-            50% { border-color: rgba(245, 158, 11, 0.25); box-shadow: inset 0 0 3px rgba(245, 158, 11, 0.05), 0 0 3px rgba(245, 158, 11, 0.1); background-color: rgba(245, 158, 11, 0.03); }
+            0%, 100% {
+                opacity: 1;
+                filter: brightness(1.18);
+            }
+            50% {
+                opacity: .72;
+                filter: brightness(.84);
+            }
         }
-        .blink-low-stock-red { animation: lowStockBlinkRed 1.5s infinite ease-in-out; }
-        .blink-low-stock-orange { animation: lowStockBlinkOrange 1.5s infinite ease-in-out; }
+        .blink-low-stock-red {
+            animation: lowStockBlinkRed 1.2s infinite ease-in-out !important;
+        }
+        .blink-low-stock-orange {
+            animation: lowStockBlinkOrange 1.2s infinite ease-in-out !important;
+        }
 
         .role-badge-admin { background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
         .role-badge-staff { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
@@ -506,20 +525,6 @@
         .premium-dashboard .dashboard-glow-card:hover { transform: translateY(-3px); }
         .premium-dashboard #chart-masuk > *, .premium-dashboard #chart-keluar > * { flex-shrink: 0; }
         .premium-dashboard #recent-activity-body tr:hover { background: rgba(59,130,246,.07); }
-
-        /* RECENT ACTIVITY: tampilkan maksimal 5 baris, scroll untuk transaksi berikutnya */
-        #recent-activity-scroll {
-            max-height: 285px;
-            overflow-x: auto;
-            overflow-y: auto;
-            overscroll-behavior: contain;
-            scrollbar-gutter: stable;
-        }
-        #recent-activity-scroll thead th {
-            position: sticky;
-            top: 0;
-            z-index: 6;
-        }
         body.theme-glass.theme-light .premium-dashboard h2,
         body.theme-glass.theme-light .premium-dashboard h3 { color:#173253 !important; }
         body.theme-glass.theme-light .premium-dashboard p,
@@ -1089,7 +1094,7 @@
         #inventory-sidebar .sidebar-mid-toggle {
             position:absolute;
             z-index:75;
-            top:35%;
+            top:60%;
             right:-20px;
             transform:none;
             box-shadow:0 8px 22px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.12);
@@ -1443,7 +1448,7 @@
                         <div class="flex items-center gap-3"><div class="flex h-10 w-10 items-center justify-center rounded-2xl border border-blue-300/20 bg-blue-500/10 text-blue-300"><i data-lucide="activity" class="h-5 w-5"></i></div><div><h3 class="text-xs font-extrabold uppercase tracking-wider text-white">Aktivitas Transaksi Terakhir</h3><p class="mt-1 text-[10px] text-slate-400">Jejak aktivitas transaksi inventory</p></div></div>
                         <span class="rounded-full border border-blue-300/20 bg-blue-500/10 px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider text-blue-300">Recent Activity Log</span>
                     </div>
-                    <div id="recent-activity-scroll" class="overflow-x-auto">
+                    <div class="overflow-x-auto">
                         <table class="w-full min-w-[760px] text-left text-xs">
                             <thead class="bg-blue-500/5 uppercase text-slate-400 border-b border-white/10 font-bold tracking-wider">
                                 <tr>
