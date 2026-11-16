@@ -3606,7 +3606,7 @@
 
             tbody.innerHTML = filtered.map((i, index) => {
                 const isLow = i.stok < i.min;
-                const blinkClass = isLow ? (i.stok <= 0 ? 'blink-low-stock-red text-rose-400 font-bold' : 'blink-low-stock-orange text-amber-400 font-bold') : '';
+                const isCritical = i.stok < (i.min * 0.5);const blinkClass = isLow? (isCritical? 'blink-low-stock-red text-rose-400 font-bold': 'blink-low-stock-orange text-amber-400 font-bold'): '';
                 return `
                     <tr class="hover:bg-white/5">
                         <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
