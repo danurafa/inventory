@@ -32,7 +32,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.16-dual-ui-classic-glass-premium-crystal-v41.4-mobile-breakpoint-fix";
+        const APP_VERSION = "2026.11.17-inventory-v42-visual-performance-refinement";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -3808,6 +3808,835 @@
 }
 
 
+
+
+/* ==========================================================
+   V42 — VISUAL REFINEMENT, HISTORY HEIGHT & LIGHTWEIGHT MOTION
+   CSS + presentational animation only. No data/cloud logic changes.
+   ========================================================== */
+
+/* Light theme icon/button in the active sidebar footer */
+body.theme-glass.theme-light #open-appearance-btn,
+body.theme-glass.theme-light #open-appearance-btn svg,
+body.theme-glass.theme-light #open-appearance-btn i {
+    color: #123b65 !important;
+    -webkit-text-fill-color: #123b65 !important;
+}
+body.theme-glass.theme-light #open-appearance-btn {
+    background: linear-gradient(135deg, rgba(202,220,241,.76), rgba(151,180,211,.62)) !important;
+    border: 1px solid rgba(35,76,121,.42) !important;
+    box-shadow: 0 4px 14px rgba(29,57,91,.13), inset 0 1px 0 rgba(255,255,255,.55) !important;
+}
+body.theme-glass.theme-light #open-appearance-btn:hover {
+    background: rgba(216,232,249,.88) !important;
+    border-color: rgba(25,83,145,.62) !important;
+}
+body.theme-glass.theme-light #open-appearance-btn .appearance-open-arrow {
+    color: #1d5689 !important;
+}
+
+/* Darker light-mode backdrop; moderate values preserve readable contrast. */
+body.theme-glass.theme-light {
+    --theme-bg: #8fa4bd;
+    background:
+        radial-gradient(ellipse at 8% 8%, rgba(65,119,181,.22), transparent 38%),
+        radial-gradient(ellipse at 92% 18%, rgba(36,135,171,.15), transparent 35%),
+        linear-gradient(135deg, #8fa4bd 0%, #a2b4c9 50%, #899fb8 100%) !important;
+}
+
+/* More transparent cards across every module in both themes.
+   Blur is kept moderate to avoid unnecessary GPU cost. */
+body.theme-glass:not(.theme-light) .app-card,
+body.theme-glass:not(.theme-light) .dashboard-glow-card,
+body.theme-glass:not(.theme-light) [id^="tab-"] .rounded-xl.border,
+body.theme-glass:not(.theme-light) [id^="tab-"] .rounded-2xl.border {
+    background: linear-gradient(135deg, rgba(25,55,88,.36), rgba(7,24,44,.27)) !important;
+    border-color: rgba(135,190,245,.27) !important;
+    backdrop-filter: blur(14px) saturate(130%) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(130%) !important;
+}
+body.theme-glass.theme-light .app-card,
+body.theme-glass.theme-light .dashboard-glow-card,
+body.theme-glass.theme-light [id^="tab-"] .rounded-xl.border,
+body.theme-glass.theme-light [id^="tab-"] .rounded-2xl.border {
+    background: linear-gradient(135deg, rgba(224,237,250,.38), rgba(165,190,218,.27)) !important;
+    border-color: rgba(42,78,119,.31) !important;
+    backdrop-filter: blur(14px) saturate(128%) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(128%) !important;
+}
+
+/* History tables: show approximately 12 rows, keep all records and sticky header. */
+.fluid-table-container {
+    height: auto !important;
+    max-height: 570px !important;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    scrollbar-gutter: stable;
+}
+.fluid-table-container thead th {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 8 !important;
+}
+.fluid-table-container tbody tr {
+    min-height: 40px;
+}
+@media (max-width: 767px) {
+    .fluid-table-container { max-height: 540px !important; }
+}
+
+/* Recent Activity: exactly five latest records are rendered by the existing view. */
+.premium-dashboard #recent-activity-scroll {
+    max-height: 260px !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+}
+
+/* Module entrance animation — one short transform/opacity transition per tab open. */
+@keyframes inventoryModuleEnter {
+    from { opacity: 0; transform: translate3d(0, 9px, 0); }
+    to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.module-enter {
+    animation: inventoryModuleEnter .28s ease-out both;
+}
+/* V48: chart bars stay static to prevent flashing on dashboard refresh. */
+.module-chart-animate > div > div:nth-child(2) {
+    animation: none !important;
+    transform: none !important;
+}
+
+/* Subtle hover and press feedback; no looping effects or continuous repaint. */
+.app-card, .dashboard-glow-card, .sidebar-btn, button {
+    transition-property: transform, background-color, border-color, color, opacity;
+    transition-duration: .16s;
+    transition-timing-function: ease-out;
+}
+.app-card:hover, .dashboard-glow-card:hover {
+    border-color: rgba(96,165,250,.42);
+}
+button:active, .sidebar-btn:active {
+    transform: scale(.975);
+}
+button:focus-visible, .sidebar-btn:focus-visible {
+    outline: 2px solid rgba(96,165,250,.72);
+    outline-offset: 2px;
+}
+
+/* Print options modal follows the currently active app theme. */
+#inventory-print-options.print-theme-dark > div {
+    background: linear-gradient(145deg, rgba(22,45,72,.98), rgba(8,23,42,.98)) !important;
+    color: #eff6ff !important;
+    border-color: rgba(147,197,253,.32) !important;
+}
+#inventory-print-options.print-theme-dark label {
+    color: #e5efff !important;
+    border-color: rgba(147,197,253,.24) !important;
+}
+#inventory-print-options.print-theme-dark #print-date-fields label,
+#inventory-print-options.print-theme-dark > div > div:nth-child(2) {
+    color: #b8cce3 !important;
+}
+#inventory-print-options.print-theme-dark #print-cancel {
+    background: rgba(71,96,126,.55) !important;
+    color: #f8fafc !important;
+    border: 1px solid rgba(147,197,253,.22) !important;
+}
+#inventory-print-options.print-theme-dark #print-continue {
+    background: linear-gradient(120deg,#2563eb,#0284c7) !important;
+    color: #fff !important;
+}
+#inventory-print-options.print-theme-light > div {
+    background: linear-gradient(145deg, rgba(220,234,249,.98), rgba(177,199,224,.98)) !important;
+    color: #173451 !important;
+    border-color: rgba(45,79,119,.34) !important;
+}
+#inventory-print-options.print-theme-light label {
+    color: #244766 !important;
+    border-color: rgba(45,79,119,.25) !important;
+}
+#inventory-print-options.print-theme-light #print-date-fields label,
+#inventory-print-options.print-theme-light > div > div:nth-child(2) {
+    color: #405c79 !important;
+}
+#inventory-print-options.print-theme-light input[type="radio"] {
+    accent-color: #2563a6 !important;
+}
+#inventory-print-options.print-theme-light #print-date-fields input {
+    background: rgba(245,249,255,.94) !important;
+    color: #173451 !important;
+    border: 1px solid rgba(45,79,119,.30) !important;
+    border-radius: 8px !important;
+    padding: 8px !important;
+}
+#inventory-print-options.print-theme-light #print-cancel {
+    background: rgba(84,111,143,.22) !important;
+    color: #173451 !important;
+    border: 1px solid rgba(45,79,119,.30) !important;
+}
+#inventory-print-options.print-theme-light #print-continue {
+    background: linear-gradient(120deg,#2563a6,#087eae) !important;
+    color: #fff !important;
+}
+
+/* Respect OS accessibility preference and disable nonessential motion. */
+@media (prefers-reduced-motion: reduce) {
+    .module-enter,
+    .module-chart-animate > div > div:nth-child(2) {
+        animation: none !important;
+    }
+    button, .app-card, .dashboard-glow-card, .sidebar-btn {
+        transition: none !important;
+    }
+}
+
+
+
+
+        /* ==========================================================
+           V43 — FIXED APP SHELL / CONTENT-ONLY VERTICAL SCROLL
+           Sidebar dan header/brand tetap diam. Hanya main content
+           yang memiliki scrollbar vertikal. Tidak menyentuh data,
+           autentikasi, Firebase, Worker, atau handler navigasi.
+           ========================================================== */
+        html, body {
+            height: 100% !important;
+            min-height: 100% !important;
+            overflow: hidden !important;
+        }
+        body.theme-glass {
+            height: 100dvh !important;
+            min-height: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+        }
+        #inventory-top-header {
+            position: relative !important;
+            top: auto !important;
+            flex: 0 0 4rem !important;
+            height: 4rem !important;
+            min-height: 4rem !important;
+            z-index: 150 !important;
+        }
+        #inventory-app-layout {
+            position: relative !important;
+            display: flex !important;
+            flex: 1 1 0% !important;
+            width: 100% !important;
+            height: calc(100dvh - 4rem) !important;
+            min-height: 0 !important;
+            max-height: calc(100dvh - 4rem) !important;
+            overflow: hidden !important;
+            overscroll-behavior: none !important;
+        }
+        #inventory-sidebar {
+            position: relative !important;
+            top: auto !important;
+            bottom: auto !important;
+            align-self: stretch !important;
+            height: 100% !important;
+            min-height: 0 !important;
+            max-height: 100% !important;
+            overflow: hidden !important;
+            overscroll-behavior: none !important;
+            flex-shrink: 0 !important;
+        }
+        #inventory-sidebar nav {
+            flex: 1 1 auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: hidden !important;
+            overscroll-behavior: none !important;
+        }
+        #inventory-main-content {
+            position: relative !important;
+            flex: 1 1 0% !important;
+            width: auto !important;
+            min-width: 0 !important;
+            min-height: 0 !important;
+            height: 100% !important;
+            max-height: 100% !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            overscroll-behavior-y: contain !important;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-gutter: stable;
+        }
+        /* The light-mode brand/title remains attached to the fixed header. */
+        body.theme-glass.theme-light #inventory-top-header,
+        body.theme-glass.theme-light #inventory-top-header #header-brand-group,
+        body.theme-glass.theme-light #inventory-top-header #header-brand-group h1 {
+            position: relative !important;
+            flex-shrink: 0 !important;
+            transform: none !important;
+        }
+        @media (max-width: 900px) {
+            #inventory-app-layout {
+                height: calc(100dvh - 4rem) !important;
+                min-height: 0 !important;
+                max-height: calc(100dvh - 4rem) !important;
+                overflow: hidden !important;
+            }
+            #inventory-main-content {
+                height: 100% !important;
+                min-height: 0 !important;
+                max-height: 100% !important;
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+            }
+            #inventory-sidebar {
+                height: 100% !important;
+                max-height: 100% !important;
+                overflow: hidden !important;
+            }
+            #inventory-sidebar nav {
+                overflow: hidden !important;
+                max-height: none !important;
+            }
+        }
+        @media (max-width: 767px) {
+            #inventory-sidebar {
+                position: fixed !important;
+                top: 4rem !important;
+                bottom: 0 !important;
+                height: calc(100dvh - 4rem) !important;
+                max-height: calc(100dvh - 4rem) !important;
+                z-index: 110 !important;
+            }
+            #inventory-app-layout.mobile-sidebar-open #inventory-sidebar {
+                height: calc(100dvh - 4rem) !important;
+            }
+            #inventory-main-content {
+                width: 100% !important;
+                max-width: 100% !important;
+                flex: 1 1 100% !important;
+            }
+        }
+
+
+        /* V44 — kunci scroll halaman; hanya area main yang menggulir.
+           Aturan sidebar V43 sengaja dipertahankan tanpa perubahan. */
+        html,
+        body.theme-glass {
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 0 !important;
+            max-height: 100% !important;
+            overflow: hidden !important;
+            overscroll-behavior: none !important;
+        }
+        body.theme-glass {
+            position: fixed !important;
+            inset: 0 !important;
+        }
+        #inventory-top-header {
+            flex: 0 0 4rem !important;
+            height: 4rem !important;
+            min-height: 4rem !important;
+            max-height: 4rem !important;
+            overflow: hidden !important;
+        }
+        #inventory-app-layout {
+            flex: 1 1 auto !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: hidden !important;
+        }
+        /* Main menjadi satu-satunya pemilik scroll vertikal halaman. */
+        #inventory-main-content {
+            flex: 1 1 0% !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            height: auto !important;
+            overflow-x: hidden !important;
+            overflow-y: scroll !important;
+            overscroll-behavior: contain !important;
+            touch-action: pan-y !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+        @media (max-width: 900px) {
+            #inventory-app-layout {
+                height: auto !important;
+                max-height: none !important;
+                min-height: 0 !important;
+            }
+            #inventory-main-content {
+                min-height: 0 !important;
+                max-height: none !important;
+                height: auto !important;
+                overflow-y: scroll !important;
+            }
+        }
+
+
+/* V47 — applied to the actual page stylesheet.
+   Preserve the current sidebar rules; only define the viewport and main scroll area. */
+html,
+body.theme-glass {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+}
+body.theme-glass {
+    position: fixed !important;
+    inset: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+body.theme-glass #inventory-top-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 4rem !important;
+    min-height: 4rem !important;
+    max-height: 4rem !important;
+    z-index: 100 !important;
+}
+body.theme-glass #inventory-app-layout {
+    position: fixed !important;
+    top: 4rem !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    display: flex !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    align-items: stretch !important;
+}
+body.theme-glass #inventory-main-content {
+    position: relative !important;
+    display: block !important;
+    flex: 1 1 0% !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-gutter: stable;
+}
+@media (max-width: 900px) {
+    body.theme-glass #inventory-app-layout {
+        top: 4rem !important;
+        bottom: 0 !important;
+        height: auto !important;
+    }
+    body.theme-glass #inventory-main-content {
+        flex: 1 1 0% !important;
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: 100% !important;
+        overflow-y: auto !important;
+    }
+}
+
+
+/* V48 — keep dashboard charts visually stable during periodic data refresh. */
+#chart-masuk > *,
+#chart-keluar > * {
+    animation: none !important;
+}
+#chart-masuk > * > div,
+#chart-keluar > * > div {
+    animation: none !important;
+    transition: none !important;
+}
+
+
+
+/* V52 — subtle, consistent hover feedback based on V48.
+   Visual-only: no layout sizing, positioning, or application logic changes. */
+@media (hover: hover) and (pointer: fine) {
+  /* Buttons and clickable controls */
+  button:not(:disabled),
+  [role="button"],
+  a[href],
+  .sidebar-btn,
+  .sidebar-toggle-btn,
+  .appearance-open-btn,
+  .appearance-theme-card,
+  .appearance-card-action {
+    transition:
+      background-color .18s ease,
+      border-color .18s ease,
+      box-shadow .18s ease,
+      color .18s ease,
+      filter .18s ease,
+      transform .18s ease !important;
+  }
+
+  button:not(:disabled):hover,
+  [role="button"]:hover,
+  a[href]:hover {
+    filter: brightness(1.06);
+  }
+
+  button:not(:disabled):active,
+  [role="button"]:active {
+    transform: translateY(0) scale(.985);
+  }
+
+  /* Sidebar navigation */
+  #inventory-sidebar .sidebar-btn:not(.active):hover {
+    transform: translateX(2px);
+    background-color: rgba(59,130,246,.10) !important;
+    border-color: rgba(96,165,250,.28) !important;
+  }
+
+  #inventory-sidebar .sidebar-toggle-btn:hover,
+  #sidebar-toggle:hover {
+    box-shadow: 0 5px 16px rgba(59,130,246,.18);
+    filter: brightness(1.12);
+  }
+
+  /* Dashboard cards and information panels */
+  .dashboard-glow-card:hover {
+    border-color: rgba(96,165,250,.38) !important;
+    box-shadow: 0 10px 28px rgba(37,99,235,.10);
+  }
+
+  /* General application panels */
+  .app-card:hover {
+    border-color: rgba(96,165,250,.28);
+    box-shadow: 0 8px 22px rgba(37,99,235,.07);
+  }
+
+  /* Theme selection cards */
+  .appearance-theme-card:hover {
+    border-color: rgba(96,165,250,.55) !important;
+    box-shadow: 0 8px 22px rgba(37,99,235,.12);
+  }
+
+  /* Table rows */
+  .fluid-table tbody tr:hover {
+    background-color: rgba(59,130,246,.07);
+    transition: background-color .16s ease;
+  }
+
+  /* Form controls: highlight only; never resize or move inputs */
+  input:not(:disabled):hover,
+  select:not(:disabled):hover,
+  textarea:not(:disabled):hover {
+    border-color: rgba(96,165,250,.55) !important;
+  }
+}
+
+/* Respect users who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  button, [role="button"], a[href],
+  .sidebar-btn, .dashboard-glow-card, .app-card,
+  .appearance-theme-card, .fluid-table tbody tr {
+    transition: none !important;
+  }
+}
+
+
+
+/* V54 — Crystal theme transparency override.
+   Uses the actual body theme classes set by applyTheme() and the real table wrapper. */
+body.theme-glass.theme-light.theme-crystal #inventory-main-content .fluid-table-container,
+body.theme-glass.theme-light.theme-crystal #inventory-main-content [class~="fluid-table-container"],
+body.theme-glass.theme-light.theme-crystal #inventory-main-content .overflow-x-auto {
+  background: rgba(255,255,255,.10) !important;
+  background-color: rgba(255,255,255,.10) !important;
+  border-color: rgba(113,157,207,.18) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.20) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(155%) !important;
+  backdrop-filter: blur(18px) saturate(155%) !important;
+}
+
+body.theme-glass.theme-light.theme-crystal #inventory-main-content .fluid-table,
+body.theme-glass.theme-light.theme-crystal #inventory-main-content .fluid-table thead,
+body.theme-glass.theme-light.theme-crystal #inventory-main-content .fluid-table tbody {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+body.theme-glass.theme-light.theme-crystal #inventory-main-content .fluid-table thead th {
+  background: rgba(205,225,246,.42) !important;
+  color: #315477 !important;
+  border-color: rgba(113,157,207,.18) !important;
+}
+
+body.theme-glass.theme-light.theme-crystal #inventory-main-content .fluid-table tbody tr,
+body.theme-glass.theme-light.theme-crystal #inventory-main-content .fluid-table tbody tr:nth-child(even) {
+  background: rgba(255,255,255,.07) !important;
+}
+
+body.theme-glass.theme-light.theme-crystal #inventory-main-content .fluid-table tbody tr:hover {
+  background: rgba(132,178,225,.20) !important;
+}
+
+body.theme-glass.theme-light.theme-crystal #inventory-main-content .fluid-table td {
+  background: transparent !important;
+  color: #24425f !important;
+  border-color: rgba(113,157,207,.14) !important;
+}
+
+/* Form/input panels: reduce solid white fills while retaining readable fields. */
+body.theme-glass.theme-light.theme-crystal #inventory-main-content [id^="tab-"] .rounded-xl.border,
+body.theme-glass.theme-light.theme-crystal #inventory-main-content [id^="tab-"] .rounded-2xl.border,
+body.theme-glass.theme-light.theme-crystal #inventory-main-content [id^="tab-"] .app-card {
+  background-color: rgba(255,255,255,.14) !important;
+  border-color: rgba(113,157,207,.20) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
+  backdrop-filter: blur(16px) saturate(150%) !important;
+}
+
+body.theme-glass.theme-light.theme-crystal #inventory-main-content [id^="tab-"] input:not([type="checkbox"]):not([type="radio"]),
+body.theme-glass.theme-light.theme-crystal #inventory-main-content [id^="tab-"] select,
+body.theme-glass.theme-light.theme-crystal #inventory-main-content [id^="tab-"] textarea {
+  background: rgba(255,255,255,.24) !important;
+  color: #183653 !important;
+  border-color: rgba(91,132,178,.28) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(145%) !important;
+  backdrop-filter: blur(12px) saturate(145%) !important;
+}
+
+
+
+/* V55 — Light Mode: make every module table body transparent.
+   Keep column headings/labels visible with a soft crystal header. */
+body.theme-glass.theme-light #inventory-main-content table,
+body.theme-glass.theme-light #inventory-main-content table tbody,
+body.theme-glass.theme-light #inventory-main-content table tbody tr,
+body.theme-glass.theme-light #inventory-main-content table tbody tr:nth-child(odd),
+body.theme-glass.theme-light #inventory-main-content table tbody tr:nth-child(even),
+body.theme-glass.theme-light #inventory-main-content table tbody td,
+body.theme-glass.theme-light #inventory-main-content table tfoot,
+body.theme-glass.theme-light #inventory-main-content table tfoot tr,
+body.theme-glass.theme-light #inventory-main-content table tfoot td {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Remove opaque row fills applied by utility classes or inline theme rules. */
+body.theme-glass.theme-light #inventory-main-content table tbody tr[class],
+body.theme-glass.theme-light #inventory-main-content table tbody td[class] {
+  background-color: transparent !important;
+}
+
+/* Column labels remain visible; only the header band gets a subtle glass tint. */
+body.theme-glass.theme-light #inventory-main-content table thead,
+body.theme-glass.theme-light #inventory-main-content table thead tr {
+  background: rgba(194, 220, 246, .30) !important;
+  background-color: rgba(194, 220, 246, .30) !important;
+}
+body.theme-glass.theme-light #inventory-main-content table thead th {
+  background: rgba(194, 220, 246, .30) !important;
+  background-color: rgba(194, 220, 246, .30) !important;
+  color: #3c5b79 !important;
+  border-color: rgba(83, 125, 168, .20) !important;
+  opacity: 1 !important;
+}
+
+/* Preserve readable data text and subtle separators across all module tables. */
+body.theme-glass.theme-light #inventory-main-content table tbody td {
+  color: #294866 !important;
+  border-color: rgba(83, 125, 168, .13) !important;
+}
+body.theme-glass.theme-light #inventory-main-content table tbody tr:hover,
+body.theme-glass.theme-light #inventory-main-content table tbody tr:hover td {
+  background: rgba(117, 166, 215, .13) !important;
+  background-color: rgba(117, 166, 215, .13) !important;
+}
+
+/* Keep table scroll wrappers clear so the glass surface behind them shows through. */
+body.theme-glass.theme-light #inventory-main-content .fluid-table-container,
+body.theme-glass.theme-light #inventory-main-content #recent-activity-scroll,
+body.theme-glass.theme-light #inventory-main-content .overflow-x-auto {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+
+
+/* V56 — Hover: animate button text color like the low-stock warning.
+   Only text color/glow changes; button surface, dimensions, and layout stay unchanged. */
+@keyframes inventoryButtonTextPulse {
+  0%, 100% {
+    color: #dc2626;
+    text-shadow: 0 0 0 rgba(220,38,38,0);
+  }
+  50% {
+    color: #f87171;
+    text-shadow: 0 0 7px rgba(220,38,38,.28);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.theme-glass.theme-light #inventory-main-content button:not(:disabled):hover,
+  body.theme-glass.theme-light #inventory-sidebar button:not(:disabled):hover,
+  body.theme-glass.theme-light #inventory-main-content [role="button"]:hover {
+    animation: none !important;
+  }
+
+  body.theme-glass.theme-light #inventory-main-content button:not(:disabled):hover,
+  body.theme-glass.theme-light #inventory-sidebar button:not(:disabled):hover,
+  body.theme-glass.theme-light #inventory-main-content [role="button"]:hover {
+    color: #dc2626 !important;
+  }
+
+  body.theme-glass.theme-light #inventory-main-content button:not(:disabled):hover *,
+  body.theme-glass.theme-light #inventory-sidebar button:not(:disabled):hover *,
+  body.theme-glass.theme-light #inventory-main-content [role="button"]:hover * {
+    animation: inventoryButtonTextPulse .9s ease-in-out infinite !important;
+  }
+
+  body.theme-glass.theme-light #inventory-main-content button:not(:disabled):hover,
+  body.theme-glass.theme-light #inventory-sidebar button:not(:disabled):hover,
+  body.theme-glass.theme-light #inventory-main-content [role="button"]:hover {
+    text-shadow: none !important;
+  }
+}
+
+/* Dark theme uses the same warning-red pulse while preserving its base palette. */
+@media (hover: hover) and (pointer: fine) {
+  body.theme-glass.theme-dark #inventory-main-content button:not(:disabled):hover *,
+  body.theme-glass.theme-dark #inventory-sidebar button:not(:disabled):hover *,
+  body.theme-glass.theme-dark #inventory-main-content [role="button"]:hover * {
+    animation: inventoryButtonTextPulse .9s ease-in-out infinite !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body #inventory-main-content button:hover *,
+  body #inventory-sidebar button:hover *,
+  body #inventory-main-content [role="button"]:hover * {
+    animation: none !important;
+  }
+}
+
+
+
+/* V57 — Theme-specific button text hover:
+   Light = warning red pulse; Dark = cyan pulse. */
+@keyframes inventoryButtonTextPulseCyan {
+  0%, 100% {
+    color: #22d3ee;
+    text-shadow: 0 0 0 rgba(34,211,238,0);
+  }
+  50% {
+    color: #67e8f9;
+    text-shadow: 0 0 8px rgba(34,211,238,.42);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* Light Mode remains red. */
+  body.theme-glass.theme-light #inventory-main-content button:not(:disabled):hover *,
+  body.theme-glass.theme-light #inventory-sidebar button:not(:disabled):hover *,
+  body.theme-glass.theme-light #inventory-main-content [role="button"]:hover * {
+    animation-name: inventoryButtonTextPulse !important;
+  }
+
+  /* Dark Mode changes to cyan. */
+  body.theme-glass.theme-dark #inventory-main-content button:not(:disabled):hover *,
+  body.theme-glass.theme-dark #inventory-sidebar button:not(:disabled):hover *,
+  body.theme-glass.theme-dark #inventory-main-content [role="button"]:hover * {
+    animation-name: inventoryButtonTextPulseCyan !important;
+  }
+
+  body.theme-glass.theme-dark #inventory-main-content button:not(:disabled):hover,
+  body.theme-glass.theme-dark #inventory-sidebar button:not(:disabled):hover,
+  body.theme-glass.theme-dark #inventory-main-content [role="button"]:hover {
+    color: #22d3ee !important;
+  }
+}
+
+
+
+/* V58 — Stronger Light Mode red hover.
+   Animate the button itself (including direct text nodes), then let its
+   contents inherit the animated color so utility text colors cannot mask it. */
+@keyframes inventoryLightButtonRedStrong {
+  0%, 100% {
+    color: #dc2626;
+    text-shadow: 0 0 1px rgba(220,38,38,.18);
+  }
+  50% {
+    color: #ff1744;
+    text-shadow: 0 0 9px rgba(255,23,68,.48);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.theme-glass.theme-light #inventory-main-content button:not(:disabled):hover,
+  body.theme-glass.theme-light #inventory-sidebar button:not(:disabled):hover,
+  body.theme-glass.theme-light #inventory-main-content [role="button"]:hover {
+    animation: inventoryLightButtonRedStrong .72s ease-in-out infinite !important;
+    color: #dc2626 !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+
+  body.theme-glass.theme-light #inventory-main-content button:not(:disabled):hover *,
+  body.theme-glass.theme-light #inventory-sidebar button:not(:disabled):hover *,
+  body.theme-glass.theme-light #inventory-main-content [role="button"]:hover * {
+    color: inherit !important;
+    -webkit-text-fill-color: currentColor !important;
+    animation: none !important;
+    text-shadow: inherit !important;
+  }
+}
+
+
+
+/* V59 — Restore visible Light Mode hover pulse on actual button text/icons.
+   Apply the keyframes directly to the button and each text-bearing child. */
+@keyframes inventoryLightHoverPulseV59 {
+  0%, 100% {
+    color: #c90024 !important;
+    -webkit-text-fill-color: #c90024 !important;
+    text-shadow: 0 0 2px rgba(201,0,36,.22) !important;
+  }
+  50% {
+    color: #ff1744 !important;
+    -webkit-text-fill-color: #ff1744 !important;
+    text-shadow: 0 0 10px rgba(255,23,68,.58) !important;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  body.theme-glass.theme-light #inventory-main-content button:not(:disabled):hover,
+  body.theme-glass.theme-light #inventory-main-content button:not(:disabled):hover *,
+  body.theme-glass.theme-light #inventory-sidebar button:not(:disabled):hover,
+  body.theme-glass.theme-light #inventory-sidebar button:not(:disabled):hover *,
+  body.theme-glass.theme-light #inventory-main-content [role="button"]:hover,
+  body.theme-glass.theme-light #inventory-main-content [role="button"]:hover * {
+    animation: inventoryLightHoverPulseV59 .8s ease-in-out infinite !important;
+    animation-play-state: running !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.theme-glass.theme-light #inventory-main-content button:hover,
+  body.theme-glass.theme-light #inventory-main-content button:hover *,
+  body.theme-glass.theme-light #inventory-sidebar button:hover,
+  body.theme-glass.theme-light #inventory-sidebar button:hover *,
+  body.theme-glass.theme-light #inventory-main-content [role="button"]:hover,
+  body.theme-glass.theme-light #inventory-main-content [role="button"]:hover * {
+    animation: none !important;
+  }
+}
+
+
+        /* Header aplikasi hanya tampil ketika sesi pengguna sudah terautentikasi. */
+        body:not(.inventory-authenticated) #inventory-top-header {
+            display: none !important;
+        }
+
 </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
@@ -5652,10 +6481,15 @@
         window.activeUserSession = JSON.parse(localStorage.getItem('gudang_pro_session')) || null;
 
         window.checkAuth = function() {
-            if (!localStorage.getItem('gudang_pro_worker_token')) window.showLoginModal();
+            if (!localStorage.getItem('gudang_pro_worker_token')) {
+                window.showLoginModal();
+            } else if (window.gudangAppDb?.currentUser || window.activeUserSession) {
+                document.body.classList.add('inventory-authenticated');
+            }
         };
 
         window.showLoginModal = function() {
+            document.body.classList.remove('inventory-authenticated');
             const modal = document.getElementById('login-modal');
             if (modal) {
                 modal.classList.remove('hidden');
@@ -5669,6 +6503,9 @@
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
             }
+            // Fungsi ini hanya dipanggil setelah autentikasi berhasil.
+            // Jangan bergantung pada urutan inisialisasi currentUser atau mode tema.
+            document.body.classList.add('inventory-authenticated');
         };
 
         window.handleLoginSubmit = async function(e) {
@@ -5815,9 +6652,23 @@
         }
 
         window.logoutUser = function() {
+            document.body.classList.remove('inventory-authenticated');
             showConfirm('Logout Sistem', 'Apakah Anda yakin ingin keluar dari sesi saat ini?', async () => {
                 await performLogout('manual');
             });
+            const cancelBtn = document.getElementById('confirm-cancel-btn');
+            if (cancelBtn) {
+                cancelBtn.onclick = () => {
+                    const modal = document.getElementById('confirm-modal');
+                    if (modal) {
+                        modal.classList.add('hidden');
+                        modal.classList.remove('flex');
+                    }
+                    if (localStorage.getItem('gudang_pro_worker_token') && window.gudangAppDb?.currentUser) {
+                        document.body.classList.add('inventory-authenticated');
+                    }
+                };
+            }
         };
 
         // Aktivitas pengguna memperbarui hitung mundur. Gerakan mouse dibatasi agar timer tidak terlalu sering ditulis.
@@ -5910,6 +6761,33 @@
             });
         };
 
+        // Visual-only module entrance and dashboard KPI animation.
+        // Uses requestAnimationFrame only while a module is opened; no polling/timers.
+        function animateInventoryKpi(el) {
+            if (!el) return;
+            const finalText = (el.textContent || '0').trim();
+            const target = Number(finalText.replace(/[^\d-]/g, '')) || 0;
+            const start = performance.now();
+            const duration = 680;
+            function frame(now) {
+                const progress = Math.min(1, (now - start) / duration);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.round(target * eased).toLocaleString('id-ID');
+                if (progress < 1) requestAnimationFrame(frame);
+                else el.textContent = finalText;
+            }
+            el.textContent = '0';
+            requestAnimationFrame(frame);
+        }
+
+        function animateDashboardOnOpen() {
+            ['stat-sku','stat-stok','stat-masuk','stat-keluar','stat-po','stat-retur']
+                .forEach(id => animateInventoryKpi(document.getElementById(id)));
+
+            // Grafik tidak dianimasikan ulang saat dashboard dibuka.
+            // Ini mencegah efek berkedip ketika data dashboard diperbarui.
+        }
+
         window.switchTab = function(tabId) {
             const tabs = ['dashboard', 'master', 'po', 'masuk', 'keluar', 'sampel', 'retur', 'users', 'backup'];
             tabs.forEach(t => {
@@ -5923,10 +6801,15 @@
 
             const activeSec = document.getElementById(`tab-${tabId}`);
             const activeBtn = document.getElementById(`nav-${tabId}`);
-            if (activeSec) activeSec.classList.remove('hidden');
+            if (activeSec) {
+                activeSec.classList.remove('hidden', 'module-enter');
+                void activeSec.offsetWidth;
+                activeSec.classList.add('module-enter');
+            }
             if (activeBtn) {
                 activeBtn.className = "sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20";
             }
+            if (tabId === 'dashboard') animateDashboardOnOpen();
             lucide.createIcons();
         };
 
@@ -5988,7 +6871,12 @@
             const safeMode = selected === 'crystal' ? 'light' : 'dark';
             localStorage.setItem(INVENTORY_UI_PREFERENCE_KEY, selected);
             localStorage.setItem(INVENTORY_THEME_KEY, safeMode);
+            // Pertahankan status autentikasi saat class tema diperbarui.
+            // Tanpa ini, pergantian UI menghapus inventory-authenticated
+            // sehingga header baru muncul kembali setelah halaman di-reload.
+            const isAuthenticated = document.body.classList.contains('inventory-authenticated');
             document.body.className = `min-h-screen flex flex-col antialiased theme-glass ${safeMode === 'light' ? 'theme-light theme-crystal' : 'theme-dark theme-classic'}`;
+            if (isAuthenticated) document.body.classList.add('inventory-authenticated');
 
             const classicBtn = document.getElementById('theme-classic-btn');
             const crystalBtn = document.getElementById('theme-crystal-btn');
@@ -7368,7 +8256,7 @@
                 ...window.gudangAppDb.masuk.map(m => ({ time: m.tanggal, type: 'MASUK', id: m.id, name: m.nama, qty: `+${m.qty} ${m.satuan}`, partner: m.supplier, user: m.user || 'Administrator' })),
                 ...window.gudangAppDb.keluar.map(k => ({ time: k.tanggal, type: 'KELUAR', id: k.id, name: k.nama, qty: `-${k.qty} ${k.satuan}`, partner: k.tujuan, user: k.user || 'Administrator' })),
                 ...window.gudangAppDb.retur.map(r => ({ time: r.tanggal, type: 'RETUR', id: r.id, name: r.nama, qty: `${r.qty} ${r.satuan}`, partner: r.keterangan, user: r.user || 'Administrator' }))
-            ].sort((a,b) => new Date(b.time) - new Date(a.time)).slice(0, 10);
+            ].sort((a,b) => new Date(b.time) - new Date(a.time)).slice(0, 5);
 
             recentBody.innerHTML = allLogs.map(l => {
                 const badgeColor = l.type === 'MASUK' ? 'bg-emerald-500/20 text-emerald-300' : (l.type === 'KELUAR' ? 'bg-rose-500/20 text-rose-300' : 'bg-amber-500/20 text-amber-300');
@@ -7478,6 +8366,7 @@
             document.getElementById('inventory-print-options')?.remove();
             const overlay = document.createElement('div');
             overlay.id = 'inventory-print-options';
+            overlay.classList.add(document.body.classList.contains('theme-light') ? 'print-theme-light' : 'print-theme-dark');
             overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:16px;';
             overlay.innerHTML = `
                 <div style="width:min(440px,100%);background:#172033;color:#f8fafc;border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.45);font-family:Arial,sans-serif">
@@ -8177,6 +9066,147 @@
             backdrop-filter: blur(26px) saturate(150%);
             -webkit-backdrop-filter: blur(26px) saturate(150%);
         }
+
+
+
+/* V45 FIX — V37 had later rules forcing main overflow-y:visible.
+   This final override restores scrolling only inside main.
+   Sidebar declarations and its current appearance are untouched. */
+html,
+body.theme-glass {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+}
+body.theme-glass {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+body.theme-glass #inventory-top-header {
+    flex: 0 0 4rem !important;
+    height: 4rem !important;
+    min-height: 4rem !important;
+    max-height: 4rem !important;
+}
+body.theme-glass #inventory-app-layout {
+    display: flex !important;
+    flex: 1 1 0% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    align-items: stretch !important;
+}
+body.theme-glass #inventory-sidebar {
+    flex-shrink: 0 !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+}
+body.theme-glass #inventory-sidebar nav {
+    overflow: hidden !important;
+}
+body.theme-glass #inventory-main-content {
+    display: block !important;
+    flex: 1 1 0% !important;
+    width: auto !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+@media (max-width: 900px) {
+    body.theme-glass #inventory-app-layout {
+        flex: 1 1 0% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+    body.theme-glass #inventory-main-content {
+        flex: 1 1 0% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: 100% !important;
+        overflow-y: auto !important;
+    }
+}
+
+
+
+/* V46 — stable viewport frame; main content owns the vertical scroll.
+   Keep the existing sidebar styling/behavior from V43/V45 unchanged. */
+html,
+body.theme-glass {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+}
+body.theme-glass {
+    position: relative !important;
+    display: block !important;
+}
+body.theme-glass #inventory-top-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 4rem !important;
+    min-height: 4rem !important;
+    max-height: 4rem !important;
+    z-index: 100 !important;
+}
+body.theme-glass #inventory-app-layout {
+    position: fixed !important;
+    top: 4rem !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    display: flex !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    align-items: stretch !important;
+}
+body.theme-glass #inventory-main-content {
+    position: relative !important;
+    display: block !important;
+    flex: 1 1 0% !important;
+    width: 0 !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-gutter: stable;
+}
+@media (max-width: 900px) {
+    body.theme-glass #inventory-app-layout {
+        top: 4rem !important;
+        bottom: 0 !important;
+        height: auto !important;
+    }
+    body.theme-glass #inventory-main-content {
+        width: 0 !important;
+        min-height: 0 !important;
+        height: 100% !important;
+        overflow-y: auto !important;
+    }
+}
 
 </style></head><body><h2>${escapePrintHtml(config.title)}</h2>
                 <p class="meta">Periode: ${escapePrintHtml(periodLabel)} &nbsp; | &nbsp; Total: ${rows.length} data &nbsp; | &nbsp; Dicetak: ${escapePrintHtml(nowStr)}</p>
