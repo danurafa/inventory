@@ -4653,7 +4653,8 @@ body.theme-glass.theme-light #inventory-main-content .overflow-x-auto {
                     <h1 id="inventory-greeting-title" class="font-bold text-base md:text-lg tracking-wide flex items-center gap-2 text-gray-100 whitespace-nowrap">
                         <span id="inventory-greeting-text">Selamat Datang!</span>
                         <span id="inventory-weather-icon" class="inline-flex items-center justify-center text-xl leading-none" title="Memuat cuaca Bandung" aria-label="Cuaca Bandung">🌤️</span>
-                        <span id="inventory-weather-temp" class="text-xs font-semibold opacity-80"></span>
+                        <span id="inventory-weather-desc" class="text-xs font-medium opacity-85 whitespace-nowrap">Memuat cuaca...</span>
+                        <span id="inventory-weather-temp" class="text-xs font-semibold opacity-80 whitespace-nowrap"></span>
                     </h1>
                     <div class="flex items-center gap-2 min-w-0">
                         <p class="text-[11px] text-gray-400 font-medium tracking-wide whitespace-nowrap">Professional Inventory & PO System</p>
@@ -6723,6 +6724,7 @@ body.theme-glass.theme-light #inventory-main-content .overflow-x-auto {
         window.updateInventoryWeather = async function() {
             const iconEl = document.getElementById('inventory-weather-icon');
             const tempEl = document.getElementById('inventory-weather-temp');
+            const descEl = document.getElementById('inventory-weather-desc');
             if (!iconEl) return;
 
             const weatherMap = {
@@ -6751,6 +6753,7 @@ body.theme-glass.theme-light #inventory-main-content .overflow-x-auto {
                 iconEl.textContent = weather[0];
                 iconEl.title = `Cuaca Bandung: ${weather[1]}`;
                 iconEl.setAttribute('aria-label', `Cuaca Bandung: ${weather[1]}`);
+                if (descEl) descEl.textContent = weather[1];
                 if (tempEl && Number.isFinite(Number(current.temperature_2m))) {
                     tempEl.textContent = `${Math.round(Number(current.temperature_2m))}°C`;
                     tempEl.title = `Suhu saat ini di Bandung: ${current.temperature_2m}°C`;
@@ -6759,6 +6762,7 @@ body.theme-glass.theme-light #inventory-main-content .overflow-x-auto {
                 iconEl.textContent = '🌤️';
                 iconEl.title = 'Cuaca Bandung belum dapat dimuat';
                 iconEl.setAttribute('aria-label', 'Cuaca Bandung belum dapat dimuat');
+                if (descEl) descEl.textContent = 'Cuaca tidak tersedia';
                 if (tempEl) tempEl.textContent = '';
             }
         };
