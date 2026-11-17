@@ -4650,8 +4650,10 @@ body.theme-glass.theme-light #inventory-main-content .overflow-x-auto {
                     G
                 </div>
                 <div class="min-w-0">
-                    <h1 class="font-bold text-base md:text-lg tracking-wide flex items-center gap-2 text-gray-100 whitespace-nowrap">
-                        Sistem Manajemen Inventory Gudang
+                    <h1 id="inventory-greeting-title" class="font-bold text-base md:text-lg tracking-wide flex items-center gap-2 text-gray-100 whitespace-nowrap">
+                        <span id="inventory-greeting-text">Selamat Datang!</span>
+                        <span id="inventory-weather-icon" class="inline-flex items-center justify-center text-xl leading-none" title="Memuat cuaca Bandung" aria-label="Cuaca Bandung">🌤️</span>
+                        <span id="inventory-weather-temp" class="text-xs font-semibold opacity-80"></span>
                     </h1>
                     <div class="flex items-center gap-2 min-w-0">
                         <p class="text-[11px] text-gray-400 font-medium tracking-wide whitespace-nowrap">Professional Inventory & PO System</p>
@@ -6698,9 +6700,73 @@ body.theme-glass.theme-light #inventory-main-content .overflow-x-auto {
         });
 
 
+        // Sapaan header otomatis mengikuti waktu lokal dan nama pengguna yang login.
+        window.updateHeaderGreeting = function() {
+            const title = document.getElementById('inventory-greeting-title');
+            if (!title) return;
+            const hour = new Date().getHours();
+            let greeting = 'Selamat Datang';
+            if (hour >= 4 && hour < 11) greeting = 'Selamat Pagi';
+            else if (hour >= 11 && hour < 15) greeting = 'Selamat Siang';
+            else if (hour >= 15 && hour < 18) greeting = 'Selamat Sore';
+            else greeting = 'Selamat Malam';
+
+            const user = window.gudangAppDb?.currentUser || window.activeUserSession || null;
+            const name = user?.name || user?.username || '';
+            const greetingText = document.getElementById('inventory-greeting-text');
+            if (greetingText) greetingText.textContent = name ? `${greeting}, ${name}!` : `${greeting}!`;
+            else title.textContent = name ? `${greeting}, ${name}!` : `${greeting}!`;
+        };
+
+        // Ikon cuaca aktual Bandung dari Open-Meteo (tanpa API key).
+        // Data diperbarui berkala; bila koneksi gagal, sapaan tetap berjalan normal.
+        window.updateInventoryWeather = async function() {
+            const iconEl = document.getElementById('inventory-weather-icon');
+            const tempEl = document.getElementById('inventory-weather-temp');
+            if (!iconEl) return;
+
+            const weatherMap = {
+                0: ['☀️', 'Cerah'], 1: ['🌤️', 'Cerah berawan'], 2: ['⛅', 'Berawan sebagian'],
+                3: ['☁️', 'Mendung'], 45: ['🌫️', 'Berkabut'], 48: ['🌫️', 'Kabut tebal'],
+                51: ['🌦️', 'Gerimis ringan'], 53: ['🌦️', 'Gerimis'], 55: ['🌧️', 'Gerimis lebat'],
+                56: ['🌧️', 'Gerimis beku'], 57: ['🌧️', 'Gerimis beku lebat'],
+                61: ['🌦️', 'Hujan ringan'], 63: ['🌧️', 'Hujan sedang'], 65: ['🌧️', 'Hujan lebat'],
+                66: ['🌧️', 'Hujan beku'], 67: ['🌧️', 'Hujan beku lebat'],
+                71: ['🌨️', 'Salju ringan'], 73: ['🌨️', 'Salju'], 75: ['❄️', 'Salju lebat'],
+                77: ['🌨️', 'Butiran salju'], 80: ['🌦️', 'Hujan lokal'], 81: ['🌧️', 'Hujan lokal sedang'],
+                82: ['🌧️', 'Hujan lokal lebat'], 85: ['🌨️', 'Hujan salju lokal'], 86: ['🌨️', 'Hujan salju lebat'],
+                izzle: ['⛈️', 'Badai petir'], 95: ['⛈️', 'Badai petir'], 96: ['⛈️', 'Petir dan hujan es'],
+                99: ['⛈️', 'Badai petir kuat']
+            };
+
+            try {
+                const url = 'https://api.open-meteo.com/v1/forecast?latitude=-6.9175&longitude=107.6191&current=temperature_2m,weather_code,is_day&timezone=Asia%2FBangkok';
+                const response = await fetch(url, { cache: 'no-store' });
+                if (!response.ok) throw new Error('Weather request failed');
+                const data = await response.json();
+                const current = data.current || {};
+                const code = Number(current.weather_code);
+                let weather = weatherMap[code] || ['🌤️', 'Cuaca Bandung'];
+                if (code === 0 && Number(current.is_day) === 0) weather = ['🌙', 'Cerah malam'];
+                iconEl.textContent = weather[0];
+                iconEl.title = `Cuaca Bandung: ${weather[1]}`;
+                iconEl.setAttribute('aria-label', `Cuaca Bandung: ${weather[1]}`);
+                if (tempEl && Number.isFinite(Number(current.temperature_2m))) {
+                    tempEl.textContent = `${Math.round(Number(current.temperature_2m))}°C`;
+                    tempEl.title = `Suhu saat ini di Bandung: ${current.temperature_2m}°C`;
+                }
+            } catch (error) {
+                iconEl.textContent = '🌤️';
+                iconEl.title = 'Cuaca Bandung belum dapat dimuat';
+                iconEl.setAttribute('aria-label', 'Cuaca Bandung belum dapat dimuat');
+                if (tempEl) tempEl.textContent = '';
+            }
+        };
+
         window.renderCurrentUserBanner = function() {
             const banner = document.getElementById('current-user-banner');
             if (!banner || !window.gudangAppDb.currentUser) return;
+            window.updateHeaderGreeting?.();
             const role = window.gudangAppDb.currentUser.role;
             const badgeClass = role === 'admin' ? 'role-badge-admin' : (role === 'staff' ? 'role-badge-staff' : 'role-badge-viewer');
             
@@ -6919,6 +6985,10 @@ body.theme-glass.theme-light #inventory-main-content .overflow-x-auto {
             }
         };
         setInterval(updateClock, 1000);
+        window.updateHeaderGreeting?.();
+        window.updateInventoryWeather?.();
+        setInterval(() => window.updateHeaderGreeting?.(), 60000);
+        setInterval(() => window.updateInventoryWeather?.(), 15 * 60 * 1000);
 
         window.showToast = function(msg, type = 'success') {
             const container = document.getElementById('toast-container');
