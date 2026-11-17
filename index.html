@@ -6988,7 +6988,7 @@ body.theme-glass.theme-light #inventory-main-content .overflow-x-auto {
         window.updateHeaderGreeting?.();
         window.updateInventoryWeather?.();
         setInterval(() => window.updateHeaderGreeting?.(), 60000);
-        setInterval(() => window.updateInventoryWeather?.(), 15 * 60 * 1000);
+        setInterval(() => window.updateInventoryWeather?.(), 10 * 60 * 1000);
 
         window.showToast = function(msg, type = 'success') {
             const container = document.getElementById('toast-container');
