@@ -4,44 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Manajemen Inventory Gudang</title>
-    <!-- V114: fallback visibilitas elemen penting untuk Safari/Brave iOS saat Tailwind CDN gagal dimuat. -->
-    <style id="inventory-critical-fallback">
-        /* Utilitas hidden adalah perilaku kritis aplikasi, jangan bergantung pada CDN. */
-        .hidden { display: none !important; }
-        html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-        body { min-width: 320px; }
-        /* Pengaman modal agar tetap menjadi overlay dan tidak merusak halaman saat CSS CDN terlambat/gagal. */
-        #login-modal, #auto-logout-modal, #detail-save-modal, #confirm-modal {
-            position: fixed;
-            inset: 0;
-            box-sizing: border-box;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-        }
-        #login-modal:not(.hidden), #auto-logout-modal:not(.hidden),
-        #detail-save-modal:not(.hidden), #confirm-modal:not(.hidden) {
-            display: flex !important;
-        }
-        #login-modal { z-index: 50; }
-        #auto-logout-modal { z-index: 95; background: rgba(0,0,0,.75); }
-        #detail-save-modal { z-index: 70; background: rgba(0,0,0,.75); }
-        #confirm-modal { z-index: 60; background: rgba(0,0,0,.70); }
-        #auto-logout-modal > div, #detail-save-modal > div, #confirm-modal > div {
-            box-sizing: border-box;
-            width: 100%;
-            max-height: calc(100% - 2rem);
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        #auto-logout-modal > div { max-width: 28rem; }
-        #detail-save-modal > div { max-width: 36rem; }
-        #confirm-modal > div { max-width: 24rem; }
-        #login-modal > div { box-sizing: border-box; width: 100%; max-width: 28rem; }
-    </style>
     <!-- V75: percepat koneksi awal ke resource eksternal tanpa mengubah urutan eksekusi library -->
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="dns-prefetch" href="//cdn.tailwindcss.com">
@@ -78,7 +40,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.18-inventory-v114-ios-modal-fallback";
+        const APP_VERSION = "2026.11.18-inventory-v99-liquid-glass-ui2";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
