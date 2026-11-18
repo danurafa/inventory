@@ -5374,6 +5374,24 @@ body.theme-glass.theme-light #toast-container > .inventory-toast.toast-success {
 }
 </style>
 
+
+<style id="v104-toast-icon-solid">
+/* V104: badge ikon toast dibuat lebih solid dan tegas tanpa mengubah warna status. */
+#toast-container > .inventory-toast > .inventory-toast-icon {
+    background: rgba(var(--toast-tone), .30) !important;
+    border: 1px solid rgba(var(--toast-tone), .72) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.30), 0 3px 12px rgba(var(--toast-tone), .18) !important;
+}
+#toast-container > .inventory-toast > .inventory-toast-icon svg {
+    stroke-width: 2.6 !important;
+}
+body.theme-glass.theme-light #toast-container > .inventory-toast > .inventory-toast-icon {
+    background: rgba(var(--toast-tone), .34) !important;
+    border-color: rgba(var(--toast-tone), .78) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.42), 0 3px 12px rgba(var(--toast-tone), .16) !important;
+}
+</style>
+
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
 
@@ -5726,15 +5744,13 @@ body.theme-glass.theme-light #toast-container > .inventory-toast.toast-success {
                                 <label class="text-xs block mb-1">Kategori *</label>
                                 <select id="master-jenis" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="">-- Pilih Kategori --</option>
-                                    <option value="ELASTIS HURUF">ELASTIS HURUF</option>
-                                    <option value="ELASTIS POLOS">ELASTIS POLOS</option>
-                                    <option value="WEBBING PP HURUF">WEBBING PP HURUF</option>
-                                    <option value="WEBBING POLY HURUF">WEBING POLY HURUF</option>
-                                    <option value="WEBBING PP">WEBBING PP</option>
-                                    <option value="WEBBING POLY">WEBBING POLY</option>
-                                    <option value="WEBBING NYLON">WEBBING NYLON FIL</option>
-                                    <option value="NYLON TEXTURE">NYLON TEXTURE</option>
-                                    <option value="IMITASI NYLON">IMITASI NYLON</option>
+                                    <option value="ELASTIS HURUF">Elastis Huruf</option>
+                                    <option value="ELASTIS POLOS">Elastis Polos</option>
+                                    <option value="WEBBING PP">Webbing PP</option>
+                                    <option value="WEBBING POLY">Webbing Poly</option>
+                                    <option value="WEBBING NYLON">Webbing Nylon</option>
+                                    <option value="NYLON TEXTURE">Nylon Texture</option>
+                                    <option value="IMITASI NYLON">Imitasi Nylon</option>
                                 </select>
                             </div>
                             <div class="grid grid-cols-2 gap-2">
@@ -5786,7 +5802,6 @@ body.theme-glass.theme-light #toast-container > .inventory-toast.toast-success {
                                         <option value="KG">KG</option>
                                         <option value="YARD">YARD</option>
                                         <option value="METER">METER</option>
-                                        <option value="ROLL (15 Y)">ROLL (15 Y)</option>
                                         <option value="ROLL (32 M)">ROLL (32 M)</option>
                                         <option value="ROLL (35 Y)">ROLL (35 Y)</option>
                                         <option value="ROLL (50 Y)">ROLL (50 Y)</option>
