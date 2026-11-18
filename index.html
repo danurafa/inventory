@@ -40,7 +40,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.17-inventory-v42-visual-performance-refinement";
+        const APP_VERSION = "2026.11.18-inventory-v99-liquid-glass-ui2";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -5269,6 +5269,111 @@ body.theme-glass #inventory-main-content :is(.app-card, .dashboard-glow-card, .a
   outline-offset: 2px;
 }
 </style>
+
+<style id="v102-toast-definitive-fix">
+#toast-container {
+  position:fixed!important; top:max(16px,env(safe-area-inset-top))!important;
+  left:50%!important; right:auto!important; transform:translateX(-50%)!important;
+  width:min(440px,calc(100vw - 28px))!important; display:flex!important;
+  flex-direction:column!important; align-items:stretch!important; gap:10px!important;
+  z-index:99999!important; pointer-events:none!important;
+}
+#toast-container > .inventory-toast {
+  position:relative!important; box-sizing:border-box!important;
+  display:grid!important; grid-template-columns:38px minmax(0,1fr) 28px!important;
+  align-items:center!important; column-gap:12px!important;
+  width:100%!important; min-height:70px!important; padding:13px 14px!important;
+  overflow:hidden!important; border-radius:18px!important;
+  border:1px solid rgba(219,234,254,.36)!important;
+  color:#f8fbff!important;
+  background:linear-gradient(120deg,rgba(255,255,255,.20),rgba(255,255,255,.055) 52%,rgba(var(--toast-tone),.15)),rgba(12,25,43,.91)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(175%)!important;
+  backdrop-filter:blur(24px) saturate(175%)!important;
+  box-shadow:0 18px 48px rgba(2,8,23,.32),inset 0 1px 0 rgba(255,255,255,.28),0 0 22px rgba(var(--toast-tone),.12)!important;
+  text-shadow:none!important; pointer-events:auto!important;
+  animation:toastV102Enter .42s cubic-bezier(.18,.89,.32,1.12) both!important;
+}
+#toast-container > .toast-success {--toast-tone:52,211,153}
+#toast-container > .toast-error {--toast-tone:251,113,133}
+#toast-container > .toast-warning {--toast-tone:251,191,36}
+#toast-container > .toast-info {--toast-tone:96,165,250}
+#toast-container > .inventory-toast > .inventory-toast-icon {
+  grid-column:1!important;grid-row:1!important;display:grid!important;place-items:center!important;
+  width:38px!important;height:38px!important;border-radius:13px!important;
+  color:rgb(var(--toast-tone))!important;background:rgba(var(--toast-tone),.15)!important;
+  border:1px solid rgba(var(--toast-tone),.46)!important;
+}
+#toast-container > .inventory-toast > .inventory-toast-icon svg {width:20px!important;height:20px!important}
+#toast-container > .inventory-toast > .inventory-toast-copy {
+  grid-column:2!important;grid-row:1!important;
+  display:block!important;flex:none!important;min-width:0!important;width:100%!important;
+  align-self:center!important;justify-self:stretch!important;white-space:normal!important;
+}
+#toast-container > .inventory-toast .inventory-toast-title {
+  display:block!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+  font-size:12px!important;font-weight:750!important;line-height:1.2!important;
+}
+#toast-container > .inventory-toast .inventory-toast-message {
+  display:block!important;color:rgba(235,244,255,.86)!important;-webkit-text-fill-color:rgba(235,244,255,.86)!important;
+  font-size:11px!important;font-weight:500!important;line-height:1.4!important;
+  white-space:normal!important;overflow-wrap:anywhere!important;
+}
+#toast-container > .inventory-toast > .inventory-toast-close {
+  grid-column:3!important;grid-row:1!important;justify-self:end!important;
+  display:grid!important;place-items:center!important;width:28px!important;height:28px!important;
+  padding:0!important;border:1px solid rgba(255,255,255,.18)!important;border-radius:9px!important;
+  color:rgba(255,255,255,.82)!important;background:rgba(255,255,255,.08)!important;
+  cursor:pointer!important;
+}
+#toast-container > .inventory-toast > .inventory-toast-close svg {width:16px!important;height:16px!important}
+#toast-container > .inventory-toast > .inventory-toast-progress {
+  position:absolute!important;left:0!important;bottom:0!important;width:100%!important;height:2px!important;
+  transform-origin:left center!important;background:rgba(var(--toast-tone),.96)!important;
+  box-shadow:0 0 10px rgba(var(--toast-tone),.55)!important;
+  animation:toastV102Progress var(--toast-duration,3600ms) linear forwards!important;
+}
+#toast-container > .inventory-toast.toast-leaving {animation:toastV102Exit .24s ease-in forwards!important}
+body.theme-glass.theme-light #toast-container > .inventory-toast {
+  background:linear-gradient(120deg,rgba(255,255,255,.78),rgba(235,245,255,.48) 52%,rgba(var(--toast-tone),.12)),rgba(210,226,244,.94)!important;
+  border-color:rgba(53,88,128,.30)!important;
+  box-shadow:0 16px 42px rgba(28,51,79,.20),inset 0 1px 0 rgba(255,255,255,.9),0 0 20px rgba(var(--toast-tone),.10)!important;
+}
+body.theme-glass.theme-light #toast-container > .inventory-toast .inventory-toast-title {
+  color:#173451!important;-webkit-text-fill-color:#173451!important;
+}
+body.theme-glass.theme-light #toast-container > .inventory-toast .inventory-toast-message {
+  color:#49627f!important;-webkit-text-fill-color:#49627f!important;
+}
+body.theme-glass.theme-light #toast-container > .inventory-toast > .inventory-toast-close {
+  color:#36516e!important;border-color:rgba(53,88,128,.22)!important;background:rgba(255,255,255,.42)!important;
+}
+@keyframes toastV102Enter {
+  from {opacity:0;transform:translate3d(0,-16px,0) scale(.96);filter:blur(4px)}
+  to {opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+}
+@keyframes toastV102Exit {
+  to {opacity:0;transform:translate3d(0,-8px,0) scale(.98);filter:blur(2px)}
+}
+@keyframes toastV102Progress {from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@media(max-width:480px) {
+  #toast-container {width:calc(100vw - 24px)!important}
+  #toast-container > .inventory-toast {grid-template-columns:34px minmax(0,1fr) 26px!important;column-gap:10px!important;min-height:66px!important;padding:11px 12px!important}
+  #toast-container > .inventory-toast > .inventory-toast-icon {width:34px!important;height:34px!important}
+}
+@media(prefers-reduced-motion:reduce) {
+  #toast-container > .inventory-toast,#toast-container > .inventory-toast.toast-leaving,
+  #toast-container > .inventory-toast > .inventory-toast-progress {animation:none!important}
+}
+</style>
+
+
+<style id="v103-light-toast-blue-success">
+/* V103: Success toast pada Light Mode memakai aksen biru; Dark Mode tetap hijau. */
+body.theme-glass.theme-light #toast-container > .inventory-toast.toast-success {
+    --toast-tone: 59,130,246 !important;
+}
+</style>
+
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
 
@@ -5408,10 +5513,10 @@ body.theme-glass #inventory-main-content :is(.app-card, .dashboard-glow-card, .a
                         <span class="appearance-card-action">Gunakan Classic Glass <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
                     </button>
                     <button type="button" id="theme-crystal-card" class="appearance-theme-card" onclick="selectAccountUiTheme('crystal')">
-                        <span class="appearance-card-top"><span class="appearance-theme-name">Premium Crystal</span><span class="appearance-selected-mark"><i data-lucide="check" class="w-3.5 h-3.5"></i> AKTIF</span></span>
+                        <span class="appearance-card-top"><span class="appearance-theme-name">Liquid Glass</span><span class="appearance-selected-mark"><i data-lucide="check" class="w-3.5 h-3.5"></i> AKTIF</span></span>
                         <span class="appearance-preview crystal-large-preview"><span class="preview-topbar"><i></i><i></i><i></i><i></i></span><span class="preview-crystal-workspace"><i></i><i></i><i></i></span></span>
-                        <span class="appearance-card-description">Navigasi horizontal · Workspace luas · Nuansa pearl crystal</span>
-                        <span class="appearance-card-action">Gunakan Premium Crystal <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                        <span class="appearance-card-description">UI 2 · Liquid Glass transparan · Refleksi lembut dan efek kaca berlapis</span>
+                        <span class="appearance-card-action">Gunakan Liquid Glass <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
                     </button>
                 </div>
                 <footer class="appearance-dialog-footer"><i data-lucide="cloud" class="w-4 h-4"></i><span>Pilihan tersimpan pada akun dan akan digunakan saat login di perangkat lain.</span></footer>
@@ -6338,7 +6443,7 @@ body.theme-glass #inventory-main-content :is(.app-card, .dashboard-glow-card, .a
                         <input id="restore-json-file" type="file" accept=".json,application/json" class="w-full text-xs text-gray-300 file:mr-3 file:px-3 file:py-2 file:rounded-lg file:border-0 file:bg-white/10 file:text-white hover:file:bg-white/20" onchange="previewRestoreFile(this)" autocomplete="off">
                         <div id="restore-file-info" class="hidden bg-white/5 rounded-xl p-3 text-xs text-gray-300"></div>
                         <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3 text-xs text-rose-300">Restore menimpa data aktif. Aplikasi akan mengunduh backup kondisi saat ini terlebih dahulu sebelum memulihkan file pilihan.</div>
-                        <button id="restore-json-btn" onclick="restoreInventoryBackup()" disabled class="w-full py-3 rounded-xl bg-rose-600/40 text-white/50 text-xs font-bold flex items-center justify-center gap-2 cursor-not-allowed"><i data-lucide="database-backup" class="w-4 h-4"></i> RESTORE DATABASE</button>
+                        <button id="restore-json-btn" onclick="restoreInventoryBackup()" disabled class="w-full py-3 rounded-xl bg-rose-600/40 text-white/50 text-xs font-bold flex items-center justify-center gap-2 cursor-not-allowed"><i data-lucide="database-restore" class="w-4 h-4"></i> RESTORE DATABASE</button>
                     </div>
                 </div>
                 <div class="app-card p-5 rounded-2xl text-xs text-gray-400 space-y-2">
@@ -7595,7 +7700,7 @@ body.theme-glass #inventory-main-content :is(.app-card, .dashboard-glow-card, .a
                 await saveAccountUiPreference(selected);
             }
             window.closeAppearancePanel();
-            showToast(selected === 'crystal' ? 'Premium Crystal UI diaktifkan.' : 'Classic Glass UI diaktifkan.');
+            showToast(selected === 'crystal' ? 'Liquid Glass UI 2 diaktifkan.' : 'Classic Glass UI diaktifkan.');
         };
 
         // Kompatibilitas tombol mode lama; pilihan desain menentukan mode warnanya.
@@ -7632,11 +7737,11 @@ body.theme-glass #inventory-main-content :is(.app-card, .dashboard-glow-card, .a
             if (classicCard) classicCard.classList.toggle('active', selected === 'classic');
             if (crystalCard) crystalCard.classList.toggle('active', selected === 'crystal');
             const appearanceLabel = document.getElementById('appearance-current-label');
-            if (appearanceLabel) appearanceLabel.textContent = selected === 'classic' ? 'Classic Glass aktif' : 'Premium Crystal aktif';
+            if (appearanceLabel) appearanceLabel.textContent = selected === 'classic' ? 'Classic Glass aktif' : 'Liquid Glass aktif';
             const legacyLabel = document.getElementById('theme-mode-label');
-            if (legacyLabel) legacyLabel.textContent = selected === 'classic' ? 'Classic Glass' : 'Premium Crystal';
+            if (legacyLabel) legacyLabel.textContent = selected === 'classic' ? 'Classic Glass' : 'Liquid Glass';
             const legacyToggle = document.getElementById('theme-mode-toggle');
-            if (legacyToggle) legacyToggle.setAttribute('aria-label', selected === 'classic' ? 'Classic Glass aktif' : 'Premium Crystal aktif');
+            if (legacyToggle) legacyToggle.setAttribute('aria-label', selected === 'classic' ? 'Classic Glass aktif' : 'Liquid Glass aktif');
         };
 
         window.updateClock = function() {
@@ -7666,17 +7771,79 @@ body.theme-glass #inventory-main-content :is(.app-card, .dashboard-glow-card, .a
         window.showToast = function(msg, type = 'success') {
             const container = document.getElementById('toast-container');
             if (!container) return;
+
+            const config = {
+                success: { icon: 'check-circle-2', title: 'Berhasil', tone: 'success' },
+                error:   { icon: 'x-circle', title: 'Terjadi Kesalahan', tone: 'error' },
+                warning: { icon: 'alert-triangle', title: 'Perhatian', tone: 'warning' },
+                info:    { icon: 'info', title: 'Informasi', tone: 'info' }
+            };
+            const item = config[type] || config.success;
             const toast = document.createElement('div');
-            const bgClass = type === 'error' ? 'bg-rose-500/90 text-white' : (type === 'warning' ? 'bg-amber-500/90 text-white' : 'bg-emerald-500/90 text-white');
-            toast.className = `px-4 py-3 rounded-xl shadow-xl text-xs font-semibold backdrop-blur-md flex items-center gap-2.5 animate-bounce ${bgClass}`;
-            toast.innerHTML = `<i data-lucide="${type === 'error' ? 'alert-circle' : 'check-circle'}" class="w-4 h-4"></i><span>${msg}</span>`;
+            toast.className = 'inventory-toast toast-' + item.tone;
+            toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+            toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+
+            const iconWrap = document.createElement('span');
+            iconWrap.className = 'inventory-toast-icon';
+            const icon = document.createElement('i');
+            icon.setAttribute('data-lucide', item.icon);
+            iconWrap.appendChild(icon);
+
+            // Gunakan blok terpisah dan inline layout agar tidak tertimpa utility CSS lama.
+            const copy = document.createElement('div');
+            copy.className = 'inventory-toast-copy';
+            copy.style.cssText = 'display:block!important;min-width:0!important;width:100%!important;flex:1 1 auto!important;white-space:normal!important;';
+
+            const heading = document.createElement('div');
+            heading.className = 'inventory-toast-title';
+            heading.textContent = item.title;
+            heading.style.cssText = 'display:block!important;width:100%!important;margin:0 0 4px 0!important;line-height:1.2!important;font-size:12px!important;font-weight:750!important;';
+
+            const message = document.createElement('div');
+            message.className = 'inventory-toast-message';
+            message.textContent = String(msg ?? '');
+            message.style.cssText = 'display:block!important;width:100%!important;margin:0!important;line-height:1.4!important;font-size:11px!important;white-space:normal!important;overflow-wrap:anywhere!important;';
+
+            copy.appendChild(heading);
+            copy.appendChild(message);
+
+            const close = document.createElement('button');
+            close.type = 'button';
+            close.className = 'inventory-toast-close';
+            close.setAttribute('aria-label', 'Tutup notifikasi');
+            const closeIcon = document.createElement('i');
+            closeIcon.setAttribute('data-lucide', 'x');
+            close.appendChild(closeIcon);
+
+            const progress = document.createElement('span');
+            progress.className = 'inventory-toast-progress';
+            toast.appendChild(iconWrap);
+            toast.appendChild(copy);
+            toast.appendChild(close);
+            toast.appendChild(progress);
             container.appendChild(toast);
-            lucide.createIcons();
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transition = 'opacity 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
+
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                window.lucide.createIcons({ attrs: { 'stroke-width': 2 } });
+            }
+
+            let dismissed = false;
+            let timer = null;
+            const dismiss = () => {
+                if (dismissed) return;
+                dismissed = true;
+                toast.classList.add('toast-leaving');
+                window.setTimeout(() => toast.remove(), 260);
+            };
+            close.addEventListener('click', () => {
+                if (timer) window.clearTimeout(timer);
+                dismiss();
+            });
+
+            const duration = 3600;
+            progress.style.setProperty('--toast-duration', duration + 'ms');
+            timer = window.setTimeout(dismiss, duration);
         };
 
         window.showConfirm = function(title, message, onConfirm, options = {}) {
@@ -10280,7 +10447,228 @@ body.theme-glass.theme-dark #tab-dashboard #movement-trend-card .movement-axis-d
 }
 </style>
 
-</body></html>`);
+</body>
+<style id="v100-liquid-glass-toast">
+/* V100 — Premium Liquid Glass Toast: scoped only to the notification component */
+#toast-container {
+    top: max(1.1rem, env(safe-area-inset-top)) !important;
+    left: 50% !important;
+    width: min( min(440px, calc(100vw - 28px)), 440px) !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    pointer-events: none !important;
+}
+#toast-container .inventory-toast {
+    --toast-tone: 96,165,250;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 68px;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 13px 14px;
+    border: 1px solid rgba(219,234,254,.34);
+    border-radius: 18px;
+    color: #f8fbff !important;
+    background:
+      linear-gradient(118deg, rgba(255,255,255,.19), rgba(255,255,255,.055) 48%, rgba(var(--toast-tone),.13)),
+      rgba(12,25,43,.86);
+    -webkit-backdrop-filter: blur(24px) saturate(175%);
+    backdrop-filter: blur(24px) saturate(175%);
+    box-shadow: 0 18px 48px rgba(2,8,23,.30), inset 0 1px 0 rgba(255,255,255,.28), 0 0 24px rgba(var(--toast-tone),.10);
+    text-shadow: none;
+    pointer-events: auto;
+    isolation: isolate;
+    animation: inventoryToastEnter .46s cubic-bezier(.18,.89,.32,1.22) both;
+}
+#toast-container .inventory-toast::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent);
+    opacity: .85;
+    pointer-events: none;
+}
+#toast-container .inventory-toast::after {
+    content: "";
+    position: absolute;
+    width: 115px;
+    height: 115px;
+    top: -78px;
+    left: -42px;
+    border-radius: 50%;
+    background: rgba(var(--toast-tone),.20);
+    filter: blur(28px);
+    pointer-events: none;
+    z-index: -1;
+}
+#toast-container .toast-success { --toast-tone: 52,211,153; }
+#toast-container .toast-error { --toast-tone: 251,113,133; }
+#toast-container .toast-warning { --toast-tone: 251,191,36; }
+#toast-container .toast-info { --toast-tone: 96,165,250; }
+#toast-container .inventory-toast-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(var(--toast-tone),.46);
+    border-radius: 13px;
+    color: rgb(var(--toast-tone)) !important;
+    background: rgba(var(--toast-tone),.15);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 0 18px rgba(var(--toast-tone),.12);
+}
+#toast-container .inventory-toast-copy {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    color: #f8fbff !important;
+    line-height: 1.35;
+}
+#toast-container .inventory-toast-copy strong {
+    color: #fff !important;
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: .015em;
+}
+#toast-container .inventory-toast-copy > span {
+    color: rgba(235,244,255,.82) !important;
+    font-size: 11px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+#toast-container .inventory-toast-close {
+    display: grid;
+    place-items: center;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 9px;
+    color: rgba(255,255,255,.78) !important;
+    background: rgba(255,255,255,.075);
+    cursor: pointer;
+    transition: background .18s ease, transform .18s ease;
+}
+#toast-container .inventory-toast-close:hover {
+    background: rgba(255,255,255,.17);
+    transform: scale(1.06);
+}
+#toast-container .inventory-toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    transform-origin: left center;
+    background: rgba(var(--toast-tone),.95);
+    box-shadow: 0 0 10px rgba(var(--toast-tone),.55);
+    animation: inventoryToastProgress var(--toast-duration, 3600ms) linear forwards;
+}
+#toast-container .inventory-toast.toast-leaving {
+    animation: inventoryToastExit .24s ease-in forwards !important;
+}
+body.theme-glass.theme-light #toast-container .inventory-toast {
+    color: #173451 !important;
+    background:
+      linear-gradient(120deg, rgba(255,255,255,.72), rgba(235,245,255,.42) 52%, rgba(var(--toast-tone),.10)),
+      rgba(210,226,244,.88);
+    border-color: rgba(53,88,128,.28);
+    box-shadow: 0 16px 42px rgba(28,51,79,.20), inset 0 1px 0 rgba(255,255,255,.88), 0 0 22px rgba(var(--toast-tone),.10);
+}
+body.theme-glass.theme-light #toast-container .inventory-toast-copy,
+body.theme-glass.theme-light #toast-container .inventory-toast-copy strong {
+    color: #173451 !important;
+    -webkit-text-fill-color: #173451 !important;
+}
+body.theme-glass.theme-light #toast-container .inventory-toast-copy > span {
+    color: #49627f !important;
+    -webkit-text-fill-color: #49627f !important;
+}
+body.theme-glass.theme-light #toast-container .inventory-toast-close {
+    color: #36516e !important;
+    border-color: rgba(53,88,128,.20);
+    background: rgba(255,255,255,.35);
+}
+@keyframes inventoryToastEnter {
+    0% { opacity: 0; transform: translate3d(0,-18px,0) scale(.94); filter: blur(5px); }
+    72% { opacity: 1; transform: translate3d(0,2px,0) scale(1.012); filter: blur(0); }
+    100% { opacity: 1; transform: translate3d(0,0,0) scale(1); filter: blur(0); }
+}
+@keyframes inventoryToastExit {
+    to { opacity: 0; transform: translate3d(0,-10px,0) scale(.97); filter: blur(3px); }
+}
+@keyframes inventoryToastProgress {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
+}
+@media (max-width: 480px) {
+    #toast-container { width: calc(100vw - 24px) !important; }
+    #toast-container .inventory-toast { min-height: 64px; padding: 11px 12px; border-radius: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    #toast-container .inventory-toast,
+    #toast-container .inventory-toast.toast-leaving,
+    #toast-container .inventory-toast-progress { animation: none !important; }
+}
+</style>
+
+
+<style id="v101-toast-layout-fix">
+/* V101: harden toast text stacking against global utility/component styles */
+#toast-container .inventory-toast {
+    display: grid !important;
+    grid-template-columns: 38px minmax(0,1fr) 28px !important;
+    align-items: center !important;
+    column-gap: 12px !important;
+}
+#toast-container .inventory-toast-icon { grid-column: 1; grid-row: 1; }
+#toast-container .inventory-toast-copy {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    white-space: normal !important;
+}
+#toast-container .inventory-toast-copy strong {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    line-height: 1.2 !important;
+}
+#toast-container .inventory-toast-copy > span {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    line-height: 1.35 !important;
+    white-space: normal !important;
+}
+#toast-container .inventory-toast-close {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+}
+@media (max-width: 480px) {
+    #toast-container .inventory-toast {
+        grid-template-columns: 34px minmax(0,1fr) 26px !important;
+        column-gap: 10px !important;
+    }
+    #toast-container .inventory-toast-icon { width: 34px; height: 34px; }
+}
+</style>
+
+</html>`);
             printWindow.onload = () => { printWindow.focus(); printWindow.print(); };
             printWindow.document.close();
             printWindow.focus();
@@ -10819,5 +11207,135 @@ body.theme-glass.theme-dark #tab-dashboard #movement-trend-card .movement-axis-d
 }
 </style>
 
+<style id="v99-liquid-glass-ui2">
+/* UI 2 — LIQUID GLASS. Terisolasi pada theme-crystal; UI 1 Classic Glass tidak disentuh. */
+body.theme-glass.theme-crystal {
+  --theme-bg:#b9c9dc;
+  --theme-card:rgba(239,247,255,.34);
+  --theme-card-border:rgba(255,255,255,.62);
+  --theme-text:#173653;
+  --theme-text-muted:#526f8e;
+  background:
+    radial-gradient(ellipse at 12% 5%,rgba(255,255,255,.92),transparent 34%),
+    radial-gradient(ellipse at 88% 18%,rgba(125,211,252,.48),transparent 34%),
+    radial-gradient(ellipse at 50% 100%,rgba(99,145,199,.30),transparent 45%),
+    linear-gradient(135deg,#aebfd3 0%,#d4e1ef 48%,#a9bfd8 100%) !important;
+  background-attachment:fixed !important;
+  color:#173653 !important;
+}
+body.theme-glass.theme-crystal #inventory-app-layout,
+body.theme-glass.theme-crystal #inventory-main-content,
+body.theme-glass.theme-crystal main { background:transparent !important; }
+body.theme-glass.theme-crystal #inventory-top-header,
+body.theme-glass.theme-crystal > header,
+body.theme-glass.theme-crystal #inventory-sidebar,
+body.theme-glass.theme-crystal aside,
+body.theme-glass.theme-crystal nav,
+body.theme-glass.theme-crystal .glass-surface {
+  background:linear-gradient(135deg,rgba(255,255,255,.58),rgba(211,229,248,.30)) !important;
+  border-color:rgba(255,255,255,.62) !important;
+  box-shadow:0 14px 38px rgba(48,78,112,.12),inset 0 1px 0 rgba(255,255,255,.88),inset 0 -1px 0 rgba(255,255,255,.20) !important;
+  backdrop-filter:blur(30px) saturate(175%);
+  -webkit-backdrop-filter:blur(30px) saturate(175%);
+}
+body.theme-glass.theme-crystal .app-card,
+body.theme-glass.theme-crystal .dashboard-glow-card,
+body.theme-glass.theme-crystal [id^="tab-"] .bg-dark-800,
+body.theme-glass.theme-crystal [id^="tab-"] .bg-dark-900,
+body.theme-glass.theme-crystal [id^="tab-"] .bg-dark-700,
+body.theme-glass.theme-crystal [id^="tab-"] .bg-gray-800,
+body.theme-glass.theme-crystal [id^="tab-"] .bg-gray-900,
+body.theme-glass.theme-crystal [id^="tab-"] .rounded-xl.border,
+body.theme-glass.theme-crystal [id^="tab-"] .rounded-2xl.border {
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(145deg,rgba(255,255,255,.58),rgba(218,234,250,.30) 52%,rgba(188,213,239,.26)) !important;
+  border:1px solid rgba(255,255,255,.72) !important;
+  box-shadow:0 18px 42px rgba(44,73,109,.13),inset 0 1px 0 rgba(255,255,255,.92),inset 0 -1px 0 rgba(255,255,255,.24) !important;
+  backdrop-filter:blur(28px) saturate(180%);
+  -webkit-backdrop-filter:blur(28px) saturate(180%);
+}
+body.theme-glass.theme-crystal #dashboard-hero {
+  background:linear-gradient(125deg,rgba(255,255,255,.72),rgba(199,222,247,.48) 55%,rgba(221,241,255,.54)) !important;
+  border:1px solid rgba(255,255,255,.82) !important;
+  box-shadow:0 22px 48px rgba(48,83,125,.16),inset 0 1px 0 rgba(255,255,255,.95) !important;
+  backdrop-filter:blur(32px) saturate(185%);
+  -webkit-backdrop-filter:blur(32px) saturate(185%);
+}
+body.theme-glass.theme-crystal .app-card:hover,
+body.theme-glass.theme-crystal .dashboard-glow-card:hover {
+  border-color:rgba(255,255,255,.96) !important;
+  box-shadow:0 22px 48px rgba(44,91,145,.19),inset 0 1px 0 rgba(255,255,255,.98) !important;
+}
+body.theme-glass.theme-crystal button:not(.sidebar-btn),
+body.theme-glass.theme-crystal .theme-choice-btn {
+  transition:background .22s ease,border-color .22s ease,box-shadow .22s ease,transform .22s ease;
+}
+body.theme-glass.theme-crystal button:not(.theme-accent-bg):not(.sidebar-btn):hover,
+body.theme-glass.theme-crystal .theme-choice-btn:hover {
+  border-color:rgba(255,255,255,.92) !important;
+  box-shadow:0 8px 22px rgba(57,93,135,.12),inset 0 1px 0 rgba(255,255,255,.82);
+}
+body.theme-glass.theme-crystal .theme-accent-bg {
+  background:linear-gradient(135deg,rgba(64,137,226,.94),rgba(37,99,190,.92)) !important;
+  border:1px solid rgba(255,255,255,.48) !important;
+  box-shadow:0 10px 24px rgba(37,99,190,.24),inset 0 1px 0 rgba(255,255,255,.35) !important;
+  color:#fff !important;
+}
+body.theme-glass.theme-crystal input:not([type="checkbox"]):not([type="radio"]),
+body.theme-glass.theme-crystal select,
+body.theme-glass.theme-crystal textarea {
+  background:rgba(248,252,255,.48) !important;
+  border:1px solid rgba(255,255,255,.78) !important;
+  box-shadow:inset 0 2px 7px rgba(69,100,137,.07),0 1px 0 rgba(255,255,255,.58) !important;
+  color:#173653 !important;
+  -webkit-text-fill-color:#173653 !important;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+body.theme-glass.theme-crystal input::placeholder,
+body.theme-glass.theme-crystal textarea::placeholder { color:#617b98 !important; }
+body.theme-glass.theme-crystal [id^="tab-"] table,
+body.theme-glass.theme-crystal [id^="tab-"] tbody,
+body.theme-glass.theme-crystal [id^="tab-"] tbody tr,
+body.theme-glass.theme-crystal [id^="tab-"] tbody td {
+  background-color:rgba(245,250,255,.13) !important;
+  border-color:rgba(255,255,255,.48) !important;
+  color:#173653 !important;
+}
+body.theme-glass.theme-crystal [id^="tab-"] thead,
+body.theme-glass.theme-crystal [id^="tab-"] thead tr,
+body.theme-glass.theme-crystal [id^="tab-"] thead th {
+  background:rgba(143,174,209,.43) !important;
+  border-color:rgba(255,255,255,.62) !important;
+  color:#173653 !important;
+}
+body.theme-glass.theme-crystal [id^="tab-"] tbody tr:hover { background:rgba(255,255,255,.32) !important; }
+body.theme-glass.theme-crystal .text-white,
+body.theme-glass.theme-crystal .text-gray-100,
+body.theme-glass.theme-crystal .text-gray-200,
+body.theme-glass.theme-crystal .text-gray-300 { color:#173653 !important; }
+body.theme-glass.theme-crystal .text-gray-400,
+body.theme-glass.theme-crystal .text-gray-500 { color:#526f8e !important; }
+body.theme-glass.theme-crystal label { color:#234565 !important; }
+body.theme-glass.theme-crystal #login-modal .login-glass-card,
+body.theme-glass.theme-crystal [id$="-modal"] > div,
+body.theme-glass.theme-crystal [role="dialog"],
+body.theme-glass.theme-crystal .modal-content {
+  backdrop-filter:blur(32px) saturate(175%);
+  -webkit-backdrop-filter:blur(32px) saturate(175%);
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) {
+  body.theme-glass.theme-crystal .app-card,
+  body.theme-glass.theme-crystal .dashboard-glow-card,
+  body.theme-glass.theme-crystal #inventory-sidebar,
+  body.theme-glass.theme-crystal #inventory-top-header { background:rgba(225,238,251,.94) !important; }
+}
+@media (prefers-reduced-motion:reduce) {
+  body.theme-glass.theme-crystal *,body.theme-glass.theme-crystal *::before,body.theme-glass.theme-crystal *::after {
+    animation-duration:.01ms !important;animation-iteration-count:1 !important;scroll-behavior:auto !important;transition-duration:.01ms !important;
+  }
+}
+</style>
 </body>
 </html>
