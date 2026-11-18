@@ -5392,6 +5392,109 @@ body.theme-glass.theme-light #toast-container > .inventory-toast > .inventory-to
 }
 </style>
 
+
+
+<style>
+        /* ==========================================================
+           V105 — STANDARDISASI DROPDOWN BARANG / CUSTOMER
+           Menyamakan lebar, tinggi kontrol, dan keterbacaan opsi.
+           ========================================================== */
+        select,
+        select[data-po-field],
+        #masuk-barang,
+        #keluar-barang,
+        #po-barang,
+        #retur-barang,
+        #keluar-po-group,
+        #keluar-po-ref {
+            box-sizing: border-box !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            min-height: 40px !important;
+            padding: 9px 34px 9px 12px !important;
+            font-size: 13px !important;
+            line-height: 1.35 !important;
+            border-radius: 11px !important;
+        }
+        select option, select optgroup {
+            font-size: 13px !important;
+            line-height: 1.4 !important;
+        }
+        @media (max-width: 640px) {
+            select,
+            select[data-po-field],
+            #masuk-barang,
+            #keluar-barang,
+            #po-barang,
+            #retur-barang,
+            #keluar-po-group,
+            #keluar-po-ref {
+                min-height: 42px !important;
+                padding: 10px 34px 10px 12px !important;
+                font-size: 13px !important;
+            }
+        }
+</style>
+
+<style>
+/* V107: custom searchable dropdown with an internal vertical scrollbar */
+.inventory-item-select-native{
+  position:absolute!important; width:1px!important; height:1px!important;
+  min-height:1px!important; opacity:0!important; pointer-events:none!important;
+  left:0!important; bottom:0!important; padding:0!important; margin:0!important;
+}
+.inventory-item-select-wrap{position:relative!important;width:100%;min-width:0;z-index:1}
+.inventory-item-select-wrap.is-open{z-index:10060}
+.inventory-item-select-trigger{
+  width:100%;min-height:42px;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;text-align:left;padding:10px 12px;border:1px solid rgba(255,255,255,.22);
+  border-radius:11px;background:rgba(255,255,255,.12);color:inherit;font:inherit;font-size:13px;
+  cursor:pointer
+}
+.inventory-item-select-trigger:focus-visible{outline:2px solid rgba(59,130,246,.85);outline-offset:2px}
+.inventory-item-select-value{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.inventory-item-select-chevron{flex:0 0 auto;opacity:.8}
+.inventory-item-select-panel{
+  position:fixed;z-index:2147483000;left:0;top:0;width:auto;max-width:calc(100vw - 16px);
+  box-sizing:border-box;padding:8px;
+  border:1px solid rgba(148,163,184,.38);border-radius:12px;
+  background:rgba(18,34,55,.98);color:#edf5ff;
+  box-shadow:0 14px 36px rgba(0,0,0,.30);backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px)
+}
+.inventory-item-select-search{
+  display:block;width:100%;height:38px;box-sizing:border-box;padding:8px 10px;margin:0 0 7px;
+  border:1px solid rgba(148,163,184,.38);border-radius:8px;
+  background:rgba(255,255,255,.10);color:inherit;font:inherit;font-size:12px;outline:none
+}
+.inventory-item-select-list{
+  max-height:280px;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
+  scrollbar-width:thin;scrollbar-color:rgba(148,163,184,.8) rgba(255,255,255,.08)
+}
+.inventory-item-select-list::-webkit-scrollbar{width:8px}
+.inventory-item-select-list::-webkit-scrollbar-track{background:rgba(255,255,255,.07);border-radius:8px}
+.inventory-item-select-list::-webkit-scrollbar-thumb{background:rgba(148,163,184,.75);border-radius:8px}
+.inventory-item-select-option{
+  display:block;width:100%;padding:9px 10px;border:0;border-radius:7px;
+  background:transparent;color:inherit;text-align:left;font:inherit;font-size:12px;
+  line-height:1.4;cursor:pointer
+}
+.inventory-item-select-option:hover,.inventory-item-select-option[aria-selected="true"]{background:rgba(59,130,246,.25)}
+.inventory-item-select-option:focus-visible{outline:2px solid rgba(96,165,250,.95);outline-offset:-2px}
+.inventory-item-select-option:disabled{opacity:.45;cursor:not-allowed}
+.inventory-item-select-empty{padding:12px 10px;opacity:.75;font-size:12px}
+body.theme-glass.theme-light .inventory-item-select-trigger{background:rgba(255,255,255,.58);border-color:rgba(71,103,145,.30);color:#24415f}
+body.theme-glass.theme-light .inventory-item-select-panel{background:rgba(239,247,255,.99);color:#243b59;border-color:rgba(71,103,145,.30)}
+body.theme-glass.theme-light .inventory-item-select-search{background:#fff;color:#172b45;border-color:rgba(71,103,145,.28)}
+body.theme-glass.theme-light .inventory-item-select-option:hover,
+body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]{background:rgba(59,130,246,.15);color:#123b70}
+@media(max-width:640px){
+  .inventory-item-select-trigger{min-height:44px}
+  .inventory-item-select-list{max-height:240px}
+  .inventory-item-select-panel{max-width:calc(100vw - 16px);box-sizing:border-box}
+}
+</style>
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
 
@@ -6171,11 +6274,16 @@ body.theme-glass.theme-light #toast-container > .inventory-toast > .inventory-to
                                 <label class="text-xs block mb-1">Kategori *</label>
                                 <select id="sampel-kategori" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="">-- Pilih Kategori --</option>
-                                    <option value="ELASTIS POLOS">Elastis Polos</option>
-                                    <option value="ELASTIS HURUF">Elastis Huruf</option>
-                                    <option value="WEBBING PP">Webbing PP</option>
-                                    <option value="WEBBING POLY">Webbing Poly</option>
-                                    <option value="WEBBING NYLON">Webbing Nylon</option>
+                                    <option value="ELASTIS HURUF">ELASTIS HURUF</option>
+                                    <option value="ELASTIS POLOS">ELASTIS POLOS</option>
+                                    <option value="WEBBING PP HURUF">WEBBING PP HURUF</option>
+                                    <option value="WEBBING POLY HURUF">WEBBING POLY HURUF</option>
+                                    <option value="WEBBING PP">WEBBING PP</option>
+                                    <option value="WEBBING POLY">WEBBING POLY</option>
+                                    <option value="WEBBING NYLON FIL">WEBBING NYLON FIL</option>
+                                    <option value="NYLON TEXTURE">NYLON TEXTURE</option>
+                                    <option value="WEBBING SPUNPOLY">WEBBING SPUNPOLY</option>
+                                    <option value="IMITASI NYLON">IMITASI NYLON</option>
                                 </select>
                             </div>
                             <div class="grid grid-cols-2 gap-2">
@@ -11358,5 +11466,155 @@ body.theme-glass.theme-crystal .modal-content {
   }
 }
 </style>
+
+<script>
+(function(){
+  const instances = new WeakMap();
+  // Semua dropdown yang terlihat memakai UI custom. Select helper tersembunyi
+  // tetap native agar tidak membuat kontrol ganda atau mengubah alur internal.
+  function isTarget(select){
+    if (!(select instanceof HTMLSelectElement)) return false;
+    if (select.closest('[hidden], [aria-hidden="true"], .hidden')) return false;
+    if (select.type === 'hidden' || select.disabled && select.options.length === 0) return false;
+    return true;
+  }
+  function init(select){
+    if(!isTarget(select) || instances.has(select)) return;
+    const wrap=document.createElement('div'); wrap.className='inventory-item-select-wrap';
+    const trigger=document.createElement('button'); trigger.type='button'; trigger.className='inventory-item-select-trigger'; trigger.setAttribute('aria-haspopup','listbox'); trigger.setAttribute('aria-expanded','false');
+    const value=document.createElement('span'); value.className='inventory-item-select-value';
+    const arrow=document.createElement('span'); arrow.textContent='▾'; arrow.setAttribute('aria-hidden','true');
+    trigger.append(value,arrow);
+    const panel=document.createElement('div'); panel.className='inventory-item-select-panel'; panel.hidden=true;
+    const search=document.createElement('input'); search.type='search'; search.className='inventory-item-select-search'; search.placeholder='Cari pilihan…'; search.autocomplete='off'; search.setAttribute('aria-label','Cari pilihan');
+    const list=document.createElement('div'); list.className='inventory-item-select-list'; list.setAttribute('role','listbox');
+    panel.append(search,list);
+    select.parentNode.insertBefore(wrap,select); wrap.append(trigger,select); select.classList.add('inventory-item-select-native');
+    wrap._inventoryPanel=panel;
+
+    function sync(){
+      const opt=select.options[select.selectedIndex];
+      value.textContent=opt?opt.textContent.trim():'-- Pilih --';
+      trigger.disabled=select.disabled;
+      trigger.setAttribute('aria-label',value.textContent);
+    }
+    function positionPanel(){
+      if(panel.hidden || !wrap.classList.contains('is-open')) return;
+      const rect=trigger.getBoundingClientRect();
+      const margin=8, gap=6, viewportH=window.innerHeight;
+      const below=viewportH-rect.bottom-gap-margin;
+      const above=rect.top-gap-margin;
+      const placeBelow=below>=Math.min(220,above) || below>=above;
+      const available=Math.max(120,placeBelow?below:above);
+      const maxList=Math.max(80,Math.min(window.innerWidth<=640?240:280,available-62));
+      const width=Math.min(rect.width,window.innerWidth-margin*2);
+      const left=Math.max(margin,Math.min(rect.left,window.innerWidth-width-margin));
+      panel.style.width=width+'px';
+      panel.style.left=left+'px';
+      panel.style.maxHeight=available+'px';
+      panel.style.top=(placeBelow?rect.bottom+gap:Math.max(margin,rect.top-available-gap))+'px';
+      list.style.maxHeight=maxList+'px';
+    }
+    function close(){
+      panel.hidden=true;
+      wrap.classList.remove('is-open');
+      trigger.setAttribute('aria-expanded','false');
+      panel.style.left=''; panel.style.top=''; panel.style.width='';
+      panel.style.maxHeight=''; list.style.maxHeight='';
+    }
+    function closeOtherDropdowns(){
+      document.querySelectorAll('.inventory-item-select-wrap.is-open').forEach(openWrap=>{
+        if(openWrap!==wrap){
+          openWrap.classList.remove('is-open');
+          const openPanel=openWrap._inventoryPanel;
+          const openTrigger=openWrap.querySelector('.inventory-item-select-trigger');
+          if(openPanel)openPanel.hidden=true;
+          if(openTrigger)openTrigger.setAttribute('aria-expanded','false');
+        }
+      });
+    }
+    function render(){
+      list.replaceChildren();
+      const q=search.value.trim().toLocaleLowerCase();
+      let count=0;
+      Array.from(select.options).forEach((opt,index)=>{
+        if(opt.disabled)return;
+        const label=opt.textContent.trim();
+        if(q && !label.toLocaleLowerCase().includes(q))return;
+        count++;
+        const b=document.createElement('button');
+        b.type='button'; b.className='inventory-item-select-option'; b.textContent=label;
+        b.setAttribute('role','option');
+        b.setAttribute('aria-selected',String(select.selectedIndex===index));
+        b.addEventListener('click',()=>{
+          select.selectedIndex=index;
+          select.dispatchEvent(new Event('input',{bubbles:true}));
+          select.dispatchEvent(new Event('change',{bubbles:true}));
+          sync(); close(); trigger.focus();
+        });
+        list.append(b);
+      });
+      if(!count){
+        const empty=document.createElement('div');
+        empty.className='inventory-item-select-empty';
+        empty.textContent='Pilihan tidak ditemukan';
+        list.append(empty);
+      }
+      positionPanel();
+    }
+    trigger.addEventListener('click',()=>{
+      if(panel.hidden){
+        closeOtherDropdowns();
+        document.body.appendChild(panel); // Portal: keluar dari card/overflow ancestor.
+        wrap.classList.add('is-open');
+        panel.hidden=false;
+        trigger.setAttribute('aria-expanded','true');
+        search.value='';
+        render();
+        positionPanel();
+        search.focus();
+      }else close();
+    });
+    search.addEventListener('input',render);
+    document.addEventListener('click',e=>{
+      if(!wrap.contains(e.target) && !panel.contains(e.target))close();
+    });
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Escape'&&!panel.hidden){close();trigger.focus();}
+    });
+    window.addEventListener('resize',positionPanel,{passive:true});
+    window.addEventListener('scroll',positionPanel,{passive:true,capture:true});
+    select.addEventListener('change',()=>{sync();if(!panel.hidden)render();});
+    const observer=new MutationObserver(()=>{sync();if(!panel.hidden)render();});
+    observer.observe(select,{childList:true,subtree:true,attributes:true,characterData:true});
+    instances.set(select,{sync,observer,panel,wrap});
+    sync();
+  }
+  function scan(root){if(root.matches&&root.matches('select'))init(root);root.querySelectorAll&&root.querySelectorAll('select').forEach(init);}
+  function start(){
+    scan(document);
+    const observer=new MutationObserver(records=>{
+      records.forEach(record=>{
+        if(record.type==='childList'){
+          record.addedNodes.forEach(node=>{if(node.nodeType===1)scan(node);});
+        } else if(record.type==='attributes'){
+          const node=record.target;
+          if(node.nodeType===1){
+            if(node.matches && node.matches('select')) init(node);
+            scan(node);
+          }
+        }
+      });
+    });
+    observer.observe(document.body,{
+      childList:true,subtree:true,attributes:true,
+      attributeFilter:['class','hidden','aria-hidden','style']
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+
+
 </body>
 </html>
