@@ -2877,7 +2877,24 @@ input,button,select,textarea{font:inherit}
         #login-modal .login-glass-title {color:#f8fbff;font-size:21px;letter-spacing:.045em}
         #login-modal .login-glass-title span {color:#38bdf8}
         #login-modal .login-glass-subtitle {color:rgba(219,234,254,.70)}
-        #login-modal .login-glass-section-label {color:#eaf4ff;font-size:14px;font-weight:700;letter-spacing:.16em;margin:4px 0 -7px}
+        /* V117: status keamanan login hanya menyatakan kondisi koneksi yang benar-benar dapat diperiksa browser. */
+        #login-modal .login-glass-footer#login-security-status {display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+        #login-security-status .login-security-dot {width:6px;height:6px;border-radius:50%;background:#94a3b8;display:inline-block;flex:0 0 6px}
+        #login-security-status[data-state="secure"] .login-security-dot {background:#34d399;box-shadow:0 0 8px rgba(52,211,153,.55)}
+        #login-security-status[data-state="offline"] .login-security-dot,
+        #login-security-status[data-state="insecure"] .login-security-dot {background:#fb923c;box-shadow:0 0 8px rgba(251,146,60,.35)}
+        #login-security-status[data-state="checking"] .login-security-dot {background:#60a5fa}
+        /* V116: rapikan label LOGIN agar punya jarak yang jelas dari field pertama. */
+        #login-modal .login-glass-section-label {
+            display:flex;align-items:center;gap:10px;
+            color:#93c5fd;font-size:12px;font-weight:800;
+            letter-spacing:.22em;line-height:1.25;
+            margin:14px 0 12px;padding:0 1px;
+        }
+        #login-modal .login-glass-section-label::after {
+            content:"";display:block;flex:1;height:1px;
+            background:linear-gradient(90deg,rgba(96,165,250,.42),rgba(96,165,250,0));
+        }
         #login-modal .login-glass-field {
             position:relative;display:flex;align-items:center;min-height:52px;border-radius:13px;
             border:1px solid rgba(191,219,254,.28);background:rgba(8,25,47,.38);
@@ -2910,7 +2927,10 @@ input,button,select,textarea{font:inherit}
         body.theme-glass.theme-light #login-modal .login-glass-title span {color:#087eae}
         body.theme-glass.theme-light #login-modal .login-glass-subtitle,
         body.theme-glass.theme-light #login-modal .login-glass-footer {color:rgba(30,58,90,.70)}
-        body.theme-glass.theme-light #login-modal .login-glass-section-label {color:#1e4168}
+        body.theme-glass.theme-light #login-modal .login-glass-section-label {color:#245783}
+        body.theme-glass.theme-light #login-modal .login-glass-section-label::after {
+            background:linear-gradient(90deg,rgba(37,99,235,.34),rgba(37,99,235,0));
+        }
         body.theme-glass.theme-light #login-modal .login-glass-field {background:rgba(235,244,253,.48);border-color:rgba(71,110,157,.32)}
         body.theme-glass.theme-light #login-modal .login-glass-field input {color:#173657 !important;-webkit-text-fill-color:#173657 !important}
         body.theme-glass.theme-light #login-modal .login-glass-field input::placeholder {color:rgba(30,58,90,.58) !important}
@@ -7768,7 +7788,7 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
         </div>
 
         <div class="flex items-center gap-4 shrink-0">
-            <div id="live-clock" class="text-sm font-mono font-bold bg-gradient-to-r from-orange-500/20 via-pink-500/20 to-purple-500/20 border border-white/20 px-4 py-2 rounded-xl text-gray-100 hidden md:flex items-center gap-2 shadow-lg shadow-orange-500/10 tracking-wider">
+            <div id="live-clock" class="text-sm font-mono font-bold hidden md:flex items-center gap-2" aria-label="Waktu sekarang" role="timer">
             </div>
             <div id="current-user-banner" class="flex items-center gap-2.5 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl">
             </div>
@@ -8852,7 +8872,12 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
                     <button type="submit" class="login-glass-submit w-full py-3 rounded-xl theme-accent-bg text-white text-xs font-bold uppercase tracking-wider transition-all">MASUK SISTEM</button>
                 </div>
             </form>
-            <div class="login-glass-footer">Akses aman • Inventory Gudang</div>
+            <div class="login-glass-footer" id="login-security-status" role="status" aria-live="polite" data-state="checking">
+                <span class="login-security-dot" aria-hidden="true"></span>
+                <span id="login-security-status-text">Memeriksa koneksi…</span>
+                <span aria-hidden="true">•</span>
+                <span>Inventory Gudang</span>
+            </div>
         </div>
     </div>
 
@@ -10119,21 +10144,26 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
 
         window.updateClock = function() {
             const clockEl = document.getElementById('live-clock');
-            if (clockEl) {
-                if (document.hidden) return;
-                const now = new Date();
-                const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-                const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
-                // OPTIMASI: ikon jam dibuat sekali; tiap detik hanya teks yang diperbarui
-                // (sebelumnya seluruh DOM dipindai ulang oleh lucide.createIcons setiap detik).
-                let textEl = clockEl.querySelector('[data-clock-text]');
-                if (!textEl) {
-                    clockEl.innerHTML = `<i data-lucide="clock" class="w-4 h-4 text-orange-400"></i> <span data-clock-text></span>`;
-                    textEl = clockEl.querySelector('[data-clock-text]');
-                    lucide.createIcons();
-                }
-                textEl.textContent = `${dateStr} • ${timeStr}`;
+            if (!clockEl || document.hidden) return;
+            // Gunakan zona waktu Jakarta secara eksplisit agar label WIB selalu akurat.
+            const now = new Date();
+            const dateStr = new Intl.DateTimeFormat('id-ID', {
+                timeZone: 'Asia/Jakarta', weekday: 'short', day: '2-digit', month: 'short', year: 'numeric'
+            }).format(now);
+            const timeStr = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+            }).format(now);
+            let timeEl = clockEl.querySelector('[data-clock-time]');
+            let dateEl = clockEl.querySelector('[data-clock-date]');
+            if (!timeEl || !dateEl) {
+                clockEl.innerHTML = '<i data-lucide="clock-3" class="w-4 h-4" aria-hidden="true"></i><span class="clock-copy"><span data-clock-time></span><span data-clock-date></span></span>';
+                timeEl = clockEl.querySelector('[data-clock-time]');
+                dateEl = clockEl.querySelector('[data-clock-date]');
+                if (window.lucide?.createIcons) lucide.createIcons({ attrs: { 'aria-hidden': 'true' } });
             }
+            timeEl.textContent = timeStr;
+            dateEl.textContent = `${dateStr}  •  WIB`;
+            clockEl.setAttribute('aria-label', `Waktu sekarang ${dateStr}, ${timeStr} WIB`);
         };
         setInterval(updateClock, 1000);
         window.updateHeaderGreeting?.();
@@ -12820,6 +12850,128 @@ body.theme-glass.theme-dark #tab-dashboard #movement-trend-card .movement-axis-d
 }
 </style>
 
+
+
+
+<style id="v120-admin-header-layout">
+/* V120: tampilkan identitas pengguna lengkap seperti referensi, termasuk pada mobile. */
+#inventory-top-header #current-user-banner {
+  display:inline-flex !important; align-items:center !important; gap:10px !important;
+}
+#inventory-top-header #current-user-banner > div {
+  display:flex !important; align-items:center !important; gap:9px !important;
+}
+#inventory-top-header #current-user-banner > div > div:first-child {
+  display:flex !important; flex:0 0 30px !important;
+}
+#inventory-top-header #current-user-banner > div > div:last-child,
+#inventory-top-header #current-user-banner > div > div.hidden,
+#inventory-top-header #current-user-banner > div .font-bold {
+  display:block !important; visibility:visible !important;
+}
+#inventory-top-header #current-user-banner .role-badge-admin,
+#inventory-top-header #current-user-banner .role-badge-staff,
+#inventory-top-header #current-user-banner .role-badge-viewer {
+  display:inline-block !important; width:max-content !important; margin-top:3px !important;
+}
+@media (max-width:767px) {
+  #inventory-top-header { display:flex !important; flex-wrap:nowrap !important; }
+  #inventory-top-header #header-brand-group { min-width:0 !important; flex:0 1 auto !important; }
+  #inventory-top-header > div:last-child { min-width:0 !important; flex:0 0 auto !important; gap:6px !important; }
+  #inventory-top-header #live-clock { flex:0 1 auto !important; min-width:0 !important; }
+  #inventory-top-header #current-user-banner { flex:0 0 auto !important; padding:5px 7px !important; gap:7px !important; }
+  #inventory-top-header #current-user-banner > div { display:flex !important; gap:7px !important; }
+  #inventory-top-header #current-user-banner > div > div:first-child { display:flex !important; }
+  #inventory-top-header #current-user-banner > div > div:last-child { display:block !important; min-width:0 !important; }
+  #inventory-top-header #current-user-banner > div .font-bold { display:block !important; font-size:11px !important; white-space:nowrap !important; }
+  #inventory-top-header #current-user-banner .role-badge-admin,
+  #inventory-top-header #current-user-banner .role-badge-staff,
+  #inventory-top-header #current-user-banner .role-badge-viewer { font-size:9px !important; padding:1px 6px !important; }
+  #inventory-top-header #current-user-banner > button { display:inline-flex !important; flex:0 0 30px !important; }
+}
+@media (max-width:420px) {
+  #inventory-top-header #current-user-banner { gap:4px !important; padding:4px !important; }
+  #inventory-top-header #current-user-banner > div { gap:4px !important; }
+  #inventory-top-header #current-user-banner > div > div:first-child { display:none !important; }
+  #inventory-top-header #current-user-banner > div .font-bold { font-size:10px !important; }
+  #inventory-top-header #live-clock { font-size:7px !important; }
+}
+</style>
+
+
+<style id="v121-compact-premium-clock">
+/* V121: Compact Premium clock, aligned with Glass Blue and the V120 user badge. */
+#inventory-top-header #live-clock {
+  display:flex !important; align-items:center !important; justify-content:center !important;
+  gap:8px !important; flex:0 1 auto !important; min-width:0 !important;
+  padding:7px 12px !important; border-radius:14px !important;
+  color:#dcecff !important; background:linear-gradient(115deg,rgba(59,130,246,.16),rgba(34,211,238,.10)) !important;
+  border:1px solid rgba(125,185,255,.30) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 4px 16px rgba(15,80,150,.12) !important;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace !important;
+  font-size:12px !important; font-weight:700 !important; letter-spacing:.025em !important;
+  line-height:1.25 !important; white-space:nowrap !important;
+  font-variant-numeric:tabular-nums !important;
+}
+#inventory-top-header #live-clock svg { width:15px !important; height:15px !important; flex:0 0 auto !important; color:#60baff !important; }
+body.theme-crystal #inventory-top-header #live-clock {
+  color:#315b87 !important; background:linear-gradient(115deg,rgba(219,237,255,.88),rgba(224,249,255,.78)) !important;
+  border-color:rgba(87,145,205,.30) !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 4px 14px rgba(52,105,160,.10) !important;
+}
+body.theme-crystal #inventory-top-header #live-clock svg { color:#278bd2 !important; }
+@media (max-width:767px) {
+  #inventory-top-header #live-clock { display:flex !important; gap:5px !important; padding:6px 8px !important; font-size:10px !important; letter-spacing:0 !important; }
+  #inventory-top-header #live-clock svg { width:13px !important; height:13px !important; }
+}
+@media (max-width:380px) {
+  #inventory-top-header #live-clock { padding:5px 6px !important; font-size:9px !important; gap:4px !important; }
+}
+</style>
+
+
+
+<style id="v123-vertical-premium-clock-final">
+/* V123: susunan vertikal tegas — jam di atas, tanggal + WIB di bawah. */
+#inventory-top-header #live-clock {
+  display:flex !important; flex-direction:row !important; align-items:center !important;
+  justify-content:flex-start !important; gap:8px !important;
+  padding:6px 10px !important; min-width:0 !important; flex:0 1 auto !important;
+  border-radius:12px !important; white-space:normal !important;
+  font-variant-numeric:tabular-nums !important; line-height:1.15 !important;
+}
+#inventory-top-header #live-clock > svg,
+#inventory-top-header #live-clock > i {
+  display:block !important; width:16px !important; height:16px !important;
+  flex:0 0 16px !important; align-self:center !important;
+}
+#inventory-top-header #live-clock .clock-copy {
+  display:flex !important; flex-direction:column !important;
+  align-items:flex-start !important; justify-content:center !important;
+  gap:3px !important; min-width:0 !important;
+}
+#inventory-top-header #live-clock [data-clock-time] {
+  display:block !important; font-family:ui-monospace,SFMono-Regular,Menlo,monospace !important;
+  font-size:13px !important; font-weight:800 !important; letter-spacing:.025em !important;
+  line-height:1.1 !important; white-space:nowrap !important;
+}
+#inventory-top-header #live-clock [data-clock-date] {
+  display:block !important; font-family:Inter,system-ui,sans-serif !important;
+  font-size:9px !important; font-weight:600 !important; letter-spacing:0 !important;
+  line-height:1.15 !important; white-space:nowrap !important; opacity:.82 !important;
+}
+@media (max-width:767px) {
+  #inventory-top-header #live-clock { display:flex !important; gap:6px !important; padding:5px 7px !important; }
+  #inventory-top-header #live-clock > svg, #inventory-top-header #live-clock > i { width:14px !important; height:14px !important; flex-basis:14px !important; }
+  #inventory-top-header #live-clock [data-clock-time] { font-size:11px !important; }
+  #inventory-top-header #live-clock [data-clock-date] { font-size:8px !important; }
+}
+@media (max-width:380px) {
+  #inventory-top-header #live-clock { gap:5px !important; padding:4px 6px !important; }
+  #inventory-top-header #live-clock [data-clock-time] { font-size:10px !important; }
+  #inventory-top-header #live-clock [data-clock-date] { font-size:7px !important; }
+}
+</style>
+
 </body>
 <style id="v100-liquid-glass-toast">
 /* V100 — Premium Liquid Glass Toast: scoped only to the notification component */
@@ -13038,6 +13190,40 @@ body.theme-glass.theme-light #toast-container .inventory-toast-close {
         column-gap: 10px !important;
     }
     #toast-container .inventory-toast-icon { width: 34px; height: 34px; }
+}
+</style>
+
+
+<style id="v122-compact-premium-clock-final">
+/* V122: match konsep A — waktu menonjol, tanggal dan WIB pada baris kedua. */
+#inventory-top-header #live-clock {
+  display:flex !important; align-items:center !important; justify-content:center !important;
+  gap:9px !important; flex:0 0 auto !important; min-width:0 !important;
+  padding:7px 12px !important; border-radius:14px !important;
+  color:#e7f2ff !important;
+  background:linear-gradient(120deg,rgba(59,130,246,.17),rgba(34,211,238,.10)) !important;
+  border:1px solid rgba(125,185,255,.32) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 4px 16px rgba(15,80,150,.12) !important;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace !important;
+  font-size:12px !important; font-weight:700 !important; letter-spacing:0 !important;
+  line-height:1.2 !important; white-space:nowrap !important; font-variant-numeric:tabular-nums !important;
+}
+#inventory-top-header #live-clock > svg { width:17px !important; height:17px !important; flex:0 0 auto !important; color:#60baff !important; }
+#inventory-top-header #live-clock .clock-copy { display:flex !important; flex-direction:column !important; align-items:flex-start !important; gap:3px !important; min-width:0 !important; }
+#inventory-top-header #live-clock [data-clock-time] { display:block !important; font-size:13px !important; font-weight:800 !important; letter-spacing:.035em !important; line-height:1.1 !important; }
+#inventory-top-header #live-clock [data-clock-date] { display:block !important; font-family:Inter,system-ui,sans-serif !important; font-size:9px !important; font-weight:600 !important; letter-spacing:.015em !important; opacity:.82 !important; line-height:1.15 !important; }
+body.theme-crystal #inventory-top-header #live-clock { color:#315b87 !important; background:linear-gradient(120deg,rgba(219,237,255,.9),rgba(224,249,255,.82)) !important; border-color:rgba(87,145,205,.32) !important; }
+body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !important; }
+@media (max-width:767px) {
+  #inventory-top-header #live-clock { display:flex !important; gap:6px !important; padding:6px 8px !important; }
+  #inventory-top-header #live-clock > svg { width:15px !important; height:15px !important; }
+  #inventory-top-header #live-clock [data-clock-time] { font-size:11px !important; }
+  #inventory-top-header #live-clock [data-clock-date] { font-size:8px !important; }
+}
+@media (max-width:380px) {
+  #inventory-top-header #live-clock { gap:5px !important; padding:5px 6px !important; }
+  #inventory-top-header #live-clock [data-clock-time] { font-size:10px !important; }
+  #inventory-top-header #live-clock [data-clock-date] { font-size:7px !important; }
 }
 </style>
 
@@ -13859,6 +14045,178 @@ body.theme-glass.theme-crystal .modal-content {
 })();
 </script>
 
+
+<script id="v117-login-security-indicator">
+(function () {
+  'use strict';
+
+  function updateLoginSecurityIndicator() {
+    var root = document.getElementById('login-security-status');
+    var label = document.getElementById('login-security-status-text');
+    if (!root || !label) return;
+
+    // navigator.onLine hanya menunjukkan status jaringan menurut browser,
+    // bukan bukti bahwa Firebase atau Worker sedang dapat dijangkau.
+    if (navigator.onLine === false) {
+      root.dataset.state = 'offline';
+      label.textContent = 'Perangkat offline';
+      root.setAttribute('aria-label', 'Perangkat terdeteksi offline. Status server belum diperiksa.');
+      return;
+    }
+
+    if (window.location.protocol === 'https:') {
+      root.dataset.state = 'secure';
+      label.textContent = 'Koneksi HTTPS aktif';
+      root.setAttribute('aria-label', 'Halaman menggunakan HTTPS. Ini tidak menjamin seluruh sistem atau server bebas risiko.');
+      return;
+    }
+
+    root.dataset.state = 'insecure';
+    label.textContent = 'Koneksi tidak aman (HTTP)';
+    root.setAttribute('aria-label', 'Halaman tidak menggunakan koneksi HTTPS.');
+  }
+
+  function start() {
+    updateLoginSecurityIndicator();
+    window.addEventListener('online', updateLoginSecurityIndicator, { passive: true });
+    window.addEventListener('offline', updateLoginSecurityIndicator, { passive: true });
+    window.addEventListener('pageshow', updateLoginSecurityIndicator, { passive: true });
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden) updateLoginSecurityIndicator();
+    }, { passive: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
+})();
+</script>
+
+
+<style id="v119-restore-header-clock-admin">
+/* V119: pulihkan jam dan identitas role pada header tanpa mengubah logika autentikasi. */
+#inventory-top-header #live-clock { display:flex !important; }
+#inventory-top-header #current-user-banner > div { display:flex !important; align-items:center !important; }
+#inventory-top-header #current-user-banner .role-badge-admin { display:inline-block !important; }
+@media (max-width: 767px) {
+  #inventory-top-header { gap:.35rem !important; }
+  #inventory-top-header #live-clock {
+    display:flex !important; align-items:center !important; gap:.3rem !important;
+    padding:.35rem .45rem !important; font-size:9px !important; line-height:1.2 !important;
+    white-space:nowrap !important; letter-spacing:0 !important; flex:0 1 auto !important;
+    min-width:0 !important;
+  }
+  #inventory-top-header #live-clock i { width:12px !important; height:12px !important; flex:0 0 auto !important; }
+  #inventory-top-header #current-user-banner {
+    display:inline-flex !important; align-items:center !important; gap:.3rem !important;
+    padding:.2rem .35rem !important; min-width:0 !important;
+  }
+  #inventory-top-header #current-user-banner > div { display:flex !important; gap:.3rem !important; }
+  #inventory-top-header #current-user-banner > div > div:first-child { display:none !important; }
+  #inventory-top-header #current-user-banner > div > div:last-child { display:block !important; }
+  #inventory-top-header #current-user-banner .role-badge-admin {
+    display:inline-block !important; font-size:8px !important; line-height:1.25 !important;
+    padding:2px 4px !important; white-space:nowrap !important;
+  }
+  #inventory-top-header #current-user-banner > div .font-bold { display:none !important; }
+}
+@media (max-width: 380px) {
+  #inventory-top-header #live-clock { font-size:8px !important; padding:.3rem !important; }
+  #inventory-top-header #current-user-banner { padding:.15rem .25rem !important; }
+}
+</style>
+
+
+<style id="v120-admin-header-layout">
+/* V120: tampilkan identitas pengguna lengkap seperti referensi, termasuk pada mobile. */
+#inventory-top-header #current-user-banner {
+  display:inline-flex !important; align-items:center !important; gap:10px !important;
+}
+#inventory-top-header #current-user-banner > div {
+  display:flex !important; align-items:center !important; gap:9px !important;
+}
+#inventory-top-header #current-user-banner > div > div:first-child {
+  display:flex !important; flex:0 0 30px !important;
+}
+#inventory-top-header #current-user-banner > div > div:last-child,
+#inventory-top-header #current-user-banner > div > div.hidden,
+#inventory-top-header #current-user-banner > div .font-bold {
+  display:block !important; visibility:visible !important;
+}
+#inventory-top-header #current-user-banner .role-badge-admin,
+#inventory-top-header #current-user-banner .role-badge-staff,
+#inventory-top-header #current-user-banner .role-badge-viewer {
+  display:inline-block !important; width:max-content !important; margin-top:3px !important;
+}
+@media (max-width:767px) {
+  #inventory-top-header { display:flex !important; flex-wrap:nowrap !important; }
+  #inventory-top-header #header-brand-group { min-width:0 !important; flex:0 1 auto !important; }
+  #inventory-top-header > div:last-child { min-width:0 !important; flex:0 0 auto !important; gap:6px !important; }
+  #inventory-top-header #live-clock { flex:0 1 auto !important; min-width:0 !important; }
+  #inventory-top-header #current-user-banner { flex:0 0 auto !important; padding:5px 7px !important; gap:7px !important; }
+  #inventory-top-header #current-user-banner > div { display:flex !important; gap:7px !important; }
+  #inventory-top-header #current-user-banner > div > div:first-child { display:flex !important; }
+  #inventory-top-header #current-user-banner > div > div:last-child { display:block !important; min-width:0 !important; }
+  #inventory-top-header #current-user-banner > div .font-bold { display:block !important; font-size:11px !important; white-space:nowrap !important; }
+  #inventory-top-header #current-user-banner .role-badge-admin,
+  #inventory-top-header #current-user-banner .role-badge-staff,
+  #inventory-top-header #current-user-banner .role-badge-viewer { font-size:9px !important; padding:1px 6px !important; }
+  #inventory-top-header #current-user-banner > button { display:inline-flex !important; flex:0 0 30px !important; }
+}
+@media (max-width:420px) {
+  #inventory-top-header #current-user-banner { gap:4px !important; padding:4px !important; }
+  #inventory-top-header #current-user-banner > div { gap:4px !important; }
+  #inventory-top-header #current-user-banner > div > div:first-child { display:none !important; }
+  #inventory-top-header #current-user-banner > div .font-bold { font-size:10px !important; }
+  #inventory-top-header #live-clock { font-size:7px !important; }
+}
+</style>
+
+
+
+<style id="v123-vertical-premium-clock-final">
+/* V123: susunan vertikal tegas — jam di atas, tanggal + WIB di bawah. */
+#inventory-top-header #live-clock {
+  display:flex !important; flex-direction:row !important; align-items:center !important;
+  justify-content:flex-start !important; gap:8px !important;
+  padding:6px 10px !important; min-width:0 !important; flex:0 1 auto !important;
+  border-radius:12px !important; white-space:normal !important;
+  font-variant-numeric:tabular-nums !important; line-height:1.15 !important;
+}
+#inventory-top-header #live-clock > svg,
+#inventory-top-header #live-clock > i {
+  display:block !important; width:16px !important; height:16px !important;
+  flex:0 0 16px !important; align-self:center !important;
+}
+#inventory-top-header #live-clock .clock-copy {
+  display:flex !important; flex-direction:column !important;
+  align-items:flex-start !important; justify-content:center !important;
+  gap:3px !important; min-width:0 !important;
+}
+#inventory-top-header #live-clock [data-clock-time] {
+  display:block !important; font-family:ui-monospace,SFMono-Regular,Menlo,monospace !important;
+  font-size:13px !important; font-weight:800 !important; letter-spacing:.025em !important;
+  line-height:1.1 !important; white-space:nowrap !important;
+}
+#inventory-top-header #live-clock [data-clock-date] {
+  display:block !important; font-family:Inter,system-ui,sans-serif !important;
+  font-size:9px !important; font-weight:600 !important; letter-spacing:0 !important;
+  line-height:1.15 !important; white-space:nowrap !important; opacity:.82 !important;
+}
+@media (max-width:767px) {
+  #inventory-top-header #live-clock { display:flex !important; gap:6px !important; padding:5px 7px !important; }
+  #inventory-top-header #live-clock > svg, #inventory-top-header #live-clock > i { width:14px !important; height:14px !important; flex-basis:14px !important; }
+  #inventory-top-header #live-clock [data-clock-time] { font-size:11px !important; }
+  #inventory-top-header #live-clock [data-clock-date] { font-size:8px !important; }
+}
+@media (max-width:380px) {
+  #inventory-top-header #live-clock { gap:5px !important; padding:4px 6px !important; }
+  #inventory-top-header #live-clock [data-clock-time] { font-size:10px !important; }
+  #inventory-top-header #live-clock [data-clock-date] { font-size:7px !important; }
+}
+</style>
 
 </body>
 </html>
