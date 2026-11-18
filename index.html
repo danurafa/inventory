@@ -5035,6 +5035,142 @@ body.theme-glass.theme-light #tab-dashboard #dashboard-hero {
     isolation: isolate;
 }
 
+
+        /* Combined movement trend: theme-aware, lightweight SVG chart */
+
+
+        /* V97: two chart views inside the existing single V96 card */
+        .movement-slide[hidden]{display:none!important}
+        .movement-slide{animation:movementSlideIn .24s ease both}
+        @keyframes movementSlideIn{from{opacity:.35;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
+        .movement-topsku-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+        .movement-topsku-panel{min-width:0;border:1px solid rgba(111,169,218,.30);border-radius:15px;padding:13px 15px 12px;background:linear-gradient(145deg,rgba(36,68,101,.30),rgba(9,25,44,.24))}
+        .movement-topsku-in{border-color:rgba(45,190,153,.36)}
+        .movement-topsku-out{border-color:rgba(238,83,133,.36)}
+        .movement-topsku-heading{display:flex;align-items:center;gap:10px;margin-bottom:12px;min-width:0}
+        .movement-topsku-heading h4{font-size:12px;font-weight:800;color:#e8f3ff;line-height:1.3}
+        .movement-topsku-heading p{font-size:9px;color:#91a9c1;margin-top:2px}
+        .movement-topsku-icon{width:29px;height:29px;flex:0 0 29px;display:grid;place-items:center;border-radius:50%;font-size:20px;font-weight:700;background:rgba(16,185,129,.15);color:#55e0b5}
+        .movement-topsku-out .movement-topsku-icon{background:rgba(244,63,112,.14);color:#ff7ca7}
+        .movement-topsku-tag{margin-left:auto;padding:5px 8px;border-radius:99px;font-size:8px;font-weight:800;letter-spacing:.05em;color:#62dfb8;background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.20)}
+        .movement-topsku-out .movement-topsku-tag{color:#ff8bad;background:rgba(244,63,112,.09);border-color:rgba(244,63,112,.20)}
+        .movement-topsku-chart{display:flex;flex-direction:column;gap:9px;min-height:166px}
+        .movement-topsku-row{display:grid;grid-template-columns:minmax(62px,100px) minmax(35px,1fr) auto;align-items:center;gap:9px;min-width:0}
+        .movement-topsku-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;color:#d2e2f3}
+        .movement-topsku-track{height:13px;border-radius:4px;background:rgba(148,163,184,.10);overflow:hidden}
+        .movement-topsku-fill{height:100%;min-width:2px;border-radius:4px;background:linear-gradient(90deg,#159cda,#38bdf8);box-shadow:0 0 12px rgba(56,189,248,.15)}
+        .movement-topsku-out .movement-topsku-fill{background:linear-gradient(90deg,#e13d78,#fb729e);box-shadow:0 0 12px rgba(244,63,112,.13)}
+        .movement-topsku-value{font-size:10px;font-weight:800;color:#e7f2ff;font-variant-numeric:tabular-nums}
+        .movement-slider-footer{display:flex;align-items:center;justify-content:center;gap:13px;margin-top:12px;position:relative;min-height:25px}
+        .movement-slide-arrow{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;font-size:22px;line-height:1;color:#c8e5ff;background:rgba(68,130,190,.22);border:1px solid rgba(125,183,232,.28);transition:background .15s,border-color .15s}
+        .movement-slide-arrow:hover{background:rgba(48,151,225,.35);border-color:rgba(96,180,245,.65)}
+        .movement-slide-dots{display:flex;align-items:center;gap:8px}
+        .movement-slide-dot{width:8px;height:8px;border-radius:50%;background:rgba(183,207,232,.55);transition:all .18s}
+        .movement-slide-dot.is-active{width:17px;border-radius:99px;background:#36b9f5;box-shadow:0 0 10px rgba(54,185,245,.55)}
+        #movement-slide-count{position:absolute;right:2px;font-size:10px;color:#b7cce2;font-weight:700}
+        body.theme-glass.theme-light .movement-topsku-panel{background:rgba(236,246,255,.38);border-color:rgba(73,112,153,.24)}
+        body.theme-glass.theme-light .movement-topsku-heading h4,body.theme-glass.theme-light .movement-topsku-value{color:#214969}
+        body.theme-glass.theme-light .movement-topsku-heading p,body.theme-glass.theme-light .movement-topsku-name{color:#526f8b}
+        body.theme-glass.theme-light .movement-topsku-track{background:rgba(73,112,153,.12)}
+        body.theme-glass.theme-light #movement-slide-count{color:#526f8b}
+        body.theme-glass.theme-light .movement-slide-arrow{color:#24577f;background:rgba(89,157,211,.14);border-color:rgba(73,112,153,.25)}
+        @media(max-width:700px){
+          .movement-topsku-grid{grid-template-columns:1fr;gap:10px}
+          .movement-topsku-panel{padding:10px 11px}
+          .movement-topsku-chart{min-height:0;gap:8px}
+          .movement-topsku-row{grid-template-columns:minmax(65px,92px) minmax(35px,1fr) auto;gap:7px}
+          .movement-topsku-heading{margin-bottom:9px}
+          .movement-slider-footer{margin-top:9px}
+        }
+        /* V96 — premium layout inspired by the first reference visual */
+        #movement-trend-card.movement-premium-card{
+          padding:18px 20px!important;
+          border:1px solid rgba(147,197,253,.24);
+          background:linear-gradient(120deg,rgba(23,52,85,.72),rgba(14,34,59,.58) 52%,rgba(19,48,79,.68));
+          box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 14px 34px rgba(3,12,28,.12);
+        }
+        .movement-premium-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:15px}
+        .movement-premium-title{display:flex;align-items:center;gap:12px;min-width:0}
+        .movement-premium-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:14px;color:#55b8ff;background:linear-gradient(145deg,rgba(14,165,233,.24),rgba(37,99,235,.13));border:1px solid rgba(96,165,250,.28);box-shadow:0 0 22px rgba(14,165,233,.12)}
+        .movement-premium-body{display:grid;grid-template-columns:minmax(150px,220px) minmax(0,1fr);align-items:stretch;gap:20px}
+        .movement-premium-stats{display:flex;flex-direction:column;gap:9px;min-width:0}
+        #movement-trend-card .movement-summary{position:relative;min-height:58px;padding:9px 12px 8px 14px;border-radius:13px;gap:3px;background:rgba(9,25,46,.30);border-color:rgba(148,190,230,.14)}
+        #movement-trend-card .movement-summary span{display:flex;align-items:center;gap:7px;font-size:10px;letter-spacing:.01em;text-transform:none;color:#d4e3f4}
+        #movement-trend-card .movement-summary strong{font-size:19px;line-height:1.05;color:#f0f7ff}
+        #movement-trend-card .movement-summary small{font-size:9px;color:#9eb5ce}
+        #movement-trend-card .movement-summary-in{border-left:3px solid #32b6f5}
+        #movement-trend-card .movement-summary-out{border-left:3px solid #f05d91}
+        #movement-trend-card .movement-summary-net{border-left:3px solid #8b78ec}
+        #movement-trend-card .movement-summary-net span{gap:7px}
+        #movement-trend-card .movement-summary-net span svg{color:#a99aff}
+        .movement-premium-visual{min-width:0;padding-left:18px;border-left:1px solid rgba(148,190,230,.16)}
+        .movement-premium-legend{display:flex;align-items:center;justify-content:center;gap:26px;margin:1px 0 5px;color:#d7e7f8;font-size:11px;font-weight:650}
+        .movement-premium-legend span{display:inline-flex;align-items:center;gap:7px}
+        .movement-in-dot{background:#2eb5f4}.movement-out-dot{background:#f05d91}
+        #movement-trend-card .movement-trend-chart{aspect-ratio:1100 / 190;min-height:145px}
+        #movement-trend-card .movement-trend-chart svg{max-height:205px}
+        #movement-trend-card .movement-axis-value{fill:#a9bfd8;font-size:10px}
+        #movement-trend-card .movement-axis-date{fill:#d0e0f2;font-size:10px}
+        body.theme-glass.theme-light #movement-trend-card.movement-premium-card{background:linear-gradient(120deg,rgba(219,235,250,.72),rgba(231,242,252,.62) 52%,rgba(211,232,249,.72));border-color:rgba(76,133,187,.24)}
+        body.theme-glass.theme-light #movement-trend-card .movement-summary{background:rgba(255,255,255,.32);border-color:rgba(73,112,153,.20)}
+        body.theme-glass.theme-light #movement-trend-card .movement-summary span{color:#355574}
+        body.theme-glass.theme-light #movement-trend-card .movement-summary strong{color:#173b5e}
+        body.theme-glass.theme-light #movement-trend-card .movement-summary small{color:#627f9d}
+        body.theme-glass.theme-light .movement-premium-legend{color:#355574}
+        body.theme-glass.theme-light #movement-trend-card .movement-axis-value{fill:#526d88}
+        body.theme-glass.theme-light #movement-trend-card .movement-axis-date{fill:#355574}
+        body.theme-glass.theme-light .movement-premium-visual{border-left-color:rgba(73,112,153,.20)}
+        @media(max-width:700px){
+          .movement-premium-heading{align-items:flex-start;flex-direction:column}
+          .movement-premium-period{width:100%;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))}
+          .movement-premium-period .movement-range-btn{padding:7px 4px;font-size:9px}
+          .movement-premium-body{grid-template-columns:1fr;gap:12px}
+          .movement-premium-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+          #movement-trend-card .movement-summary{min-height:62px;padding:7px 7px 6px 9px}
+          #movement-trend-card .movement-summary span{font-size:8px;gap:4px}
+          #movement-trend-card .movement-summary strong{font-size:15px}
+          #movement-trend-card .movement-summary small{font-size:8px}
+          .movement-premium-visual{padding:10px 0 0;border-left:0;border-top:1px solid rgba(148,190,230,.16)}
+          #movement-trend-card .movement-trend-chart{aspect-ratio:760 / 175;min-height:130px}
+          body.theme-glass.theme-light .movement-premium-visual{border-top-color:rgba(73,112,153,.20)}
+        }
+        @media(max-width:380px){
+          #movement-trend-card.movement-premium-card{padding:13px!important}
+          #movement-trend-card .movement-summary span{font-size:7px}
+          #movement-trend-card .movement-summary strong{font-size:13px}
+          .movement-premium-icon{width:36px;height:36px;flex-basis:36px}
+        }
+        .movement-range-btn{border:1px solid rgba(148,163,184,.28);border-radius:999px;padding:6px 11px;font-size:10px;font-weight:700;line-height:1.2;color:#aebdce;background:rgba(30,45,63,.45);transition:border-color .15s,color .15s,background-color .15s;white-space:nowrap}
+        .movement-range-btn:hover,.movement-range-btn.is-active{border-color:#579bd8;color:#d8eaff;background:rgba(59,130,246,.16)}
+        .movement-summary{display:flex;flex-direction:column;justify-content:center;gap:2px;padding:6px 10px;border:1px solid rgba(148,163,184,.2);border-radius:11px;background:rgba(15,28,44,.24);min-width:0;min-height:48px}
+        .movement-summary span{font-size:8px;font-weight:700;letter-spacing:.045em;text-transform:uppercase;color:#91a4ba;line-height:1.2}
+        .movement-summary strong{font-size:15px;line-height:1.15;font-weight:800;color:#dce8f5;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+        #movement-total-in{color:#56a9ed} #movement-total-out{color:#e5a15d}
+        .movement-legend-dot{display:inline-block;width:8px;height:8px;flex:0 0 8px;border-radius:50%}
+        .movement-in-dot{background:#56a9ed}.movement-out-dot{background:#e5a15d}
+        .movement-trend-chart{display:block;width:100%;min-width:0;min-height:0;overflow:hidden;aspect-ratio:1100 / 190}
+        .movement-trend-chart svg{display:block;width:100%;height:100%;max-height:190px;overflow:visible}
+        .movement-chart-empty{min-height:110px;display:grid;place-items:center;color:#91a4ba;font-size:12px;text-align:center}
+        .movement-axis-label{fill:#91a4ba;font-size:10px}
+        .movement-grid-line{stroke:currentColor;opacity:.12;stroke-dasharray:3 4}
+        body.theme-glass.theme-light .movement-range-btn{color:#52677e;background:rgba(218,230,244,.42);border-color:rgba(73,112,153,.25)}
+        body.theme-glass.theme-light .movement-range-btn:hover,body.theme-glass.theme-light .movement-range-btn.is-active{color:#174d7d;background:rgba(67,142,207,.13);border-color:#579bd8}
+        body.theme-glass.theme-light .movement-summary{background:rgba(219,232,246,.30);border-color:rgba(73,112,153,.22)}
+        body.theme-glass.theme-light .movement-summary span{color:#536b84}
+        body.theme-glass.theme-light .movement-summary strong{color:#24415e}
+        body.theme-glass.theme-light .movement-axis-label{fill:#52677e}
+        @media(max-width:640px){
+          #movement-trend-card{padding:14px!important;border-radius:18px!important}
+          #movement-trend-card .movement-summary{padding:6px 7px;min-height:44px;border-radius:10px}
+          #movement-trend-card .movement-summary span{font-size:7px;letter-spacing:.02em}
+          #movement-trend-card .movement-summary strong{font-size:13px}
+          #movement-trend-card .movement-range-btn{padding:6px 9px;font-size:9px}
+          #movement-trend-card .movement-trend-chart{aspect-ratio:1100 / 175}
+          #movement-trend-card .movement-axis-label{font-size:11px}
+        }
+        @media(max-width:360px){#movement-trend-card .movement-summary strong{font-size:11px}#movement-trend-card .movement-summary span{font-size:6.5px}#movement-trend-card .movement-trend-chart{aspect-ratio:760 / 165}}
+
+
 </style>
 <style id="v78-dashboard-scroll-refinement">
 
@@ -5374,23 +5510,61 @@ body.theme-glass #inventory-main-content :is(.app-card, .dashboard-glow-card, .a
                     </div>
                 </div>
 
-                <!-- MOVEMENT CHARTS: original chart target IDs retained -->
-                <div class="grid grid-cols-1 2xl:grid-cols-2 gap-5">
-                    <div class="dashboard-glow-card flex min-h-[310px] flex-col rounded-3xl p-5 md:p-6">
-                        <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-                            <div class="flex items-center gap-3"><div class="flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-500/10 text-emerald-300"><i data-lucide="trending-up" class="h-5 w-5"></i></div><div><h3 class="text-xs font-extrabold uppercase tracking-wider text-white">Barang Masuk</h3><p class="mt-1 text-[10px] text-slate-400">Top SKU berdasarkan pergerakan masuk</p></div></div>
-                            <span class="rounded-full border border-emerald-300/20 bg-emerald-500/10 px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider text-emerald-300">Inflow Trend</span>
+
+                <!-- V96: Premium single-card inflow / outflow trend -->
+                <section id="movement-trend-card" class="dashboard-glow-card movement-premium-card rounded-3xl p-4 md:p-5">
+                    <div class="movement-premium-heading">
+                        <div class="movement-premium-title">
+                            <div class="movement-premium-icon"><i data-lucide="chart-no-axes-combined" class="h-5 w-5"></i></div>
+                            <div class="min-w-0">
+                                <h3 class="text-sm font-extrabold tracking-wide text-white">Analisis Grafik Inventory</h3>
+                                <p id="movement-slide-subtitle" class="mt-1 text-xs text-slate-400">Pergerakan barang berdasarkan transaksi masuk dan keluar</p>
+                            </div>
                         </div>
-                        <div id="chart-masuk" class="flex-1 min-h-[220px] flex items-end gap-3 pt-6 pb-2 px-2 border-b border-white/5 overflow-x-auto"></div>
-                    </div>
-                    <div class="dashboard-glow-card flex min-h-[310px] flex-col rounded-3xl p-5 md:p-6">
-                        <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-                            <div class="flex items-center gap-3"><div class="flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-300/20 bg-rose-500/10 text-rose-300"><i data-lucide="trending-down" class="h-5 w-5"></i></div><div><h3 class="text-xs font-extrabold uppercase tracking-wider text-white">Barang Keluar</h3><p class="mt-1 text-[10px] text-slate-400">Top SKU berdasarkan pergerakan keluar</p></div></div>
-                            <span class="rounded-full border border-rose-300/20 bg-rose-500/10 px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider text-rose-300">Outflow Trend</span>
+                        <div class="flex flex-wrap gap-2 movement-premium-period" role="group" aria-label="Pilih periode grafik">
+                            <button type="button" class="movement-range-btn is-active" data-range="7">7 Hari</button>
+                            <button type="button" class="movement-range-btn" data-range="30">30 Hari</button>
+                            <button type="button" class="movement-range-btn" data-range="90">3 Bulan</button>
+                            <button type="button" class="movement-range-btn" data-range="365">12 Bulan</button>
                         </div>
-                        <div id="chart-keluar" class="flex-1 min-h-[220px] flex items-end gap-3 pt-6 pb-2 px-2 border-b border-white/5 overflow-x-auto"></div>
                     </div>
-                </div>
+                    <div class="movement-slide-stage">
+                        <div class="movement-slide is-active" data-movement-slide="0">
+                            <div class="movement-premium-body">
+                                <div class="movement-premium-stats">
+                                    <div class="movement-summary movement-summary-in"><span><i class="movement-legend-dot movement-in-dot"></i> Barang Masuk</span><strong id="movement-total-in">0</strong><small>unit</small></div>
+                                    <div class="movement-summary movement-summary-out"><span><i class="movement-legend-dot movement-out-dot"></i> Barang Keluar</span><strong id="movement-total-out">0</strong><small>unit</small></div>
+                                    <div class="movement-summary movement-summary-net"><span><i data-lucide="layers" class="h-3.5 w-3.5"></i> Selisih</span><strong id="movement-total-net">0</strong><small>unit</small></div>
+                                </div>
+                                <div class="movement-premium-visual">
+                                    <div class="movement-premium-legend"><span><i class="movement-legend-dot movement-in-dot"></i> Masuk</span><span><i class="movement-legend-dot movement-out-dot"></i> Keluar</span></div>
+                                    <div id="movement-trend-chart" class="movement-trend-chart" role="img" aria-label="Grafik tren barang masuk dan barang keluar"><div class="movement-chart-empty">Grafik akan tampil setelah data transaksi tersedia.</div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="movement-slide" data-movement-slide="1" hidden>
+                            <div class="movement-topsku-grid">
+                                <div class="movement-topsku-panel movement-topsku-in">
+                                    <div class="movement-topsku-heading"><span class="movement-topsku-icon">↑</span><div><h4>Top 5 Barang Masuk</h4><p>SKU dengan kuantitas masuk tertinggi</p></div><span class="movement-topsku-tag">INFLOW</span></div>
+                                    <div id="movement-top-in" class="movement-topsku-chart"><div class="movement-chart-empty">Belum ada data masuk.</div></div>
+                                </div>
+                                <div class="movement-topsku-panel movement-topsku-out">
+                                    <div class="movement-topsku-heading"><span class="movement-topsku-icon">↓</span><div><h4>Top 5 Barang Keluar</h4><p>SKU dengan kuantitas keluar tertinggi</p></div><span class="movement-topsku-tag">OUTFLOW</span></div>
+                                    <div id="movement-top-out" class="movement-topsku-chart"><div class="movement-chart-empty">Belum ada data keluar.</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="movement-slider-footer">
+                        <button type="button" class="movement-slide-arrow" id="movement-slide-prev" aria-label="Grafik sebelumnya">‹</button>
+                        <div class="movement-slide-dots" role="group" aria-label="Pilih tampilan grafik">
+                            <button type="button" class="movement-slide-dot is-active" data-slide-to="0" aria-label="Movement Trend"></button>
+                            <button type="button" class="movement-slide-dot" data-slide-to="1" aria-label="Top SKU Movement"></button>
+                        </div>
+                        <button type="button" class="movement-slide-arrow" id="movement-slide-next" aria-label="Grafik berikutnya">›</button>
+                        <span id="movement-slide-count">1 / 2</span>
+                    </div>
+                </section>
 
                 <!-- LOW STOCK: original list target retained -->
                 <div class="dashboard-glow-card rounded-3xl p-5 md:p-6">
@@ -8736,6 +8910,137 @@ body.theme-glass #inventory-main-content :is(.app-card, .dashboard-glow-card, .a
             lucide.createIcons();
         };
 
+
+        // Combined Inflow / Outflow trend. Uses transaction quantities grouped by date.
+        let movementTrendRange = 7;
+        function parseMovementDate(value) {
+            if (!value) return null;
+            if (value instanceof Date && !isNaN(value)) return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+            const raw = String(value).trim();
+            let m = raw.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+            if (m) return new Date(+m[1], +m[2]-1, +m[3]);
+            m = raw.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})/);
+            if (m) { let y=+m[3]; if(y<100)y+=2000; return new Date(y,+m[2]-1,+m[1]); }
+            const parsed = new Date(raw);
+            return isNaN(parsed) ? null : new Date(parsed.getFullYear(),parsed.getMonth(),parsed.getDate());
+        }
+        function drawMovementTrend() {
+            const host = document.getElementById('movement-trend-chart');
+            if (!host || !window.gudangAppDb) return;
+            const now = new Date(); now.setHours(0,0,0,0);
+            const days = movementTrendRange;
+            const start = new Date(now); start.setDate(start.getDate()-days+1);
+            const masuk = (window.gudangAppDb.masuk || []);
+            const keluar = (window.gudangAppDb.keluar || []);
+            const rows = [];
+            const keyOf = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+            const map = new Map();
+            const add = (list,type) => list.forEach(r=>{
+                const d=parseMovementDate(r.tanggal); if(!d || d<start || d>now) return;
+                const key=keyOf(d); if(!map.has(key))map.set(key,{date:d,in:0,out:0});
+                map.get(key)[type]+=Number(r.qty)||0;
+            });
+            add(masuk,'in'); add(keluar,'out');
+            const bucketMode = days<=7 ? 'day' : (days<=90 ? 'week' : 'month');
+            if(bucketMode==='day'){
+                for(let d=new Date(start);d<=now;d.setDate(d.getDate()+1)){const v=map.get(keyOf(d))||{in:0,out:0};rows.push({label:d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'}),in:v.in,out:v.out});}
+            } else if(bucketMode==='week'){
+                const buckets=new Map();
+                for(const v of map.values()){const d=new Date(v.date);const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);const k=keyOf(d);if(!buckets.has(k))buckets.set(k,{date:d,in:0,out:0});buckets.get(k).in+=v.in;buckets.get(k).out+=v.out;}
+                for(let d=new Date(start);d<=now;d.setDate(d.getDate()+7)){const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);const k=keyOf(d);const v=buckets.get(k)||{in:0,out:0};const label=d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'});if(!rows.length||rows[rows.length-1].label!==label)rows.push({label,in:v.in,out:v.out});}
+            } else {
+                const buckets=new Map();
+                for(const v of map.values()){const k=`${v.date.getFullYear()}-${v.date.getMonth()}`;if(!buckets.has(k))buckets.set(k,{date:v.date,in:0,out:0});buckets.get(k).in+=v.in;buckets.get(k).out+=v.out;}
+                for(let i=11;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);const k=`${d.getFullYear()}-${d.getMonth()}`;const v=buckets.get(k)||{in:0,out:0};rows.push({label:d.toLocaleDateString('id-ID',{month:'short'}),in:v.in,out:v.out});}
+            }
+            const totalIn=rows.reduce((a,r)=>a+r.in,0), totalOut=rows.reduce((a,r)=>a+r.out,0);
+            const fmt=n=>Math.round(n).toLocaleString('id-ID');
+            document.getElementById('movement-total-in').textContent=fmt(totalIn);
+            document.getElementById('movement-total-out').textContent=fmt(totalOut);
+            document.getElementById('movement-total-net').textContent=(totalIn-totalOut>0?'+':'')+fmt(totalIn-totalOut);
+            // V89: reserve a little more room on the right so the final date label is never clipped.
+            const W=760,H=112,L=42,R=28,T=7,B=22,plotW=W-L-R,plotH=H-T-B;
+            const max=Math.max(1,...rows.flatMap(r=>[r.in,r.out]));
+            const y=v=>T+plotH-(v/max)*plotH;
+            const x=i=>L+(rows.length<=1?plotW/2:i*plotW/(rows.length-1));
+            const points=key=>rows.map((r,i)=>`${x(i).toFixed(1)},${y(r[key]).toFixed(1)}`).join(' ');
+            const grid=[0,.25,.5,.75,1].map(f=>{const yy=T+plotH-f*plotH;return `<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" class="movement-grid-line"/><text x="${L-8}" y="${yy+3}" text-anchor="end" class="movement-axis-value">${fmt(max*f)}</text>`;}).join('');
+            const labelStep=Math.max(1,Math.ceil(rows.length/7));
+            const labels=rows.map((r,i)=>{
+                if(i%labelStep!==0 && i!==rows.length-1) return '';
+                const anchor=i===rows.length-1?'end':(i===0?'start':'middle');
+                return `<text x="${x(i)}" y="${H-8}" text-anchor="${anchor}" class="movement-axis-date">${r.label}</text>`;
+            }).join('');
+            const pointsWithTips=rows.map((r,i)=>`
+                <circle cx="${x(i)}" cy="${y(r.in)}" r="3" fill="#56a9ed">
+                  <title>${r.label} • Inflow: ${fmt(r.in)}</title>
+                </circle>
+                <circle cx="${x(i)}" cy="${y(r.out)}" r="3" fill="#e5a15d">
+                  <title>${r.label} • Outflow: ${fmt(r.out)}</title>
+                </circle>
+                <circle cx="${x(i)}" cy="${Math.min(y(r.in),y(r.out))}" r="9" fill="transparent" pointer-events="all">
+                  <title>${r.label}\nInflow: ${fmt(r.in)}\nOutflow: ${fmt(r.out)}</title>
+                </circle>`).join('');
+            const areaPath=key=>`M ${x(0)} ${T+plotH} L ${rows.map((r,i)=>`${x(i).toFixed(1)} ${y(r[key]).toFixed(1)}`).join(' L ')} L ${x(rows.length-1)} ${T+plotH} Z`;
+            host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Tren inflow ${fmt(totalIn)} dan outflow ${fmt(totalOut)}" preserveAspectRatio="none"><defs><linearGradient id="movementInFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#2eb5f4" stop-opacity=".34"/><stop offset="100%" stop-color="#2eb5f4" stop-opacity=".015"/></linearGradient><linearGradient id="movementOutFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#f05d91" stop-opacity=".28"/><stop offset="100%" stop-color="#f05d91" stop-opacity=".012"/></linearGradient></defs><g>${grid}</g><path d="${areaPath('in')}" fill="url(#movementInFill)"/><path d="${areaPath('out')}" fill="url(#movementOutFill)"/><polyline points="${points('in')}" fill="none" stroke="#2eb5f4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${points('out')}" fill="none" stroke="#f05d91" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${pointsWithTips}${labels}</svg>`;
+            document.querySelectorAll('.movement-range-btn').forEach(btn=>btn.classList.toggle('is-active',Number(btn.dataset.range)===movementTrendRange));
+        }
+
+        let movementActiveSlide = 0;
+        function drawMovementTopSku() {
+            const db = window.gudangAppDb || {};
+            const items = db.items || [];
+            const start = new Date(); start.setHours(0,0,0,0);
+            start.setDate(start.getDate() - movementTrendRange + 1);
+            const now = new Date(); now.setHours(23,59,59,999);
+            const fmt = n => Math.round(n).toLocaleString('id-ID');
+            const render = (records, hostId, colorClass, emptyText) => {
+                const totals = new Map();
+                records.forEach(r => {
+                    const d = parseMovementDate(r.tanggal);
+                    if (!d || d < start || d > now) return;
+                    const id = String(r.barangId ?? '');
+                    if (!id) return;
+                    totals.set(id, (totals.get(id) || 0) + (Number(r.qty) || 0));
+                });
+                const top = [...totals.entries()].sort((a,b) => b[1]-a[1]).slice(0,5);
+                const host = document.getElementById(hostId);
+                if (!host) return;
+                if (!top.length) { host.innerHTML = `<div class="movement-chart-empty">${emptyText}</div>`; return; }
+                const max = Math.max(...top.map(x=>x[1]),1);
+                host.innerHTML = top.map(([id,qty]) => {
+                    const item = items.find(x => String(x.id) === id);
+                    const name = item?.id || item?.kode || id;
+                    const pct = Math.max(2, qty/max*100);
+                    return `<div class="movement-topsku-row" title="${String(item?.nama || name).replace(/["&<>]/g,c=>({'"':'&quot;','&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}: ${fmt(qty)} unit"><span class="movement-topsku-name">${String(name).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</span><div class="movement-topsku-track"><div class="movement-topsku-fill ${colorClass}" style="width:${pct}%"></div></div><strong class="movement-topsku-value">${fmt(qty)}</strong></div>`;
+                }).join('');
+            };
+            render(db.masuk || [], 'movement-top-in', 'in', 'Belum ada data masuk pada periode ini.');
+            render(db.keluar || [], 'movement-top-out', 'out', 'Belum ada data keluar pada periode ini.');
+        }
+        function setMovementSlide(index) {
+            movementActiveSlide = (index + 2) % 2;
+            document.querySelectorAll('[data-movement-slide]').forEach(el => {
+                const active = Number(el.dataset.movementSlide) === movementActiveSlide;
+                el.hidden = !active;
+                el.classList.toggle('is-active', active);
+            });
+            document.querySelectorAll('.movement-slide-dot').forEach(el => el.classList.toggle('is-active', Number(el.dataset.slideTo) === movementActiveSlide));
+            const count = document.getElementById('movement-slide-count');
+            const subtitle = document.getElementById('movement-slide-subtitle');
+            if (count) count.textContent = `${movementActiveSlide+1} / 2`;
+            if (subtitle) subtitle.textContent = movementActiveSlide === 0
+                ? 'Pergerakan barang berdasarkan transaksi masuk dan keluar'
+                : 'Top SKU berdasarkan total kuantitas transaksi masuk dan keluar';
+            if (movementActiveSlide === 1) drawMovementTopSku();
+        }
+        document.querySelectorAll('.movement-slide-dot').forEach(btn => btn.addEventListener('click',()=>setMovementSlide(Number(btn.dataset.slideTo)||0)));
+        document.getElementById('movement-slide-prev')?.addEventListener('click',()=>setMovementSlide(movementActiveSlide-1));
+        document.getElementById('movement-slide-next')?.addEventListener('click',()=>setMovementSlide(movementActiveSlide+1));
+
+        document.querySelectorAll('.movement-range-btn').forEach(btn=>btn.addEventListener('click',()=>{movementTrendRange=Number(btn.dataset.range)||7;drawMovementTrend();if(movementActiveSlide===1)drawMovementTopSku();}));
+
+
         // Render Dashboard & Charts
         window.renderDashboard = function() {
             const totalSku = window.gudangAppDb.items.length;
@@ -8752,48 +9057,7 @@ body.theme-glass #inventory-main-content :is(.app-card, .dashboard-glow-card, .a
             document.getElementById('stat-po').textContent = totalPo.toLocaleString('id-ID');
             document.getElementById('stat-retur').textContent = totalRetur.toLocaleString('id-ID');
 
-            // Charts
-            const chartMasuk = document.getElementById('chart-masuk');
-            // OPTIMASI: total per barang dihitung sekali (O(n)) lalu dipakai ulang,
-            // bukan di-filter ulang di dalam setiap perbandingan sort.
-            const sumMasukByItem = new Map();
-            window.gudangAppDb.masuk.forEach(m => sumMasukByItem.set(m.barangId, (sumMasukByItem.get(m.barangId) || 0) + m.qty));
-            const topMasuk = [...window.gudangAppDb.items].sort((a,b) =>
-                (sumMasukByItem.get(b.id) || 0) - (sumMasukByItem.get(a.id) || 0)
-            ).slice(0, 5);
-            const maxMasuk = Math.max(...topMasuk.map(i => sumMasukByItem.get(i.id) || 0), 1);
-
-            chartMasuk.innerHTML = topMasuk.map(i => {
-                const qty = sumMasukByItem.get(i.id) || 0;
-                const pct = Math.max(12, Math.round((qty / maxMasuk) * 100));
-                return `
-                    <div class="flex-1 flex flex-col items-center justify-end h-full group">
-                        <span class="text-[10px] font-mono mb-1 text-emerald-300 font-bold">${qty}</span>
-                        <div class="w-full bg-emerald-500/20 rounded-t-lg transition-all group-hover:bg-emerald-500/40 border-t border-emerald-500" style="height: ${pct}%"></div>
-                        <span class="text-[10px] mt-2 truncate w-full text-center text-gray-400" title="${i.nama}">${i.id}</span>
-                    </div>
-                `;
-            }).join('') || '<div class="text-xs text-gray-500 m-auto">Belum ada data masuk</div>';
-
-            const chartKeluar = document.getElementById('chart-keluar');
-            const sumKeluarByItem = new Map();
-            window.gudangAppDb.keluar.forEach(m => sumKeluarByItem.set(m.barangId, (sumKeluarByItem.get(m.barangId) || 0) + m.qty));
-            const topKeluar = [...window.gudangAppDb.items].sort((a,b) =>
-                (sumKeluarByItem.get(b.id) || 0) - (sumKeluarByItem.get(a.id) || 0)
-            ).slice(0, 5);
-            const maxKeluar = Math.max(...topKeluar.map(i => sumKeluarByItem.get(i.id) || 0), 1);
-
-            chartKeluar.innerHTML = topKeluar.map(i => {
-                const qty = sumKeluarByItem.get(i.id) || 0;
-                const pct = Math.max(12, Math.round((qty / maxKeluar) * 100));
-                return `
-                    <div class="flex-1 flex flex-col items-center justify-end h-full group">
-                        <span class="text-[10px] font-mono mb-1 text-rose-300 font-bold">${qty}</span>
-                        <div class="w-full bg-rose-500/20 rounded-t-lg transition-all group-hover:bg-rose-500/40 border-t border-rose-500" style="height: ${pct}%"></div>
-                        <span class="text-[10px] mt-2 truncate w-full text-center text-gray-400" title="${i.nama}">${i.id}</span>
-                    </div>
-                `;
-            }).join('') || '<div class="text-xs text-gray-500 m-auto">Belum ada data keluar</div>';
+            // Top SKU sudah ditampilkan pada slider Analisis Grafik Inventory.
 
             // Low stock alert
             const lowList = document.getElementById('low-stock-list');
@@ -8841,6 +9105,8 @@ body.theme-glass #inventory-main-content :is(.app-card, .dashboard-glow-card, .a
                     </tr>
                 `;
             }).join('') || '<tr><td colspan="7" class="py-6 text-center opacity-50">Belum ada aktivitas transaksi.</td></tr>';
+            drawMovementTrend();
+            if (movementActiveSlide === 1) drawMovementTopSku();
             lucide.createIcons();
         };
 
@@ -9911,10 +10177,110 @@ body.theme-glass #inventory-main-content {
     transition-duration: .01ms !important;
   }
 }
-</style></head><body><h2>${escapePrintHtml(config.title)}</h2>
+</style>
+<style id="v83-movement-chart-wide-compact">
+/* V83: chart follows the available content width without creating a tall card.
+   Existing tables and their responsive wrappers are intentionally untouched. */
+#tab-dashboard #movement-trend-card {
+  display:block; width:100%; max-width:100%; min-width:0; box-sizing:border-box;
+  overflow:hidden;
+}
+#tab-dashboard #movement-trend-card > * { min-width:0; }
+#tab-dashboard #movement-trend-card .movement-trend-chart {
+  display:block; width:100%; max-width:100%; height:190px; min-height:190px;
+  aspect-ratio:auto; overflow:hidden; box-sizing:border-box;
+}
+#tab-dashboard #movement-trend-card .movement-trend-chart svg {
+  display:block; width:100%; height:100%; max-width:100%; max-height:none;
+  overflow:hidden;
+}
+#tab-dashboard #movement-trend-card .grid.grid-cols-3 {
+  width:100%; min-width:0;
+}
+#tab-dashboard #movement-trend-card .movement-summary {
+  min-width:0; overflow:hidden;
+}
+@media (max-width:640px) {
+  #tab-dashboard #movement-trend-card { padding:14px !important; }
+  #tab-dashboard #movement-trend-card .movement-trend-chart { height:165px; min-height:165px; }
+  #tab-dashboard #movement-trend-card .movement-summary { min-height:56px; padding:7px 8px; }
+  #tab-dashboard #movement-trend-card .movement-summary strong {
+    font-size:clamp(11px,3.5vw,14px); overflow-wrap:anywhere;
+  }
+}
+@media (max-width:360px) {
+  #tab-dashboard #movement-trend-card .movement-trend-chart { height:150px; min-height:150px; }
+  #tab-dashboard #movement-trend-card .movement-summary span { font-size:7px; }
+}
+</style>
+</head><body><h2>${escapePrintHtml(config.title)}</h2>
                 <p class="meta">Periode: ${escapePrintHtml(periodLabel)} &nbsp; | &nbsp; Total: ${rows.length} data &nbsp; | &nbsp; Dicetak: ${escapePrintHtml(nowStr)}</p>
                 <table><thead><tr><th class="no">No</th>${headers.map(([,label])=>`<th>${escapePrintHtml(label)}</th>`).join('')}</tr></thead><tbody>${bodyRows}</tbody></table>
-                </body></html>`);
+                
+<style id="v86-movement-chart-shorter-wide">
+/* V86: keep the original wide chart presentation while reducing its vertical footprint.
+   Compact summary cards from V84/V85 remain unchanged. Tables and other modules are untouched. */
+#tab-dashboard #movement-trend-card .movement-trend-chart {
+  display:block; width:100%; max-width:100%; min-width:0; min-height:0; height:auto;
+  aspect-ratio:760 / 145; overflow:hidden; box-sizing:border-box;
+}
+#tab-dashboard #movement-trend-card .movement-trend-chart svg {
+  display:block; width:100%; height:100%; max-width:100%; max-height:none; overflow:hidden;
+}
+@media (max-width:640px) {
+  #tab-dashboard #movement-trend-card .movement-trend-chart { aspect-ratio:760 / 155; }
+}
+</style>
+
+<style id="v88-movement-axis-typography">
+/* V88: scale chart axis numbers and dates to a restrained, readable size. */
+#tab-dashboard #movement-trend-card .movement-axis-value {
+  font-size:8px !important; font-weight:600;
+}
+#tab-dashboard #movement-trend-card .movement-axis-date {
+  font-size:9px !important; font-weight:600;
+}
+@media (max-width:640px) {
+  #tab-dashboard #movement-trend-card .movement-axis-value { font-size:13px !important; }
+  #tab-dashboard #movement-trend-card .movement-axis-date { font-size:13px !important; }
+}
+</style>
+
+
+<style id="v89-movement-chart-polish">
+/* V89: keep the final date label inside the plot and refine line weight. */
+#tab-dashboard #movement-trend-card .movement-trend-chart svg { overflow:visible; }
+#tab-dashboard #movement-trend-card .movement-axis-date { dominant-baseline:auto; }
+#tab-dashboard #movement-trend-card .movement-trend-chart circle { cursor:crosshair; }
+</style>
+\n
+
+<style id="v90-chart-axis-font-compact">
+/* V90: slightly smaller axis labels while preserving readability and chart proportions. */
+#tab-dashboard #movement-trend-card .movement-axis-value {
+  font-size:6px !important; font-weight:600;
+}
+#tab-dashboard #movement-trend-card .movement-axis-date {
+  font-size:7px !important; font-weight:600;
+}
+@media (max-width:640px) {
+  #tab-dashboard #movement-trend-card .movement-axis-value { font-size:10px !important; }
+  #tab-dashboard #movement-trend-card .movement-axis-date { font-size:10px !important; }
+}
+</style>
+
+
+<style id="v91-dark-chart-axis-readable">
+/* V91: ensure chart axis labels remain light and readable in dark mode. */
+body.theme-glass.theme-dark #tab-dashboard #movement-trend-card .movement-axis-value,
+body.theme-glass.theme-dark #tab-dashboard #movement-trend-card .movement-axis-date {
+  fill: #E6EDF5 !important;
+  color: #E6EDF5 !important;
+  opacity: 1 !important;
+}
+</style>
+
+</body></html>`);
             printWindow.onload = () => { printWindow.focus(); printWindow.print(); };
             printWindow.document.close();
             printWindow.focus();
@@ -10376,6 +10742,82 @@ body.theme-glass #inventory-main-content {
         })();
 
 </script>
+
+
+<style id="v85-restore-original-chart-keep-short-summary-cards">
+/* V85: restore the original Inflow/Outflow chart proportions from V81.
+   Keep the compact summary-card styling introduced in V84. */
+#tab-dashboard #movement-trend-card .movement-trend-chart {
+  display:block; width:100%; max-width:100%; min-width:0;
+  min-height:210px; height:auto; aspect-ratio:auto; overflow:hidden;
+  box-sizing:border-box;
+}
+#tab-dashboard #movement-trend-card .movement-trend-chart svg {
+  display:block; width:100%; height:auto; max-width:100%; max-height:none;
+  overflow:visible;
+}
+@media (max-width:640px) {
+  #tab-dashboard #movement-trend-card .movement-trend-chart {
+    min-height:180px; height:auto; aspect-ratio:auto;
+  }
+}
+</style>
+
+<style id="v87-movement-chart-more-compact">
+/* V87: keep the chart full-width but reduce its vertical footprint further.
+   Summary cards and all tables remain unchanged. */
+#tab-dashboard #movement-trend-card .movement-trend-chart {
+  width:100%; max-width:100%; min-width:0; min-height:0; height:auto;
+  aspect-ratio:auto; overflow:hidden; box-sizing:border-box;
+}
+#tab-dashboard #movement-trend-card .movement-trend-chart svg {
+  display:block; width:100%; height:auto; max-width:100%; overflow:hidden;
+}
+@media (max-width:640px) {
+  #tab-dashboard #movement-trend-card { padding:12px !important; }
+}
+</style>
+
+<style id="v88-movement-axis-typography">
+/* V88: scale chart axis numbers and dates to a restrained, readable size. */
+#tab-dashboard #movement-trend-card .movement-axis-value {
+  font-size:8px !important; font-weight:600;
+}
+#tab-dashboard #movement-trend-card .movement-axis-date {
+  font-size:9px !important; font-weight:600;
+}
+@media (max-width:640px) {
+  #tab-dashboard #movement-trend-card .movement-axis-value { font-size:13px !important; }
+  #tab-dashboard #movement-trend-card .movement-axis-date { font-size:13px !important; }
+}
+</style>
+
+
+
+<style id="v90-chart-axis-font-compact">
+/* V90: slightly smaller axis labels while preserving readability and chart proportions. */
+#tab-dashboard #movement-trend-card .movement-axis-value {
+  font-size:6px !important; font-weight:600;
+}
+#tab-dashboard #movement-trend-card .movement-axis-date {
+  font-size:7px !important; font-weight:600;
+}
+@media (max-width:640px) {
+  #tab-dashboard #movement-trend-card .movement-axis-value { font-size:10px !important; }
+  #tab-dashboard #movement-trend-card .movement-axis-date { font-size:10px !important; }
+}
+</style>
+
+
+<style id="v91-dark-chart-axis-readable">
+/* V91: ensure chart axis labels remain light and readable in dark mode. */
+body.theme-glass.theme-dark #tab-dashboard #movement-trend-card .movement-axis-value,
+body.theme-glass.theme-dark #tab-dashboard #movement-trend-card .movement-axis-date {
+  fill: #E6EDF5 !important;
+  color: #E6EDF5 !important;
+  opacity: 1 !important;
+}
+</style>
 
 </body>
 </html>
