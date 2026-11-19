@@ -8810,12 +8810,28 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
 
             <!-- BACKUP & RESTORE -->
             <section id="tab-backup" class="hidden space-y-6 w-full">
-                <div class="bg-gradient-to-r from-emerald-500/10 to-transparent p-6 rounded-3xl border border-emerald-500/20">
-                    <div class="flex items-center gap-3 mb-2">
-                        <div class="w-11 h-11 rounded-2xl bg-emerald-500/15 flex items-center justify-center text-emerald-400"><i data-lucide="database-backup" class="w-5 h-5"></i></div>
-                        <div><h2 class="text-2xl font-black text-white">BACKUP & RESTORE DATABASE</h2><p class="text-xs text-gray-400">Cadangkan dan pulihkan data inventory dalam format JSON.</p></div>
+                <div id="backup-restore-hero" class="relative w-full min-w-0 overflow-hidden rounded-[2rem] border border-blue-300/15 bg-gradient-to-br from-blue-600/20 via-slate-900/60 to-cyan-500/10 p-6 md:p-8 shadow-2xl shadow-blue-950/20 backdrop-blur-2xl">
+                    <div class="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full bg-blue-500/15 blur-3xl"></div>
+                    <div class="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-cyan-400/10 blur-3xl"></div>
+                    <div class="relative flex flex-col gap-4">
+                        <div class="inline-flex w-fit items-center gap-2 rounded-full border border-blue-300/20 bg-blue-400/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.22em] text-blue-300">
+                            <span class="h-2 w-2 rounded-full bg-blue-400 shadow-[0_0_12px_#60a5fa] animate-pulse"></span>
+                            Data Management
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-400/10 text-emerald-300 shadow-lg shadow-emerald-950/20">
+                                    <i data-lucide="database-backup" class="w-5 h-5"></i>
+                                </div>
+                                <h2 class="text-3xl md:text-4xl font-black tracking-tight text-white">Backup &amp; Restore Database</h2>
+                            </div>
+                            <p class="mt-2 max-w-xl text-sm leading-6 text-slate-300/80">Cadangkan dan pulihkan data inventory dalam format JSON.</p>
+                        </div>
+                        <div id="backup-restore-warning" class="inline-flex items-start gap-2 rounded-xl border border-amber-300/15 bg-amber-400/5 px-3 py-2 text-xs leading-5 text-amber-200/90">
+                            <i data-lucide="shield-alert" class="mt-0.5 h-4 w-4 shrink-0 text-amber-300"></i>
+                            <span>Penting: file backup dapat berisi data akun pengguna. Simpan secara pribadi dan jangan bagikan ke publik.</span>
+                        </div>
                     </div>
-                    <p class="text-xs text-amber-300 mt-4">Penting: file backup dapat berisi data akun pengguna. Simpan secara pribadi dan jangan bagikan ke publik.</p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -14966,6 +14982,56 @@ html body.theme-glass.theme-crystal #appearance-panel .appearance-eyebrow {displ
     transition-duration: .01ms !important;
     animation: none !important;
   }
+}
+</style>
+
+
+<style id="v133-backup-hero-dashboard-consistency">
+/* V133 — Header Backup & Restore mengikuti bahasa visual Dashboard Hero. */
+html body.theme-glass #backup-restore-hero {
+  isolation:isolate;
+  color:#f8fbff;
+}
+html body.theme-glass #backup-restore-hero > .relative {
+  z-index:1;
+}
+@media(max-width:640px) {
+  html body.theme-glass #backup-restore-hero {
+    padding:18px !important;
+    border-radius:22px !important;
+    gap:12px !important;
+  }
+  html body.theme-glass #backup-restore-hero h2 {
+    font-size:21px !important;
+    line-height:1.2 !important;
+  }
+  html body.theme-glass #backup-restore-hero .relative.inline-flex {
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
+}
+</style>
+
+
+
+<style id="v134-backup-dashboard-exact-match">
+/* Samakan struktur dan nuansa hero Backup dengan Dashboard. */
+#backup-restore-hero { isolation:isolate; }
+#backup-restore-hero > .relative { z-index:1; align-items:flex-start; }
+#backup-restore-hero #backup-restore-warning {
+    display:inline-flex !important;
+    width:max-content !important;
+    max-width:100% !important;
+    align-self:flex-start !important;
+    flex:0 1 auto !important;
+    box-sizing:border-box !important;
+    white-space:normal !important;
+}
+#backup-restore-warning span { min-width:0; }
+@media (max-width:640px) {
+    #backup-restore-hero { padding:20px !important; }
+    #backup-restore-hero h2 { font-size:clamp(21px,5.5vw,30px) !important; line-height:1.2 !important; }
+    #backup-restore-hero #backup-restore-warning { width:max-content !important; max-width:100% !important; }
 }
 </style>
 
