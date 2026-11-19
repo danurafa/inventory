@@ -37,7 +37,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.18-inventory-v99-liquid-glass-ui2";
+        const APP_VERSION = "2026.11.19-inventory-v133-tab-hover-stability";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }
@@ -3242,6 +3242,10 @@ input,button,select,textarea{font:inherit}
             flex:0 0 16rem;
             transition:width .28s ease,flex-basis .28s ease,transform .28s ease,background .25s ease;
             overflow-x:hidden;
+            isolation: isolate;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            backface-visibility: hidden;
         }
         #inventory-sidebar nav { min-width:0; }
         #inventory-sidebar .sidebar-btn {
@@ -7816,42 +7820,42 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
             <nav class="p-4 space-y-1.5">
                 <div class="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Menu Utama</div>
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard Realtime" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                     <span>Dashboard Realtime</span>
                 </button>
                 <button onclick="switchTab('master')" id="nav-master" title="Master Data Barang" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
-                    <i data-lucide="package" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <i data-lucide="package" class="w-4 h-4"></i>
                     <span>Master Data Barang</span>
                 </button>
                 <button onclick="switchTab('po')" id="nav-po" title="PO Masuk (Customer)" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
-                    <i data-lucide="file-text" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <i data-lucide="file-text" class="w-4 h-4"></i>
                     <span>PO Masuk (Customer)</span>
                 </button>
                 <button onclick="switchTab('masuk')" id="nav-masuk" title="Barang Masuk" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
-                    <i data-lucide="plus-circle" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
                     <span>Barang Masuk</span>
                 </button>
                 <button onclick="switchTab('keluar')" id="nav-keluar" title="Barang Keluar" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
-                    <i data-lucide="minus-circle" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <i data-lucide="minus-circle" class="w-4 h-4"></i>
                     <span>Barang Keluar</span>
                 </button>
                 <button onclick="switchTab('sampel')" id="nav-sampel" title="Sampel" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
-                    <i data-lucide="box" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <i data-lucide="box" class="w-4 h-4"></i>
                     <span>Sampel</span>
                 </button>
                 <button onclick="switchTab('retur')" id="nav-retur" title="Retur Barang" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
-                    <i data-lucide="rotate-ccw" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                     <span>Retur Barang</span>
                 </button>
                 <div id="nav-users-wrapper" class="pt-2">
                     <button onclick="switchTab('users')" id="nav-users" title="Manajemen User" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
-                        <i data-lucide="users" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                        <i data-lucide="users" class="w-4 h-4"></i>
                         <span>Manajemen User</span>
                     </button>
                 </div>
                 <div id="nav-backup-wrapper" class="pt-2">
                     <button onclick="switchTab('backup')" id="nav-backup" title="Backup & Restore" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
-                        <i data-lucide="database-backup" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                        <i data-lucide="database-backup" class="w-4 h-4"></i>
                         <span>Backup & Restore</span>
                     </button>
                 </div>
@@ -7882,11 +7886,13 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
         <!-- APPEARANCE PANEL: dibuka saat pengguna menekan tombol Tampilan Aplikasi -->
         <div id="appearance-panel" class="appearance-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="appearance-title" onclick="if(event.target===this)closeAppearancePanel()">
             <section class="appearance-dialog">
-                <header class="appearance-dialog-header">
-                    <div>
-                        <div class="appearance-eyebrow"><i data-lucide="palette" class="w-3.5 h-3.5"></i> PERSONALISASI</div>
-                        <h2 id="appearance-title">Tampilan Aplikasi</h2>
-                        <p>Pilih desain ruang kerja yang paling nyaman digunakan.</p>
+                <header class="appearance-dialog-header v129-appearance-header">
+                    <div class="v129-appearance-heading">
+                        <div class="v129-appearance-icon"><i data-lucide="palette" class="w-5 h-5"></i></div>
+                        <div class="v129-appearance-copy">
+                            <h2 id="appearance-title">TAMPILAN APLIKASI</h2>
+                            <p>Pilih desain ruang kerja yang paling nyaman digunakan.</p>
+                        </div>
                     </div>
                     <button type="button" class="appearance-close" onclick="closeAppearancePanel()" aria-label="Tutup"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </header>
@@ -10032,24 +10038,58 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
 
         window.switchTab = function(tabId) {
             const tabs = ['dashboard', 'master', 'po', 'masuk', 'keluar', 'sampel', 'retur', 'users', 'backup'];
+            // Jangan rewrite className penuh — itu memicu style recalc + layer glitch di UI 2.
+            // Hanya toggle class aktif/non-aktif.
+            const inactiveBtnClasses = ['theme-accent-bg', 'text-white', 'shadow-lg', 'shadow-orange-500/20', 'active'];
+            const inactiveAdd = ['text-gray-400', 'hover:bg-white/5', 'hover:text-gray-200'];
             tabs.forEach(t => {
                 const sec = document.getElementById(`tab-${t}`);
                 const btn = document.getElementById(`nav-${t}`);
-                if (sec) sec.classList.add('hidden');
+                if (sec) {
+                    sec.classList.add('hidden');
+                    sec.classList.remove('module-enter');
+                    // Bersihkan transform sisa animasi agar backdrop-filter stabil
+                    sec.style.transform = '';
+                    sec.style.opacity = '';
+                }
                 if (btn) {
-                    btn.className = "sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200";
+                    inactiveBtnClasses.forEach(c => btn.classList.remove(c));
+                    inactiveAdd.forEach(c => btn.classList.add(c));
+                    btn.setAttribute('aria-current', 'false');
                 }
             });
 
             const activeSec = document.getElementById(`tab-${tabId}`);
             const activeBtn = document.getElementById(`nav-${tabId}`);
             if (activeSec) {
-                activeSec.classList.remove('hidden', 'module-enter');
-                void activeSec.offsetWidth;
-                activeSec.classList.add('module-enter');
+                activeSec.classList.remove('hidden');
+                // UI 2 / Crystal: tanpa translate animation (pemicu compositing glitch)
+                const isCrystal = document.body.classList.contains('theme-crystal');
+                if (isCrystal) {
+                    activeSec.classList.remove('module-enter');
+                    activeSec.style.transform = 'none';
+                    activeSec.style.opacity = '1';
+                } else {
+                    activeSec.classList.remove('module-enter');
+                    void activeSec.offsetWidth;
+                    activeSec.classList.add('module-enter');
+                    // Lepas class setelah animasi selesai agar transform tidak menempel
+                    window.clearTimeout(window._moduleEnterTimer);
+                    window._moduleEnterTimer = window.setTimeout(() => {
+                        activeSec.classList.remove('module-enter');
+                        activeSec.style.transform = '';
+                        activeSec.style.opacity = '';
+                    }, 320);
+                }
             }
             if (activeBtn) {
-                activeBtn.className = "sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20";
+                inactiveAdd.forEach(c => activeBtn.classList.remove(c));
+                activeBtn.classList.add('theme-accent-bg', 'text-white', 'active');
+                // Shadow oranye hanya di Classic — di Crystal memicu layer ekstra
+                if (!document.body.classList.contains('theme-crystal')) {
+                    activeBtn.classList.add('shadow-lg', 'shadow-orange-500/20');
+                }
+                activeBtn.setAttribute('aria-current', 'page');
             }
             if (tabId === 'dashboard') animateDashboardOnOpen();
             lucide.createIcons();
@@ -12972,6 +13012,291 @@ body.theme-crystal #inventory-top-header #live-clock svg { color:#278bd2 !import
 }
 </style>
 
+
+<style id="v132-ui2-hover-glitch-hardfix">
+/*
+ V132 — Perbaikan glitch hover UI 2 (Crystal / Liquid Glass) yang lebih agresif.
+
+ Akar masalah yang masih tersisa setelah V131:
+ - #inventory-sidebar di Crystal memakai backdrop-filter tinggi.
+ - Saat hover, tombol menu mengubah box-shadow / layer → browser
+   menghitung ulang seluruh backdrop kaca (flicker / glitch).
+ - Kartu .app-card masih translateY(-2/-3px) saat hover.
+ - will-change:transform pada toggle memaksa layer compositing permanen.
+
+ Strategi:
+ 1) Sidebar UI 2: isolasi kuat + background lebih solid (tanpa blur berat).
+ 2) Hover menu: HANYA background-color & color — tanpa shadow/transform/filter.
+ 3) Kartu: tanpa translateY.
+ 4) Main content: layer terpisah agar sibling hover tidak merusak kaca tabel.
+*/
+
+/* === 1. Sidebar UI 2: stacking + blur ringan / fill lebih padat === */
+html body.theme-glass.theme-crystal #inventory-sidebar,
+html body.theme-crystal #inventory-sidebar {
+  isolation: isolate !important;
+  transform: translateZ(0) !important;
+  -webkit-transform: translateZ(0) !important;
+  backface-visibility: hidden !important;
+  contain: paint !important;
+  /* Blur rendah + fill lebih solid = hover anak tidak memicu recomposite besar */
+  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
+  backdrop-filter: blur(8px) saturate(140%) !important;
+  will-change: auto !important;
+}
+
+/* Liquid Glass UI2 sidebar: ganti blur 26–30px dengan fill padat + blur ringan */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar {
+  background:
+    linear-gradient(155deg, rgba(36, 48, 92, .88), rgba(18, 28, 62, .92)) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(150%) !important;
+  backdrop-filter: blur(10px) saturate(150%) !important;
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, .28),
+    inset 1px 1px 0 rgba(255, 255, 255, .14) !important;
+}
+
+/* Premium Crystal (bukan liquid dark): sidebar horizontal tetap legible, blur rendah */
+html body.theme-crystal:not(.theme-glass) #inventory-sidebar,
+html body.theme-glass.theme-crystal #inventory-sidebar {
+  /* keep rule above; this reinforces no heavy will-change */
+  will-change: auto !important;
+}
+
+/* Anak sidebar tidak boleh membentuk layer blur sendiri */
+html body.theme-glass.theme-crystal #inventory-sidebar nav,
+html body.theme-glass.theme-crystal #inventory-sidebar > div,
+html body.theme-crystal #inventory-sidebar nav,
+html body.theme-crystal #inventory-sidebar > div {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  transform: none !important;
+  filter: none !important;
+  will-change: auto !important;
+}
+
+/* === 2. Menu hover: warna saja === */
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn,
+html body.theme-glass.theme-crystal #inventory-sidebar nav button,
+html body.theme-crystal #inventory-sidebar .sidebar-btn,
+html body.theme-crystal #inventory-sidebar nav button {
+  transition: background-color .12s ease, color .12s ease, border-color .12s ease !important;
+  transform: none !important;
+  filter: none !important;
+  box-shadow: none !important;
+  will-change: auto !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn:hover,
+html body.theme-glass.theme-crystal #inventory-sidebar nav button:hover,
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn:active,
+html body.theme-glass.theme-crystal #inventory-sidebar nav button:active,
+html body.theme-crystal #inventory-sidebar .sidebar-btn:hover,
+html body.theme-crystal #inventory-sidebar nav button:hover,
+html body.theme-crystal #inventory-sidebar .sidebar-btn:active,
+html body.theme-crystal #inventory-sidebar nav button:active,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn:hover {
+  transform: none !important;
+  filter: none !important;
+  animation: none !important;
+  /* Tanpa inset shadow baru — itu yang sering memicu recomposite kaca */
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  position: static !important;
+  z-index: auto !important;
+  /* Feedback visual tetap ada */
+  background: rgba(255, 255, 255, .14) !important;
+  border-color: rgba(255, 255, 255, .28) !important;
+}
+
+/* Active item boleh sedikit lebih tegas, tetap tanpa transform */
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn.active,
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn.theme-accent-bg,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn.active,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn.theme-accent-bg {
+  transform: none !important;
+  filter: none !important;
+}
+
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn i,
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn svg,
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn [data-lucide],
+html body.theme-crystal #inventory-sidebar .sidebar-btn i,
+html body.theme-crystal #inventory-sidebar .sidebar-btn svg {
+  transform: none !important;
+  transition: none !important;
+  will-change: auto !important;
+}
+
+/* === 3. Toggle sidebar: jangan pakai will-change:transform === */
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-mid-toggle,
+html body.theme-crystal #inventory-sidebar .sidebar-mid-toggle,
+#inventory-sidebar .sidebar-mid-toggle {
+  will-change: auto !important;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease !important;
+}
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-mid-toggle:hover,
+html body.theme-crystal #inventory-sidebar .sidebar-mid-toggle:hover {
+  transform: none !important;
+  filter: none !important;
+}
+
+/* === 4. Main content layer terpisah dari sidebar === */
+html body.theme-glass.theme-crystal #inventory-main-content,
+html body.theme-crystal #inventory-main-content {
+  isolation: isolate !important;
+  transform: translateZ(0) !important;
+  -webkit-transform: translateZ(0) !important;
+  backface-visibility: hidden !important;
+  contain: layout style !important;
+}
+
+/* === 5. Kartu: matikan translateY hover (sumber glitch kaca) === */
+html body.theme-glass.theme-crystal .app-card,
+html body.theme-glass.theme-crystal .dashboard-glow-card,
+html body.theme-crystal .app-card,
+html body.theme-crystal .dashboard-glow-card,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .app-card,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .dashboard-glow-card {
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+html body.theme-glass.theme-crystal .app-card:hover,
+html body.theme-glass.theme-crystal .dashboard-glow-card:hover,
+html body.theme-crystal .app-card:hover,
+html body.theme-crystal .dashboard-glow-card:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .app-card:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .dashboard-glow-card:hover,
+body.theme-crystal .app-card:hover,
+body.theme-crystal .dashboard-glow-card:hover {
+  transform: none !important;
+  filter: none !important;
+  /* feedback lembut tanpa gerak */
+  border-color: rgba(255, 255, 255, .34) !important;
+}
+
+/* Specular ::before: jangan pakai transform / will-change agresif */
+html body.theme-glass.theme-crystal #inventory-main-content .app-card::before,
+html body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card::before {
+  transform: none !important;
+  will-change: auto !important;
+  pointer-events: none !important;
+}
+
+/* === 6. Tabel: stabil === */
+html body.theme-glass.theme-crystal #inventory-main-content .fluid-table-container,
+html body.theme-glass.theme-crystal #inventory-main-content table {
+  transform: none !important;
+  filter: none !important;
+  will-change: auto !important;
+}
+
+/* === 7. Tombol umum UI 2: active tanpa scale === */
+html body.theme-glass.theme-crystal button:not(:disabled):active,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) button:not(:disabled):active {
+  transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body.theme-glass.theme-crystal *,
+  html body.theme-crystal * {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
+</style>
+
+
+<style id="v133-tab-switch-hover-stability">
+/*
+ V133 — Glitch hanya “aman” di Master Barang karena tab lain meninggalkan
+ layer transform (module-enter) + konten lebih berat (nested table / blur).
+ Perbaikan: matikan transform enter di Crystal, stabilkan semua tab sama rata.
+*/
+
+/* Matikan animasi transform saat ganti modul di UI 2 */
+html body.theme-glass.theme-crystal .module-enter,
+html body.theme-crystal .module-enter {
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+}
+html body.theme-glass.theme-crystal #inventory-main-content > section[id^="tab-"],
+html body.theme-crystal #inventory-main-content > section[id^="tab-"] {
+  transform: none !important;
+  will-change: auto !important;
+  backface-visibility: hidden;
+  isolation: isolate;
+}
+/* Tab tersembunyi: jangan ikut di-paint */
+html body.theme-glass.theme-crystal #inventory-main-content > section[id^="tab-"].hidden,
+html body.theme-crystal #inventory-main-content > section[id^="tab-"].hidden {
+  display: none !important;
+  content-visibility: hidden !important;
+  contain: strict !important;
+}
+/* Tab aktif: batasi area repaint */
+html body.theme-glass.theme-crystal #inventory-main-content > section[id^="tab-"]:not(.hidden),
+html body.theme-crystal #inventory-main-content > section[id^="tab-"]:not(.hidden) {
+  content-visibility: visible !important;
+  contain: layout style !important;
+  transform: none !important;
+}
+
+/* Dashboard blur orbs: jangan filter berat yang merembes saat hover menu */
+html body.theme-glass.theme-crystal #tab-dashboard .blur-3xl,
+html body.theme-glass.theme-crystal #tab-dashboard .blur-2xl,
+html body.theme-crystal #tab-dashboard .blur-3xl,
+html body.theme-crystal #tab-dashboard .blur-2xl {
+  filter: blur(8px) !important;
+  opacity: .45 !important;
+  will-change: auto !important;
+  transform: none !important;
+  pointer-events: none !important;
+}
+html body.theme-glass.theme-crystal #dashboard-hero,
+html body.theme-crystal #dashboard-hero {
+  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+  backdrop-filter: blur(10px) saturate(140%) !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* Nested detail tables (PO / Keluar): tanpa glass ekstra */
+html body.theme-glass.theme-crystal [id^="tab-"] table .rounded-xl,
+html body.theme-glass.theme-crystal [id^="tab-"] table .rounded-2xl,
+html body.theme-glass.theme-crystal [id^="tab-"] td .rounded-xl,
+html body.theme-glass.theme-crystal [id^="tab-"] td .rounded-2xl {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* Nav active di Crystal: tanpa shadow-lg oranye */
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn.theme-accent-bg,
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn.active,
+html body.theme-crystal #inventory-sidebar .sidebar-btn.theme-accent-bg,
+html body.theme-crystal #inventory-sidebar .sidebar-btn.active {
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+/* Semua modul: kartu/tabel tidak promote layer saat tab non-master */
+html body.theme-glass.theme-crystal #inventory-main-content .app-card,
+html body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card,
+html body.theme-glass.theme-crystal #inventory-main-content .fluid-table-container {
+  will-change: auto !important;
+  transform: none !important;
+  backface-visibility: hidden;
+}
+</style>
+
 </body>
 <style id="v100-liquid-glass-toast">
 /* V100 — Premium Liquid Glass Toast: scoped only to the notification component */
@@ -14215,6 +14540,767 @@ body.theme-glass.theme-crystal .modal-content {
   #inventory-top-header #live-clock { gap:5px !important; padding:4px 6px !important; }
   #inventory-top-header #live-clock [data-clock-time] { font-size:10px !important; }
   #inventory-top-header #live-clock [data-clock-date] { font-size:7px !important; }
+}
+</style>
+
+<style id="v127-liquid-glass-ui2">
+/* UI 2 — LIQUID GLASS gelap ala iOS. Hanya aktif pada body.theme-crystal; UI 1 dan logika JS tidak disentuh. */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) {
+  --lg-ink:#ffffff;
+  --lg-ink-2:#eef4ff;
+  --lg-muted:#c3d3ec;
+  --lg-blue:#4aa3ff;
+  --lg-edge:inset 1.5px 1.5px 0 rgba(255,255,255,.55),inset -1px -1px 0 rgba(255,255,255,.14),inset 0 0 24px rgba(255,255,255,.07);
+  --lg-fill:linear-gradient(155deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.05) 45%,rgba(255,255,255,.09) 100%);
+  --theme-text:#ffffff;
+  --theme-text-muted:#c3d3ec;
+  color-scheme:dark;
+  background:
+    radial-gradient(circle at 12% 10%,rgba(255,120,90,.50),transparent 30%),
+    radial-gradient(circle at 88% 8%,rgba(40,140,255,.62),transparent 34%),
+    radial-gradient(circle at 80% 85%,rgba(150,80,255,.55),transparent 36%),
+    radial-gradient(circle at 15% 88%,rgba(20,200,170,.42),transparent 34%),
+    radial-gradient(circle at 50% 50%,rgba(255,70,150,.20),transparent 42%),
+    linear-gradient(160deg,#0a1230 0%,#150f33 50%,#06202a 100%) !important;
+  background-attachment:fixed !important;
+  color:var(--lg-ink) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-top-header,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .glass-surface {
+  background:var(--lg-fill) !important;
+  border:1px solid rgba(255,255,255,.22) !important;
+  box-shadow:0 12px 44px rgba(0,0,0,.40),var(--lg-edge) !important;
+  backdrop-filter:blur(30px) saturate(200%);
+  -webkit-backdrop-filter:blur(30px) saturate(200%);
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-top-header { border-radius:0 0 28px 28px !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar { border-radius:0 28px 28px 0 !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .app-card,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .dashboard-glow-card,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #dashboard-hero,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] .rounded-xl.border,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] .rounded-2xl.border {
+  background:var(--lg-fill) !important;
+  border:1px solid rgba(255,255,255,.20) !important;
+  border-radius:28px !important;
+  box-shadow:0 14px 40px rgba(0,0,0,.32),var(--lg-edge) !important;
+  backdrop-filter:blur(26px) saturate(200%);
+  -webkit-backdrop-filter:blur(26px) saturate(200%);
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .app-card:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .dashboard-glow-card:hover {
+  transform:translateY(-2px);
+  border-color:rgba(255,255,255,.38) !important;
+  box-shadow:0 20px 50px rgba(0,0,0,.40),var(--lg-edge) !important;
+}
+/* Font terang & jelas */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content h1,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content h2,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content h3,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content h4,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-white,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-gray-100,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-gray-200,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-gray-300,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-slate-100,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-slate-200,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-slate-300 { color:var(--lg-ink) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-gray-400,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-gray-500,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-gray-600,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-slate-400,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-slate-500 { color:var(--lg-muted) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) label,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) legend { color:var(--lg-ink-2) !important; font-weight:600; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-green-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-green-400,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-emerald-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-emerald-400 { color:#6df0a4 !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-red-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-red-400,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-rose-400 { color:#ff9a9a !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-yellow-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-yellow-400,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-amber-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-amber-400,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-orange-400 { color:#ffd166 !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-blue-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-blue-400,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-sky-400,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-cyan-400 { color:#8cc8ff !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-purple-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-purple-400,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-indigo-400 { color:#cdb4ff !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-top-header,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-top-header * :not(svg):not(path) { color:var(--lg-ink); }
+/* Sidebar */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn span { color:var(--lg-ink-2) !important; font-weight:600; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn {
+  background:transparent !important; border:1px solid transparent !important; border-radius:999px !important; box-shadow:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn:hover {
+  background:rgba(255,255,255,.12) !important; border-color:rgba(255,255,255,.28) !important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.4) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn.active,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn[aria-current="page"],
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn.theme-accent-bg {
+  background:linear-gradient(155deg,rgba(255,255,255,.32),rgba(255,255,255,.12)) !important;
+  border:1px solid rgba(255,255,255,.50) !important;
+  box-shadow:0 8px 22px rgba(0,0,0,.35),inset 1px 1px 0 rgba(255,255,255,.7),inset 0 0 14px rgba(255,255,255,.12) !important;
+  text-shadow:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn.active,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn.active span,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn.theme-accent-bg,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn.theme-accent-bg span,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn.active svg { color:#fff !important; font-weight:700; }
+/* Tombol utama */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .theme-accent-bg:not(.sidebar-btn),
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) button.theme-accent-bg:not(.sidebar-btn),
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) button[type="submit"].theme-accent-bg:not(.sidebar-btn) {
+  background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0) 52%),linear-gradient(160deg,#3d9bff,#0a62d6) !important;
+  border:1px solid rgba(255,255,255,.55) !important;
+  border-radius:999px !important;
+  box-shadow:0 10px 26px rgba(10,109,224,.45),inset 1.5px 1.5px 0 rgba(255,255,255,.55),inset 0 0 12px rgba(255,255,255,.15) !important;
+  color:#fff !important;
+  font-weight:600;
+  text-shadow:0 1px 2px rgba(0,30,90,.5);
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .theme-accent-bg:not(.sidebar-btn) *,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .theme-accent-bg:not(.sidebar-btn) svg { color:#fff !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .theme-accent-bg:not(.sidebar-btn):hover { filter:brightness(1.1) saturate(1.1); transform:translateY(-1px); }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .theme-accent-bg:not(.sidebar-btn):active { transform:scale(.97); }
+/* Tombol sekunder */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) button:not(.theme-accent-bg):not(.sidebar-btn):not([class*="bg-red"]):not([class*="bg-green"]):not([class*="bg-yellow"]):not([class*="bg-blue"]):not([class*="bg-orange"]):not([class*="bg-purple"]) {
+  color:var(--lg-ink-2);
+  background:linear-gradient(155deg,rgba(255,255,255,.18),rgba(255,255,255,.06)) !important;
+  border:1px solid rgba(255,255,255,.30) !important;
+  border-radius:999px;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.4),0 4px 12px rgba(0,0,0,.25);
+}
+/* Input */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) input:not([type="checkbox"]):not([type="radio"]),
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) select,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) textarea {
+  background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.06)) !important;
+  border:1px solid rgba(255,255,255,.30) !important;
+  border-radius:16px !important;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.28),0 1px 0 rgba(255,255,255,.12) !important;
+  color:var(--lg-ink) !important;
+  -webkit-text-fill-color:var(--lg-ink) !important;
+  font-weight:500;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) input::placeholder,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) textarea::placeholder { color:#a9bfdc !important; -webkit-text-fill-color:#a9bfdc !important; opacity:1; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) input:focus,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) select:focus,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) textarea:focus {
+  border-color:var(--lg-blue) !important;
+  box-shadow:0 0 0 4px rgba(74,163,255,.32),inset 0 2px 8px rgba(0,0,0,.25) !important;
+  outline:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) select option { color:#fff; background:#16203f; }
+/* Tabel */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody tr,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody td {
+  background-color:rgba(255,255,255,.03) !important;
+  border-color:rgba(255,255,255,.14) !important;
+  color:var(--lg-ink) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody tr:nth-child(even) td { background-color:rgba(255,255,255,.07) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody tr:hover td { background-color:rgba(255,255,255,.16) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] thead,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] thead tr,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] thead th {
+  background:linear-gradient(180deg,rgba(255,255,255,.20),rgba(255,255,255,.09)) !important;
+  border-color:rgba(255,255,255,.26) !important;
+  color:#fff !important;
+  font-weight:700;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .fluid-table-container { border-radius:22px !important; overflow:hidden; }
+/* Dropdown custom */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="inventory-item-select"] { color:var(--lg-ink); }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="inventory-item-select"][class*="panel"],
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="inventory-item-select"][class*="menu"],
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="inventory-item-select"][class*="list"] {
+  background:linear-gradient(160deg,rgba(40,48,92,.78),rgba(22,28,62,.82)) !important;
+  border:1px solid rgba(255,255,255,.30) !important;
+  border-radius:20px !important;
+  color:#fff !important;
+  box-shadow:0 18px 44px rgba(0,0,0,.50),var(--lg-edge) !important;
+  backdrop-filter:blur(30px) saturate(190%);
+  -webkit-backdrop-filter:blur(30px) saturate(190%);
+}
+/* Modal & toast */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #login-modal .login-glass-card,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #confirm-modal > div,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal > div,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #auto-logout-modal > div,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .appearance-dialog {
+  background:linear-gradient(155deg,rgba(60,70,120,.55),rgba(24,30,66,.62)) !important;
+  border:1px solid rgba(255,255,255,.30) !important;
+  border-radius:32px !important;
+  box-shadow:0 30px 80px rgba(0,0,0,.55),var(--lg-edge) !important;
+  backdrop-filter:blur(36px) saturate(200%);
+  -webkit-backdrop-filter:blur(36px) saturate(200%);
+  color:var(--lg-ink) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #toast-container .inventory-toast {
+  background:linear-gradient(155deg,rgba(60,70,120,.62),rgba(24,30,66,.70)) !important;
+  border:1px solid rgba(255,255,255,.30) !important;
+  border-radius:22px !important;
+  color:var(--lg-ink) !important;
+  box-shadow:0 14px 34px rgba(0,0,0,.45),var(--lg-edge) !important;
+  backdrop-filter:blur(26px) saturate(190%);
+  -webkit-backdrop-filter:blur(26px) saturate(190%);
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #live-clock,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #live-clock * { color:var(--lg-ink) !important; }
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) {
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .app-card,
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .dashboard-glow-card,
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar,
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-top-header { background:rgba(28,36,76,.94) !important; }
+}
+
+/* ===== v127: rekomendasi ===== */
+/* Tingkat kaca (opsional, lewat class di body): lg-glass-thin / lg-glass-thick. Otomatis tebal bila OS meminta kurangi transparansi. */
+html body.theme-glass.theme-crystal.lg-glass-thin { --lg-fill:linear-gradient(155deg,rgba(255,255,255,.10),rgba(255,255,255,.03) 50%,rgba(255,255,255,.06)); }
+html body.theme-glass.theme-crystal.lg-glass-thick { --lg-fill:linear-gradient(155deg,rgba(40,50,100,.72),rgba(20,26,60,.78)); }
+@media (prefers-reduced-transparency:reduce) {
+  html body.theme-glass.theme-crystal { --lg-fill:linear-gradient(155deg,rgba(40,50,100,.82),rgba(20,26,60,.86)); }
+}
+/* Kilau specular iOS pada kartu dashboard */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content .dashboard-glow-card::before,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content .app-card::before {
+  background:
+    linear-gradient(115deg,transparent 30%,rgba(255,255,255,.22) 46%,rgba(255,255,255,.06) 54%,transparent 70%),
+    linear-gradient(180deg,rgba(255,255,255,.20),transparent 38%) !important;
+  background-size:260% 100%,100% 100% !important;
+  background-position:120% 0,0 0 !important;
+  pointer-events:none;
+  transition:background-position .9s cubic-bezier(.2,.7,.2,1);
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content .dashboard-glow-card:hover::before,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content .app-card:hover::before { background-position:-20% 0,0 0 !important; }
+/* Modal membesar halus */
+@keyframes lgModalPop { from { opacity:0; transform:scale(.94) translateY(8px); } to { opacity:1; transform:none; } }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #confirm-modal:not(.hidden) > div,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal:not(.hidden) > div,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #auto-logout-modal:not(.hidden) > div,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .appearance-dialog { animation:lgModalPop .32s cubic-bezier(.2,.9,.25,1.1) both; }
+/* Tombol mengecil saat ditekan */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) button:not(:disabled):active { transform:scale(.96); }
+/* Baris tabel sedikit lebih solid agar nyaman dibaca */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody tr td { background-color:rgba(12,18,48,.28) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody tr:nth-child(even) td { background-color:rgba(255,255,255,.10) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody tr:hover td { background-color:rgba(255,255,255,.20) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody td { font-weight:500; }
+/* Layar kecil / sentuh: blur lebih ringan agar tetap lancar */
+@media (max-width:820px),(pointer:coarse) {
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-top-header,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .glass-surface,
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .app-card,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .dashboard-glow-card,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #dashboard-hero,
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] .rounded-xl.border,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] .rounded-2xl.border {
+    backdrop-filter:blur(14px) saturate(170%) !important;
+    -webkit-backdrop-filter:blur(14px) saturate(170%) !important;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) * { animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
+
+/* Warna teks dasar terang untuk seluruh area aplikasi (text-fill ikut warna teks) */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) :where(#inventory-app-layout,#inventory-top-header,#inventory-sidebar,#inventory-main-content,#toast-container,[id$="-modal"],.appearance-dialog) :where(*) {
+  -webkit-text-fill-color:currentColor !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) :where(#inventory-top-header,#inventory-sidebar,#inventory-main-content,#toast-container,[id$="-modal"],.appearance-dialog) :where(h1,h2,h3,h4,h5,h6,p,span,div,td,th,label,small,strong,b,li,a,dt,dd,legend) {
+  color:var(--lg-ink) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) :where(#inventory-top-header,#inventory-sidebar,#inventory-main-content,#toast-container,[id$="-modal"],.appearance-dialog) :where(.text-gray-400,.text-gray-500,.text-gray-600,.text-slate-400,.text-slate-500) { color:var(--lg-muted) !important; }
+
+/* Elemen nav/aside bersarang tidak boleh memakai kaca terang lama */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar nav,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar aside,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-top-header nav,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar > div {
+  background:transparent !important; border-color:transparent !important; box-shadow:none !important;
+  backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .border-t,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .border-b { border-color:rgba(255,255,255,.16) !important; }
+
+/* Panel/kotak bersarang di dalam tabel (mis. detail riwayat PO): jangan jadi kaca terang */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table .rounded-xl.border,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table .rounded-2xl.border,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] td .rounded-xl,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] td .rounded-2xl {
+  background:rgba(10,16,44,.38) !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  border-radius:16px !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18) !important;
+  backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+  overflow:hidden;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table table thead,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table table thead tr,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table table thead th {
+  background:rgba(255,255,255,.10) !important; color:#e6eefc !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table table tbody td,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table table tbody tr { background-color:transparent !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table table tbody tr:nth-child(even) td { background-color:rgba(255,255,255,.05) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table table tbody tr:hover td { background-color:rgba(255,255,255,.12) !important; }
+/* Tombol & input di dalam tabel: kaca gelap berwarna, bukan putih */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button:not(.theme-accent-bg) {
+  background:rgba(255,255,255,.10) !important;
+  border:1px solid rgba(255,255,255,.22) !important;
+  border-radius:999px !important;
+  box-shadow:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button:not(.theme-accent-bg):hover { background:rgba(255,255,255,.20) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button[class*="bg-red"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button[class*="bg-rose"] { background:rgba(255,90,90,.20) !important; border-color:rgba(255,130,130,.45) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button[class*="bg-emerald"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button[class*="bg-green"] { background:rgba(40,210,130,.20) !important; border-color:rgba(100,240,170,.45) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button[class*="bg-sky"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button[class*="bg-blue"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button[class*="bg-cyan"] { background:rgba(60,160,255,.22) !important; border-color:rgba(130,200,255,.45) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button[class*="bg-indigo"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button[class*="bg-purple"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button[class*="bg-violet"] { background:rgba(140,110,255,.24) !important; border-color:rgba(190,170,255,.45) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button[class*="bg-yellow"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button[class*="bg-amber"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button[class*="bg-orange"] { background:rgba(255,190,60,.20) !important; border-color:rgba(255,215,120,.45) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table input:not([type="checkbox"]):not([type="radio"]),html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table select {
+  background:rgba(8,14,40,.45) !important;
+  border:1px solid rgba(255,255,255,.28) !important;
+  border-radius:12px !important;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.35) !important;
+}
+/* Badge status & teks berwarna: versi terang yang terbaca di latar gelap */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-sky-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-sky-400,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-sky-500,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-cyan-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-cyan-500,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-blue-500 { color:#8cd2ff !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-indigo-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-indigo-500,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-violet-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-violet-400,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-purple-500 { color:#c9b8ff !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-teal-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-teal-400,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-green-500,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-emerald-500,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-lime-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-lime-400 { color:#6df0c4 !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-rose-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-red-500,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-pink-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-pink-400,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-fuchsia-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-fuchsia-400 { color:#ffa3b8 !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-orange-300,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-orange-500,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-yellow-500,html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .text-amber-500 { color:#ffd27a !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="bg-sky-"][class*="/"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="bg-blue-"][class*="/"] { background-color:rgba(60,160,255,.22) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="bg-emerald-"][class*="/"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="bg-green-"][class*="/"] { background-color:rgba(40,210,130,.20) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="bg-red-"][class*="/"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="bg-rose-"][class*="/"] { background-color:rgba(255,90,90,.20) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="bg-yellow-"][class*="/"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="bg-amber-"][class*="/"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="bg-orange-"][class*="/"] { background-color:rgba(255,190,60,.20) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="bg-indigo-"][class*="/"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="bg-purple-"][class*="/"],html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="bg-violet-"][class*="/"] { background-color:rgba(140,110,255,.24) !important; }
+
+
+/* V124 — Barang Keluar: samakan nuansa gelap-transparan input Qty
+   dengan baris tabel Riwayat; hanya menyentuh kartu item PO dan field Qty. */
+body.theme-glass #tab-keluar #keluar-items-container > [data-keluar-row] {
+    background: rgba(48, 56, 78, .48) !important;
+    background-color: rgba(48, 56, 78, .48) !important;
+    border-color: rgba(255, 255, 255, .18) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(125%) !important;
+    backdrop-filter: blur(14px) saturate(125%) !important;
+}
+body.theme-glass #tab-keluar #keluar-items-container [data-keluar-qty] {
+    background: rgba(42, 49, 69, .68) !important;
+    background-color: rgba(42, 49, 69, .68) !important;
+    color: #f1f5f9 !important;
+    border: 1px solid rgba(255, 255, 255, .24) !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, .18) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    backdrop-filter: blur(10px) !important;
+}
+body.theme-glass #tab-keluar #keluar-items-container [data-keluar-qty]:focus {
+    outline: none !important;
+    border-color: rgba(147, 197, 253, .72) !important;
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, .18) !important;
+}
+body.theme-glass #tab-keluar #keluar-items-container [data-keluar-qty]::placeholder {
+    color: rgba(226, 232, 240, .62) !important;
+}
+
+
+
+        /* V125 — Crystal: readable dark-blue typography for history tables. */
+        body.theme-glass.theme-crystal #inventory-main-content .fluid-table tbody td,
+        body.theme-glass.theme-crystal #inventory-main-content .fluid-table tbody td *,
+        body.theme-glass.theme-crystal #inventory-main-content .fluid-table tbody th {
+            color: #244563 !important;
+            -webkit-text-fill-color: #244563 !important;
+        }
+        body.theme-glass.theme-crystal #inventory-main-content .fluid-table tbody td .text-gray-400,
+        body.theme-glass.theme-crystal #inventory-main-content .fluid-table tbody td .text-gray-500,
+        body.theme-glass.theme-crystal #inventory-main-content .fluid-table tbody td small {
+            color: #58738f !important;
+            -webkit-text-fill-color: #58738f !important;
+        }
+
+        /* V125 — Detail-save popup: dark readable text on the pale Crystal body. */
+        body.theme-glass.theme-crystal #detail-save-content,
+        body.theme-glass.theme-crystal #detail-save-content :is(div, span, p, label, li, strong, b, small) {
+            color: #244563 !important;
+            -webkit-text-fill-color: #244563 !important;
+        }
+        body.theme-glass.theme-crystal #detail-save-content .text-gray-400,
+        body.theme-glass.theme-crystal #detail-save-content .text-gray-500,
+        body.theme-glass.theme-crystal #detail-save-content [class*="text-blue-"] {
+            color: #58738f !important;
+            -webkit-text-fill-color: #58738f !important;
+        }
+        body.theme-glass.theme-crystal #detail-save-content .text-emerald-300,
+        body.theme-glass.theme-crystal #detail-save-content .text-emerald-400 {
+            color: #047857 !important;
+            -webkit-text-fill-color: #047857 !important;
+        }
+
+
+/* V126 — UI 2 Liquid Glass: detail-save popup only.
+   Keep UI 1 and all transaction / Firebase / Worker logic untouched. */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal {
+  background:rgba(4,8,24,.62) !important;
+  -webkit-backdrop-filter:blur(18px) saturate(150%) !important;
+  backdrop-filter:blur(18px) saturate(150%) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal > div {
+  background:linear-gradient(145deg,rgba(48,62,112,.88),rgba(18,27,63,.92) 55%,rgba(9,42,58,.90)) !important;
+  background-color:rgba(20,30,68,.92) !important;
+  border:1px solid rgba(255,255,255,.34) !important;
+  border-radius:26px !important;
+  box-shadow:0 28px 80px rgba(0,0,0,.58),inset 1.5px 1.5px 0 rgba(255,255,255,.38),inset -1px -1px 0 rgba(255,255,255,.12),inset 0 0 28px rgba(255,255,255,.06) !important;
+  color:#f4f8ff !important;
+  -webkit-backdrop-filter:blur(28px) saturate(180%) !important;
+  backdrop-filter:blur(28px) saturate(180%) !important;
+  overflow:hidden !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal > div > :first-child {
+  background:linear-gradient(110deg,rgba(255,255,255,.13),rgba(255,255,255,.035)) !important;
+  border-color:rgba(255,255,255,.18) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal > div > :last-child {
+  background:linear-gradient(110deg,rgba(4,10,34,.24),rgba(255,255,255,.035)) !important;
+  border-color:rgba(255,255,255,.18) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal h4,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal h4 *,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content :is(div,span,p,label,li,strong,b,small) {
+  color:#f2f7ff !important;
+  -webkit-text-fill-color:#f2f7ff !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-subtitle,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content .text-gray-400,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content .text-gray-500 {
+  color:#c5d6f0 !important;
+  -webkit-text-fill-color:#c5d6f0 !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content section {
+  background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.045)) !important;
+  border:1px solid rgba(255,255,255,.24) !important;
+  border-radius:16px !important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.20),0 8px 20px rgba(0,0,0,.12) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content section > div:first-child {
+  border-color:rgba(255,255,255,.20) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content .text-emerald-300,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content .text-emerald-400 {
+  color:#75f0b2 !important;
+  -webkit-text-fill-color:#75f0b2 !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content .text-sky-200,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content .text-sky-300 {
+  color:#9edaff !important;
+  -webkit-text-fill-color:#9edaff !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-back {
+  background:linear-gradient(145deg,rgba(255,255,255,.17),rgba(255,255,255,.06)) !important;
+  border:1px solid rgba(255,255,255,.34) !important;
+  color:#f4f8ff !important;
+  -webkit-text-fill-color:#f4f8ff !important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.30),0 5px 16px rgba(0,0,0,.20) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-yes {
+  background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,0) 48%),linear-gradient(145deg,#389cff,#075bd0) !important;
+  border:1px solid rgba(255,255,255,.52) !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  box-shadow:0 9px 24px rgba(0,95,220,.42),inset 1px 1px 0 rgba(255,255,255,.58) !important;
+}
+@media(max-width:640px) {
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal { padding:10px !important; }
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal > div { max-height:92dvh !important; border-radius:22px !important; }
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal > div > :first-child,
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal > div > :last-child { padding:14px !important; }
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content { padding:14px !important; }
+}
+
+
+
+
+/* ===== V127 — Detail Save Popup mengikuti tabel input / riwayat UI 2 =====
+   Fokus hanya pada popup Periksa Kembali Data; tidak mengubah tabel modul,
+   popup konfirmasi lain, maupun logika transaksi. */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content {
+  background:linear-gradient(155deg,rgba(8,18,46,.34),rgba(8,24,48,.22)) !important;
+  border-top:1px solid rgba(255,255,255,.10) !important;
+  border-bottom:1px solid rgba(255,255,255,.10) !important;
+  color:#f2f7ff !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content > .grid,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content section > .grid {
+  background:linear-gradient(100deg,rgba(255,255,255,.075),rgba(255,255,255,.035)) !important;
+  border:1px solid rgba(255,255,255,.10) !important;
+  border-radius:9px !important;
+  padding:9px 11px !important;
+  margin:0 0 5px !important;
+  min-height:36px;
+  align-items:center !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.055) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content section {
+  background:linear-gradient(145deg,rgba(8,22,52,.46),rgba(12,34,58,.36)) !important;
+  border:1px solid rgba(255,255,255,.20) !important;
+  border-radius:15px !important;
+  box-shadow:0 8px 22px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.12) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content section > div:first-child:not(.grid) {
+  background:linear-gradient(90deg,rgba(255,255,255,.07),rgba(255,255,255,.015)) !important;
+  border-color:rgba(255,255,255,.16) !important;
+  border-radius:9px 9px 0 0 !important;
+  padding-bottom:9px !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content .grid > div:first-child {
+  color:#b8cce8 !important;
+  -webkit-text-fill-color:#b8cce8 !important;
+  font-weight:500 !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content .grid > div:last-child {
+  color:#f5f8ff !important;
+  -webkit-text-fill-color:#f5f8ff !important;
+  font-weight:700 !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content > .rounded-xl {
+  background:linear-gradient(110deg,rgba(16,185,129,.13),rgba(16,185,129,.055)) !important;
+  border:1px solid rgba(110,231,183,.25) !important;
+  border-radius:12px !important;
+}
+@media(max-width:640px) {
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content > .grid,
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal #detail-save-content section > .grid {
+    grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) !important;
+    gap:8px !important;
+    padding:8px 9px !important;
+  }
+}
+
+</style>
+
+
+<style id="v128-appearance-riwayat-nav-refine">
+/* V128 — Personalisasi mengikuti tabel Riwayat UI 2. Perubahan visual saja. */
+html body.theme-glass.theme-crystal #appearance-panel .appearance-dialog {
+  color:#f2f7ff !important;
+  background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.045) 48%,rgba(255,255,255,.075)),rgba(13,22,48,.88) !important;
+  border:1px solid rgba(225,239,255,.34) !important;
+  border-radius:24px !important;
+  box-shadow:0 24px 70px rgba(0,0,0,.42),inset 1px 1px 0 rgba(255,255,255,.42),inset -1px -1px 0 rgba(255,255,255,.12) !important;
+  -webkit-backdrop-filter:blur(28px) saturate(175%) !important;
+  backdrop-filter:blur(28px) saturate(175%) !important;
+}
+html body.theme-glass.theme-crystal #appearance-panel .appearance-dialog-header {
+  background:linear-gradient(110deg,rgba(255,255,255,.13),rgba(255,255,255,.035)) !important;
+  border:1px solid rgba(255,255,255,.14) !important;
+  border-radius:15px !important;
+  padding:13px 14px !important;
+  margin-bottom:18px !important;
+}
+html body.theme-glass.theme-crystal #appearance-panel .appearance-eyebrow { color:#a9d4ff !important; }
+html body.theme-glass.theme-crystal #appearance-panel .appearance-dialog-header h2 { color:#fff !important; }
+html body.theme-glass.theme-crystal #appearance-panel .appearance-dialog-header p { color:#c3d3e9 !important; }
+html body.theme-glass.theme-crystal #appearance-panel .appearance-theme-card {
+  background:linear-gradient(150deg,rgba(255,255,255,.12),rgba(255,255,255,.035)) !important;
+  border:1px solid rgba(220,236,255,.24) !important;
+  border-radius:18px !important;
+  color:#f3f7ff !important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.24),0 10px 24px rgba(0,0,0,.18) !important;
+}
+html body.theme-glass.theme-crystal #appearance-panel .appearance-theme-card:hover {
+  background:linear-gradient(150deg,rgba(255,255,255,.18),rgba(255,255,255,.07)) !important;
+  border-color:rgba(178,216,255,.55) !important;
+  transform:translateY(-1px) !important;
+}
+html body.theme-glass.theme-crystal #appearance-panel .appearance-theme-card.active {
+  background:linear-gradient(150deg,rgba(67,145,224,.25),rgba(255,255,255,.07)) !important;
+  border-color:rgba(116,190,255,.78) !important;
+  box-shadow:0 0 0 2px rgba(76,160,255,.16),inset 1px 1px 0 rgba(255,255,255,.30),0 12px 28px rgba(0,0,0,.22) !important;
+}
+html body.theme-glass.theme-crystal #appearance-panel .appearance-theme-name { color:#fff !important; }
+html body.theme-glass.theme-crystal #appearance-panel .appearance-selected-mark { color:#8fe0b4 !important; }
+html body.theme-glass.theme-crystal #appearance-panel .appearance-card-description { color:#c4d3e8 !important; }
+html body.theme-glass.theme-crystal #appearance-panel .appearance-card-action {
+  color:#a9d5ff !important; border-top-color:rgba(255,255,255,.16) !important;
+}
+html body.theme-glass.theme-crystal #appearance-panel .appearance-close {
+  color:#f4f8ff !important;
+  background:linear-gradient(150deg,rgba(255,255,255,.20),rgba(255,255,255,.07)) !important;
+  border:1px solid rgba(255,255,255,.30) !important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.30),0 4px 12px rgba(0,0,0,.22) !important;
+}
+html body.theme-glass.theme-crystal #appearance-panel .appearance-dialog-footer {
+  color:#d3e4f8 !important;
+  background:linear-gradient(120deg,rgba(255,255,255,.13),rgba(255,255,255,.045)) !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  border-radius:13px !important;
+}
+html body.theme-glass.theme-crystal #appearance-panel .appearance-dialog-footer svg { color:#9bcfff !important; }
+/* Preview miniatur tetap mempertahankan warna khas kedua tema. */
+html body.theme-glass.theme-crystal #appearance-panel .classic-large-preview { background:linear-gradient(140deg,#071a30,#102c49) !important; }
+html body.theme-glass.theme-crystal #appearance-panel .crystal-large-preview { background:linear-gradient(140deg,#eaf6ff,#cde8ff) !important; }
+
+/* Naikkan posisi baris menu UI 2 sedikit, tanpa mengubah tinggi/scroll sidebar. */
+@media (min-width:641px) {
+  html body.theme-glass.theme-crystal #inventory-sidebar nav { position:relative !important; top:-3px !important; }
+}
+@media (max-width:640px) {
+  html body.theme-glass.theme-crystal #inventory-sidebar nav { top:0 !important; }
+}
+</style>
+
+
+<style id="v129-appearance-header-backup-style">
+/* V129 — Samakan hierarki judul Personalisasi dengan header Backup & Restore. */
+html body.theme-glass.theme-crystal #appearance-panel .appearance-dialog-header.v129-appearance-header {display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:14px!important;padding:14px 15px!important;margin:0 0 18px!important;border-radius:16px!important;background:linear-gradient(110deg,rgba(255,255,255,.15),rgba(255,255,255,.055))!important;border:1px solid rgba(225,239,255,.20)!important;}
+html body.theme-glass.theme-crystal #appearance-panel .v129-appearance-heading {display:flex!important;align-items:center!important;gap:13px!important;min-width:0!important;}
+html body.theme-glass.theme-crystal #appearance-panel .v129-appearance-icon {width:44px!important;height:44px!important;flex:0 0 44px!important;display:grid!important;place-items:center!important;border-radius:15px!important;color:#55e6a5!important;background:rgba(52,211,153,.17)!important;border:1px solid rgba(110,231,183,.20)!important;}
+html body.theme-glass.theme-crystal #appearance-panel .v129-appearance-copy {min-width:0!important;}
+html body.theme-glass.theme-crystal #appearance-panel .v129-appearance-copy h2 {margin:0 0 4px!important;color:#fff!important;font-size:23px!important;line-height:1.18!important;font-weight:900!important;letter-spacing:-.035em!important;text-transform:uppercase!important;}
+html body.theme-glass.theme-crystal #appearance-panel .v129-appearance-copy p {margin:0!important;color:#c7d9ed!important;font-size:12px!important;line-height:1.45!important;}
+html body.theme-glass.theme-crystal #appearance-panel .appearance-eyebrow {display:none!important;}
+@media(max-width:600px){html body.theme-glass.theme-crystal #appearance-panel .appearance-dialog-header.v129-appearance-header{padding:12px!important;gap:8px!important;}html body.theme-glass.theme-crystal #appearance-panel .v129-appearance-icon{width:40px!important;height:40px!important;flex-basis:40px!important;}html body.theme-glass.theme-crystal #appearance-panel .v129-appearance-copy h2{font-size:18px!important;}}
+</style>
+
+<style id="v130-hover-render-glitch-fix">
+/*
+ V130 / V131 — Stabilkan render UI 2 (Crystal) saat hover menu.
+ Akar masalah:
+ 1) Ikon sidebar memakai group-hover:scale-110 + transition-transform
+    → compositing layer baru di samping panel backdrop-filter.
+ 2) Rule global memberi sidebar-btn transition transform + :active scale.
+ 3) Hover yang mengubah z-index/position/box-shadow besar ikut memicu
+    repaint kaca di main content.
+
+ Strategi: isolasi stacking context tetap (bukan saat hover),
+ hover hanya ubah warna/background, matikan scale/transform/filter.
+*/
+/* Sidebar isolation — berlaku Classic + Crystal */
+html body.theme-glass #inventory-sidebar,
+#inventory-sidebar {
+  isolation: isolate !important;
+  transform: translateZ(0) !important;
+  -webkit-transform: translateZ(0) !important;
+  backface-visibility: hidden !important;
+}
+html body.theme-glass.theme-crystal #inventory-sidebar,
+html body.theme-glass.theme-crystal #inventory-top-header {
+  isolation: isolate !important;
+  transform: translateZ(0) !important;
+  -webkit-transform: translateZ(0) !important;
+  backface-visibility: hidden !important;
+}
+html body.theme-glass.theme-crystal #inventory-main-content {
+  isolation: isolate;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  /* Batasi repaint ke area konten saja */
+  contain: layout style;
+}
+
+/* Sidebar / nav buttons: jangan animasikan transform atau filter */
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn,
+html body.theme-glass.theme-crystal #inventory-sidebar nav button,
+html body.theme-glass.theme-crystal #inventory-top-header nav .sidebar-btn,
+html body.theme-glass.theme-crystal #inventory-top-header nav button {
+  transition-property: background-color, border-color, color, box-shadow !important;
+  transition-duration: .15s !important;
+  transition-timing-function: ease-out !important;
+  transform: none !important;
+  filter: none !important;
+  will-change: auto !important;
+  backface-visibility: hidden;
+}
+
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn:hover,
+html body.theme-glass.theme-crystal #inventory-sidebar nav button:hover,
+html body.theme-glass.theme-crystal #inventory-top-header nav .sidebar-btn:hover,
+html body.theme-glass.theme-crystal #inventory-top-header nav button:hover,
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn:active,
+html body.theme-glass.theme-crystal #inventory-sidebar nav button:active,
+html body.theme-glass.theme-crystal #inventory-top-header nav .sidebar-btn:active,
+html body.theme-glass.theme-crystal #inventory-top-header nav button:active {
+  transform: none !important;
+  filter: none !important;
+  animation: none !important;
+  /* Hindari z-index/position baru saat hover (pemicu layer glitch) */
+  position: static !important;
+  z-index: auto !important;
+}
+
+/* Matikan group-hover:scale-110 pada ikon menu */
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn i,
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn svg,
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn [data-lucide],
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn .transition-transform,
+html body.theme-glass.theme-crystal #inventory-top-header nav .sidebar-btn i,
+html body.theme-glass.theme-crystal #inventory-top-header nav .sidebar-btn svg,
+html body.theme-glass.theme-crystal #inventory-top-header nav .sidebar-btn [data-lucide] {
+  transform: none !important;
+  transition-property: color, opacity !important;
+  transition-duration: .15s !important;
+  will-change: auto !important;
+}
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn:hover i,
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn:hover svg,
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn:hover [data-lucide],
+html body.theme-glass.theme-crystal #inventory-sidebar .group:hover .group-hover\:scale-110,
+html body.theme-glass.theme-crystal #inventory-sidebar .sidebar-btn:is(:hover, :focus-visible) .group-hover\:scale-110,
+html body.theme-glass.theme-crystal #inventory-top-header nav .sidebar-btn:hover i,
+html body.theme-glass.theme-crystal #inventory-top-header nav .sidebar-btn:hover svg {
+  transform: none !important;
+  scale: 1 !important;
+  filter: none !important;
+  animation: none !important;
+}
+
+/* Override Tailwind group-hover:scale-110 di dalam sidebar UI 2 */
+html body.theme-glass.theme-crystal #inventory-sidebar .group:hover .group-hover\:scale-110,
+html body.theme-glass.theme-crystal #inventory-sidebar .group:hover [class*="group-hover:scale"] {
+  transform: none !important;
+}
+
+/* Kartu kaca: hover tanpa translateY agar backdrop-filter stabil.
+   Tetap ada feedback lewat border/shadow ringan. */
+html body.theme-glass.theme-crystal .app-card,
+html body.theme-glass.theme-crystal .dashboard-glow-card {
+  transition-property: border-color, box-shadow, background-color, opacity !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+html body.theme-glass.theme-crystal .app-card:hover,
+html body.theme-glass.theme-crystal .dashboard-glow-card:hover {
+  transform: none !important;
+  filter: none !important;
+}
+/* Specular ::before boleh bergeser background, tanpa transform parent */
+html body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card::before,
+html body.theme-glass.theme-crystal #inventory-main-content .app-card::before {
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* Tabel riwayat: layer stabil, tanpa filter/transform */
+html body.theme-glass.theme-crystal #inventory-main-content .fluid-table-container,
+html body.theme-glass.theme-crystal #inventory-main-content .fluid-table,
+html body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] table {
+  transform: none !important;
+  filter: none !important;
+  backface-visibility: hidden;
+}
+
+/* Tombol di main content: active tanpa scale besar yang mengganggu kaca */
+html body.theme-glass.theme-crystal #inventory-main-content button:not(.sidebar-btn):active {
+  transform: none !important;
+  filter: none !important;
+}
+
+/* Link nav */
+html body.theme-glass.theme-crystal #inventory-sidebar nav a:hover,
+html body.theme-glass.theme-crystal #inventory-top-header nav a:hover {
+  filter: none !important;
+  transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body.theme-glass.theme-crystal #inventory-sidebar *,
+  html body.theme-glass.theme-crystal #inventory-main-content .app-card,
+  html body.theme-glass.theme-crystal #inventory-main-content .dashboard-glow-card {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
 }
 </style>
 
