@@ -7759,6 +7759,23 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
   .inventory-item-select-panel{max-width:calc(100vw - 16px);box-sizing:border-box}
 }
 </style>
+
+<style id="v148-ui2-navigation-single-rounded-border">
+/* V148: Gunakan border asli sidebar saja. V147 menambahkan ::after sehingga
+   garis border bertumpuk dengan border/lapisan bawaan dan tampak seperti dua bingkai. */
+@media (min-width: 1200px) {
+  html body.theme-glass:not(.theme-classic) #inventory-sidebar {
+    border-radius: 24px !important;
+    -webkit-border-radius: 24px !important;
+    background-clip: padding-box !important;
+  }
+  html body.theme-glass:not(.theme-classic) #inventory-sidebar::after {
+    content: none !important;
+    display: none !important;
+  }
+}
+</style>
+
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
 
@@ -7797,7 +7814,12 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
                 <span>Export CSV</span>
             </button>
         </div>
-    </header>
+    
+        <div id="v156-mobile-greeting" aria-live="polite">
+            <span id="v156-mobile-greeting-text">Selamat Datang!</span>
+            <span id="v167-mobile-role-badge" class="v167-mobile-role-badge">ROLE</span>
+        </div>
+</header>
 
     <div id="inventory-app-layout" class="flex-1 flex overflow-hidden">
         
@@ -9906,6 +9928,8 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
             const name = user?.name || user?.username || '';
             const greetingText = document.getElementById('inventory-greeting-text');
             if (greetingText) greetingText.textContent = name ? `${greeting}, ${name}!` : `${greeting}!`;
+            const mobileGreeting = document.getElementById('v156-mobile-greeting-text');
+            if (mobileGreeting) mobileGreeting.textContent = name ? `${greeting}, ${name}!` : `${greeting}!`;
             else title.textContent = name ? `${greeting}, ${name}!` : `${greeting}!`;
         };
 
@@ -9963,6 +9987,12 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
             window.updateHeaderGreeting?.();
             const role = window.gudangAppDb.currentUser.role;
             const badgeClass = role === 'admin' ? 'role-badge-admin' : (role === 'staff' ? 'role-badge-staff' : 'role-badge-viewer');
+            const mobileRoleBadge = document.getElementById('v167-mobile-role-badge');
+            if (mobileRoleBadge) {
+                const roleNames = { superadmin: 'SUPER ADMIN', admin: 'ADMIN', staff: 'STAFF', viewer: 'VIEWER' };
+                mobileRoleBadge.textContent = roleNames[String(role || '').toLowerCase()] || String(role || 'USER').toUpperCase();
+                mobileRoleBadge.dataset.role = String(role || '').toLowerCase();
+            }
             
             banner.innerHTML = `
                 <div class="flex items-center gap-2">
@@ -15032,6 +15062,970 @@ html body.theme-glass #backup-restore-hero > .relative {
     #backup-restore-hero { padding:20px !important; }
     #backup-restore-hero h2 { font-size:clamp(21px,5.5vw,30px) !important; line-height:1.2 !important; }
     #backup-restore-hero #backup-restore-warning { width:max-content !important; max-width:100% !important; }
+}
+</style>
+
+
+<style id="v137-sidebar-badge-full-pill-fix">
+/* V137: clip the active navigation surface itself into a true pill.
+   Also neutralize square pseudo/background layers that can remain visible at the left edge. */
+html body #inventory-sidebar nav > button.sidebar-btn,
+html body #inventory-sidebar nav button.sidebar-btn.theme-accent-bg,
+html body #inventory-sidebar nav button.sidebar-btn.active,
+html body #inventory-sidebar nav button.sidebar-btn[aria-current="page"] {
+    position:relative !important;
+    border-radius:9999px !important;
+    -webkit-border-radius:9999px !important;
+    overflow:hidden !important;
+    clip-path:inset(0 round 9999px) !important;
+    -webkit-clip-path:inset(0 round 9999px) !important;
+    background-clip:padding-box !important;
+}
+html body #inventory-sidebar nav button.sidebar-btn::before,
+html body #inventory-sidebar nav button.sidebar-btn::after {
+    border-radius:9999px !important;
+    clip-path:inset(0 round 9999px) !important;
+    -webkit-clip-path:inset(0 round 9999px) !important;
+}
+html body #inventory-sidebar nav > button.sidebar-btn.theme-accent-bg,
+html body #inventory-sidebar nav > button.sidebar-btn.active {
+    margin-inline:0 !important;
+}
+html body #inventory-sidebar nav {
+    background:transparent !important;
+}
+</style>
+
+
+
+<style id="v143-sidebar-navigation-balance">
+/* V143: seimbangkan jarak menu horizontal pada Crystal desktop.
+   Perubahan dibatasi ke navigasi desktop lebar; layout mobile/tablet dan isi aplikasi tetap. */
+@media (min-width: 1200px) {
+  html body.theme-crystal #inventory-sidebar {
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:clamp(12px, 1.2vw, 24px) !important;
+    padding-left:clamp(14px, 1.1vw, 22px) !important;
+    padding-right:clamp(14px, 1.1vw, 22px) !important;
+  }
+  html body.theme-crystal #inventory-sidebar nav {
+    flex:1 1 0 !important;
+    min-width:0 !important;
+    width:auto !important;
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:clamp(4px, .45vw, 9px) !important;
+    padding:0 !important;
+    margin:0 !important;
+    overflow-x:hidden !important;
+    overflow-y:visible !important;
+  }
+  html body.theme-crystal #inventory-sidebar nav > div:first-child {
+    display:none !important;
+  }
+  html body.theme-crystal #inventory-sidebar nav > div[id$="-wrapper"] {
+    display:contents !important;
+    padding:0 !important;
+    margin:0 !important;
+  }
+  html body.theme-crystal #inventory-sidebar nav > button.sidebar-btn,
+  html body.theme-crystal #inventory-sidebar nav > div[id$="-wrapper"] > button.sidebar-btn {
+    flex:0 1 auto !important;
+    min-width:0 !important;
+    width:auto !important;
+    height:42px !important;
+    min-height:42px !important;
+    box-sizing:border-box !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:clamp(6px, .45vw, 9px) !important;
+    padding:0 clamp(8px, .7vw, 13px) !important;
+    margin:0 !important;
+    white-space:nowrap !important;
+    line-height:1 !important;
+  }
+  html body.theme-crystal #inventory-sidebar nav .sidebar-btn > i,
+  html body.theme-crystal #inventory-sidebar nav .sidebar-btn > svg {
+    width:15px !important;
+    height:15px !important;
+    flex:0 0 15px !important;
+    margin:0 !important;
+  }
+  html body.theme-crystal #inventory-sidebar nav .sidebar-btn > span {
+    display:inline-block !important;
+    min-width:0 !important;
+    font-size:clamp(9px, .58vw, 11px) !important;
+    line-height:1.15 !important;
+    white-space:nowrap !important;
+  }
+  html body.theme-crystal #inventory-sidebar > div:last-child {
+    flex:0 0 auto !important;
+    width:auto !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    padding:0 !important;
+    margin:0 !important;
+    border:0 !important;
+    background:transparent !important;
+  }
+  html body.theme-crystal #inventory-sidebar #open-appearance-btn {
+    min-height:42px !important;
+    margin:0 !important;
+    box-sizing:border-box !important;
+    white-space:nowrap !important;
+  }
+}
+
+
+/* V150 — UI 2 only: circular Appearance control when desktop sidebar is collapsed. */
+@media (min-width: 769px) {
+  html body.theme-crystal #inventory-app-layout.sidebar-collapsed #inventory-sidebar #open-appearance-btn {
+    box-sizing: border-box !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex: 0 0 42px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    aspect-ratio: 1 / 1 !important;
+  }
+  html body.theme-crystal #inventory-app-layout.sidebar-collapsed #inventory-sidebar #open-appearance-btn > :first-child {
+    display: flex !important;
+    flex: 0 0 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    margin: 0 !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+</style>
+
+
+<style id="v151-crystal-sidebar-toggle-light-dark">
+/* V151: tampilkan tombol sidebar pada UI 2 (Crystal) untuk Light dan Dark.
+   Desktop saja; aturan mobile V41.3 dan fungsi JS asli tetap mengendalikan mobile. */
+@media screen and (min-width: 901px) {
+  html body.theme-crystal #inventory-sidebar #sidebar-toggle {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    inset: auto !important;
+    z-index: 35 !important;
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+    margin: 0 8px 0 0 !important;
+    padding: 8px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 11px !important;
+    transform: none !important;
+  }
+  html body.theme-crystal #inventory-sidebar #sidebar-toggle .sidebar-toggle-svg {
+    display: block !important;
+    width: 18px !important;
+    height: 18px !important;
+    stroke: currentColor !important;
+    fill: none !important;
+  }
+}
+</style>
+
+<style id="v156-mobile-light-header-greeting">
+/* V156: dedicated greeting on the left; original controls remain on the right.
+   Scope strictly to the mobile Light theme (theme-glass + theme-light). */
+#v156-mobile-greeting { display:none; }
+@media screen and (max-width: 767px) {
+  html body.theme-glass.theme-light #inventory-top-header {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    flex-wrap: nowrap !important;
+    min-height: 58px !important;
+    padding: 8px 10px 8px 12px !important;
+    gap: 6px !important;
+  }
+  html body.theme-glass.theme-light #v156-mobile-greeting {
+    display: flex !important;
+    position: absolute !important;
+    left: 58px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: calc(100% - 188px) !important;
+    min-width: 0 !important;
+    max-width: 48% !important;
+    align-items: center !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
+  }
+  html body.theme-glass.theme-light #v156-mobile-greeting-text {
+    display: block !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    color: #244765 !important;
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+    font-weight: 800 !important;
+    letter-spacing: .01em !important;
+  }
+  /* Keep the original action group aligned to the right edge. */
+  html body.theme-glass.theme-light #inventory-top-header > div:last-child {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 0 0 auto !important;
+    padding: 0 !important;
+    gap: 6px !important;
+    align-items: center !important;
+  }
+  html body.theme-glass.theme-light #inventory-top-header #header-brand-group,
+  html body.theme-glass.theme-light #inventory-top-header #live-clock {
+    display: none !important;
+  }
+}
+@media screen and (max-width: 390px) {
+  html body.theme-glass.theme-light #v156-mobile-greeting {
+    width: calc(100% - 172px) !important;
+    max-width: 43% !important;
+  }
+  html body.theme-glass.theme-light #v156-mobile-greeting-text {
+    font-size: 10px !important;
+  }
+}
+</style>
+
+
+<style id="v157-mobile-light-unified-action-badge">
+/* V157: make Toggle, Logout and CSV one continuous glass action badge.
+   CSV keeps its original onclick; only its visible label is hidden on mobile. */
+@media screen and (max-width: 767px) {
+  html body.theme-crystal #inventory-top-header {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  /* Greeting remains on the left, outside the action badge. */
+  html body.theme-crystal #v156-mobile-greeting {
+    display: flex !important;
+    position: static !important;
+    transform: none !important;
+    flex: 1 1 auto !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 4px 0 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    order: 0 !important;
+  }
+  html body.theme-crystal #v156-mobile-greeting-text {
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    font-size: 11px !important;
+    font-weight: 750 !important;
+    color: #244765 !important;
+  }
+
+  /* Existing user banner contains the real sidebar toggle and Logout button. */
+  html body.theme-crystal #inventory-top-header #current-user-banner {
+    display: inline-flex !important;
+    order: 1 !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    height: 38px !important;
+    padding: 3px 4px 3px 5px !important;
+    margin: 0 !important;
+    border: 1px solid rgba(255,255,255,.42) !important;
+    border-right: 0 !important;
+    border-radius: 13px 0 0 13px !important;
+    background: rgba(218,235,255,.28) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.30), 0 3px 10px rgba(20,55,95,.12) !important;
+  }
+  html body.theme-crystal #inventory-top-header #current-user-banner > div:first-child {
+    display: none !important;
+  }
+  html body.theme-crystal #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle {
+    display: inline-flex !important;
+    position: static !important;
+    order: 0 !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    flex: 0 0 34px !important;
+    margin: 0 !important;
+    padding: 6px !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  html body.theme-crystal #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+    display: inline-flex !important;
+    order: 1 !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 32px !important;
+    flex: 0 0 34px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 6px !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /* CSV is the third icon in the same continuous badge. */
+  html body.theme-crystal #inventory-top-header > div:last-child > button[onclick="exportCSVData()"] {
+    display: inline-flex !important;
+    order: 2 !important;
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    flex: 0 0 38px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 1px solid rgba(255,255,255,.42) !important;
+    border-left: 0 !important;
+    border-radius: 0 13px 13px 0 !important;
+    background: rgba(218,235,255,.28) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.30), 0 3px 10px rgba(20,55,95,.12) !important;
+    color: #244765 !important;
+  }
+  html body.theme-crystal #inventory-top-header > div:last-child > button[onclick="exportCSVData()"] i,
+  html body.theme-crystal #inventory-top-header > div:last-child > button[onclick="exportCSVData()"] svg {
+    display: inline-block !important;
+    width: 17px !important;
+    height: 17px !important;
+    margin: 0 !important;
+  }
+  html body.theme-crystal #inventory-top-header > div:last-child > button[onclick="exportCSVData()"] span {
+    display: none !important;
+  }
+
+  /* Hide empty wrapper spacing; keep the existing header button hierarchy intact. */
+  html body.theme-crystal #inventory-top-header > div:last-child {
+    display: contents !important;
+  }
+}
+@media screen and (max-width: 380px) {
+  html body.theme-crystal #v156-mobile-greeting-text {
+    font-size: 10px !important;
+  }
+}
+</style>
+
+
+<style id="v158-mobile-header-layout-correction">
+@media screen and (max-width: 767px) {
+  html body.theme-crystal #inventory-top-header {
+    position: relative !important;
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-height: 58px !important;
+    padding: 8px 10px !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Greeting occupies a reserved lane; it cannot overlap the action group. */
+  html body.theme-crystal #inventory-top-header #v156-mobile-greeting {
+    display: flex !important;
+    position: absolute !important;
+    left: 12px !important;
+    right: 164px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+  }
+  html body.theme-crystal #inventory-top-header #v156-mobile-greeting-text {
+    display: block !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    font-size: 10px !important;
+    line-height: 1.25 !important;
+    font-weight: 800 !important;
+    color: #244765 !important;
+  }
+
+  /* Hide the legacy brand group; greeting is now the single header identity. */
+  html body.theme-crystal #inventory-top-header #header-brand-group,
+  html body.theme-crystal #inventory-top-header #live-clock {
+    display: none !important;
+  }
+
+  /* Keep the original action wrapper as a flex row (never display:contents). */
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 {
+    display: flex !important;
+    position: relative !important;
+    z-index: 2 !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: 40px !important;
+    margin: 0 0 0 auto !important;
+    padding: 3px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    border: 1px solid rgba(255,255,255,.48) !important;
+    border-radius: 13px !important;
+    background: rgba(218,235,255,.30) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.32), 0 3px 10px rgba(20,55,95,.12) !important;
+  }
+
+  html body.theme-crystal #inventory-top-header #current-user-banner {
+    display: inline-flex !important;
+    position: static !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    height: 32px !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 2px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  html body.theme-crystal #inventory-top-header #current-user-banner > div:first-child {
+    display: none !important;
+  }
+  html body.theme-crystal #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle,
+  html body.theme-crystal #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+    display: inline-flex !important;
+    position: static !important;
+    flex: 0 0 34px !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    margin: 0 !important;
+    padding: 6px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] {
+    display: inline-flex !important;
+    position: static !important;
+    flex: 0 0 34px !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    margin: 0 !important;
+    padding: 6px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #244765 !important;
+    font-size: 0 !important;
+  }
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] i,
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] svg {
+    display: inline-block !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+  }
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] span {
+    display: none !important;
+  }
+}
+@media screen and (max-width: 380px) {
+  html body.theme-crystal #inventory-top-header #v156-mobile-greeting {
+    right: 154px !important;
+  }
+  html body.theme-crystal #inventory-top-header #v156-mobile-greeting-text {
+    font-size: 9px !important;
+  }
+}
+</style>
+
+
+<style id="v159-mobile-greeting-font-size">
+/* V159: enlarge only the mobile Light greeting text; preserve reserved width and button layout. */
+@media screen and (max-width: 767px) {
+  html body.theme-crystal #inventory-top-header #v156-mobile-greeting-text {
+    font-size: 13px !important;
+    line-height: 1.3 !important;
+    font-weight: 800 !important;
+    letter-spacing: .005em !important;
+  }
+}
+@media screen and (max-width: 380px) {
+  html body.theme-crystal #inventory-top-header #v156-mobile-greeting-text {
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+  }
+}
+</style>
+
+
+<style id="v160-mobile-greeting-font-extra-large">
+/* V160: increase mobile Light greeting readability without changing its layout lane. */
+@media screen and (max-width: 767px) {
+  html body.theme-crystal #inventory-top-header #v156-mobile-greeting-text {
+    font-size: 15px !important;
+    line-height: 1.3 !important;
+    font-weight: 800 !important;
+    letter-spacing: 0 !important;
+  }
+}
+@media screen and (max-width: 380px) {
+  html body.theme-crystal #inventory-top-header #v156-mobile-greeting-text {
+    font-size: 13px !important;
+    line-height: 1.25 !important;
+  }
+}
+</style>
+
+
+<style id="v161-mobile-action-order">
+/* V161: reorder the original controls to Toggle | CSV download | Logout.
+   CSS-only; original buttons and onclick handlers remain intact. */
+@media screen and (max-width: 767px) {
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 {
+    display: grid !important;
+    grid-template-columns: 34px 34px 34px !important;
+    grid-template-rows: 32px !important;
+    grid-auto-flow: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    width: 112px !important;
+    min-width: 112px !important;
+    height: 40px !important;
+    padding: 3px !important;
+  }
+  /* Flatten only the wrapper around the original Toggle and Logout controls. */
+  html body.theme-crystal #inventory-top-header #current-user-banner {
+    display: contents !important;
+  }
+  html body.theme-crystal #inventory-top-header #current-user-banner > div:first-child {
+    display: none !important;
+  }
+  html body.theme-crystal #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    order: 1 !important;
+  }
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    order: 2 !important;
+  }
+  html body.theme-crystal #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    order: 3 !important;
+  }
+}
+@media screen and (max-width: 380px) {
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 {
+    width: 106px !important;
+    min-width: 106px !important;
+    grid-template-columns: 32px 32px 32px !important;
+  }
+  html body.theme-crystal #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle,
+  html body.theme-crystal #inventory-top-header #current-user-banner button[onclick="logoutUser()"],
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] {
+    width: 32px !important;
+    min-width: 32px !important;
+    flex-basis: 32px !important;
+  }
+}
+</style>
+
+
+<style id="v162-mobile-light-sidebar-icon-contrast">
+/* V162: strengthen sidebar icon contrast in UI 2 Light mobile drawer only.
+   Preserve each button's background, size, spacing and click behavior. */
+@media screen and (max-width: 900px) {
+  html body.theme-glass.theme-light:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav .sidebar-btn {
+    color: #d9f3ff !important;
+  }
+  html body.theme-glass.theme-light:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav .sidebar-btn > i,
+  html body.theme-glass.theme-light:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav .sidebar-btn > svg {
+    color: #d9f3ff !important;
+    stroke: #d9f3ff !important;
+    opacity: 1 !important;
+    filter: drop-shadow(0 0 3px rgba(78, 190, 255, .48)) !important;
+  }
+  html body.theme-glass.theme-light:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav .sidebar-btn.theme-accent-bg > i,
+  html body.theme-glass.theme-light:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav .sidebar-btn.theme-accent-bg > svg,
+  html body.theme-glass.theme-light:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav .sidebar-btn.active > i,
+  html body.theme-glass.theme-light:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav .sidebar-btn.active > svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    filter: drop-shadow(0 0 4px rgba(255,255,255,.42)) !important;
+  }
+  html body.theme-glass.theme-light:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #sidebar-toggle,
+  html body.theme-glass.theme-light:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #open-appearance-btn {
+    color: #e4f7ff !important;
+  }
+  html body.theme-glass.theme-light:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #sidebar-toggle svg,
+  html body.theme-glass.theme-light:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #open-appearance-btn svg,
+  html body.theme-glass.theme-light:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #open-appearance-btn i {
+    color: #e4f7ff !important;
+    stroke: #e4f7ff !important;
+    opacity: 1 !important;
+    filter: drop-shadow(0 0 3px rgba(78,190,255,.5)) !important;
+  }
+}
+</style>
+
+
+<style id="v163-mobile-dark-sidebar-icon-contrast">
+/* V163: match the improved sidebar icon visibility in UI 2 Dark mobile.
+   Keep the same contrast treatment as Light while preserving the Dark glass surface. */
+@media screen and (max-width: 900px) {
+  html body.theme-glass.theme-dark:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav .sidebar-btn {
+    color: #d9f3ff !important;
+  }
+  html body.theme-glass.theme-dark:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav .sidebar-btn > i,
+  html body.theme-glass.theme-dark:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav .sidebar-btn > svg {
+    color: #d9f3ff !important;
+    stroke: #d9f3ff !important;
+    opacity: 1 !important;
+    filter: drop-shadow(0 0 3px rgba(78, 190, 255, .48)) !important;
+  }
+  html body.theme-glass.theme-dark:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav .sidebar-btn.theme-accent-bg > i,
+  html body.theme-glass.theme-dark:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav .sidebar-btn.theme-accent-bg > svg,
+  html body.theme-glass.theme-dark:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav .sidebar-btn.active > i,
+  html body.theme-glass.theme-dark:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav .sidebar-btn.active > svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    filter: drop-shadow(0 0 4px rgba(255,255,255,.42)) !important;
+  }
+  html body.theme-glass.theme-dark:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #sidebar-toggle,
+  html body.theme-glass.theme-dark:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #open-appearance-btn {
+    color: #e4f7ff !important;
+  }
+  html body.theme-glass.theme-dark:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #sidebar-toggle svg,
+  html body.theme-glass.theme-dark:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #open-appearance-btn svg,
+  html body.theme-glass.theme-dark:not(.theme-classic)
+  #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #open-appearance-btn i {
+    color: #e4f7ff !important;
+    stroke: #e4f7ff !important;
+    opacity: 1 !important;
+    filter: drop-shadow(0 0 3px rgba(78,190,255,.5)) !important;
+  }
+}
+</style>
+
+
+<style id="v166-mobile-dark-header-match-light-fix">
+/* V166: correct theme selector for the app's actual dark/classic body classes.
+   Mobile dark header mirrors the approved Light arrangement while preserving
+   the dark glass palette and original button elements/handlers. */
+@media screen and (max-width: 767px) {
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header {
+    position: relative !important;
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-height: 58px !important;
+    padding: 8px 10px !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #header-brand-group,
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #live-clock {
+    display: none !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #v156-mobile-greeting {
+    display: flex !important;
+    position: absolute !important;
+    left: 12px !important;
+    right: 164px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #v156-mobile-greeting-text {
+    display: block !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    font-size: 15px !important;
+    line-height: 1.3 !important;
+    font-weight: 800 !important;
+    color: #f0f7ff !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header > div.flex.items-center.gap-4 {
+    display: grid !important;
+    grid-template-columns: 34px 34px 34px !important;
+    grid-template-rows: 32px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    position: relative !important;
+    z-index: 2 !important;
+    flex: 0 0 auto !important;
+    width: 112px !important;
+    min-width: 112px !important;
+    height: 40px !important;
+    margin: 0 0 0 auto !important;
+    padding: 3px !important;
+    border: 1px solid rgba(165,205,245,.38) !important;
+    border-radius: 13px !important;
+    background: rgba(20,45,78,.46) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 3px 10px rgba(0,0,0,.20) !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #current-user-banner {
+    display: contents !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #current-user-banner > div:first-child {
+    display: none !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle {
+    display: inline-flex !important;
+    position: static !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    order: 1 !important;
+    flex: 0 0 34px !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    margin: 0 !important;
+    padding: 6px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    color: #c9eaff !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle svg {
+    color: #c9eaff !important;
+    stroke: #c9eaff !important;
+    opacity: 1 !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] {
+    display: inline-flex !important;
+    position: static !important;
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    order: 2 !important;
+    flex: 0 0 34px !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    margin: 0 !important;
+    padding: 6px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    color: #c9eaff !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    font-size: 0 !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] span {
+    display: none !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] svg,
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] i {
+    display: inline-block !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+    color: #c9eaff !important;
+    stroke: #c9eaff !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+    display: inline-flex !important;
+    position: static !important;
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    order: 3 !important;
+    flex: 0 0 34px !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    margin: 0 !important;
+    padding: 6px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    color: #c9eaff !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #current-user-banner button[onclick="logoutUser()"] svg,
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #current-user-banner button[onclick="logoutUser()"] i {
+    color: #c9eaff !important;
+    stroke: #c9eaff !important;
+    opacity: 1 !important;
+  }
+}
+@media screen and (max-width: 380px) {
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #v156-mobile-greeting {
+    right: 154px !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #v156-mobile-greeting-text {
+    font-size: 13px !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header > div.flex.items-center.gap-4 {
+    width: 106px !important;
+    min-width: 106px !important;
+    grid-template-columns: 32px 32px 32px !important;
+  }
+}
+</style>
+
+
+<style id="v167-mobile-role-badge-style">
+/* V167: show the current signed-in role under the greeting on mobile, both UI 2 modes. */
+@media screen and (max-width: 767px) {
+  html body.theme-glass.theme-light.theme-crystal #inventory-top-header #v156-mobile-greeting,
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #v156-mobile-greeting {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    overflow: hidden !important;
+  }
+  html body.theme-glass.theme-light.theme-crystal #inventory-top-header #v167-mobile-role-badge,
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #v167-mobile-role-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    align-self: flex-start !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    padding: 2px 7px !important;
+    border-radius: 999px !important;
+    font-size: 9px !important;
+    line-height: 1.25 !important;
+    letter-spacing: .045em !important;
+    font-weight: 850 !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+    border: 1px solid rgba(59,130,246,.30) !important;
+  }
+  html body.theme-glass.theme-light.theme-crystal #inventory-top-header #v156-mobile-greeting-text {
+    color: #244765 !important;
+  }
+  html body.theme-glass.theme-light.theme-crystal #inventory-top-header #v167-mobile-role-badge {
+    color: #15558a !important;
+    background: rgba(191,222,250,.62) !important;
+    border-color: rgba(40,112,180,.32) !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #v156-mobile-greeting-text {
+    color: #f0f7ff !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #v167-mobile-role-badge {
+    color: #c9eaff !important;
+    background: rgba(35,105,160,.28) !important;
+    border-color: rgba(120,190,235,.38) !important;
+  }
 }
 </style>
 
