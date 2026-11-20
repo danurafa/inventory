@@ -226,8 +226,12 @@
   ol, ul, menu {
     list-style: none;
   }
-  img, svg, video, canvas, audio, iframe, embed, object {
+  img, video, canvas, audio, iframe, embed, object {
     display: block;
+    vertical-align: middle;
+  }
+  svg {
+    display: inline-block;
     vertical-align: middle;
   }
   img, video {
@@ -8232,7 +8236,7 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-master" oninput="renderMasterTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Nama / Kategori..." autocomplete="off">
+                                    <input type="text" id="search-master" oninput="queueTableRender('master')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Nama / Kategori..." autocomplete="off">
                                 </div>
                                 <button onclick="printMasterTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
@@ -8318,7 +8322,7 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-po" oninput="renderPoTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari No PO / Customer / Barang..." autocomplete="off">
+                                    <input type="text" id="search-po" oninput="queueTableRender('po')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari No PO / Customer / Barang..." autocomplete="off">
                                 </div>
                                 <button onclick="printPoTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
@@ -8404,7 +8408,7 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-masuk" oninput="renderMasukTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Sumber..." autocomplete="off">
+                                    <input type="text" id="search-masuk" oninput="queueTableRender('masuk')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Sumber..." autocomplete="off">
                                 </div>
                                 <button onclick="printMasukTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
@@ -8502,7 +8506,7 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-keluar" oninput="renderKeluarTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Customer..." autocomplete="off">
+                                    <input type="text" id="search-keluar" oninput="queueTableRender('keluar')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Customer..." autocomplete="off">
                                 </div>
                                 <button onclick="printKeluarTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
@@ -8641,7 +8645,7 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-sampel" oninput="renderSampelTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Customer / Nama..." autocomplete="off">
+                                    <input type="text" id="search-sampel" oninput="queueTableRender('sampel')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Customer / Nama..." autocomplete="off">
                                 </div>
                                 <button onclick="printSampelTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
@@ -8732,7 +8736,7 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-retur" oninput="renderReturTable()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Alasan..." autocomplete="off">
+                                    <input type="text" id="search-retur" oninput="queueTableRender('retur')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Alasan..." autocomplete="off">
                                 </div>
                                 <button onclick="printReturTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i><span>Print</span>
@@ -9657,22 +9661,40 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
         };
 
 
+        let refreshAllViewsFrame = null;
         window.refreshAllViews = function() {
-            populateItemDropdowns();
-            populatePoDropdowns();
-            renderDashboard();
-            renderMasterTable();
-            renderMasukTable();
-            renderKeluarTable();
-            renderPoTable();
-            renderSampelTable();
-            renderReturTable();
-            renderUserTable();
-            const backupCounts = { items: 'backup-count-items', masuk: 'backup-count-masuk', keluar: 'backup-count-keluar', po: 'backup-count-po' };
-            Object.entries(backupCounts).forEach(([key, id]) => { const el = document.getElementById(id); if (el) el.textContent = Array.isArray(window.gudangAppDb[key]) ? window.gudangAppDb[key].length : 0; });
-            renderCurrentUserBanner();
-            applyRoleRestrictions();
-            lucide.createIcons();
+            if (refreshAllViewsFrame !== null) return;
+            refreshAllViewsFrame = requestAnimationFrame(() => {
+                refreshAllViewsFrame = null;
+                const activeTab = ['dashboard','master','po','masuk','keluar','sampel','retur','users','backup']
+                    .find(tab => {
+                        const section = document.getElementById(`tab-${tab}`);
+                        return section && !section.classList.contains('hidden');
+                    }) || 'dashboard';
+
+                if (['po','masuk','keluar','retur'].includes(activeTab)) {
+                    populateItemDropdowns();
+                }
+                if (activeTab === 'keluar') populatePoDropdowns();
+
+                const renderers = {
+                    dashboard: renderDashboard,
+                    master: renderMasterTable,
+                    masuk: renderMasukTable,
+                    keluar: renderKeluarTable,
+                    po: renderPoTable,
+                    sampel: renderSampelTable,
+                    retur: renderReturTable,
+                    users: renderUserTable
+                };
+                renderers[activeTab]?.();
+
+                const backupCounts = { items: 'backup-count-items', masuk: 'backup-count-masuk', keluar: 'backup-count-keluar', po: 'backup-count-po' };
+                Object.entries(backupCounts).forEach(([key, id]) => { const el = document.getElementById(id); if (el) el.textContent = Array.isArray(window.gudangAppDb[key]) ? window.gudangAppDb[key].length : 0; });
+                renderCurrentUserBanner();
+                applyRoleRestrictions();
+                lucide.createIcons();
+            });
         };
 
         window.resetData = async function() {
@@ -10078,6 +10100,25 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
             // Ini mencegah efek berkedip ketika data dashboard diperbarui.
         }
 
+        const inventoryTableRenderTimers = {};
+        window.queueTableRender = function(tabId) {
+            if (inventoryTableRenderTimers[tabId]) {
+                clearTimeout(inventoryTableRenderTimers[tabId]);
+            }
+            inventoryTableRenderTimers[tabId] = setTimeout(() => {
+                inventoryTableRenderTimers[tabId] = null;
+                const renderers = {
+                    master: window.renderMasterTable,
+                    po: window.renderPoTable,
+                    masuk: window.renderMasukTable,
+                    keluar: window.renderKeluarTable,
+                    sampel: window.renderSampelTable,
+                    retur: window.renderReturTable
+                };
+                renderers[tabId]?.();
+            }, 120);
+        };
+
         window.switchTab = function(tabId) {
             const tabs = ['dashboard', 'master', 'po', 'masuk', 'keluar', 'sampel', 'retur', 'users', 'backup'];
             tabs.forEach(t => {
@@ -10100,6 +10141,21 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
                 activeBtn.className = "sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20";
             }
             if (tabId === 'dashboard') animateDashboardOnOpen();
+            if (['po','masuk','keluar','retur'].includes(tabId)) {
+                populateItemDropdowns();
+            }
+            if (tabId === 'keluar') populatePoDropdowns();
+            const renderers = {
+                dashboard: window.renderDashboard,
+                master: window.renderMasterTable,
+                po: window.renderPoTable,
+                masuk: window.renderMasukTable,
+                keluar: window.renderKeluarTable,
+                sampel: window.renderSampelTable,
+                retur: window.renderReturTable,
+                users: window.renderUserTable
+            };
+            renderers[tabId]?.();
             lucide.createIcons();
         };
 
@@ -10195,12 +10251,18 @@ body.theme-glass.theme-light .inventory-item-select-option[aria-selected="true"]
             if (!clockEl || document.hidden) return;
             // Gunakan zona waktu Jakarta secara eksplisit agar label WIB selalu akurat.
             const now = new Date();
-            const dateStr = new Intl.DateTimeFormat('id-ID', {
-                timeZone: 'Asia/Jakarta', weekday: 'short', day: '2-digit', month: 'short', year: 'numeric'
-            }).format(now);
-            const timeStr = new Intl.DateTimeFormat('en-US', {
-                timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
-            }).format(now);
+            if (!window.__inventoryClockFormatters) {
+                window.__inventoryClockFormatters = {
+                    date: new Intl.DateTimeFormat('id-ID', {
+                        timeZone: 'Asia/Jakarta', weekday: 'short', day: '2-digit', month: 'short', year: 'numeric'
+                    }),
+                    time: new Intl.DateTimeFormat('en-US', {
+                        timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+                    })
+                };
+            }
+            const dateStr = window.__inventoryClockFormatters.date.format(now);
+            const timeStr = window.__inventoryClockFormatters.time.format(now);
             let timeEl = clockEl.querySelector('[data-clock-time]');
             let dateEl = clockEl.querySelector('[data-clock-date]');
             if (!timeEl || !dateEl) {
@@ -14113,7 +14175,11 @@ body.theme-glass.theme-crystal .modal-content {
         search.focus();
       }else close();
     });
-    search.addEventListener('input',render);
+    let dropdownSearchTimer=null;
+    search.addEventListener('input',()=>{
+      if(dropdownSearchTimer)clearTimeout(dropdownSearchTimer);
+      dropdownSearchTimer=setTimeout(()=>{dropdownSearchTimer=null;render();},80);
+    });
     document.addEventListener('click',e=>{
       if(!wrap.contains(e.target) && !panel.contains(e.target))close();
     });
@@ -14146,7 +14212,7 @@ body.theme-glass.theme-crystal .modal-content {
     });
     observer.observe(document.body,{
       childList:true,subtree:true,attributes:true,
-      attributeFilter:['class','hidden','aria-hidden','style']
+      attributeFilter:['class','disabled','hidden','aria-hidden']
     });
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
