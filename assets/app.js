@@ -2789,7 +2789,7 @@
                 ...window.gudangAppDb.masuk.map(m => ({ time: m.tanggal, type: 'MASUK', id: m.id, name: m.nama, qty: `+${m.qty} ${m.satuan}`, partner: m.supplier, user: m.user || 'Administrator' })),
                 ...window.gudangAppDb.keluar.map(k => ({ time: k.tanggal, type: 'KELUAR', id: k.id, name: k.nama, qty: `-${k.qty} ${k.satuan}`, partner: k.tujuan, user: k.user || 'Administrator' })),
                 ...window.gudangAppDb.retur.map(r => ({ time: r.tanggal, type: 'RETUR', id: r.id, name: r.nama, qty: `${r.qty} ${r.satuan}`, partner: r.keterangan, user: r.user || 'Administrator' }))
-            ].sort((a,b) => new Date(b.time) - new Date(a.time)).slice(0, 5);
+            ].sort((a,b) => new Date(b.time) - new Date(a.time)).slice(0, 20);
 
             recentBody.innerHTML = allLogs.map(l => {
                 const badgeColor = l.type === 'MASUK' ? 'bg-emerald-500/20 text-emerald-300' : (l.type === 'KELUAR' ? 'bg-rose-500/20 text-rose-300' : 'bg-amber-500/20 text-amber-300');
