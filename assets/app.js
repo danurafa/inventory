@@ -4877,6 +4877,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
 
 (function(){
   const instances = new WeakMap();
+  const measureContext=document.createElement('canvas').getContext('2d');
   // Semua dropdown yang terlihat memakai UI custom. Select helper tersembunyi
   // tetap native agar tidak membuat kontrol ganda atau mengubah alur internal.
   function isTarget(select){
@@ -4914,7 +4915,15 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
       const placeBelow=below>=Math.min(220,above) || below>=above;
       const available=Math.max(120,placeBelow?below:above);
       const maxList=Math.max(80,Math.min(window.innerWidth<=640?240:280,available-62));
-      const width=Math.min(rect.width,window.innerWidth-margin*2);
+      let widestOption=0;
+      if(measureContext){
+        list.querySelectorAll('.inventory-item-select-option').forEach(option=>{
+          const style=getComputedStyle(option);
+          measureContext.font=`${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+          widestOption=Math.max(widestOption,measureContext.measureText(option.textContent).width);
+        });
+      }
+      const width=Math.min(Math.max(rect.width,Math.ceil(widestOption+48)),window.innerWidth-margin*2);
       const left=Math.max(margin,Math.min(rect.left,window.innerWidth-width-margin));
       panel.style.width=width+'px';
       panel.style.left=left+'px';
