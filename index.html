@@ -13020,6 +13020,66 @@ body.theme-crystal #inventory-top-header #live-clock svg { color:#278bd2 !import
 }
 </style>
 
+
+<style id="v171-dashboard-chart-axis-contrast">
+/* V171: override the legacy Light Mode fills (#526d88 / #355574)
+   only for the Dashboard movement chart axis labels. */
+html body #tab-dashboard #movement-trend-card .movement-trend-chart svg text.movement-axis-value,
+html body #tab-dashboard #movement-trend-card .movement-trend-chart svg text.movement-axis-date {
+  fill: #F4F8FF !important;
+  color: #F4F8FF !important;
+  opacity: 1 !important;
+  font-weight: 750 !important;
+}
+</style>
+
+
+
+<style id="v178-admin-badge-popup-isolation">
+/* V178 — cegah badge/identitas Admin dari header menembus popup Simpan dan Ganti UI.
+   Berlaku pada kedua UI dan semua tema; tidak mengubah autentikasi, role, atau proses simpan. */
+html body:has(#detail-save-modal:not(.hidden)) #inventory-top-header,
+html body:has(#appearance-panel:not(.hidden)) #inventory-top-header,
+html body:has(#confirm-modal:not(.hidden)) #inventory-top-header,
+html body:has(#auto-logout-modal:not(.hidden)) #inventory-top-header,
+html body:has(#inventory-print-options:not(.hidden)) #inventory-top-header {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Pastikan overlay popup berada di atas header, termasuk badge Admin. */
+html body:has(#detail-save-modal:not(.hidden)) #detail-save-modal,
+html body:has(#appearance-panel:not(.hidden)) #appearance-panel,
+html body:has(#confirm-modal:not(.hidden)) #confirm-modal,
+html body:has(#auto-logout-modal:not(.hidden)) #auto-logout-modal {
+  z-index: 2000 !important;
+}
+
+/* Jaga agar badge role hanya tampil di area identitas pengguna saat popup tertutup. */
+html body:has(#detail-save-modal:not(.hidden)) #current-user-banner .role-badge-admin,
+html body:has(#appearance-panel:not(.hidden)) #current-user-banner .role-badge-admin,
+html body:has(#confirm-modal:not(.hidden)) #current-user-banner .role-badge-admin,
+html body:has(#auto-logout-modal:not(.hidden)) #current-user-banner .role-badge-admin {
+  display: none !important;
+}
+</style>
+
+
+
+<style id="v179-hide-user-chip-during-appearance">
+/* V179 — sembunyikan seluruh identitas header, termasuk greeting/badge mobile,
+   saat dialog Tampilan Aplikasi terbuka. */
+html body:has(#appearance-panel:not(.hidden)) #inventory-top-header,
+html body:has(#appearance-panel:not(.hidden)) #inventory-top-header #current-user-banner,
+html body:has(#appearance-panel:not(.hidden)) #inventory-top-header #v156-mobile-greeting,
+html body:has(#appearance-panel:not(.hidden)) #inventory-top-header #v167-mobile-role-badge {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+</style>
+
 </body>
 <style id="v100-liquid-glass-toast">
 /* V100 — Premium Liquid Glass Toast: scoped only to the notification component */
@@ -16026,6 +16086,521 @@ html body #inventory-sidebar nav {
     background: rgba(35,105,160,.28) !important;
     border-color: rgba(120,190,235,.38) !important;
   }
+}
+</style>
+
+<style id="v172-ui2-chart-print-glass">
+/* V172 — UI 2 (Liquid Glass): grafik Analisis Inventory + popup Print.
+   Hanya aktif di body.theme-crystal; UI 1 & JS tidak diubah.
+   Catatan: blok V171 (warna sumbu) sebelumnya tertanam di dalam template string JS (jendela cetak),
+   sehingga tidak pernah berlaku pada halaman. Perbaikan warna sumbu dipindah ke sini. */
+
+/* ===== GRAFIK: font terang & jelas ===== */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-trend-chart svg text.movement-axis-value {
+  fill:#e3edff !important; color:#e3edff !important; opacity:1 !important;
+  font-weight:700 !important; paint-order:stroke; stroke:rgba(8,14,42,.55); stroke-width:2.2px; stroke-linejoin:round;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-trend-chart svg text.movement-axis-date {
+  fill:#ffffff !important; color:#ffffff !important; opacity:1 !important;
+  font-weight:750 !important; paint-order:stroke; stroke:rgba(8,14,42,.55); stroke-width:2.2px; stroke-linejoin:round;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-grid-line {
+  stroke:rgba(255,255,255,.55) !important; opacity:.28 !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-premium-legend,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-premium-legend span,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card #movement-slide-count { color:#ffffff !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card #movement-slide-subtitle { color:var(--lg-muted) !important; }
+
+/* ===== GRAFIK: card dalam = kaca tipis (tanpa blur kedua) ===== */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-summary,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-topsku-panel {
+  background:linear-gradient(155deg,rgba(255,255,255,.16),rgba(255,255,255,.05) 60%,rgba(255,255,255,.09)) !important;
+  border:1px solid rgba(255,255,255,.24) !important;
+  border-radius:20px !important;
+  box-shadow:inset 1.5px 1.5px 0 rgba(255,255,255,.38),inset 0 0 18px rgba(255,255,255,.05) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-summary-in { border-left:3px solid #4aa3ff !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-summary-out { border-left:3px solid #ff6b9d !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-summary-net { border-left:3px solid #a99aff !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-topsku-in { border-color:rgba(80,220,180,.45) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-topsku-out { border-color:rgba(255,107,157,.45) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-summary span,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-summary strong,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-topsku-heading h4,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-topsku-value { color:#ffffff !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-summary small,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-topsku-heading p { color:var(--lg-muted) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-topsku-name { color:var(--lg-ink-2) !important; font-weight:600; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-topsku-track { background:rgba(255,255,255,.16) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-topsku-tag { color:#ffffff !important; background:rgba(255,255,255,.14) !important; border-color:rgba(255,255,255,.30) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-topsku-icon { color:#ffffff !important; background:rgba(255,255,255,.16) !important; border:1px solid rgba(255,255,255,.30); }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-chart-empty { color:var(--lg-muted) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-premium-visual { border-left-color:rgba(255,255,255,.22) !important; }
+
+/* Tombol periode, panah & titik slide: kaca pil, tanpa blur bertumpuk dan tanpa transform */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card *,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card *:hover {
+  backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-range-btn,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-slide-arrow {
+  background:linear-gradient(155deg,rgba(255,255,255,.24),rgba(255,255,255,.08)) !important;
+  border:1px solid rgba(255,255,255,.38) !important;
+  color:#ffffff !important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.45) !important;
+  transform:none !important; filter:none !important;
+  transition:background-color .16s ease,border-color .16s ease !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-range-btn:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-slide-arrow:hover {
+  background:linear-gradient(155deg,rgba(255,255,255,.34),rgba(255,255,255,.14)) !important;
+  border-color:rgba(255,255,255,.58) !important; color:#fff !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-range-btn.is-active {
+  background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0) 52%),linear-gradient(160deg,#3d9bff,#0a62d6) !important;
+  border-color:rgba(255,255,255,.60) !important; color:#fff !important; font-weight:700;
+  box-shadow:0 6px 18px rgba(10,109,224,.40),inset 1.5px 1.5px 0 rgba(255,255,255,.55) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-slide-dot { background:rgba(255,255,255,.50) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-slide-dot.is-active { background:#4aa3ff !important; box-shadow:0 0 10px rgba(74,163,255,.65) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #movement-trend-card .movement-premium-icon {
+  background:linear-gradient(155deg,rgba(255,255,255,.26),rgba(255,255,255,.08)) !important;
+  border:1px solid rgba(255,255,255,.36) !important; color:#ffffff !important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.45) !important;
+}
+
+/* ===== POPUP PRINT: kaca iOS gelap (menyamai popup UI 2 lainnya) ===== */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options {
+  background:radial-gradient(circle at 20% 15%,rgba(74,163,255,.22),transparent 40%),
+             radial-gradient(circle at 85% 90%,rgba(170,90,255,.22),transparent 42%),
+             rgba(6,10,30,.55) !important;
+  backdrop-filter:blur(18px) saturate(150%) !important;
+  -webkit-backdrop-filter:blur(18px) saturate(150%) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options > div {
+  background:linear-gradient(155deg,rgba(255,255,255,.20) 0%,rgba(255,255,255,.07) 42%,rgba(255,255,255,.12) 100%),
+             linear-gradient(160deg,rgba(44,56,120,.74),rgba(18,24,62,.82)) !important;
+  border:1px solid rgba(255,255,255,.34) !important;
+  border-radius:32px !important;
+  padding:26px !important;
+  box-shadow:0 30px 80px rgba(0,0,0,.50),var(--lg-edge) !important;
+  backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+  color:var(--lg-ink) !important;
+  animation:lgModalFade .22s ease-out both;
+}
+@keyframes lgModalFade { from { opacity:0; } to { opacity:1; } }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options * { backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options.print-theme-light > div > div:first-child,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options.print-theme-dark > div > div:first-child { color:#ffffff !important; font-size:18px !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options.print-theme-light > div > div:nth-child(2),
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options.print-theme-dark > div > div:nth-child(2) { color:var(--lg-muted) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options label,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options.print-theme-light label,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options.print-theme-dark label {
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  border:1px solid rgba(255,255,255,.28) !important;
+  border-radius:18px !important;
+  background:rgba(255,255,255,.08) !important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.30) !important;
+  font-weight:600;
+  transition:background-color .16s ease,border-color .16s ease !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options label:hover {
+  background:rgba(255,255,255,.15) !important; border-color:rgba(255,255,255,.45) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options label:has(input[type="radio"]:checked) {
+  background:rgba(74,163,255,.22) !important; border-color:rgba(130,195,255,.75) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options #print-date-fields label {
+  background:transparent !important; border:0 !important; box-shadow:none !important; border-radius:0 !important;
+  color:var(--lg-ink-2) !important; -webkit-text-fill-color:var(--lg-ink-2) !important; font-weight:600;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options input[type="radio"] { accent-color:#4aa3ff !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options input[type="date"],
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options #print-date-fields input {
+  background:rgba(10,16,44,.45) !important;
+  color:#ffffff !important; -webkit-text-fill-color:#ffffff !important;
+  border:1px solid rgba(255,255,255,.30) !important;
+  border-radius:14px !important;
+  color-scheme:dark;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.25) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options input[type="date"]:focus {
+  border-color:var(--lg-blue) !important; box-shadow:0 0 0 3px rgba(74,163,255,.35) !important; outline:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options > div > div:last-child { color:var(--lg-muted) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options button {
+  border-radius:999px !important;
+  padding:10px 20px !important;
+  color:#ffffff !important; -webkit-text-fill-color:#ffffff !important;
+  font-weight:700 !important;
+  transform:none !important; filter:none !important;
+  transition:background-color .16s ease,border-color .16s ease !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options #print-cancel,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options.print-theme-light #print-cancel,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options.print-theme-dark #print-cancel {
+  background:linear-gradient(155deg,rgba(255,255,255,.22),rgba(255,255,255,.08)) !important;
+  border:1px solid rgba(255,255,255,.38) !important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.42) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options #print-cancel:hover { background:linear-gradient(155deg,rgba(255,255,255,.32),rgba(255,255,255,.14)) !important; border-color:rgba(255,255,255,.55) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options #print-continue,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options.print-theme-light #print-continue,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options.print-theme-dark #print-continue {
+  background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0) 52%),linear-gradient(160deg,#3d9bff,#0a62d6) !important;
+  border:1px solid rgba(255,255,255,.55) !important;
+  box-shadow:0 10px 26px rgba(10,109,224,.45),inset 1.5px 1.5px 0 rgba(255,255,255,.55) !important;
+  text-shadow:0 1px 2px rgba(0,30,90,.5);
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options #print-continue:hover {
+  background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.04) 52%),linear-gradient(160deg,#4aa5ff,#1470e6) !important;
+}
+@media (prefers-reduced-motion:reduce) {
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options > div { animation:none !important; }
+}
+</style>
+
+<style id="v173-ui2-tables-inputs-backup-hero">
+/* V173 — UI 2 (Liquid Glass): tabel riwayat, kolom input, dan header Backup & Restore.
+   Hanya aktif di body.theme-crystal. UI 1 dan JS tidak diubah.
+   Tujuan: kaca GELAP translusen (tidak terlalu terang), teks putih kontras tinggi. */
+
+/* ===== KOLOM INPUT (form di semua tab) ===== */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="hidden"]),
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] select,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] textarea {
+  background-color:rgba(10,16,44,.42) !important;
+  background-image:none !important;
+  border:1px solid rgba(255,255,255,.26) !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.28) !important;
+  color-scheme:dark;
+  transition:border-color .16s ease,background-color .16s ease,box-shadow .16s ease !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] select:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] textarea:hover { border-color:rgba(255,255,255,.42) !important; background-color:rgba(10,16,44,.50) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] input:focus,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] select:focus,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] textarea:focus {
+  border-color:#4aa3ff !important; box-shadow:0 0 0 3px rgba(74,163,255,.35),inset 0 1px 3px rgba(0,0,0,.28) !important; outline:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] input::placeholder,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] textarea::placeholder { color:rgba(214,226,255,.60) !important; -webkit-text-fill-color:rgba(214,226,255,.60) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] select option { background:#16204a; color:#ffffff; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] input[readonly],
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] input:disabled,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] select:disabled { background-color:rgba(10,16,44,.28) !important; color:#d5e2ff !important; -webkit-text-fill-color:#d5e2ff !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] input[type="file"] {
+  background-color:rgba(10,16,44,.42) !important; background-image:none !important; border:1px solid rgba(255,255,255,.26) !important; color:#fff !important; border-radius:16px !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] input[type="file"]::file-selector-button {
+  background:linear-gradient(155deg,rgba(255,255,255,.24),rgba(255,255,255,.08)); color:#fff; border:0; border-right:1px solid rgba(255,255,255,.28); padding:8px 14px; margin-right:12px; font-weight:600; cursor:pointer;
+}
+/* Kotak info (mis. Kategori/Satuan) di dalam form */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] .app-card .bg-white\/5,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] .app-card [class*="bg-black/"] {
+  background:rgba(10,16,44,.30) !important; border:1px solid rgba(255,255,255,.16) !important;
+}
+
+/* ===== TABEL RIWAYAT / DAFTAR (semua tab + dashboard) ===== */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] :is(.fluid-table-container,#recent-activity-scroll) {
+  background:rgba(8,14,40,.34) !important;
+  background-image:none !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  border-radius:20px !important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.22) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody { background:transparent !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] thead,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] thead tr,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] thead th {
+  background:rgba(255,255,255,.10) !important;
+  background-image:none !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  border-color:rgba(255,255,255,.20) !important;
+  text-shadow:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] thead th { font-weight:700; letter-spacing:.06em; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody tr {
+  background:transparent !important; background-image:none !important;
+  border-bottom:1px solid rgba(255,255,255,.10) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody tr:nth-child(even) { background:rgba(255,255,255,.04) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody tr:hover { background:rgba(255,255,255,.11) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody td {
+  background:transparent !important; background-image:none !important;
+  color:#f1f6ff !important; -webkit-text-fill-color:#f1f6ff !important;
+  border-color:rgba(255,255,255,.10) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody td:first-child { color:#ffffff !important; -webkit-text-fill-color:#ffffff !important; }
+/* Tombol aksi di dalam tabel: kaca tipis */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody td button {
+  background:rgba(255,255,255,.12) !important; background-image:none !important;
+  border:1px solid rgba(255,255,255,.28) !important;
+  color:#ffffff !important; -webkit-text-fill-color:#ffffff !important;
+  transform:none !important; filter:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody td button:hover { background:rgba(255,255,255,.22) !important; border-color:rgba(255,255,255,.45) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody td button[class*="red"],
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody td button[class*="rose"] { background:rgba(255,90,120,.18) !important; border-color:rgba(255,130,150,.50) !important; }
+/* Pesan tabel kosong */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody td[colspan] { color:var(--lg-muted) !important; -webkit-text-fill-color:var(--lg-muted) !important; }
+
+/* ===== HEADER BACKUP & RESTORE ===== */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #backup-restore-hero {
+  background:linear-gradient(155deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,.06) 45%,rgba(255,255,255,.10) 100%),rgba(20,28,74,.34) !important;
+  border:1px solid rgba(255,255,255,.34) !important;
+  border-radius:32px !important;
+  box-shadow:0 20px 50px rgba(0,0,0,.30),var(--lg-edge) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #backup-restore-hero > .pointer-events-none { opacity:.55; filter:blur(48px); }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #backup-restore-hero .inline-flex.w-fit {
+  background:linear-gradient(155deg,rgba(255,255,255,.22),rgba(255,255,255,.08)) !important;
+  border:1px solid rgba(255,255,255,.36) !important;
+  color:#e6f0ff !important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.40);
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #backup-restore-hero h2 { color:#ffffff !important; -webkit-text-fill-color:#ffffff !important; text-shadow:0 2px 14px rgba(0,0,0,.30); }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #backup-restore-hero p { color:var(--lg-ink-2) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #backup-restore-hero .rounded-2xl.border {
+  background:linear-gradient(155deg,rgba(255,255,255,.26),rgba(255,255,255,.08)) !important;
+  border:1px solid rgba(255,255,255,.40) !important;
+  color:#9ff0cf !important;
+  box-shadow:inset 1.5px 1.5px 0 rgba(255,255,255,.50),0 8px 20px rgba(0,0,0,.22) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #backup-restore-warning {
+  background:linear-gradient(155deg,rgba(255,205,110,.22),rgba(255,170,60,.10)) !important;
+  border:1px solid rgba(255,214,140,.50) !important;
+  border-radius:18px !important;
+  color:#fff1cf !important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.30) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #backup-restore-warning span { color:#fff1cf !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #backup-restore-warning i,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #backup-restore-warning svg { color:#ffd27a !important; stroke:#ffd27a !important; }
+/* Select: spesifisitas lebih tinggi agar mengikuti kaca gelap yang sama dengan input */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e) [id^="tab-"] select,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e) [id^="tab-"] select:not([multiple]) {
+  background-color:rgba(10,16,44,.42) !important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") !important;
+  background-repeat:no-repeat !important; background-position:right 14px center !important; background-size:12px 8px !important;
+  border:1px solid rgba(255,255,255,.26) !important;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.28) !important;
+  color:#ffffff !important; -webkit-text-fill-color:#ffffff !important;
+  appearance:none; -webkit-appearance:none; padding-right:34px !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e) [id^="tab-"] select:hover { background-color:rgba(10,16,44,.50) !important; border-color:rgba(255,255,255,.42) !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e) [id^="tab-"] select:focus { border-color:#4aa3ff !important; box-shadow:0 0 0 3px rgba(74,163,255,.35),inset 0 1px 3px rgba(0,0,0,.28) !important; outline:none !important; }
+
+/* Kontrol form tanpa backdrop-filter sendiri (blur+saturate di dalam kartu ber-blur membuat dropdown tampak lebih terang) */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e) [id^="tab-"] :is(input,select,textarea,thead,thead th,tbody td,table) { backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
+</style>
+
+<style id="v174-ui2-table-uniform-save-header">
+/* V174 — UI 2: semua tabel diseragamkan seperti tabel PO Customer (tanpa garis/zebra/pita kolom),
+   dan badge status di header atas ("Menyimpan ke Cloud...") tidak ditampilkan saat simpan.
+   Hanya aktif di body.theme-crystal. UI 1 dan JS tidak diubah. */
+
+/* Baris: tanpa garis pemisah dan tanpa zebra */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) [id^="tab-"] tbody,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) [id^="tab-"] tbody tr,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) [id^="tab-"] tbody tr:nth-child(even),
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) [id^="tab-"] tbody tr:nth-child(odd) {
+  background:transparent !important; background-image:none !important;
+  border:0 !important; border-bottom:0 !important; border-top:0 !important;
+  box-shadow:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) [id^="tab-"] tbody tr:hover { background:rgba(255,255,255,.07) !important; }
+
+/* Sel: tanpa isian per-sel (penyebab pita/kolom bergaris), tanpa garis, teks tidak diredupkan */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) [id^="tab-"] tbody td {
+  background:transparent !important; background-image:none !important;
+  border:0 !important; box-shadow:none !important;
+  opacity:1 !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) [id^="tab-"] tbody td:first-child { color:#ffffff !important; }
+
+/* Baris detail (sub-baris) tetap halus dan seragam */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) [id^="tab-"] tbody tr[class*="bg-black"] { background:rgba(255,255,255,.04) !important; }
+
+/* Header tabel: seragam di semua tab */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) [id^="tab-"] thead th { border:0 !important; border-bottom:1px solid rgba(255,255,255,.16) !important; }
+
+/* Header atas: sembunyikan badge saat status "Menyimpan ke Cloud..." */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-top-header #cloud-sync-status:has(.bg-sky-400) { display:none !important; }
+</style>
+<style id="v175-ui2-hover-performance">
+/* V175 — UI 2: optimasi performa hover (sebelumnya V137). Tampilan diam tidak berubah; hover tidak lagi memicu re-raster blur.
+   Scope: hanya UI 2. UI 1 dan logika JS tidak disentuh.
+   Prinsip: saat hover TIDAK ada perubahan geometri/layer (transform, filter, box-shadow,
+   backdrop-filter, animasi infinite). Hover hanya mengubah warna latar/border. */
+
+/* 1) Kartu & hero: tanpa transform, shadow identik dengan kondisi normal (tidak re-composite blur) */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .app-card,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .dashboard-glow-card,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #dashboard-hero {
+  transform:none !important;
+  will-change:auto !important;
+  transition:border-color .18s ease, background-color .18s ease !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .app-card:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .dashboard-glow-card:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #dashboard-hero:hover {
+  transform:none !important;
+  border-color:rgba(255,255,255,.38) !important;
+  box-shadow:0 14px 40px rgba(0,0,0,.32),var(--lg-edge) !important;
+}
+
+/* 2) Kilau specular: posisi saat hover dikunci SAMA dengan posisi diam (tampilan diam tidak berubah, tanpa sweep 0,9 dtk yang me-repaint kartu ber-blur) */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content .app-card::before,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content .app-card:hover::before {
+  background-position:120% 0,0 0 !important;
+  transition:none !important; animation:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content .dashboard-glow-card::before,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content .dashboard-glow-card:hover::before {
+  background-position:120% 0,0 0 !important;
+  transition:none !important; animation:none !important;
+}
+
+/* 3) Sidebar: tanpa geser/transform; hanya warna */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn:active {
+  transform:none !important;
+  filter:none !important;
+  transition:background-color .16s ease, border-color .16s ease, color .16s ease !important;
+}
+
+/* 4) Tombol aksen & tombol umum: tanpa brightness/saturate/translate/scale */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .theme-accent-bg:not(.sidebar-btn),
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .theme-accent-bg:not(.sidebar-btn):hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .theme-accent-bg:not(.sidebar-btn):active,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content button:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content button:active,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content [role="button"]:hover {
+  transform:none !important;
+  filter:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .theme-accent-bg:not(.sidebar-btn):hover {
+  background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.04) 52%),linear-gradient(160deg,#4aa5ff,#1470e6) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .theme-accent-bg:not(.sidebar-btn):active {
+  background:linear-gradient(180deg,rgba(255,255,255,.26),rgba(255,255,255,0) 52%),linear-gradient(160deg,#2f86e8,#0852b8) !important;
+}
+
+/* 5) Matikan animasi pulse merah infinite (V56–V59) pada UI 2: warna teks tetap statis & kontras */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content button:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content button:hover *,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar button:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar button:hover *,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-top-header button:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-top-header button:hover *,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content [role="button"]:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content [role="button"]:hover * {
+  animation:none !important;
+  text-shadow:none !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+/* Warna teks statis saat hover (sama dengan kondisi normal UI 2) */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn:not(.active):not(.theme-accent-bg):hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn:not(.active):not(.theme-accent-bg):hover span {
+  color:var(--lg-ink) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .theme-accent-bg:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .theme-accent-bg:hover *,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn.active:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn.active:hover * {
+  color:#fff !important;
+}
+
+/* 6) Tabel: transisi hanya warna, tanpa kedip antar baris */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody tr,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] tbody tr td,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"] table button {
+  transform:none !important;
+  transition:background-color .12s ease, border-color .12s ease, color .12s ease !important;
+}
+
+/* 7) Touch & reduced motion: tanpa efek hover sama sekali */
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .app-card,
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .dashboard-glow-card,
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn,
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) button {
+    transition:none !important;
+  }
+}
+</style>
+<style id="v176-ui2-popup-header-badges-off">
+/* V176 — UI 2: badge ikon di header popup Simpan (Periksa Kembali Data) dan popup Tampilan Aplikasi disembunyikan.
+   Hanya aktif di body.theme-crystal. UI 1 dan JS tidak diubah. */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #detail-save-modal > div > div:first-child > .flex > div:first-child:not(:only-child),
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #appearance-panel .v129-appearance-icon { display:none !important; }
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #appearance-panel .v129-appearance-heading,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #detail-save-modal > div > div:first-child > .flex { gap:0 !important; }
+</style>
+<style id="v177-ui2-header-hidden-under-popups">
+/* V177 — UI 2: header atas (sapaan, jam, Cloud Sync, Export CSV) tidak tampil saat popup terbuka.
+   Penyebab: header memakai z-index 100, lebih tinggi dari popup Simpan (70), Konfirmasi (50), Auto-logout (95),
+   sehingga tampil tajam di atas overlay; pada popup Tampilan Aplikasi header ikut menembus overlay translusen.
+   Hanya aktif di body.theme-crystal. JS, UI 1, dan z-index popup tidak diubah. */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):has(:is(#confirm-modal,#detail-save-modal,#auto-logout-modal,#appearance-panel):not(.hidden)) #inventory-top-header,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):has(#inventory-print-options) #inventory-top-header {
+  visibility:hidden !important;
+}
+</style>
+
+
+<style id="v178-admin-badge-popup-isolation">
+/* V178 — cegah badge/identitas Admin dari header menembus popup Simpan dan Ganti UI.
+   Berlaku pada kedua UI dan semua tema; tidak mengubah autentikasi, role, atau proses simpan. */
+html body:has(#detail-save-modal:not(.hidden)) #inventory-top-header,
+html body:has(#appearance-panel:not(.hidden)) #inventory-top-header,
+html body:has(#confirm-modal:not(.hidden)) #inventory-top-header,
+html body:has(#auto-logout-modal:not(.hidden)) #inventory-top-header,
+html body:has(#inventory-print-options:not(.hidden)) #inventory-top-header {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Pastikan overlay popup berada di atas header, termasuk badge Admin. */
+html body:has(#detail-save-modal:not(.hidden)) #detail-save-modal,
+html body:has(#appearance-panel:not(.hidden)) #appearance-panel,
+html body:has(#confirm-modal:not(.hidden)) #confirm-modal,
+html body:has(#auto-logout-modal:not(.hidden)) #auto-logout-modal {
+  z-index: 2000 !important;
+}
+
+/* Jaga agar badge role hanya tampil di area identitas pengguna saat popup tertutup. */
+html body:has(#detail-save-modal:not(.hidden)) #current-user-banner .role-badge-admin,
+html body:has(#appearance-panel:not(.hidden)) #current-user-banner .role-badge-admin,
+html body:has(#confirm-modal:not(.hidden)) #current-user-banner .role-badge-admin,
+html body:has(#auto-logout-modal:not(.hidden)) #current-user-banner .role-badge-admin {
+  display: none !important;
+}
+</style>
+
+
+
+<style id="v179-hide-user-chip-during-appearance">
+/* V179 — sembunyikan seluruh identitas header, termasuk greeting/badge mobile,
+   saat dialog Tampilan Aplikasi terbuka. */
+html body:has(#appearance-panel:not(.hidden)) #inventory-top-header,
+html body:has(#appearance-panel:not(.hidden)) #inventory-top-header #current-user-banner,
+html body:has(#appearance-panel:not(.hidden)) #inventory-top-header #v156-mobile-greeting,
+html body:has(#appearance-panel:not(.hidden)) #inventory-top-header #v167-mobile-role-badge {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 </style>
 
