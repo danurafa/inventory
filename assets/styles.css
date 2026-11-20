@@ -10267,3 +10267,36 @@ html body:has(#appearance-panel:not(.hidden)) #inventory-top-header #v167-mobile
   opacity: 0 !important;
   pointer-events: none !important;
 }
+
+/* UI 1: samakan tabel riwayat dengan tabel PO Customer. */
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .fluid-table-container {
+  border: 1px solid rgba(96,165,250,.20);
+  border-radius: 14px;
+  background: rgba(5,18,34,.20);
+  overflow: auto;
+}
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .fluid-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  background: transparent;
+}
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .fluid-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  background: #142b46 !important;
+  color: #cfe3ff !important;
+  border-bottom: 1px solid rgba(96,165,250,.24);
+  white-space: nowrap;
+}
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .fluid-table tbody tr,
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .fluid-table tbody tr:nth-child(even) {
+  background: transparent;
+}
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .fluid-table tbody tr:hover {
+  background: rgba(59,130,246,.10);
+}
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .fluid-table tbody td {
+  border-bottom: 1px solid rgba(148,163,184,.10);
+  vertical-align: middle;
+}
