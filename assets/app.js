@@ -2733,6 +2733,8 @@
         document.querySelectorAll('.movement-range-btn').forEach(btn=>btn.addEventListener('click',()=>{movementTrendRange=Number(btn.dataset.range)||7;drawMovementTrend();if(movementActiveSlide===1)drawMovementTopSku();}));
 
 
+        let lastLowStockRenderSignature = null;
+
         // Render Dashboard & Charts
         window.renderDashboard = function() {
             const totalSku = window.gudangAppDb.items.length;
@@ -2754,26 +2756,32 @@
             // Low stock alert
             const lowList = document.getElementById('low-stock-list');
             const lowItems = window.gudangAppDb.items.filter(i => i.stok < i.min);
-            lowList.innerHTML = lowItems.map(i => {
-                const isBelow50 = i.stok < (i.min * 0.5);
-                const blinkClass = isBelow50 ? 'blink-low-stock-red' : 'blink-low-stock-orange';
-                const textClass = isBelow50 ? 'text-rose-400' : 'text-amber-400';
-                return `
-                    <div class="p-3 rounded-xl border flex items-center justify-between text-xs ${blinkClass}">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="alert-triangle" class="w-4 h-4 ${textClass}"></i>
-                            <div>
-                                <span class="font-bold text-gray-100">${i.id} - ${window.displayItemName(i.id, i.nama)}</span>
-                                <span class="text-[10px] text-gray-400 block">Kategori: ${i.jenis} | Lebar: ${i.lebar || '-'}</span>
+            const lowStockSignature = JSON.stringify(lowItems.map(i => [
+                i.id, window.displayItemName(i.id, i.nama), i.jenis, i.lebar || '-', i.stok, i.min
+            ]));
+            if (lowStockSignature !== lastLowStockRenderSignature) {
+                lowList.innerHTML = lowItems.map(i => {
+                    const isBelow50 = i.stok < (i.min * 0.5);
+                    const blinkClass = isBelow50 ? 'blink-low-stock-red' : 'blink-low-stock-orange';
+                    const textClass = isBelow50 ? 'text-rose-400' : 'text-amber-400';
+                    return `
+                        <div class="p-3 rounded-xl border flex items-center justify-between text-xs ${blinkClass}">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="alert-triangle" class="w-4 h-4 ${textClass}"></i>
+                                <div>
+                                    <span class="font-bold text-gray-100">${i.id} - ${window.displayItemName(i.id, i.nama)}</span>
+                                    <span class="text-[10px] text-gray-400 block">Kategori: ${i.jenis} | Lebar: ${i.lebar || '-'}</span>
+                                </div>
+                            </div>
+                            <div class="text-right font-mono">
+                                <span class="${textClass} font-bold">Stok: ${i.stok}</span>
+                                <span class="text-[10px] text-gray-400 block">Min: ${i.min}</span>
                             </div>
                         </div>
-                        <div class="text-right font-mono">
-                            <span class="${textClass} font-bold">Stok: ${i.stok}</span>
-                            <span class="text-[10px] text-gray-400 block">Min: ${i.min}</span>
-                        </div>
-                    </div>
-                `;
-            }).join('') || '<div class="text-xs text-emerald-400 p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-center font-semibold">Semua stok barang dalam kondisi aman (&gt;= Minimum).</div>';
+                    `;
+                }).join('') || '<div class="text-xs text-emerald-400 p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-center font-semibold">Semua stok barang dalam kondisi aman (&gt;= Minimum).</div>';
+                lastLowStockRenderSignature = lowStockSignature;
+            }
 
             // Recent activity log
             const recentBody = document.getElementById('recent-activity-body');
