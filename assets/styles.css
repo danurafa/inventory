@@ -13162,3 +13162,13 @@ html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):
   transition:none !important;
   animation:none !important;
 }
+
+/* Keep authenticated app chrome off the login screen, including on mobile. */
+html body:not(.inventory-authenticated) #inventory-top-header,
+html body:not(.inventory-authenticated) #inventory-app-layout {
+  display:none !important;
+}
+html body:not(.inventory-authenticated) #login-modal:not(.hidden) {
+  display:flex !important;
+  z-index:10000 !important;
+}
