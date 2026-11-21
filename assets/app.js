@@ -1337,8 +1337,23 @@
                 info:    { icon: 'info', title: 'Informasi', tone: 'info' }
             };
             const item = config[type] || config.success;
+            const messageText = String(msg ?? '');
+            const activeToasts = () => Array.from(container.children).filter(toast =>
+                toast.classList.contains('inventory-toast') && !toast.classList.contains('toast-leaving')
+            );
+            const removeToast = toast => {
+                const closeButton = toast.querySelector('.inventory-toast-close');
+                if (closeButton) closeButton.click();
+                toast.remove();
+            };
+            const toastKey = JSON.stringify([item.tone, messageText]);
+            const duplicate = activeToasts().find(toast => toast.dataset.toastKey === toastKey);
+            if (duplicate) removeToast(duplicate);
+            while (activeToasts().length >= 3) removeToast(activeToasts()[0]);
+
             const toast = document.createElement('div');
             toast.className = 'inventory-toast toast-' + item.tone;
+            toast.dataset.toastKey = toastKey;
             toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
             toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
 
@@ -1360,7 +1375,7 @@
 
             const message = document.createElement('div');
             message.className = 'inventory-toast-message';
-            message.textContent = String(msg ?? '');
+            message.textContent = messageText;
             message.style.cssText = 'display:block!important;width:100%!important;margin:0!important;line-height:1.4!important;font-size:11px!important;white-space:normal!important;overflow-wrap:anywhere!important;';
 
             copy.appendChild(heading);
@@ -1399,7 +1414,7 @@
                 dismiss();
             });
 
-            const duration = 3600;
+            const duration = { success: 3600, error: 7000, warning: 5200, info: 4500 }[item.tone];
             progress.style.setProperty('--toast-duration', duration + 'ms');
             timer = window.setTimeout(dismiss, duration);
         };
@@ -4825,29 +4840,16 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             function isMobile() {
                 return window.matchMedia('(max-width: 900px)').matches;
             }
-            function applyMobileIconOnly() {
-                const mobileOpen = isMobile() && layout.classList.contains('mobile-sidebar-open');
-                const iconOnlyMobile = mobileOpen && !document.body.classList.contains('theme-soft');
+            function applyMobileSidebarLabels() {
                 const labels = sidebar.querySelectorAll('nav .sidebar-btn > span');
                 labels.forEach(function(label) {
-                    if (iconOnlyMobile) {
-                        if (label.style.getPropertyValue('display') !== 'none' || label.style.getPropertyPriority('display') !== 'important') label.style.setProperty('display', 'none', 'important');
-                        if (label.style.getPropertyValue('visibility') !== 'hidden' || label.style.getPropertyPriority('visibility') !== 'important') label.style.setProperty('visibility', 'hidden', 'important');
-                        if (label.style.getPropertyValue('width') !== '0px' || label.style.getPropertyPriority('width') !== 'important') label.style.setProperty('width', '0', 'important');
-                        if (label.style.getPropertyValue('overflow') !== 'hidden' || label.style.getPropertyPriority('overflow') !== 'important') label.style.setProperty('overflow', 'hidden', 'important');
-                    } else {
-                        label.style.removeProperty('display');
-                        label.style.removeProperty('visibility');
-                        label.style.removeProperty('width');
-                        label.style.removeProperty('overflow');
-                    }
+                    label.style.removeProperty('display');
+                    label.style.removeProperty('visibility');
+                    label.style.removeProperty('width');
+                    label.style.removeProperty('overflow');
                 });
                 const menuHeading = sidebar.querySelector('nav > div:first-child');
-                if (menuHeading) {
-                    if (iconOnlyMobile) {
-                        if (menuHeading.style.getPropertyValue('display') !== 'none' || menuHeading.style.getPropertyPriority('display') !== 'important') menuHeading.style.setProperty('display', 'none', 'important');
-                    } else menuHeading.style.removeProperty('display');
-                }
+                if (menuHeading) menuHeading.style.removeProperty('display');
             }
 
             function updateToggleIcon() {
@@ -4879,18 +4881,18 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     layout.classList.toggle('sidebar-collapsed');
                     localStorage.setItem(KEY, String(layout.classList.contains('sidebar-collapsed')));
                 }
-                applyMobileIconOnly();
+                applyMobileSidebarLabels();
                 updateToggleIcon();
             };
             window.closeInventorySidebar = function() {
                 layout.classList.remove('mobile-sidebar-open');
-                applyMobileIconOnly();
+                applyMobileSidebarLabels();
                 updateToggleIcon();
             };
             window.addEventListener('resize', function() {
                 if (!isMobile()) layout.classList.remove('mobile-sidebar-open');
                 placeToggleForViewport();
-                applyMobileIconOnly();
+                applyMobileSidebarLabels();
                 updateToggleIcon();
             });
             document.addEventListener('keydown', function(event) {
@@ -4903,11 +4905,11 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     if (isMobile()) window.closeInventorySidebar();
                 });
             });
-            applyMobileIconOnly();
+            applyMobileSidebarLabels();
             // Re-apply icon-only labels if another UI routine re-renders sidebar styles.
             const sidebarLabelObserver = new MutationObserver(function() {
                 if (isMobile() && layout.classList.contains('mobile-sidebar-open')) {
-                    applyMobileIconOnly();
+                    applyMobileSidebarLabels();
                 }
             });
             sidebarLabelObserver.observe(sidebar, { subtree: true, childList: true, attributes: true, attributeFilter: ['style', 'class'] });

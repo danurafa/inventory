@@ -7754,6 +7754,205 @@ body.theme-glass.theme-crystal .inventory-item-select-option[aria-selected="true
   }
 }
 
+/* UI 3 mobile header matches the compact greeting and three action controls used by UI 1/2. */
+@media screen and (max-width:767px) {
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header {
+    position:relative !important;
+    display:flex !important;
+    flex-flow:row nowrap !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    box-sizing:border-box !important;
+    width:100% !important;
+    min-height:58px !important;
+    padding:8px 10px !important;
+    gap:0 !important;
+    overflow:hidden !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #header-brand-group,
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #live-clock {
+    display:none !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #v156-mobile-greeting {
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:flex-start !important;
+    justify-content:center !important;
+    gap:3px !important;
+    position:absolute !important;
+    left:12px !important;
+    right:164px !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:auto !important;
+    max-width:none !important;
+    min-width:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+    z-index:1 !important;
+    pointer-events:none !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #v156-mobile-greeting-text {
+    display:block !important;
+    width:100% !important;
+    overflow:hidden !important;
+    white-space:nowrap !important;
+    text-overflow:ellipsis !important;
+    font-size:15px !important;
+    line-height:1.3 !important;
+    font-weight:800 !important;
+    color:#e0e7e2 !important;
+    -webkit-text-fill-color:#e0e7e2 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #v167-mobile-role-badge {
+    display:inline-flex !important;
+    align-items:center !important;
+    align-self:flex-start !important;
+    width:max-content !important;
+    max-width:100% !important;
+    padding:2px 7px !important;
+    border:1px solid #3a4941 !important;
+    border-radius:999px !important;
+    color:#c2cec7 !important;
+    background:#27312d !important;
+    font-size:10px !important;
+    line-height:1.2 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 {
+    display:grid !important;
+    grid-template-columns:34px 34px 34px !important;
+    grid-template-rows:32px !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:2px !important;
+    position:relative !important;
+    z-index:2 !important;
+    flex:0 0 auto !important;
+    width:112px !important;
+    min-width:112px !important;
+    height:40px !important;
+    margin:0 0 0 auto !important;
+    padding:3px !important;
+    border:1px solid #3a4941 !important;
+    border-radius:13px !important;
+    background:#27312d !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06) !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner {
+    display:contents !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner > div:first-child {
+    display:none !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle,
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"],
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+    display:inline-flex !important;
+    position:static !important;
+    grid-row:1 !important;
+    flex:0 0 34px !important;
+    width:34px !important;
+    min-width:34px !important;
+    height:32px !important;
+    min-height:32px !important;
+    margin:0 !important;
+    padding:6px !important;
+    align-items:center !important;
+    justify-content:center !important;
+    border:0 !important;
+    border-radius:9px !important;
+    color:#c2cec7 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle { grid-column:1 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] { grid-column:2 !important; font-size:0 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[onclick="logoutUser()"] { grid-column:3 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] span { display:none !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header :is(#sidebar-toggle, button[onclick="exportCSVData()"], button[onclick="logoutUser()"]):is(svg,i) {
+    color:#c2cec7 !important;
+    stroke:#c2cec7 !important;
+  }
+}
+@media screen and (max-width:380px) {
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #v156-mobile-greeting { right:154px !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #v156-mobile-greeting-text { font-size:13px !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 {
+    width:106px !important;
+    min-width:106px !important;
+    grid-template-columns:32px 32px 32px !important;
+  }
+}
+
+/* UI 1/2 use the mobile drawer structure while keeping their own theme colors. */
+@media (max-width:900px) {
+  html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #inventory-app-layout.mobile-sidebar-open #inventory-sidebar {
+    width:min(17rem,84vw) !important;
+    flex-basis:min(17rem,84vw) !important;
+    max-width:none !important;
+  }
+  html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav {
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:6px !important;
+    padding:18px 12px !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+  }
+  html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #inventory-app-layout.mobile-sidebar-open #inventory-sidebar nav > div:first-child {
+    display:block !important;
+    padding:8px 10px !important;
+    color:var(--theme-text-muted) !important;
+    font-size:10px !important;
+    letter-spacing:.12em !important;
+  }
+  html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #inventory-app-layout.mobile-sidebar-open #inventory-sidebar .sidebar-btn {
+    width:100% !important;
+    min-height:44px !important;
+    height:44px !important;
+    justify-content:flex-start !important;
+    gap:12px !important;
+    padding:0 12px !important;
+    border-radius:14px !important;
+  }
+  html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #inventory-app-layout.mobile-sidebar-open #inventory-sidebar .sidebar-btn > span {
+    display:inline !important;
+    visibility:visible !important;
+    width:auto !important;
+    min-width:0 !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+  html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #inventory-app-layout.mobile-sidebar-open #inventory-sidebar > div:last-child {
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:8px !important;
+    padding:10px 12px !important;
+    border-top:1px solid var(--theme-card-border) !important;
+    background:transparent !important;
+  }
+  html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #open-appearance-btn {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    min-height:44px !important;
+    justify-content:flex-start !important;
+    gap:10px !important;
+    padding:0 12px !important;
+    border-radius:14px !important;
+  }
+  html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #open-appearance-btn > span {
+    display:flex !important;
+    flex:1 1 auto !important;
+  }
+  html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #open-appearance-btn > .appearance-open-arrow {
+    display:inline-flex !important;
+  }
+}
+
 
 /* V87: keep the chart full-width but reduce its vertical footprint further.
    Summary cards and all tables remain unchanged. */
@@ -12325,5 +12524,328 @@ html body.theme-glass.theme-light.theme-soft #movement-trend-card svg circle[fil
   html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-axis-value,
   html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-axis-date {
     font-size:20px !important;
+  }
+}
+
+/* UI 3 mobile layout: align spacing, cards, forms, and history tables with UI 1/2. */
+@media (max-width:640px) {
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content {
+    padding-left:12px !important;
+    padding-right:12px !important;
+    overflow-x:hidden !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] {
+    min-width:0 !important;
+    gap:16px !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] > .grid {
+    min-width:0 !important;
+    gap:14px !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] .app-card,
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] .dashboard-glow-card {
+    min-width:0 !important;
+    padding:16px !important;
+    border-radius:16px !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] form[id^="form-"] {
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:12px !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] form[id^="form-"] > * {
+    min-width:0 !important;
+    grid-column:1/-1 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] form[id^="form-"] input,
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] form[id^="form-"] select,
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] form[id^="form-"] textarea {
+    min-height:42px;
+    font-size:14px !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] .fluid-table-container {
+    width:100% !important;
+    max-width:100% !important;
+    max-height:540px !important;
+    overflow:auto !important;
+    border-radius:14px !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] .fluid-table {
+    width:max-content !important;
+    min-width:100% !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] .fluid-table thead th {
+    position:sticky !important;
+    top:0 !important;
+    z-index:8 !important;
+    white-space:nowrap !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] .app-card > .flex.flex-col.md\:flex-row {
+    align-items:stretch !important;
+    gap:12px !important;
+    margin-bottom:14px !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] .app-card > .flex.flex-col.md\:flex-row > .flex.items-center {
+    width:100% !important;
+    flex-wrap:wrap !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] .app-card > .flex.flex-col.md\:flex-row > .flex.items-center > div {
+    flex:1 1 180px !important;
+    min-width:0 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] .app-card > .flex.flex-col.md\:flex-row > .flex.items-center input {
+    width:100% !important;
+    min-height:40px;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #dashboard-hero {
+    min-height:0 !important;
+    padding:20px !important;
+    border-radius:18px !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard .movement-premium-stats {
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:8px !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard .movement-summary {
+    min-width:0 !important;
+    padding:9px 7px !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard .movement-summary strong {
+    font-size:13px !important;
+  }
+}
+
+/* Final UI 3 mobile header overrides, kept after the theme palette rules. */
+@media screen and (max-width:767px) {
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header {
+    position:relative !important; display:flex !important; flex-flow:row nowrap !important;
+    align-items:center !important; justify-content:flex-end !important; box-sizing:border-box !important;
+    width:100% !important; min-height:58px !important; padding:8px 10px !important; gap:0 !important; overflow:hidden !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #header-brand-group,
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #live-clock { display:none !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #v156-mobile-greeting {
+    display:flex !important; flex-direction:column !important; align-items:flex-start !important; justify-content:center !important;
+    gap:3px !important; position:absolute !important; left:12px !important; right:164px !important; top:50% !important;
+    transform:translateY(-50%) !important; width:auto !important; max-width:none !important; min-width:0 !important;
+    margin:0 !important; padding:0 !important; overflow:hidden !important; z-index:1 !important; pointer-events:none !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #v156-mobile-greeting-text {
+    display:block !important; width:100% !important; overflow:hidden !important; white-space:nowrap !important;
+    text-overflow:ellipsis !important; font-size:15px !important; line-height:1.3 !important; font-weight:800 !important;
+    color:#e0e7e2 !important; -webkit-text-fill-color:#e0e7e2 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #v167-mobile-role-badge {
+    display:inline-flex !important; align-items:center !important; align-self:flex-start !important; width:max-content !important;
+    max-width:100% !important; padding:2px 7px !important; border:1px solid #3a4941 !important; border-radius:999px !important;
+    color:#c2cec7 !important; background:#27312d !important; font-size:10px !important; line-height:1.2 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 {
+    display:grid !important; grid-template-columns:34px 34px 34px !important; grid-template-rows:32px !important;
+    align-items:center !important; justify-content:center !important; gap:2px !important; position:relative !important;
+    z-index:2 !important; flex:0 0 auto !important; width:112px !important; min-width:112px !important; height:40px !important;
+    margin:0 0 0 auto !important; padding:3px !important; border:1px solid #3a4941 !important; border-radius:13px !important;
+    background:#27312d !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.06) !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner { display:contents !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner > div:first-child { display:none !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle,
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"],
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+    display:inline-flex !important; position:static !important; grid-row:1 !important; flex:0 0 34px !important;
+    width:34px !important; min-width:34px !important; height:32px !important; min-height:32px !important;
+    margin:0 !important; padding:6px !important; align-items:center !important; justify-content:center !important;
+    border:0 !important; border-radius:9px !important; color:#c2cec7 !important; background:transparent !important; box-shadow:none !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle { grid-column:1 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] { grid-column:2 !important; font-size:0 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[onclick="logoutUser()"] { grid-column:3 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] span { display:none !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #sidebar-toggle svg,
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] :is(svg,i),
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[onclick="logoutUser()"] :is(svg,i) {
+    color:#c2cec7 !important; stroke:#c2cec7 !important;
+  }
+}
+@media screen and (max-width:380px) {
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #v156-mobile-greeting { right:154px !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #v156-mobile-greeting-text { font-size:13px !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 {
+    width:106px !important; min-width:106px !important; grid-template-columns:32px 32px 32px !important;
+  }
+}
+
+/* Keep UI 1/2 mobile navigation in the same fixed drawer as UI 3. */
+@media screen and (max-width:900px) {
+  html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar {
+    position:fixed !important;
+    inset:4rem auto 0 0 !important;
+    width:min(17rem,84vw) !important;
+    min-width:0 !important;
+    max-width:min(17rem,84vw) !important;
+    height:auto !important;
+    min-height:0 !important;
+    flex:0 0 min(17rem,84vw) !important;
+    transform:translateX(-105%) !important;
+    z-index:60 !important;
+    border-radius:0 !important;
+  }
+  html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #inventory-app-layout.mobile-sidebar-open #inventory-sidebar {
+    transform:translateX(0) !important;
+  }
+  html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #sidebar-mobile-backdrop {
+    position:fixed !important;
+    inset:4rem 0 0 !important;
+    z-index:55 !important;
+    backdrop-filter:blur(3px) !important;
+    -webkit-backdrop-filter:blur(3px) !important;
+  }
+  html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #inventory-app-layout.mobile-sidebar-open #sidebar-mobile-backdrop {
+    display:block !important;
+  }
+  html body.theme-glass.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar {
+    background:linear-gradient(180deg,rgba(8,24,43,.94),rgba(6,17,31,.88)) !important;
+    border-color:var(--theme-card-border) !important;
+    box-shadow:12px 0 34px rgba(0,0,0,.20) !important;
+    backdrop-filter:blur(24px) saturate(155%) !important;
+    -webkit-backdrop-filter:blur(24px) saturate(155%) !important;
+  }
+  html body.theme-glass.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn:not(.active):not(.theme-accent-bg),
+  html body.theme-glass.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn:not(.active):not(.theme-accent-bg) > span {
+    color:var(--theme-text-muted) !important;
+    -webkit-text-fill-color:var(--theme-text-muted) !important;
+  }
+  html body.theme-glass.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn.active,
+  html body.theme-glass.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar .sidebar-btn.theme-accent-bg {
+    border-color:rgba(96,165,250,.44) !important;
+  }
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-sidebar {
+    background:var(--lg-fill) !important;
+    border-color:rgba(255,255,255,.22) !important;
+    box-shadow:0 12px 44px rgba(0,0,0,.40),var(--lg-edge) !important;
+    backdrop-filter:blur(30px) saturate(200%) !important;
+    -webkit-backdrop-filter:blur(30px) saturate(200%) !important;
+  }
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #sidebar-mobile-backdrop {
+    background:rgba(10,18,42,.42) !important;
+    backdrop-filter:blur(6px) !important;
+    -webkit-backdrop-filter:blur(6px) !important;
+  }
+}
+
+/* Toasts stay visible without covering the header on phones. */
+#toast-container {
+  top:auto !important;
+  right:max(16px,env(safe-area-inset-right)) !important;
+  bottom:max(16px,env(safe-area-inset-bottom)) !important;
+  left:auto !important;
+  transform:none !important;
+  width:min(390px,calc(100vw - 32px)) !important;
+}
+@media (max-width:640px) {
+  #toast-container {
+    top:max(72px,calc(env(safe-area-inset-top) + 72px)) !important;
+    right:auto !important;
+    bottom:auto !important;
+    left:50% !important;
+    transform:translateX(-50%) !important;
+    width:calc(100vw - 24px) !important;
+  }
+}
+html body.theme-glass.theme-light.theme-soft #toast-container > .toast-success {
+  --toast-tone:143,179,151 !important;
+}
+html body.theme-glass.theme-light.theme-soft #toast-container > .toast-error {
+  --toast-tone:196,131,129 !important;
+}
+html body.theme-glass.theme-light.theme-soft #toast-container > .toast-warning {
+  --toast-tone:199,167,111 !important;
+}
+html body.theme-glass.theme-light.theme-soft #toast-container > .toast-info {
+  --toast-tone:141,166,184 !important;
+}
+html body.theme-glass.theme-light.theme-soft #toast-container > .inventory-toast {
+  color:#d1dad5 !important;
+  background:linear-gradient(135deg,rgba(49,67,57,.96),rgba(32,40,37,.98) 62%,rgba(var(--toast-tone),.12)) !important;
+  border-color:#46564b !important;
+  box-shadow:0 12px 30px rgba(0,0,0,.36),inset 0 1px 0 rgba(220,237,226,.07) !important;
+  backdrop-filter:blur(20px) saturate(135%) !important;
+  -webkit-backdrop-filter:blur(20px) saturate(135%) !important;
+}
+html body.theme-glass.theme-light.theme-soft #toast-container > .inventory-toast > .inventory-toast-close {
+  color:#c2cec7 !important;
+  border-color:#43534a !important;
+  background:#2b3630 !important;
+}
+html body.theme-glass.theme-light.theme-soft #toast-container > .inventory-toast > .inventory-toast-close:hover {
+  background:#344039 !important;
+}
+
+/* Keep the UI 3 appearance control aligned with the other themes, using its sage palette. */
+html body.theme-glass.theme-light.theme-soft #inventory-sidebar #open-appearance-btn {
+  box-sizing:border-box !important;
+  width:100% !important;
+  min-height:44px !important;
+  justify-content:flex-start !important;
+  gap:11px !important;
+  padding:10px 12px !important;
+  border:1px solid rgba(139,162,146,.34) !important;
+  border-radius:13px !important;
+  color:#d1dad5 !important;
+  background:linear-gradient(135deg,#2c3831,#242d28) !important;
+  box-shadow:0 4px 12px rgba(0,0,0,.18),inset 0 1px 0 rgba(220,237,226,.06) !important;
+  text-align:left !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-sidebar #open-appearance-btn > i:first-child,
+html body.theme-glass.theme-light.theme-soft #inventory-sidebar #open-appearance-btn > svg:first-child {
+  color:#aab8b0 !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-sidebar #open-appearance-btn strong {
+  color:#d1dad5 !important;
+  -webkit-text-fill-color:#d1dad5 !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-sidebar #open-appearance-btn small {
+  color:#aab8b0 !important;
+  -webkit-text-fill-color:#aab8b0 !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-sidebar #open-appearance-btn .appearance-open-arrow {
+  color:#9bb0a3 !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-sidebar #open-appearance-btn:hover {
+  border-color:#60766a !important;
+  background:linear-gradient(135deg,#344039,#2b3630) !important;
+  box-shadow:0 7px 16px rgba(0,0,0,.22),inset 0 1px 0 rgba(220,237,226,.08) !important;
+  transform:translateY(-1px);
+}
+html body.theme-glass.theme-light.theme-soft #inventory-sidebar #open-appearance-btn:focus-visible {
+  outline:2px solid #8da895 !important;
+  outline-offset:2px !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-app-layout.sidebar-collapsed #inventory-sidebar #open-appearance-btn {
+  width:44px !important;
+  min-width:44px !important;
+  max-width:44px !important;
+  height:44px !important;
+  min-height:44px !important;
+  max-height:44px !important;
+  margin:0 auto !important;
+  padding:0 !important;
+  justify-content:center !important;
+  gap:0 !important;
+  border-radius:13px !important;
+}
+@media screen and (max-width:900px) {
+  html body.theme-glass.theme-light.theme-soft #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #open-appearance-btn {
+    justify-content:flex-start !important;
+    gap:11px !important;
+    padding:0 12px !important;
+    overflow:visible !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #open-appearance-btn > span {
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #open-appearance-btn > .appearance-open-arrow {
+    display:inline-flex !important;
   }
 }
