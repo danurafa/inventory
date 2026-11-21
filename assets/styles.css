@@ -6387,7 +6387,7 @@ button:focus-visible, .sidebar-btn:focus-visible {
             overflow-x: hidden !important;
             overflow-y: scroll !important;
             overscroll-behavior: contain !important;
-            touch-action: pan-y !important;
+            touch-action: pan-x pan-y !important;
             -webkit-overflow-scrolling: touch !important;
         }
         @media (max-width: 900px) {
@@ -7885,6 +7885,37 @@ body.theme-glass.theme-crystal .inventory-item-select-option[aria-selected="true
   }
 }
 
+/* Ensure mobile table scrolling wins over theme-specific clipping rules. */
+@media screen and (max-width:767px) {
+  html body.theme-glass #inventory-main-content [id^="tab-"] .fluid-table-container {
+    overflow-x:auto !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+    touch-action:pan-x pan-y !important;
+  }
+}
+
+/* Mobile history headings align to the table's left edge and share one rhythm. */
+@media screen and (max-width:767px) {
+  html body.theme-glass #inventory-main-content [id^="tab-"] .app-card > .flex.flex-col.md\:flex-row > div:first-child {
+    align-self:flex-start !important;
+    width:100% !important;
+    min-width:0 !important;
+    margin-left:-4px !important;
+    text-align:left !important;
+  }
+  html body.theme-glass #inventory-main-content [id^="tab-"] .app-card > .flex.flex-col.md\:flex-row > div:first-child h3 {
+    margin:0 !important;
+    line-height:1.35 !important;
+    overflow-wrap:anywhere !important;
+  }
+  html body.theme-glass #inventory-main-content [id^="tab-"] .app-card > .flex.flex-col.md\:flex-row > div:first-child p {
+    margin-top:3px !important;
+    line-height:1.3 !important;
+  }
+}
+
 /* UI 1/2 use the mobile drawer structure while keeping their own theme colors. */
 @media (max-width:900px) {
   html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #inventory-app-layout.mobile-sidebar-open #inventory-sidebar {
@@ -7950,6 +7981,33 @@ body.theme-glass.theme-crystal .inventory-item-select-option[aria-selected="true
   }
   html body.theme-glass:is(.theme-classic,.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c) #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #open-appearance-btn > .appearance-open-arrow {
     display:inline-flex !important;
+  }
+}
+
+/* Mobile history tables: keep scrolling inside the table frame on every UI theme. */
+@media screen and (max-width:767px) {
+  html body.theme-glass #inventory-main-content .fluid-table-container {
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    max-height:58vh !important;
+    overflow-x:auto !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain !important;
+    -webkit-overflow-scrolling:touch !important;
+    touch-action:pan-x pan-y !important;
+    scrollbar-gutter:stable;
+  }
+  html body.theme-glass #inventory-main-content .fluid-table-container > table {
+    width:max-content !important;
+    min-width:100% !important;
+    max-width:none !important;
+  }
+  html body.theme-glass #inventory-main-content .fluid-table-container thead th {
+    position:sticky !important;
+    top:0 !important;
+    z-index:8 !important;
   }
 }
 
@@ -12847,5 +12905,23 @@ html body.theme-glass.theme-light.theme-soft #inventory-app-layout.sidebar-colla
   }
   html body.theme-glass.theme-light.theme-soft #inventory-app-layout.mobile-sidebar-open #inventory-sidebar #open-appearance-btn > .appearance-open-arrow {
     display:inline-flex !important;
+  }
+}
+
+/* Final mobile table overflow: override the legacy overflow-y:clip rule. */
+@media screen and (max-width:767px) {
+  html body.theme-glass #inventory-main-content [id^="tab-"] .fluid-table-container {
+    width:100% !important;
+    max-width:100% !important;
+    max-height:58vh !important;
+    overflow-x:auto !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+    touch-action:pan-x pan-y !important;
+  }
+  html body.theme-glass #inventory-main-content [id^="tab-"] .fluid-table-container > table {
+    width:max-content !important;
+    min-width:100% !important;
   }
 }
