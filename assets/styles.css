@@ -12921,6 +12921,48 @@ html body.theme-glass.theme-light.theme-soft #inventory-sidebar #open-appearance
   outline-offset:2px !important;
 }
 
+/* Toasts: consistent top-center placement and theme-aware colors across UI 1/2/3. */
+html body.theme-glass #toast-container {
+  position:fixed !important;
+  top:max(14px,env(safe-area-inset-top)) !important;
+  right:auto !important;
+  bottom:auto !important;
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  width:min(440px,calc(100vw - 24px)) !important;
+  z-index:10050 !important;
+  align-items:stretch !important;
+}
+html body.theme-glass.theme-classic #toast-container .inventory-toast {
+  color:#f2f7ff !important;
+  background:linear-gradient(120deg,rgba(40,67,99,.98),rgba(15,31,52,.98) 62%,rgba(var(--toast-tone),.13)) !important;
+  border-color:rgba(147,197,253,.34) !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.10) !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+html body.theme-glass.theme-classic #toast-container .inventory-toast-copy,
+html body.theme-glass.theme-classic #toast-container .inventory-toast-copy strong { color:#f2f7ff !important; }
+html body.theme-glass.theme-classic #toast-container .inventory-toast-copy > span { color:#c2d2e4 !important; }
+html body.theme-glass.theme-crystal #toast-container .inventory-toast {
+  color:#f5f8ff !important;
+  background:linear-gradient(130deg,rgba(44,62,106,.98),rgba(25,36,72,.98) 60%,rgba(var(--toast-tone),.15)) !important;
+  border-color:rgba(177,199,255,.36) !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+html body.theme-glass.theme-light.theme-soft #toast-container .inventory-toast {
+  color:#e0e7e2 !important;
+  background:linear-gradient(120deg,#344039,#202825 65%,rgba(var(--toast-tone),.16)) !important;
+  border-color:#526258 !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.32),inset 0 1px 0 rgba(220,237,226,.08) !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+html body.theme-glass.theme-light.theme-soft #toast-container .inventory-toast-copy,
+html body.theme-glass.theme-light.theme-soft #toast-container .inventory-toast-copy strong { color:#e0e7e2 !important; }
+html body.theme-glass.theme-light.theme-soft #toast-container .inventory-toast-copy > span { color:#b8c4bc !important; }
+
 /* UI 1/2: avoid compositing an off-screen blurred drawer during page scrolling. */
 @media screen and (max-width:900px) {
   html body.theme-glass:is(.theme-classic,.theme-crystal) #inventory-sidebar {
