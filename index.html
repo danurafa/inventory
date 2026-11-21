@@ -156,7 +156,7 @@
             </nav>
 
             <div class="p-3 border-t border-white/5 space-y-3 bg-dark-900/60">
-                <button type="button" id="open-appearance-btn" onclick="openAppearancePanel()" class="appearance-open-btn" aria-haspopup="dialog" aria-controls="appearance-panel">
+                <button type="button" id="open-appearance-btn" onclick="openAppearancePanel()" class="appearance-open-btn" aria-label="Pilih tampilan aplikasi" aria-haspopup="dialog" aria-controls="appearance-panel">
                     <i data-lucide="palette" class="w-4 h-4"></i>
                     <span><strong>Tampilan Aplikasi</strong><small id="appearance-current-label">Classic Glass</small></span>
                     <i data-lucide="sliders-horizontal" class="appearance-open-arrow w-4 h-4"></i>
@@ -164,12 +164,13 @@
                 <div class="hidden" id="theme-picker" aria-hidden="true">
                     <button type="button" id="theme-classic-btn" onclick="selectAccountUiTheme('classic')" aria-pressed="false"></button>
                     <button type="button" id="theme-crystal-btn" onclick="selectAccountUiTheme('crystal')" aria-pressed="false"></button>
+                    <button type="button" id="theme-soft-btn" onclick="selectAccountUiTheme('soft')" aria-pressed="false"></button>
                 </div>
                 <button type="button" id="theme-mode-toggle" onclick="toggleThemeMode()" class="hidden" aria-hidden="true" tabindex="-1">
                     <span id="theme-mode-label">Mode Terang</span>
                 </button>
                 <div id="reset-btn-wrapper">
-                    <button onclick="resetData()" class="w-full py-2 px-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold hover:bg-rose-500/20 transition-all flex items-center justify-center gap-2">
+                    <button onclick="resetData()" title="Reset Data Gudang" aria-label="Reset Data Gudang" class="w-full py-2 px-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold hover:bg-rose-500/20 transition-all flex items-center justify-center gap-2">
                         <i data-lucide="database" class="w-3.5 h-3.5"></i>
                         <span>Reset Data Gudang</span>
                     </button>
@@ -203,8 +204,14 @@
                         <span class="appearance-card-description">UI 2 · Liquid Glass transparan · Refleksi lembut dan efek kaca berlapis</span>
                         <span class="appearance-card-action">Gunakan Liquid Glass <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
                     </button>
+                    <button type="button" id="theme-soft-card" class="appearance-theme-card" onclick="selectAccountUiTheme('soft')">
+                        <span class="appearance-card-top"><span class="appearance-theme-name">Soft Neutral · UI 3</span><span class="appearance-selected-mark"><i data-lucide="check" class="w-3.5 h-3.5"></i> AKTIF</span></span>
+                        <span class="appearance-preview soft-large-preview"><span class="preview-soft-rail"><i></i><i></i><i></i><i></i></span><span class="preview-soft-workspace"><i></i><i></i><i></i><i></i></span></span>
+                        <span class="appearance-card-description">Palet gelap redup · navigasi ikon · form di atas tabel</span>
+                        <span class="appearance-card-action">Gunakan Soft Neutral <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                    </button>
                 </div>
-                <footer class="appearance-dialog-footer"><i data-lucide="cloud" class="w-4 h-4"></i><span>Pilihan tersimpan pada akun dan akan digunakan saat login di perangkat lain.</span></footer>
+                <footer class="appearance-dialog-footer"><i data-lucide="cloud" class="w-4 h-4"></i><span>UI 1 dan UI 2 tersimpan pada akun. UI 3 tersimpan lokal per akun pada perangkat ini.</span></footer>
             </section>
         </div>
 
@@ -649,7 +656,7 @@
                                     <option value="">-- Pilih Barang —</option>
                                 </select>
                             </div>
-                            <div class="grid grid-cols-2 gap-2 bg-white/5 p-3 rounded-xl border border-white/10 text-[11px] text-gray-200">
+                            <div id="masuk-item-info" class="grid grid-cols-2 gap-2 bg-white/5 p-3 rounded-xl border border-white/10 text-[11px] text-gray-200">
                                 <div><span class="text-gray-300 block mb-0.5 font-medium">Kategori:</span> <span id="info-masuk-jenis" class="font-bold text-white">-</span></div>
                                 <div><span class="text-gray-300 block mb-0.5 font-medium">Satuan:</span> <span id="info-masuk-satuan" class="font-bold text-white">-</span></div>
                             </div>
@@ -738,7 +745,7 @@
                                     <option value="">-- Pilih Nomor PO —</option>
                                 </select>
                             </div>
-                            <div class="rounded-xl border border-white/10 bg-white/5 p-3 space-y-2">
+                            <div id="keluar-items-panel" class="rounded-xl border border-white/10 bg-white/5 p-3 space-y-2">
                                 <div class="flex items-center justify-between gap-2">
                                     <label class="text-xs font-semibold">Daftar Barang dari PO</label>
                                     <span class="text-[10px] text-emerald-300">Isi Qty pada barang yang dikirim</span>

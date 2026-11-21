@@ -118,10 +118,19 @@
             if (!response.ok) throw new Error(body.error || `Worker error (${response.status})`);
             return body;
         }
-        // Preferensi desain UI disimpan pada akun Worker:
-        // classic = Classic Glass (dark), crystal = Premium Crystal (light).
+        const INVENTORY_THEME_KEY = 'gudang_inventory_theme_mode';
+        const INVENTORY_UI_PREFERENCE_KEY = 'gudang_inventory_ui_preference';
+
+        function localSoftUiPreferenceKey(user) {
+            const accountId = user?.id || user?.username;
+            return accountId
+                ? `${INVENTORY_UI_PREFERENCE_KEY}:soft:${encodeURIComponent(String(accountId))}`
+                : `${INVENTORY_UI_PREFERENCE_KEY}:soft`;
+        }
+
+        // Preferensi desain UI disimpan pada akun Worker.
         function normalizeAccountUiPreference(value) {
-            return value === 'crystal' ? 'crystal' : 'classic';
+            return ['classic', 'crystal', 'soft'].includes(value) ? value : 'classic';
         }
 
         function accountPreferenceFromMode(mode) {
@@ -130,9 +139,10 @@
 
         function applyAccountUiPreference(user) {
             if (!user) return;
-            const preference = normalizeAccountUiPreference(user.uiPreference);
+            const localSoftPreference = localStorage.getItem(localSoftUiPreferenceKey(user)) === 'soft';
+            const preference = localSoftPreference ? 'soft' : normalizeAccountUiPreference(user.uiPreference);
             user.uiPreference = preference;
-            const mode = preference === 'crystal' ? 'light' : 'dark';
+            const mode = preference === 'classic' ? 'dark' : 'light';
             localStorage.setItem(INVENTORY_THEME_KEY, mode);
             window.applyTheme?.('glass', mode, preference);
             window.activeUserSession = user;
@@ -143,12 +153,14 @@
         async function saveAccountUiPreference(preference) {
             if (!workerToken || !window.gudangAppDb?.currentUser) return;
             const uiPreference = normalizeAccountUiPreference(preference);
+            if (uiPreference === 'soft') return;
             try {
                 const result = await workerRequest('/api/me/ui-preference', {
                     method: 'PUT',
                     body: JSON.stringify({ uiPreference })
                 });
                 if (result.user) {
+                    result.user.uiPreference = uiPreference;
                     window.gudangAppDb.currentUser = result.user;
                     window.activeUserSession = result.user;
                     localStorage.setItem('gudang_pro_session', JSON.stringify(result.user));
@@ -1171,9 +1183,6 @@
             lucide.createIcons();
         };
 
-        const INVENTORY_THEME_KEY = 'gudang_inventory_theme_mode';
-        const INVENTORY_UI_PREFERENCE_KEY = 'gudang_inventory_ui_preference';
-
         window.openAppearancePanel = function() {
             const panel = document.getElementById('appearance-panel');
             if (!panel) return;
@@ -1196,25 +1205,36 @@
         });
 
         window.changeTheme = function(themeName) {
-            const preference = themeName === 'crystal' ? 'crystal' : 'classic';
+            const preference = normalizeAccountUiPreference(themeName);
             window.selectAccountUiTheme(preference);
         };
 
         window.selectAccountUiTheme = async function(preference) {
-            const selected = preference === 'crystal' ? 'crystal' : 'classic';
-            const mode = selected === 'crystal' ? 'light' : 'dark';
+            const selected = normalizeAccountUiPreference(preference);
+            const mode = selected === 'classic' ? 'dark' : 'light';
             localStorage.setItem(INVENTORY_UI_PREFERENCE_KEY, selected);
             localStorage.setItem(INVENTORY_THEME_KEY, mode);
+            if (selected === 'soft') {
+                localStorage.setItem('gudang_inventory_sidebar_collapsed', 'false');
+                document.getElementById('inventory-app-layout')?.classList.remove('sidebar-collapsed');
+            }
             window.applyTheme('glass', mode, selected);
 
             if (window.gudangAppDb?.currentUser) {
-                window.gudangAppDb.currentUser.uiPreference = selected;
-                window.activeUserSession = window.gudangAppDb.currentUser;
-                localStorage.setItem('gudang_pro_session', JSON.stringify(window.gudangAppDb.currentUser));
+                const currentUser = window.gudangAppDb.currentUser;
+                if (selected === 'soft') {
+                    localStorage.setItem(localSoftUiPreferenceKey(currentUser), 'soft');
+                } else {
+                    localStorage.removeItem(localSoftUiPreferenceKey(currentUser));
+                }
+                currentUser.uiPreference = selected;
+                window.activeUserSession = currentUser;
+                localStorage.setItem('gudang_pro_session', JSON.stringify(currentUser));
                 await saveAccountUiPreference(selected);
             }
             window.closeAppearancePanel();
-            showToast(selected === 'crystal' ? 'Liquid Glass UI 2 diaktifkan.' : 'Classic Glass UI diaktifkan.');
+            const themeName = selected === 'soft' ? 'Soft Neutral UI 3' : selected === 'crystal' ? 'Liquid Glass UI 2' : 'Classic Glass';
+            showToast(`${themeName} diaktifkan.`);
         };
 
         // Kompatibilitas tombol mode lama; pilihan desain menentukan mode warnanya.
@@ -1225,19 +1245,21 @@
 
         window.applyTheme = function(themeName = 'glass', mode = null, preference = null) {
             const savedPreference = preference || localStorage.getItem(INVENTORY_UI_PREFERENCE_KEY) || accountPreferenceFromMode(mode || localStorage.getItem(INVENTORY_THEME_KEY) || 'dark');
-            const selected = savedPreference === 'crystal' ? 'crystal' : 'classic';
-            const safeMode = selected === 'crystal' ? 'light' : 'dark';
+            const selected = normalizeAccountUiPreference(savedPreference);
+            const safeMode = selected === 'classic' ? 'dark' : 'light';
             localStorage.setItem(INVENTORY_UI_PREFERENCE_KEY, selected);
             localStorage.setItem(INVENTORY_THEME_KEY, safeMode);
             // Pertahankan status autentikasi saat class tema diperbarui.
             // Tanpa ini, pergantian UI menghapus inventory-authenticated
             // sehingga header baru muncul kembali setelah halaman di-reload.
             const isAuthenticated = document.body.classList.contains('inventory-authenticated');
-            document.body.className = `min-h-screen flex flex-col antialiased theme-glass ${safeMode === 'light' ? 'theme-light theme-crystal' : 'theme-dark theme-classic'}`;
+            const themeClass = selected === 'soft' ? 'theme-light theme-soft' : safeMode === 'light' ? 'theme-light theme-crystal' : 'theme-dark theme-classic';
+            document.body.className = `min-h-screen flex flex-col antialiased theme-glass ${themeClass}`;
             if (isAuthenticated) document.body.classList.add('inventory-authenticated');
 
             const classicBtn = document.getElementById('theme-classic-btn');
             const crystalBtn = document.getElementById('theme-crystal-btn');
+            const softBtn = document.getElementById('theme-soft-btn');
             if (classicBtn) {
                 classicBtn.classList.toggle('active', selected === 'classic');
                 classicBtn.setAttribute('aria-pressed', String(selected === 'classic'));
@@ -1246,16 +1268,27 @@
                 crystalBtn.classList.toggle('active', selected === 'crystal');
                 crystalBtn.setAttribute('aria-pressed', String(selected === 'crystal'));
             }
+            if (softBtn) {
+                softBtn.classList.toggle('active', selected === 'soft');
+                softBtn.setAttribute('aria-pressed', String(selected === 'soft'));
+            }
             const classicCard = document.getElementById('theme-classic-card');
             const crystalCard = document.getElementById('theme-crystal-card');
+            const softCard = document.getElementById('theme-soft-card');
             if (classicCard) classicCard.classList.toggle('active', selected === 'classic');
             if (crystalCard) crystalCard.classList.toggle('active', selected === 'crystal');
+            if (softCard) softCard.classList.toggle('active', selected === 'soft');
+            const themeNames = {
+                classic: 'Classic Glass',
+                crystal: 'Liquid Glass',
+                soft: 'Soft Neutral UI 3'
+            };
             const appearanceLabel = document.getElementById('appearance-current-label');
-            if (appearanceLabel) appearanceLabel.textContent = selected === 'classic' ? 'Classic Glass aktif' : 'Liquid Glass aktif';
+            if (appearanceLabel) appearanceLabel.textContent = `${themeNames[selected]} aktif`;
             const legacyLabel = document.getElementById('theme-mode-label');
-            if (legacyLabel) legacyLabel.textContent = selected === 'classic' ? 'Classic Glass' : 'Liquid Glass';
+            if (legacyLabel) legacyLabel.textContent = themeNames[selected];
             const legacyToggle = document.getElementById('theme-mode-toggle');
-            if (legacyToggle) legacyToggle.setAttribute('aria-label', selected === 'classic' ? 'Classic Glass aktif' : 'Liquid Glass aktif');
+            if (legacyToggle) legacyToggle.setAttribute('aria-label', `${themeNames[selected]} aktif`);
         };
 
         window.updateClock = function() {
@@ -4792,9 +4825,10 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             }
             function applyMobileIconOnly() {
                 const mobileOpen = isMobile() && layout.classList.contains('mobile-sidebar-open');
+                const iconOnlyMobile = mobileOpen && !document.body.classList.contains('theme-soft');
                 const labels = sidebar.querySelectorAll('nav .sidebar-btn > span');
                 labels.forEach(function(label) {
-                    if (mobileOpen) {
+                    if (iconOnlyMobile) {
                         if (label.style.getPropertyValue('display') !== 'none' || label.style.getPropertyPriority('display') !== 'important') label.style.setProperty('display', 'none', 'important');
                         if (label.style.getPropertyValue('visibility') !== 'hidden' || label.style.getPropertyPriority('visibility') !== 'important') label.style.setProperty('visibility', 'hidden', 'important');
                         if (label.style.getPropertyValue('width') !== '0px' || label.style.getPropertyPriority('width') !== 'important') label.style.setProperty('width', '0', 'important');
@@ -4808,7 +4842,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 });
                 const menuHeading = sidebar.querySelector('nav > div:first-child');
                 if (menuHeading) {
-                    if (mobileOpen) {
+                    if (iconOnlyMobile) {
                         if (menuHeading.style.getPropertyValue('display') !== 'none' || menuHeading.style.getPropertyPriority('display') !== 'important') menuHeading.style.setProperty('display', 'none', 'important');
                     } else menuHeading.style.removeProperty('display');
                 }
