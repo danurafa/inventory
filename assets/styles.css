@@ -12963,6 +12963,50 @@ html body.theme-glass.theme-light.theme-soft #toast-container .inventory-toast-c
 html body.theme-glass.theme-light.theme-soft #toast-container .inventory-toast-copy strong { color:#e0e7e2 !important; }
 html body.theme-glass.theme-light.theme-soft #toast-container .inventory-toast-copy > span { color:#b8c4bc !important; }
 
+/* PO Customer detail controls: compact, aligned touch targets on phones. */
+@media screen and (max-width:767px) {
+  html body.theme-glass #tab-po tr[id^="po-detail-"] > td {
+    padding:8px !important;
+  }
+  html body.theme-glass #tab-po tr[id^="po-detail-"] > td > div {
+    max-width:100% !important;
+    overflow-x:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+    border-radius:12px !important;
+  }
+  html body.theme-glass #tab-po tr[id^="po-detail-"] table {
+    min-width:760px !important;
+    border-collapse:separate !important;
+    border-spacing:0 !important;
+  }
+  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td {
+    padding:9px 8px !important;
+    vertical-align:middle !important;
+  }
+  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(8),
+  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(9) {
+    white-space:nowrap !important;
+  }
+  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(8) input {
+    width:76px !important;
+    min-height:36px !important;
+    box-sizing:border-box !important;
+    margin-right:5px !important;
+  }
+  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(8) button,
+  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(9) button {
+    min-width:58px !important;
+    min-height:36px !important;
+    margin:2px !important;
+    padding:7px 9px !important;
+    border-radius:9px !important;
+    font-size:11px !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+    touch-action:manipulation;
+  }
+}
+
 /* UI 1/2: avoid compositing an off-screen blurred drawer during page scrolling. */
 @media screen and (max-width:900px) {
   html body.theme-glass:is(.theme-classic,.theme-crystal) #inventory-sidebar {
