@@ -13123,8 +13123,42 @@ html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):
 html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] tbody tr:hover,
 html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] tbody tr:hover td,
 html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] tbody tr td:hover {
+  background:rgba(126,157,138,.10) !important;
+  background-color:rgba(126,157,138,.10) !important;
+  background-image:none !important;
+  transition:none !important;
+}
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] tbody tr:hover,
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] tbody tr:hover td,
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] tbody tr td:hover {
+  background:rgba(59,130,246,.10) !important;
+  background-color:rgba(59,130,246,.10) !important;
+  transition:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content [id^="tab-"] tbody tr:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content [id^="tab-"] tbody tr:hover td,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content [id^="tab-"] tbody tr td:hover {
+  transition:none !important;
+  animation:none !important;
+  background-color:rgba(255,255,255,.08) !important;
+}
+
+/* Final override: disable table row/cell hover fill in UI 1, UI 2 and UI 3. */
+html body.theme-glass #inventory-main-content [id^="tab-"] table tbody tr:hover,
+html body.theme-glass #inventory-main-content [id^="tab-"] table tbody tr:hover td,
+html body.theme-glass #inventory-main-content [id^="tab-"] table tbody tr td:hover {
   background:transparent !important;
   background-color:transparent !important;
   background-image:none !important;
   transition:none !important;
+  animation:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content [id^="tab-"] table tbody tr:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content [id^="tab-"] table tbody tr:hover td,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content [id^="tab-"] table tbody tr td:hover {
+  background:transparent !important;
+  background-color:transparent !important;
+  background-image:none !important;
+  transition:none !important;
+  animation:none !important;
 }

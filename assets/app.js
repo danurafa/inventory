@@ -1676,7 +1676,7 @@
 
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Item terdaftar`;
 
-            tbody.innerHTML = filtered.map((i, index) => {
+            const renderedMasterRows = filtered.map((i, index) => {
                 const isLow = i.stok < i.min;
                 const isCritical = isLow && i.stok < (i.min * 0.5);
                 const blinkClass = isLow
@@ -1705,6 +1705,7 @@
                     </tr>
                 `;
             }).join('') || `<tr><td colspan="${isViewer ? 10 : 11}" class="py-6 text-center opacity-50">Tidak ada data master barang.</td></tr>`;
+            if (tbody.innerHTML !== renderedMasterRows) tbody.innerHTML = renderedMasterRows;
             lucide.createIcons();
         };
 
@@ -1866,7 +1867,7 @@
             );
             if (badgeTotal) badgeTotal.textContent = `${new Set(filtered.map(i => String(i.transactionId||i.groupId||i.id))).size} Surat Jalan · ${filtered.length} Detail Barang`;
 
-            tbody.innerHTML = filtered.map((i, index) => `
+            const renderedMasukRows = filtered.map((i, index) => `
                 <tr class="hover:bg-white/5">
                     <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
                     <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
@@ -1887,6 +1888,7 @@
                     ` : ''}
                 </tr>
             `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
+            if (tbody.innerHTML !== renderedMasukRows) tbody.innerHTML = renderedMasukRows;
             lucide.createIcons();
         };
 
@@ -2057,7 +2059,7 @@
                 '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
             }[ch]));
 
-            tbody.innerHTML = groups.map((group, index) => {
+            const renderedKeluarRows = groups.map((group, index) => {
                 const token = encodeURIComponent(group.transactionId).replace(/'/g, '%27');
                 const expanded = window._expandedKeluarGroupKeys.has(token);
                 const totalQty = group.rows.reduce((sum, row) => sum + Number(row.qty || 0), 0);
@@ -2110,6 +2112,7 @@
                         </td>
                     </tr>`;
             }).join('') || `<tr><td colspan="9" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
+            if (tbody.innerHTML !== renderedKeluarRows) tbody.innerHTML = renderedKeluarRows;
             lucide.createIcons();
         };
 
@@ -2335,7 +2338,7 @@
             );
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Sampel`;
 
-            tbody.innerHTML = filtered.map((i, index) => `
+            const renderedSampelRows = filtered.map((i, index) => `
                 <tr class="hover:bg-white/5">
                     <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
                     <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
@@ -2355,6 +2358,7 @@
                     ` : ''}
                 </tr>
             `).join('') || `<tr><td colspan="${isViewer ? 10 : 11}" class="py-6 text-center opacity-50">Tidak ada data sampel.</td></tr>`;
+            if (tbody.innerHTML !== renderedSampelRows) tbody.innerHTML = renderedSampelRows;
             lucide.createIcons();
         };
 
@@ -2525,7 +2529,7 @@
             );
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Transaksi`;
 
-            tbody.innerHTML = filtered.map((i, index) => `
+            const renderedReturRows = filtered.map((i, index) => `
                 <tr class="hover:bg-white/5">
                     <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
                     <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
@@ -2546,6 +2550,7 @@
                     ` : ''}
                 </tr>
             `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
+            if (tbody.innerHTML !== renderedReturRows) tbody.innerHTML = renderedReturRows;
             lucide.createIcons();
         };
 
@@ -2628,7 +2633,7 @@
             if (!tbody) return;
 
             if (badgeTotal) badgeTotal.textContent = `${window.gudangAppDb.users.length} User`;
-            tbody.innerHTML = window.gudangAppDb.users.map((u, index) => {
+            const renderedUserRows = window.gudangAppDb.users.map((u, index) => {
                 const isCurrent = window.gudangAppDb.currentUser?.username === u.username;
                 const badgeClass = ['admin','superadmin'].includes(u.role) ? 'role-badge-admin' : (u.role === 'staff' ? 'role-badge-staff' : 'role-badge-viewer');
                 return `
@@ -2650,6 +2655,7 @@
                     </tr>
                 `;
             }).join('');
+            if (tbody.innerHTML !== renderedUserRows) tbody.innerHTML = renderedUserRows;
             lucide.createIcons();
         };
 
