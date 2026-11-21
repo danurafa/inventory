@@ -12265,3 +12265,65 @@ html body.theme-glass.theme-light.theme-soft #appearance-panel .appearance-close
     -webkit-text-fill-color:#e0e7e2 !important;
   }
 }
+html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-premium-body {
+  grid-template-columns:minmax(0,1fr) !important;
+  gap:14px !important;
+}
+html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-premium-stats {
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:10px !important;
+}
+html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-premium-visual {
+  min-width:0 !important;
+  padding:12px 0 0 !important;
+  border-left:0 !important;
+  border-top:1px solid #394740 !important;
+}
+html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-trend-chart {
+  width:100% !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  height:auto !important;
+  aspect-ratio:760 / 160 !important;
+}
+html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-trend-chart svg {
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  max-height:none !important;
+  overflow:hidden !important;
+}
+html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-axis-value,
+html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-axis-date {
+  fill:#e0e7e2 !important;
+  color:#e0e7e2 !important;
+  font-size:14px !important;
+  font-weight:700 !important;
+  opacity:1 !important;
+}
+html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-grid-line {
+  stroke:#98a89f !important;
+  opacity:.3 !important;
+}
+html body.theme-glass.theme-light.theme-soft #movement-trend-card svg polyline[stroke="#2eb5f4"] {
+  stroke:#a8cbb5 !important;
+}
+html body.theme-glass.theme-light.theme-soft #movement-trend-card svg polyline[stroke="#f05d91"] {
+  stroke:#d59b8c !important;
+}
+html body.theme-glass.theme-light.theme-soft #movement-trend-card svg circle[fill="#56a9ed"] {
+  fill:#a8cbb5 !important;
+}
+html body.theme-glass.theme-light.theme-soft #movement-trend-card svg circle[fill="#e5a15d"] {
+  fill:#d59b8c !important;
+}
+@media (max-width:700px) {
+  html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-trend-chart {
+    aspect-ratio:760 / 190 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-axis-value,
+  html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-axis-date {
+    font-size:20px !important;
+  }
+}

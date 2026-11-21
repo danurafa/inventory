@@ -2684,7 +2684,9 @@
             document.getElementById('movement-total-out').textContent=fmt(totalOut);
             document.getElementById('movement-total-net').textContent=(totalIn-totalOut>0?'+':'')+fmt(totalIn-totalOut);
             // V89: reserve a little more room on the right so the final date label is never clipped.
-            const W=760,H=112,L=42,R=28,T=7,B=22,plotW=W-L-R,plotH=H-T-B;
+            const softTheme = document.body.classList.contains('theme-soft');
+            const softMobile = softTheme && window.matchMedia('(max-width: 700px)').matches;
+            const W=760,H=softTheme?(softMobile?190:160):112,L=softTheme?54:42,R=28,T=softTheme?12:7,B=softMobile?34:(softTheme?30:22),plotW=W-L-R,plotH=H-T-B;
             const max=Math.max(1,...rows.flatMap(r=>[r.in,r.out]));
             const y=v=>T+plotH-(v/max)*plotH;
             const x=i=>L+(rows.length<=1?plotW/2:i*plotW/(rows.length-1));
@@ -2707,7 +2709,7 @@
                   <title>${r.label}\nInflow: ${fmt(r.in)}\nOutflow: ${fmt(r.out)}</title>
                 </circle>`).join('');
             const areaPath=key=>`M ${x(0)} ${T+plotH} L ${rows.map((r,i)=>`${x(i).toFixed(1)} ${y(r[key]).toFixed(1)}`).join(' L ')} L ${x(rows.length-1)} ${T+plotH} Z`;
-            host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Tren inflow ${fmt(totalIn)} dan outflow ${fmt(totalOut)}" preserveAspectRatio="none"><defs><linearGradient id="movementInFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#2eb5f4" stop-opacity=".34"/><stop offset="100%" stop-color="#2eb5f4" stop-opacity=".015"/></linearGradient><linearGradient id="movementOutFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#f05d91" stop-opacity=".28"/><stop offset="100%" stop-color="#f05d91" stop-opacity=".012"/></linearGradient></defs><g>${grid}</g><path d="${areaPath('in')}" fill="url(#movementInFill)"/><path d="${areaPath('out')}" fill="url(#movementOutFill)"/><polyline points="${points('in')}" fill="none" stroke="#2eb5f4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${points('out')}" fill="none" stroke="#f05d91" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${pointsWithTips}${labels}</svg>`;
+            host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Tren inflow ${fmt(totalIn)} dan outflow ${fmt(totalOut)}" preserveAspectRatio="${softTheme?'xMidYMid meet':'none'}"><defs><linearGradient id="movementInFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#2eb5f4" stop-opacity=".34"/><stop offset="100%" stop-color="#2eb5f4" stop-opacity=".015"/></linearGradient><linearGradient id="movementOutFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#f05d91" stop-opacity=".28"/><stop offset="100%" stop-color="#f05d91" stop-opacity=".012"/></linearGradient></defs><g>${grid}</g><path d="${areaPath('in')}" fill="url(#movementInFill)"/><path d="${areaPath('out')}" fill="url(#movementOutFill)"/><polyline points="${points('in')}" fill="none" stroke="#2eb5f4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${points('out')}" fill="none" stroke="#f05d91" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${pointsWithTips}${labels}</svg>`;
             document.querySelectorAll('.movement-range-btn').forEach(btn=>btn.classList.toggle('is-active',Number(btn.dataset.range)===movementTrendRange));
         }
 
