@@ -10625,6 +10625,48 @@ html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .fluid-
   vertical-align: middle;
 }
 
+/* UI 1 scroll performance: replace oversized card shadows with a compact static edge. */
+html body.theme-glass.theme-classic #inventory-main-content .app-card,
+html body.theme-glass.theme-classic #inventory-main-content .app-card:hover,
+html body.theme-glass.theme-classic #inventory-main-content .dashboard-glow-card,
+html body.theme-glass.theme-classic #inventory-main-content .dashboard-glow-card:hover,
+html body.theme-glass.theme-classic #inventory-main-content #dashboard-hero,
+html body.theme-glass.theme-classic #inventory-main-content #dashboard-hero:hover {
+  box-shadow:0 5px 14px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.045) !important;
+  filter:none !important;
+  transition:background-color .15s ease,border-color .15s ease !important;
+}
+html body.theme-glass.theme-classic #inventory-main-content .app-card:hover,
+html body.theme-glass.theme-classic #inventory-main-content .dashboard-glow-card:hover,
+html body.theme-glass.theme-classic #inventory-main-content #dashboard-hero:hover {
+  transform:none !important;
+}
+
+/* UI 1: keep the scrolling canvas and card highlights cheap to repaint. */
+html body.theme-glass.theme-classic #inventory-main-content {
+  background:#081525 !important;
+  background-image:none !important;
+  background-attachment:scroll !important;
+}
+html body.theme-glass.theme-classic #inventory-main-content .app-card::before,
+html body.theme-glass.theme-classic #inventory-main-content .app-card::after,
+html body.theme-glass.theme-classic #inventory-main-content .dashboard-glow-card::before,
+html body.theme-glass.theme-classic #inventory-main-content .dashboard-glow-card::after,
+html body.theme-glass.theme-classic #inventory-main-content #dashboard-hero::before,
+html body.theme-glass.theme-classic #inventory-main-content #dashboard-hero::after {
+  display:none !important;
+  animation:none !important;
+  transition:none !important;
+  filter:none !important;
+}
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .app-card,
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .dashboard-glow-card,
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .app-card:hover,
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] .dashboard-glow-card:hover {
+  transition:none !important;
+  will-change:auto !important;
+}
+
 /* Keep translucent theme surfaces, but avoid repaint-heavy blur while menus scroll. */
 html body.theme-glass #inventory-main-content,
 html body.theme-glass #inventory-main-content .app-card,
