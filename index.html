@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <link id="inventory-styles" rel="stylesheet" href="assets/styles.css?v=a241b29-mobile-heading">
+    <link id="inventory-styles" rel="stylesheet" href="assets/styles.css?v=low-stock-neutral-idle-20261122">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -165,6 +165,7 @@
                     <button type="button" id="theme-classic-btn" onclick="selectAccountUiTheme('classic')" aria-pressed="false"></button>
                     <button type="button" id="theme-crystal-btn" onclick="selectAccountUiTheme('crystal')" aria-pressed="false"></button>
                     <button type="button" id="theme-soft-btn" onclick="selectAccountUiTheme('soft')" aria-pressed="false"></button>
+                    <button type="button" id="theme-neon-btn" onclick="selectAccountUiTheme('neon')" aria-pressed="false"></button>
                 </div>
                 <button type="button" id="theme-mode-toggle" onclick="toggleThemeMode()" class="hidden" aria-hidden="true" tabindex="-1">
                     <span id="theme-mode-label">Mode Terang</span>
@@ -210,8 +211,14 @@
                         <span class="appearance-card-description">Palet gelap redup · navigasi ikon · form di atas tabel</span>
                         <span class="appearance-card-action">Gunakan Soft Neutral <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
                     </button>
+                    <button type="button" id="theme-neon-card" class="appearance-theme-card" onclick="selectAccountUiTheme('neon')">
+                        <span class="appearance-card-top"><span class="appearance-theme-name">Black Cyan · UI 4</span><span class="appearance-selected-mark"><i data-lucide="check" class="w-3.5 h-3.5"></i> AKTIF</span></span>
+                        <span class="appearance-preview neon-large-preview"><span class="preview-neon-rail"><i></i><i></i><i></i><i></i></span><span class="preview-neon-workspace"><i></i><i></i><i></i><i></i></span></span>
+                        <span class="appearance-card-description">Latar hitam · panel glass transparan · aksen cyan</span>
+                        <span class="appearance-card-action">Gunakan Black Cyan <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                    </button>
                 </div>
-                <footer class="appearance-dialog-footer"><i data-lucide="cloud" class="w-4 h-4"></i><span>UI 1 dan UI 2 tersimpan pada akun. UI 3 tersimpan lokal per akun pada perangkat ini.</span></footer>
+                <footer class="appearance-dialog-footer"><i data-lucide="cloud" class="w-4 h-4"></i><span>UI 1 dan UI 2 tersimpan pada akun. UI 3 dan UI 4 tersimpan lokal per akun pada perangkat ini.</span></footer>
             </section>
         </div>
 
@@ -251,6 +258,22 @@
                         </div>
                     </div>
                 </div>
+
+                <section class="dashboard-search-panel" aria-labelledby="dashboard-search-title">
+                    <div class="dashboard-search-heading">
+                        <div>
+                            <h3 id="dashboard-search-title">Pencarian Umum</h3>
+                            <p>Cari barang dan transaksi dari semua menu inventory.</p>
+                        </div>
+                        <span class="dashboard-search-shortcut" aria-hidden="true">6 MENU</span>
+                    </div>
+                    <label class="dashboard-search-field">
+                        <i data-lucide="search" class="w-5 h-5" aria-hidden="true"></i>
+                        <input id="dashboard-global-search" type="search" autocomplete="off" oninput="runDashboardSearch()" placeholder="Cari ID, nama barang, customer, PO, atau transaksi..." aria-label="Cari semua data inventory">
+                        <button type="button" id="dashboard-search-clear" onclick="clearDashboardSearch()" aria-label="Hapus pencarian" hidden><i data-lucide="x" class="w-4 h-4"></i></button>
+                    </label>
+                    <div id="dashboard-search-results" class="dashboard-search-results" aria-live="polite" hidden></div>
+                </section>
 
                 <!-- KPI OVERVIEW: keep original IDs and click navigation -->
                 <div class="flex items-center justify-between gap-3">
@@ -1379,6 +1402,6 @@
 
 
 
-    <script src="assets/app.js"></script>
+    <script src="assets/app.js?v=low-stock-ui1-blink-20261122"></script>
 </body>
 </html>

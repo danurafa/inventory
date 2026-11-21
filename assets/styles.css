@@ -7885,6 +7885,77 @@ body.theme-glass.theme-crystal .inventory-item-select-option[aria-selected="true
   }
 }
 
+/* UI 4 — Data Explorer layout across CRUD menus. */
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) > .grid:first-child {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  grid-template-areas:"editor" "records";
+  align-items:start !important;
+  gap:20px !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) > .grid:first-child > .app-card:first-child {
+  grid-area:editor;
+  width:100% !important;
+  min-width:0 !important;
+  padding:20px !important;
+  border-radius:18px !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) > .grid:first-child > .app-card:nth-child(2) {
+  grid-area:records;
+  width:100% !important;
+  min-width:0 !important;
+  padding:20px !important;
+  border-radius:18px !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) form[id^="form-"] {
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  align-items:end;
+  gap:14px 16px !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) form[id^="form-"] > * {
+  min-width:0 !important;
+  margin-top:0 !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) form[id^="form-"] > .grid,
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) form[id^="form-"] > .space-y-2,
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) form[id^="form-"] > .rounded-xl.border,
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) form[id^="form-"] > .pt-2 {
+  grid-column:1/-1 !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) form[id^="form-"] > .pt-2 {
+  display:flex !important;
+  justify-content:flex-end !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) form[id^="form-"] > .pt-2 button {
+  min-width:130px;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) .fluid-table-container {
+  border-radius:14px !important;
+  border-color:rgba(95,218,235,.16) !important;
+  background:rgba(2,7,11,.32) !important;
+}
+@media (max-width:999px) {
+  html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) form[id^="form-"] {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+}
+@media (max-width:640px) {
+  html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) > .grid:first-child {
+    grid-template-areas:"editor" "records" !important;
+    gap:14px !important;
+  }
+  html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) > .grid:first-child > .app-card {
+    padding:16px !important;
+    border-radius:16px !important;
+  }
+  html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) form[id^="form-"] {
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:12px !important;
+  }
+}
+
+
 /* Ensure mobile table scrolling wins over theme-specific clipping rules. */
 @media screen and (max-width:767px) {
   html body.theme-glass #inventory-main-content [id^="tab-"] .fluid-table-container {
@@ -11426,7 +11497,7 @@ html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"
 html body.theme-glass.theme-light.theme-soft #tab-dashboard {
   display:grid;
   grid-template-columns:minmax(0,1.35fr) minmax(300px,.85fr);
-  grid-template-areas:"hero hero" "summary summary" "kpis kpis" "trend low" "recent recent";
+  grid-template-areas:"hero hero" "search search" "summary summary" "kpis kpis" "trend low" "recent recent";
   align-items:stretch;
   gap:18px !important;
 }
@@ -11441,6 +11512,11 @@ html body.theme-glass.theme-light.theme-soft #dashboard-hero {
   background:#e3ebe6 !important;
   border-color:#d2ddd6 !important;
   box-shadow:none !important;
+}
+html body.theme-glass.theme-light.theme-soft #tab-dashboard > .dashboard-search-panel {
+  grid-area:search;
+  width:100%;
+  min-width:0;
 }
 html body.theme-glass.theme-light.theme-soft #dashboard-hero > .blur-3xl {
   display:none !important;
@@ -11469,10 +11545,10 @@ html body.theme-glass.theme-light.theme-soft #dashboard-hero .text-blue-100 {
   color:#477567 !important;
   -webkit-text-fill-color:#477567 !important;
 }
-html body.theme-glass.theme-light.theme-soft #dashboard-hero + .flex.items-center.justify-between {
+html body.theme-glass.theme-light.theme-soft #dashboard-hero + .dashboard-search-panel + .flex.items-center.justify-between {
   grid-area:summary;
 }
-html body.theme-glass.theme-light.theme-soft #dashboard-hero + .flex.items-center.justify-between + .grid {
+html body.theme-glass.theme-light.theme-soft #dashboard-hero + .dashboard-search-panel + .flex.items-center.justify-between + .grid {
   grid-area:kpis;
 }
 html body.theme-glass.theme-light.theme-soft #movement-trend-card {
@@ -11599,7 +11675,7 @@ html body.theme-glass.theme-light.theme-soft .appearance-close {
   background:#e3ebe6;
 }
 .appearance-options {
-  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-columns:repeat(2,minmax(0,1fr));
 }
 @media (max-width:760px) {
   .appearance-options {
@@ -11614,7 +11690,7 @@ html body.theme-glass.theme-light.theme-soft .appearance-close {
 @media (max-width:900px) {
   html body.theme-glass.theme-light.theme-soft #tab-dashboard {
     grid-template-columns:minmax(0,1fr);
-    grid-template-areas:"hero" "summary" "kpis" "low" "trend" "recent";
+    grid-template-areas:"hero" "search" "summary" "kpis" "low" "trend" "recent";
   }
 }
 html body.theme-glass.theme-light.theme-soft #inventory-main-content .inventory-item-select-trigger:hover,
@@ -12393,7 +12469,7 @@ html body.theme-glass.theme-light.theme-soft #toast-container > .inventory-toast
 @media (max-width:900px) {
   html body.theme-glass.theme-light.theme-soft #tab-dashboard {
     grid-template-columns:minmax(0,1fr);
-    grid-template-areas:"hero" "summary" "kpis" "low" "trend" "recent";
+    grid-template-areas:"hero" "search" "summary" "kpis" "low" "trend" "recent";
   }
 }
 html body.theme-glass.theme-light.theme-soft #tab-masuk #masuk-item-info,
@@ -13171,4 +13247,1041 @@ html body:not(.inventory-authenticated) #inventory-app-layout {
 html body:not(.inventory-authenticated) #login-modal:not(.hidden) {
   display:flex !important;
   z-index:10000 !important;
+}
+
+/* UI 4 — Black Cyan glass workspace. */
+html body.theme-glass.theme-neon {
+  --neon-bg:#07090d;
+  --neon-panel:rgba(12,18,25,.70);
+  --neon-panel-strong:rgba(12,19,27,.88);
+  --neon-border:rgba(95,218,235,.20);
+  --neon-cyan:#35d7e8;
+  --neon-text:#e7edf1;
+  --neon-muted:#91a1ad;
+  color:var(--neon-text) !important;
+  background:#07090d !important;
+  color-scheme:dark;
+}
+html body.theme-glass.theme-neon #inventory-top-header {
+  color:var(--neon-text) !important;
+  background:rgba(8,12,17,.92) !important;
+  border-color:var(--neon-border) !important;
+  box-shadow:0 5px 22px rgba(0,0,0,.34) !important;
+  -webkit-backdrop-filter:blur(12px) saturate(125%) !important;
+  backdrop-filter:blur(12px) saturate(125%) !important;
+}
+html body.theme-glass.theme-neon #inventory-sidebar {
+  color:var(--neon-text) !important;
+  background:rgba(8,12,17,.94) !important;
+  border-color:var(--neon-border) !important;
+  box-shadow:6px 0 24px rgba(0,0,0,.28) !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content {
+  color:var(--neon-text) !important;
+  background:radial-gradient(ellipse at 76% 4%,rgba(22,185,206,.12),transparent 34%),#07090d !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content :is(.app-card,.dashboard-glow-card,#dashboard-hero) {
+  color:var(--neon-text) !important;
+  background:linear-gradient(145deg,rgba(21,31,40,.72),rgba(9,14,20,.76)) !important;
+  border:1px solid var(--neon-border) !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.25),inset 0 1px 0 rgba(181,244,250,.05) !important;
+  -webkit-backdrop-filter:blur(10px) saturate(130%) !important;
+  backdrop-filter:blur(10px) saturate(130%) !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content :is(.app-card,.dashboard-glow-card):hover {
+  border-color:rgba(53,215,232,.34) !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content #dashboard-hero {
+  background:linear-gradient(120deg,rgba(10,33,42,.9),rgba(9,15,22,.84) 58%,rgba(17,37,45,.74)) !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"] :is(h1,h2,h3,h4,.font-bold,.font-semibold) {
+  color:#e8f0f3 !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"] :is(.text-gray-300,.text-gray-400,.text-gray-500,.text-slate-300,.text-slate-400) {
+  color:var(--neon-muted) !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content :is(input:not([type=checkbox]):not([type=radio]),select,textarea) {
+  color:var(--neon-text) !important;
+  background:rgba(5,10,15,.78) !important;
+  border-color:rgba(105,192,207,.24) !important;
+  box-shadow:inset 0 1px 4px rgba(0,0,0,.30) !important;
+  color-scheme:dark;
+}
+html body.theme-glass.theme-neon #inventory-main-content :is(input,textarea)::placeholder { color:#71828e !important; }
+html body.theme-glass.theme-neon #inventory-main-content .theme-accent-bg,
+html body.theme-glass.theme-neon #inventory-main-content button[class*="bg-blue-"] {
+  color:#061216 !important;
+  background:linear-gradient(135deg,#3fe2ec,#1caebe) !important;
+  border-color:rgba(102,239,247,.58) !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"] :is(thead,thead tr,thead th) {
+  color:#bceef2 !important;
+  background:rgba(22,42,50,.82) !important;
+  border-color:rgba(95,218,235,.18) !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"] tbody tr { border-color:rgba(116,155,166,.12) !important; }
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"] tbody tr:hover { background:transparent !important; }
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"] tbody td { color:#dce6e9 !important; }
+html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn { color:#97a8b2 !important; border-radius:12px !important; }
+html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn:hover { color:#dffbfc !important; background:rgba(53,215,232,.08) !important; }
+html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn.active,
+html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn.theme-accent-bg {
+  color:#e9fdff !important;
+  background:linear-gradient(100deg,rgba(22,185,206,.25),rgba(22,185,206,.08)) !important;
+  border-color:rgba(53,215,232,.28) !important;
+  box-shadow:inset 3px 0 var(--neon-cyan) !important;
+}
+html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn.active > span,
+html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn.theme-accent-bg > span { color:#e9fdff !important; }
+html body.theme-glass.theme-neon #open-appearance-btn {
+  color:#cceff2 !important;
+  background:rgba(53,215,232,.07) !important;
+  border-color:var(--neon-border) !important;
+}
+html body.theme-glass.theme-neon #inventory-top-header #current-user-banner,
+html body.theme-glass.theme-neon #inventory-top-header #live-clock {
+  color:#dce9ed !important;
+  background:rgba(15,27,35,.80) !important;
+  border-color:var(--neon-border) !important;
+}
+html body.theme-glass.theme-neon #inventory-top-header #v156-mobile-greeting-text { color:#e7f5f7 !important; }
+html body.theme-glass.theme-neon #toast-container .inventory-toast { --toast-tone:53,215,232; }
+html body.theme-glass.theme-neon .appearance-theme-card.active { border-color:#35d7e8 !important; }
+.neon-large-preview { gap:8px; background:#070a0e !important; border-color:rgba(53,215,232,.28) !important; }
+.preview-neon-rail {
+  display:flex;flex:0 0 19%;flex-direction:column;gap:7px;min-width:0;padding:7px 5px;
+  border:1px solid #1b3b44;border-radius:6px;background:#0b1218;
+}
+.preview-neon-rail i { display:block;height:7px;flex:none;border-radius:4px;background:#17434b;border:1px solid rgba(53,215,232,.08); }
+.preview-neon-rail i:first-child { background:#24bbca;box-shadow:0 0 9px rgba(53,215,232,.24); }
+.preview-neon-workspace {
+  display:grid;flex:1;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:22px repeat(2,minmax(0,1fr));
+  gap:6px;min-width:0;padding:5px;border:1px solid rgba(53,215,232,.12);border-radius:7px;
+  background:linear-gradient(145deg,rgba(18,34,41,.72),rgba(7,13,18,.86));
+}
+.preview-neon-workspace i { display:block;min-width:0;min-height:0;border:1px solid #24444b;border-radius:5px;background:#101920; }
+.preview-neon-workspace i:first-child { grid-column:1/-1;background:linear-gradient(90deg,rgba(18,111,122,.52),rgba(16,33,39,.72));border-color:rgba(53,215,232,.22); }
+@media (max-width:900px) {
+  html body.theme-glass.theme-neon #inventory-app-layout.mobile-sidebar-open #inventory-sidebar {
+    background:rgba(8,12,17,.98) !important;
+    -webkit-backdrop-filter:none !important;
+    backdrop-filter:none !important;
+  }
+}
+@media screen and (max-width:767px) {
+  html body.theme-glass.theme-neon #inventory-top-header {
+    position:relative !important;
+    display:flex !important;
+    flex-flow:row nowrap !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    min-height:58px !important;
+    padding:8px 10px !important;
+    gap:0 !important;
+    overflow:hidden !important;
+  }
+  html body.theme-glass.theme-neon #inventory-top-header #header-brand-group,
+  html body.theme-glass.theme-neon #inventory-top-header #live-clock { display:none !important; }
+  html body.theme-glass.theme-neon #inventory-top-header #v156-mobile-greeting {
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:flex-start !important;
+    justify-content:center !important;
+    gap:3px !important;
+    position:absolute !important;
+    left:12px !important;
+    right:164px !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    min-width:0 !important;
+    overflow:hidden !important;
+    z-index:1 !important;
+    pointer-events:none !important;
+  }
+  html body.theme-glass.theme-neon #inventory-top-header #v156-mobile-greeting-text {
+    width:100% !important;
+    overflow:hidden !important;
+    white-space:nowrap !important;
+    text-overflow:ellipsis !important;
+    color:#e7f5f7 !important;
+    font-size:15px !important;
+    font-weight:800 !important;
+  }
+  html body.theme-glass.theme-neon #inventory-top-header #v167-mobile-role-badge {
+    display:inline-flex !important;
+    color:#b8e8ed !important;
+    background:rgba(16,53,61,.82) !important;
+    border:1px solid rgba(53,215,232,.24) !important;
+    border-radius:999px !important;
+    padding:2px 7px !important;
+    font-size:10px !important;
+  }
+  html body.theme-glass.theme-neon #inventory-top-header > div.flex.items-center.gap-4 {
+    display:grid !important;
+    grid-template-columns:34px 34px 34px !important;
+    grid-template-rows:32px !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:2px !important;
+    width:112px !important;
+    min-width:112px !important;
+    height:40px !important;
+    margin-left:auto !important;
+    padding:3px !important;
+    border:1px solid rgba(53,215,232,.22) !important;
+    border-radius:13px !important;
+    background:rgba(10,25,31,.92) !important;
+    z-index:2 !important;
+  }
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner { display:contents !important; }
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner > div:first-child { display:none !important; }
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle,
+  html body.theme-glass.theme-neon #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"],
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+    display:inline-flex !important;
+    position:static !important;
+    width:34px !important;
+    min-width:34px !important;
+    height:32px !important;
+    min-height:32px !important;
+    margin:0 !important;
+    padding:6px !important;
+    align-items:center !important;
+    justify-content:center !important;
+    border:0 !important;
+    background:transparent !important;
+    color:#9eeaf0 !important;
+    box-shadow:none !important;
+  }
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle { grid-column:1 !important; }
+  html body.theme-glass.theme-neon #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] { grid-column:2 !important; font-size:0 !important; }
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[onclick="logoutUser()"] { grid-column:3 !important; }
+  html body.theme-glass.theme-neon #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] span { display:none !important; }
+}
+@media screen and (max-width:380px) {
+  html body.theme-glass.theme-neon #inventory-top-header #v156-mobile-greeting { right:154px !important; }
+  html body.theme-glass.theme-neon #inventory-top-header #v156-mobile-greeting-text { font-size:13px !important; }
+  html body.theme-glass.theme-neon #inventory-top-header > div.flex.items-center.gap-4 {
+    width:106px !important;
+    min-width:106px !important;
+    grid-template-columns:32px 32px 32px !important;
+  }
+}
+
+/* UI 4 — popup surfaces use the same black glass and cyan accent as the workspace. */
+html body.theme-glass.theme-neon :is(#login-modal,#auto-logout-modal,#detail-save-modal,#confirm-modal,#appearance-panel,#inventory-print-options) {
+  background-color:rgba(2,6,10,.78) !important;
+  -webkit-backdrop-filter:blur(10px) !important;
+  backdrop-filter:blur(10px) !important;
+}
+html body.theme-glass.theme-neon :is(#auto-logout-modal,#detail-save-modal,#confirm-modal) > div,
+html body.theme-glass.theme-neon #appearance-panel .appearance-dialog,
+html body.theme-glass.theme-neon #inventory-print-options > div {
+  color:#e7edf1 !important;
+  background:linear-gradient(145deg,rgba(20,31,39,.97),rgba(7,12,17,.97)) !important;
+  border:1px solid rgba(53,215,232,.24) !important;
+  border-radius:20px !important;
+  box-shadow:0 24px 72px rgba(0,0,0,.62),inset 0 1px 0 rgba(215,250,252,.06),0 0 28px rgba(53,215,232,.07) !important;
+  -webkit-backdrop-filter:blur(18px) saturate(125%) !important;
+  backdrop-filter:blur(18px) saturate(125%) !important;
+}
+html body.theme-glass.theme-neon :is(#auto-logout-modal,#detail-save-modal,#confirm-modal) :is(h3,h4,p,strong,.text-gray-100,.text-gray-200,.text-gray-300) {
+  color:#e7edf1 !important;
+}
+html body.theme-glass.theme-neon :is(#auto-logout-modal,#detail-save-modal,#confirm-modal) :is(.text-gray-400,.text-gray-500) {
+  color:#9aabb4 !important;
+}
+html body.theme-glass.theme-neon :is(#detail-save-modal,#confirm-modal) :is(.border-b,.border-t) {
+  border-color:rgba(111,157,167,.16) !important;
+}
+html body.theme-glass.theme-neon :is(#detail-save-content,#confirm-details,#auto-logout-modal .bg-black\/20) {
+  color:#dce6e9 !important;
+  background:rgba(2,8,12,.36) !important;
+  border-color:rgba(111,157,167,.17) !important;
+}
+html body.theme-glass.theme-neon :is(#detail-save-back,#confirm-cancel-btn,#auto-logout-modal button[onclick="autoLogoutNow()"],#print-cancel) {
+  color:#d3e0e4 !important;
+  background:rgba(116,145,155,.12) !important;
+  border:1px solid rgba(132,170,180,.22) !important;
+}
+html body.theme-glass.theme-neon :is(#detail-save-yes,#confirm-ok-btn,#auto-logout-modal button[onclick="keepSessionAlive()"],#print-continue) {
+  color:#061216 !important;
+  background:linear-gradient(135deg,#48e3ed,#16aebe) !important;
+  border:1px solid rgba(102,239,247,.55) !important;
+  box-shadow:0 8px 20px rgba(20,190,207,.18) !important;
+}
+html body.theme-glass.theme-neon #login-modal.login-glass-overlay {
+  background:radial-gradient(ellipse at 50% 35%,rgba(20,130,146,.15),transparent 52%),rgba(2,6,10,.84) !important;
+}
+html body.theme-glass.theme-neon #login-modal .login-glass-card {
+  background:linear-gradient(145deg,rgba(19,31,40,.88),rgba(7,13,19,.95)) !important;
+  border-color:rgba(53,215,232,.26) !important;
+  box-shadow:0 28px 80px rgba(0,0,0,.55),inset 0 1px rgba(220,250,252,.07),0 0 32px rgba(53,215,232,.08) !important;
+}
+html body.theme-glass.theme-neon #login-modal .login-glass-mark {
+  color:#a8f2f5 !important;
+  background:linear-gradient(145deg,rgba(25,110,125,.40),rgba(10,35,43,.72)) !important;
+  border-color:rgba(90,224,235,.34) !important;
+  box-shadow:0 8px 24px rgba(0,0,0,.25),inset 0 1px rgba(225,255,255,.12) !important;
+}
+html body.theme-glass.theme-neon #login-modal .login-glass-title span { color:#35d7e8 !important; }
+html body.theme-glass.theme-neon #login-modal .login-glass-section-label { color:#7ce6ed !important; }
+html body.theme-glass.theme-neon #login-modal .login-glass-section-label::after { background:rgba(53,215,232,.35) !important; }
+html body.theme-glass.theme-neon #login-modal .login-glass-field {
+  background:rgba(4,10,15,.56) !important;
+  border-color:rgba(113,164,174,.30) !important;
+}
+html body.theme-glass.theme-neon #login-modal .login-glass-field:focus-within {
+  border-color:rgba(53,215,232,.75) !important;
+  box-shadow:0 0 0 3px rgba(53,215,232,.13),inset 0 1px 5px rgba(0,0,0,.2) !important;
+}
+html body.theme-glass.theme-neon #login-modal .login-glass-submit {
+  color:#061216 !important;
+  background:linear-gradient(115deg,#3fe2ec,#13a9bd) !important;
+  border:1px solid rgba(102,239,247,.55) !important;
+}
+html body.theme-glass.theme-neon #appearance-panel .appearance-dialog-header :is(h2,.appearance-theme-name) { color:#e7edf1 !important; }
+html body.theme-glass.theme-neon #appearance-panel .appearance-dialog-header p,
+html body.theme-glass.theme-neon #appearance-panel .appearance-card-description { color:#9aabb4 !important; }
+html body.theme-glass.theme-neon #appearance-panel :is(.appearance-theme-card,.appearance-close) {
+  color:#dbe8eb !important;
+  background:rgba(7,15,20,.68) !important;
+  border-color:rgba(111,157,167,.20) !important;
+}
+html body.theme-glass.theme-neon #appearance-panel .appearance-theme-card:hover,
+html body.theme-glass.theme-neon #appearance-panel .appearance-theme-card.active {
+  background:linear-gradient(145deg,rgba(17,53,61,.66),rgba(8,21,26,.86)) !important;
+  border-color:rgba(53,215,232,.48) !important;
+}
+html body.theme-glass.theme-neon #appearance-panel .appearance-card-action,
+html body.theme-glass.theme-neon #appearance-panel .appearance-selected-mark { color:#53dce7 !important; }
+html body.theme-glass.theme-neon #appearance-panel .appearance-dialog-footer {
+  color:#a6bdc3 !important;
+  background:rgba(18,79,87,.20) !important;
+  border:1px solid rgba(53,215,232,.14) !important;
+}
+html body.theme-glass.theme-neon #inventory-print-options {
+  color:#e7edf1 !important;
+  font-family:inherit !important;
+}
+html body.theme-glass.theme-neon #inventory-print-options > div {
+  font-family:inherit !important;
+  border-radius:20px !important;
+}
+html body.theme-glass.theme-neon #inventory-print-options > div > :is(div:first-child,div:nth-child(2)) { color:#e7edf1 !important; }
+html body.theme-glass.theme-neon #inventory-print-options #print-date-fields label,
+html body.theme-glass.theme-neon #inventory-print-options > div > div:not(:first-child):not(:last-child) { color:#a9b8bf !important; }
+html body.theme-glass.theme-neon #inventory-print-options label {
+  color:#dce6e9 !important;
+  background:rgba(3,10,15,.42) !important;
+  border-color:rgba(111,157,167,.20) !important;
+}
+html body.theme-glass.theme-neon #inventory-print-options input[type="radio"] { accent-color:#35d7e8 !important; }
+html body.theme-glass.theme-neon #inventory-print-options input[type="date"] {
+  color:#e7edf1 !important;
+  color-scheme:dark !important;
+  background:rgba(3,10,15,.82) !important;
+  border:1px solid rgba(111,157,167,.28) !important;
+  border-radius:10px !important;
+}
+html body.theme-glass.theme-neon #inventory-print-options input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(.85) sepia(.35) saturate(2) hue-rotate(135deg) !important; }
+html body.theme-glass.theme-neon .inventory-item-select-panel {
+  color:#e1ecef !important;
+  background:rgba(9,16,21,.98) !important;
+  border:1px solid rgba(53,215,232,.25) !important;
+  box-shadow:0 18px 48px rgba(0,0,0,.58),0 0 22px rgba(53,215,232,.06) !important;
+  -webkit-backdrop-filter:blur(16px) saturate(120%) !important;
+  backdrop-filter:blur(16px) saturate(120%) !important;
+}
+html body.theme-glass.theme-neon :is(.inventory-item-select-trigger,.inventory-item-select-search) {
+  color:#e1ecef !important;
+  background:rgba(4,10,15,.76) !important;
+  border-color:rgba(111,157,167,.27) !important;
+}
+html body.theme-glass.theme-neon .inventory-item-select-option { color:#dce6e9 !important; }
+html body.theme-glass.theme-neon .inventory-item-select-option:is(:hover,[aria-selected="true"]) {
+  color:#bff9fc !important;
+  background:rgba(53,215,232,.12) !important;
+}
+html body.theme-glass.theme-neon #toast-container > .inventory-toast {
+  color:#e7edf1 !important;
+  background:linear-gradient(120deg,rgba(26,54,61,.72),rgba(8,17,22,.94) 58%,rgba(var(--toast-tone),.12)),rgba(7,13,18,.96) !important;
+  border-color:rgba(105,199,210,.30) !important;
+  box-shadow:0 18px 48px rgba(0,0,0,.48),inset 0 1px 0 rgba(215,250,252,.07),0 0 22px rgba(var(--toast-tone),.10) !important;
+  -webkit-backdrop-filter:blur(18px) saturate(130%) !important;
+  backdrop-filter:blur(18px) saturate(130%) !important;
+}
+html body.theme-glass.theme-neon #toast-container > .inventory-toast .inventory-toast-title { color:#effbfd !important; }
+html body.theme-glass.theme-neon #toast-container > .inventory-toast .inventory-toast-message { color:#afc1c7 !important; }
+
+/* Dashboard cross-module search. */
+.dashboard-search-panel {
+  min-width:0;
+  padding:20px;
+  border:1px solid rgba(148,180,205,.18);
+  border-radius:22px;
+  color:#e8f0f3;
+  background:linear-gradient(145deg,rgba(20,31,40,.68),rgba(9,14,20,.78));
+  box-shadow:0 12px 28px rgba(0,0,0,.20),inset 0 1px 0 rgba(220,250,252,.035);
+}
+.dashboard-search-heading { display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px; }
+.dashboard-search-heading > div { min-width:0; }
+.dashboard-search-heading h3 { margin:0;color:#edf4f6;font-size:14px;font-weight:800;letter-spacing:.01em; }
+.dashboard-search-heading p { margin:5px 0 0;color:#93a3ad;font-size:11px; }
+.dashboard-search-shortcut,.dashboard-search-result-category {
+  flex:none;padding:5px 9px;border:1px solid rgba(112,165,179,.18);border-radius:999px;
+  color:#a9c2c9;background:rgba(93,144,154,.08);font-size:9px;font-weight:700;letter-spacing:.06em;white-space:nowrap;
+}
+.dashboard-search-shortcut { align-self:flex-start;margin-top:1px; }
+.dashboard-search-field {
+  display:flex;align-items:center;gap:11px;min-height:50px;padding:0 14px;
+  border:1px solid rgba(112,165,179,.24);border-radius:15px;
+  color:#9db8c0;background:rgba(3,9,14,.56);
+  transition:border-color .16s ease,box-shadow .16s ease;
+}
+.dashboard-search-field:focus-within { border-color:rgba(53,215,232,.58);box-shadow:0 0 0 3px rgba(53,215,232,.09); }
+.dashboard-search-field > svg { flex:none; }
+.dashboard-search-field input {
+  flex:1;min-width:0;height:48px;padding:0;border:0;outline:0;
+  color:#e7edf1;background:transparent;font:inherit;font-size:13px;box-shadow:none;
+}
+html body.theme-glass #inventory-main-content #dashboard-global-search:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) {
+  flex:1 1 0 !important;
+  width:100% !important;
+  min-width:0 !important;
+  height:48px !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  outline:0 !important;
+  color:inherit !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+.dashboard-search-field input::placeholder { color:#72838d; }
+.dashboard-search-field input::-webkit-search-cancel-button { display:none; }
+.dashboard-search-field button {
+  display:grid;place-items:center;width:30px;height:30px;padding:0;border:0;border-radius:9px;
+  color:#a5c2c8;background:rgba(112,165,179,.10);cursor:pointer;
+}
+.dashboard-search-field button[hidden] { display:none; }
+.dashboard-search-results { display:grid;gap:7px;margin-top:12px; }
+.dashboard-search-results[hidden] { display:none; }
+.dashboard-search-count,.dashboard-search-more { padding:4px 2px;color:#96aab2;font-size:10px; }
+.dashboard-search-result {
+  display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0;
+  padding:11px 12px;border:1px solid rgba(112,165,179,.14);border-radius:13px;
+  color:#dce6e9;text-align:left;background:rgba(6,13,18,.55);cursor:pointer;
+  transition:background-color .16s ease,border-color .16s ease;
+}
+.dashboard-search-result-category { max-width:104px;text-align:center; }
+.dashboard-search-result:hover,.dashboard-search-result:focus-visible {
+  border-color:rgba(53,215,232,.34);background:rgba(29,92,101,.18);outline:none;
+}
+.dashboard-search-result-copy { display:grid;gap:4px;min-width:0; }
+.dashboard-search-result-copy strong { overflow:hidden;color:#e5eef0;font-size:11px;font-weight:700;text-overflow:ellipsis;white-space:nowrap; }
+.dashboard-search-result-copy small { overflow:hidden;color:#91a3ab;font-size:10px;text-overflow:ellipsis;white-space:nowrap; }
+html body.theme-glass.theme-neon .dashboard-search-panel { border-color:rgba(53,215,232,.18); }
+html body.theme-glass.theme-neon .dashboard-search-heading h3 { color:#e7f5f7; }
+html body.theme-glass.theme-neon .dashboard-search-shortcut,
+html body.theme-glass.theme-neon .dashboard-search-result-category { border-color:rgba(53,215,232,.18);color:#a9e4e9;background:rgba(53,215,232,.07); }
+html body.theme-glass.theme-neon .dashboard-search-field { border-color:rgba(53,215,232,.22); }
+html body.theme-glass.theme-neon .dashboard-search-field:focus-within { border-color:rgba(53,215,232,.60); }
+html body.theme-glass.theme-neon .dashboard-search-result:hover,
+html body.theme-glass.theme-neon .dashboard-search-result:focus-visible { border-color:rgba(53,215,232,.38);background:rgba(27,105,114,.20); }
+@media (max-width:640px) {
+  .dashboard-search-panel { padding:16px;border-radius:18px; }
+  .dashboard-search-result { align-items:flex-start;padding:10px; }
+  .dashboard-search-result-category { font-size:8px; }
+}
+
+/* Match the dashboard search controls to each workspace palette. */
+html body.theme-glass.theme-classic .dashboard-search-panel {
+  color:#eaf2ff;border-color:rgba(125,180,255,.20);
+  background:linear-gradient(145deg,rgba(19,39,64,.88),rgba(10,25,44,.90));
+  box-shadow:0 12px 28px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.045);
+}
+html body.theme-glass.theme-classic .dashboard-search-heading h3,
+html body.theme-glass.theme-classic .dashboard-search-result-copy strong { color:#eaf2ff; }
+html body.theme-glass.theme-classic .dashboard-search-heading p,
+html body.theme-glass.theme-classic .dashboard-search-count,
+html body.theme-glass.theme-classic .dashboard-search-more,
+html body.theme-glass.theme-classic .dashboard-search-result-copy small { color:#9fb3cc; }
+html body.theme-glass.theme-classic .dashboard-search-shortcut,
+html body.theme-glass.theme-classic .dashboard-search-result-category {
+  color:#b9d7ff;border-color:rgba(96,165,250,.22);background:rgba(59,130,246,.12);
+}
+html body.theme-glass.theme-classic .dashboard-search-field {
+  color:#93c5fd;border-color:rgba(96,165,250,.28);background:rgba(3,14,27,.62);
+}
+html body.theme-glass.theme-classic .dashboard-search-field:focus-within { border-color:rgba(96,165,250,.70);box-shadow:0 0 0 3px rgba(59,130,246,.14); }
+html body.theme-glass.theme-classic #dashboard-global-search:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) { color:#eaf2ff !important;-webkit-text-fill-color:#eaf2ff !important; }
+html body.theme-glass.theme-classic #dashboard-global-search:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::placeholder { color:#9fc5fa !important;-webkit-text-fill-color:#9fc5fa !important; }
+html body.theme-glass.theme-classic .dashboard-search-result { color:#dbeafe;border-color:rgba(125,180,255,.16);background:rgba(5,19,34,.52); }
+html body.theme-glass.theme-classic .dashboard-search-result:hover,
+html body.theme-glass.theme-classic .dashboard-search-result:focus-visible { border-color:rgba(96,165,250,.40);background:rgba(37,99,235,.14); }
+
+html body.theme-glass.theme-crystal .dashboard-search-panel {
+  color:#183b61;border-color:rgba(89,139,198,.27);
+  background:linear-gradient(145deg,rgba(246,251,255,.72),rgba(205,224,247,.58));
+  box-shadow:0 12px 30px rgba(45,88,140,.10),inset 0 1px 0 rgba(255,255,255,.82);
+}
+html body.theme-glass.theme-crystal .dashboard-search-heading h3,
+html body.theme-glass.theme-crystal .dashboard-search-result-copy strong { color:#183b61; }
+html body.theme-glass.theme-crystal .dashboard-search-heading p,
+html body.theme-glass.theme-crystal .dashboard-search-count,
+html body.theme-glass.theme-crystal .dashboard-search-more,
+html body.theme-glass.theme-crystal .dashboard-search-result-copy small { color:#607895; }
+html body.theme-glass.theme-crystal .dashboard-search-shortcut,
+html body.theme-glass.theme-crystal .dashboard-search-result-category {
+  color:#315f91;border-color:rgba(91,139,195,.24);background:rgba(96,165,250,.10);
+}
+html body.theme-glass.theme-crystal .dashboard-search-field {
+  color:#4b78aa;border-color:rgba(89,139,198,.32);background:rgba(229,240,254,.58);
+}
+html body.theme-glass.theme-crystal .dashboard-search-field:focus-within { border-color:rgba(37,99,235,.58);box-shadow:0 0 0 3px rgba(59,130,246,.12); }
+html body.theme-glass.theme-crystal #dashboard-global-search:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) { color:#183b61 !important;-webkit-text-fill-color:#183b61 !important; }
+html body.theme-glass.theme-crystal #dashboard-global-search:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::placeholder { color:#c5d9ef !important;-webkit-text-fill-color:#c5d9ef !important; }
+html body.theme-glass.theme-crystal .dashboard-search-result { color:#24466f;border-color:rgba(91,139,195,.19);background:rgba(239,247,255,.64); }
+html body.theme-glass.theme-crystal .dashboard-search-result:hover,
+html body.theme-glass.theme-crystal .dashboard-search-result:focus-visible { border-color:rgba(59,130,246,.40);background:rgba(191,219,254,.42); }
+
+html body.theme-glass.theme-light.theme-soft .dashboard-search-panel {
+  color:#d1dad5;border-color:#3b4942;background:linear-gradient(145deg,rgba(32,40,37,.94),rgba(24,31,28,.96));
+  box-shadow:0 12px 28px rgba(0,0,0,.22),inset 0 1px 0 rgba(220,231,225,.025);
+}
+html body.theme-glass.theme-light.theme-soft .dashboard-search-heading h3,
+html body.theme-glass.theme-light.theme-soft .dashboard-search-result-copy strong { color:#e0e7e2; }
+html body.theme-glass.theme-light.theme-soft .dashboard-search-heading p,
+html body.theme-glass.theme-light.theme-soft .dashboard-search-count,
+html body.theme-glass.theme-light.theme-soft .dashboard-search-more,
+html body.theme-glass.theme-light.theme-soft .dashboard-search-result-copy small { color:#9aa79f; }
+html body.theme-glass.theme-light.theme-soft .dashboard-search-shortcut,
+html body.theme-glass.theme-light.theme-soft .dashboard-search-result-category {
+  color:#b8cabe;border-color:#46554c;background:rgba(82,107,94,.16);
+}
+html body.theme-glass.theme-light.theme-soft .dashboard-search-field {
+  color:#a9c4b6;border-color:#3b4942;background:#181f1c;
+}
+html body.theme-glass.theme-light.theme-soft .dashboard-search-field:focus-within { border-color:#71877a;box-shadow:0 0 0 3px rgba(82,107,94,.18); }
+html body.theme-glass.theme-light.theme-soft #dashboard-global-search:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) { color:#d1dad5 !important;-webkit-text-fill-color:#d1dad5 !important; }
+html body.theme-glass.theme-light.theme-soft #dashboard-global-search:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::placeholder { color:#9aac9f !important;-webkit-text-fill-color:#9aac9f !important; }
+html body.theme-glass.theme-light.theme-soft .dashboard-search-result { color:#d1dad5;border-color:#394740;background:#202825; }
+html body.theme-glass.theme-light.theme-soft .dashboard-search-result:hover,
+html body.theme-glass.theme-light.theme-soft .dashboard-search-result:focus-visible { border-color:#71877a;background:#2b3731; }
+
+html body.theme-glass.theme-neon .dashboard-search-field { color:#8fe8ed;background:rgba(3,9,14,.72); }
+html body.theme-glass.theme-neon .dashboard-search-result { border-color:rgba(53,215,232,.15);background:rgba(5,13,18,.66); }
+
+/* Final high-specificity theme pass: keep dashboard search colors above legacy global input rules. */
+html body.theme-glass.theme-classic #inventory-main-content #tab-dashboard .dashboard-search-panel {
+  color:#eaf2ff !important;border-color:rgba(125,180,255,.20) !important;
+  background:linear-gradient(145deg,rgba(19,39,64,.96),rgba(10,25,44,.96)) !important;
+  box-shadow:0 5px 14px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+html body.theme-glass.theme-classic #inventory-main-content #tab-dashboard .dashboard-search-heading h3,
+html body.theme-glass.theme-classic #inventory-main-content #tab-dashboard .dashboard-search-result-copy strong { color:#eaf2ff !important; }
+html body.theme-glass.theme-classic #inventory-main-content #tab-dashboard :is(.dashboard-search-heading p,.dashboard-search-count,.dashboard-search-more,.dashboard-search-result-copy small) { color:#9fb3cc !important; }
+html body.theme-glass.theme-classic #inventory-main-content #tab-dashboard :is(.dashboard-search-shortcut,.dashboard-search-result-category) { color:#b9d7ff !important;border-color:rgba(96,165,250,.28) !important;background:rgba(59,130,246,.14) !important; }
+html body.theme-glass.theme-classic #inventory-main-content #tab-dashboard .dashboard-search-field { color:#93c5fd !important;border-color:rgba(96,165,250,.32) !important;background:rgba(3,14,27,.72) !important; }
+html body.theme-glass.theme-classic #inventory-main-content #tab-dashboard .dashboard-search-field button { color:#bfdbfe !important;border:1px solid rgba(96,165,250,.22) !important;background:rgba(59,130,246,.14) !important; }
+html body.theme-glass.theme-classic #inventory-main-content #tab-dashboard .dashboard-search-result { color:#dbeafe !important;border-color:rgba(125,180,255,.18) !important;background:rgba(5,19,34,.60) !important; }
+html body.theme-glass.theme-classic #inventory-main-content #tab-dashboard .dashboard-search-result:is(:hover,:focus-visible) { border-color:rgba(96,165,250,.46) !important;background:rgba(37,99,235,.16) !important; }
+
+html body.theme-glass.theme-crystal #inventory-main-content #tab-dashboard .dashboard-search-panel {
+  color:var(--lg-ink) !important;border-color:rgba(255,255,255,.20) !important;
+  border-radius:28px !important;
+  background:var(--lg-fill) !important;
+  box-shadow:0 14px 40px rgba(0,0,0,.32),var(--lg-edge) !important;
+  -webkit-backdrop-filter:blur(26px) saturate(200%) !important;
+  backdrop-filter:blur(26px) saturate(200%) !important;
+}
+html body.theme-glass.theme-crystal #inventory-main-content #tab-dashboard .dashboard-search-heading h3,
+html body.theme-glass.theme-crystal #inventory-main-content #tab-dashboard .dashboard-search-result-copy strong { color:var(--lg-ink) !important; }
+html body.theme-glass.theme-crystal #inventory-main-content #tab-dashboard :is(.dashboard-search-heading p,.dashboard-search-count,.dashboard-search-more,.dashboard-search-result-copy small) { color:var(--lg-ink-2) !important; }
+html body.theme-glass.theme-crystal #inventory-main-content #tab-dashboard :is(.dashboard-search-shortcut,.dashboard-search-result-category) { color:var(--lg-ink-2) !important;border-color:rgba(255,255,255,.24) !important;background:rgba(255,255,255,.10) !important; }
+html body.theme-glass.theme-crystal #inventory-main-content #tab-dashboard .dashboard-search-field { color:var(--lg-ink-2) !important;border-color:rgba(255,255,255,.30) !important;background:linear-gradient(155deg,rgba(255,255,255,.14),rgba(255,255,255,.06)) !important; }
+html body.theme-glass.theme-crystal #inventory-main-content #tab-dashboard .dashboard-search-field button { color:var(--lg-ink-2) !important;border:1px solid rgba(255,255,255,.22) !important;background:rgba(255,255,255,.10) !important; }
+html body.theme-glass.theme-crystal #inventory-main-content #dashboard-global-search:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) { color:var(--lg-ink) !important;-webkit-text-fill-color:var(--lg-ink) !important; }
+html body.theme-glass.theme-crystal #inventory-main-content #dashboard-global-search:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::placeholder { color:#c5d9ef !important;-webkit-text-fill-color:#c5d9ef !important; }
+html body.theme-glass.theme-crystal #inventory-main-content #tab-dashboard .dashboard-search-result { color:var(--lg-ink) !important;border-color:rgba(255,255,255,.20) !important;background:linear-gradient(155deg,rgba(255,255,255,.12),rgba(255,255,255,.045)) !important; }
+html body.theme-glass.theme-crystal #inventory-main-content #tab-dashboard .dashboard-search-result:is(:hover,:focus-visible) { border-color:rgba(255,255,255,.38) !important;background:rgba(255,255,255,.16) !important; }
+
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard .dashboard-search-panel {
+  color:#d1dad5 !important;border-color:#3b4942 !important;
+  background:#202825 !important;
+  box-shadow:0 5px 16px rgba(0,0,0,.16) !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard .dashboard-search-heading h3,
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard .dashboard-search-result-copy strong { color:#e0e7e2 !important; }
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard :is(.dashboard-search-heading p,.dashboard-search-count,.dashboard-search-more,.dashboard-search-result-copy small) { color:#9aa79f !important; }
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard :is(.dashboard-search-shortcut,.dashboard-search-result-category) { color:#b8cabe !important;border-color:#46554c !important;background:rgba(82,107,94,.20) !important; }
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard .dashboard-search-field { color:#a9c4b6 !important;border-color:#3b4942 !important;background:#181f1c !important; }
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard .dashboard-search-field button { color:#b8cabe !important;border:1px solid #46554c !important;background:rgba(82,107,94,.20) !important; }
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard .dashboard-search-result { color:#d1dad5 !important;border-color:#394740 !important;background:#202825 !important; }
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard .dashboard-search-result:is(:hover,:focus-visible) { border-color:#71877a !important;background:#2b3731 !important; }
+
+html body.theme-glass.theme-neon #inventory-main-content #tab-dashboard .dashboard-search-panel {
+  color:var(--neon-text) !important;border-color:var(--neon-border) !important;
+  background:linear-gradient(145deg,rgba(21,31,40,.72),rgba(9,14,20,.76)) !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.25),inset 0 1px 0 rgba(181,244,250,.05) !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content #tab-dashboard .dashboard-search-heading h3,
+html body.theme-glass.theme-neon #inventory-main-content #tab-dashboard .dashboard-search-result-copy strong { color:#e7f5f7 !important; }
+html body.theme-glass.theme-neon #inventory-main-content #tab-dashboard :is(.dashboard-search-heading p,.dashboard-search-count,.dashboard-search-more,.dashboard-search-result-copy small) { color:#9aabb4 !important; }
+html body.theme-glass.theme-neon #inventory-main-content #tab-dashboard :is(.dashboard-search-shortcut,.dashboard-search-result-category) { color:#a9e4e9 !important;border-color:rgba(53,215,232,.24) !important;background:rgba(53,215,232,.09) !important; }
+html body.theme-glass.theme-neon #inventory-main-content #tab-dashboard .dashboard-search-field { color:#8fe8ed !important;border-color:rgba(53,215,232,.30) !important;background:rgba(3,9,14,.80) !important; }
+html body.theme-glass.theme-neon #inventory-main-content #tab-dashboard .dashboard-search-field button { color:#a9e4e9 !important;border:1px solid rgba(53,215,232,.22) !important;background:rgba(53,215,232,.10) !important; }
+html body.theme-glass.theme-neon #inventory-main-content #dashboard-global-search:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::placeholder { color:#81dfe7 !important;-webkit-text-fill-color:#81dfe7 !important; }
+
+/* Improve placeholder contrast in every form without changing entered values. */
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] input:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::placeholder,
+html body.theme-glass.theme-classic #inventory-main-content [id^="tab-"] textarea:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::placeholder {
+  color:#b9d7ff !important;-webkit-text-fill-color:#b9d7ff !important;opacity:1 !important;
+}
+html body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] input:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::placeholder,
+html body.theme-glass.theme-crystal #inventory-main-content [id^="tab-"] textarea:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::placeholder {
+  color:#c5d9ef !important;-webkit-text-fill-color:#c5d9ef !important;opacity:1 !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] input:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::placeholder,
+html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] textarea:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::placeholder {
+  color:#aab8b0 !important;-webkit-text-fill-color:#aab8b0 !important;opacity:1 !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"] input:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::placeholder,
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"] textarea:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::placeholder {
+  color:#81dfe7 !important;-webkit-text-fill-color:#81dfe7 !important;opacity:1 !important;
+}
+
+/* Retur form: align six fields into a balanced grid in UI 3 and UI 4. */
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #form-retur,
+html body.theme-glass.theme-neon #inventory-main-content #form-retur {
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  align-items:start !important;
+  column-gap:14px !important;
+  row-gap:14px !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #form-retur > div:not(.pt-2),
+html body.theme-glass.theme-neon #inventory-main-content #form-retur > div:not(.pt-2) {
+  grid-column:auto !important;
+  min-width:0 !important;
+  margin:0 !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #form-retur > .pt-2,
+html body.theme-glass.theme-neon #inventory-main-content #form-retur > .pt-2 {
+  grid-column:1/-1 !important;
+  display:flex !important;
+  justify-content:flex-end !important;
+  gap:10px !important;
+  margin:0 !important;
+  margin-top:0 !important;
+  padding-top:2px !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #form-retur > .pt-2 button[type="submit"],
+html body.theme-glass.theme-neon #inventory-main-content #form-retur > .pt-2 button[type="submit"] {
+  flex:0 0 150px !important;
+  width:150px !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #form-retur > .pt-2 button[type="button"],
+html body.theme-glass.theme-neon #inventory-main-content #form-retur > .pt-2 button[type="button"] {
+  flex:0 0 96px !important;
+  width:96px !important;
+}
+@media (max-width:999px) {
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #form-retur,
+  html body.theme-glass.theme-neon #inventory-main-content #form-retur {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+}
+@media (max-width:640px) {
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #form-retur,
+  html body.theme-glass.theme-neon #inventory-main-content #form-retur {
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #form-retur > .pt-2,
+  html body.theme-glass.theme-neon #inventory-main-content #form-retur > .pt-2 {
+    justify-content:stretch !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #form-retur > .pt-2 button[type="submit"],
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #form-retur > .pt-2 button[type="button"],
+  html body.theme-glass.theme-neon #inventory-main-content #form-retur > .pt-2 button[type="submit"],
+  html body.theme-glass.theme-neon #inventory-main-content #form-retur > .pt-2 button[type="button"] {
+    flex:1 1 0 !important;
+    width:auto !important;
+  }
+}
+html body.theme-glass.theme-neon #inventory-main-content #tab-dashboard .dashboard-search-result { color:#dce6e9 !important;border-color:rgba(53,215,232,.18) !important;background:rgba(5,13,18,.74) !important; }
+html body.theme-glass.theme-neon #inventory-main-content #tab-dashboard .dashboard-search-result:is(:hover,:focus-visible) { border-color:rgba(53,215,232,.42) !important;background:rgba(27,105,114,.20) !important; }
+
+/* Even dashboard rhythm after adding the cross-module search section. */
+html body.theme-glass:not(.theme-soft) #tab-dashboard > * + * { margin-top:16px !important; }
+html body.theme-glass.theme-light.theme-soft #tab-dashboard { gap:12px !important; }
+html body.theme-glass.theme-light.theme-soft #tab-dashboard > * + * { margin-top:0 !important; }
+@media (max-width:640px) {
+  html body.theme-glass:not(.theme-soft) #tab-dashboard > * + * { margin-top:14px !important; }
+  html body.theme-glass.theme-light.theme-soft #tab-dashboard { gap:12px !important; }
+}
+
+/* Keep print date filters readable on narrow screens across every UI theme. */
+#inventory-print-options #print-date-fields {
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:10px !important;
+}
+#inventory-print-options #print-date-fields > label { display:block;min-width:0; }
+#inventory-print-options #print-date-fields input[type="date"] {
+  box-sizing:border-box !important;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+}
+@media (max-width:480px) {
+  #inventory-print-options #print-date-fields {
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:8px !important;
+  }
+  #inventory-print-options #print-date-fields input[type="date"] {
+    height:42px !important;
+    padding:8px !important;
+    font-size:12px !important;
+  }
+}
+
+/* Native empty date segments are WebKit pseudo-elements; give them theme-aware contrast. */
+html body.theme-glass.theme-classic #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit,
+html body.theme-glass.theme-classic #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-text,
+html body.theme-glass.theme-classic #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-month-field,
+html body.theme-glass.theme-classic #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-day-field,
+html body.theme-glass.theme-classic #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-year-field {
+  color:#b9d7ff !important;-webkit-text-fill-color:#b9d7ff !important;opacity:1 !important;
+}
+html body.theme-glass.theme-crystal #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit,
+html body.theme-glass.theme-crystal #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-text,
+html body.theme-glass.theme-crystal #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-month-field,
+html body.theme-glass.theme-crystal #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-day-field,
+html body.theme-glass.theme-crystal #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-year-field {
+  color:#c5d9ef !important;-webkit-text-fill-color:#c5d9ef !important;opacity:1 !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit,
+html body.theme-glass.theme-light.theme-soft #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-text,
+html body.theme-glass.theme-light.theme-soft #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-month-field,
+html body.theme-glass.theme-light.theme-soft #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-day-field,
+html body.theme-glass.theme-light.theme-soft #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-year-field {
+  color:#b8cabe !important;-webkit-text-fill-color:#b8cabe !important;opacity:1 !important;
+}
+html body.theme-glass.theme-neon #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit,
+html body.theme-glass.theme-neon #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-text,
+html body.theme-glass.theme-neon #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-month-field,
+html body.theme-glass.theme-neon #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-day-field,
+html body.theme-glass.theme-neon #inventory-print-options #print-date-fields input[type="date"]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)::-webkit-datetime-edit-year-field {
+  color:#81dfe7 !important;-webkit-text-fill-color:#81dfe7 !important;opacity:1 !important;
+}
+
+/* UI 2 — keep login fields in the same cool, translucent blue glass palette. */
+html body.theme-glass.theme-crystal #login-modal .login-glass-field {
+  background:linear-gradient(120deg,rgba(118,164,218,.58),rgba(160,195,235,.42)) !important;
+  border-color:rgba(70,126,190,.62) !important;
+  box-shadow:inset 0 1px 4px rgba(239,247,255,.34),0 5px 16px rgba(43,83,130,.13) !important;
+}
+html body.theme-glass.theme-crystal #login-modal .login-glass-field:focus-within {
+  background:linear-gradient(120deg,rgba(139,184,234,.70),rgba(181,211,245,.54)) !important;
+  border-color:rgba(55,119,190,.86) !important;
+  box-shadow:0 0 0 3px rgba(69,139,211,.18),inset 0 1px 4px rgba(255,255,255,.42) !important;
+}
+html body.theme-glass.theme-crystal #login-modal .login-glass-field input {
+  color:#173657 !important;-webkit-text-fill-color:#173657 !important;
+}
+html body.theme-glass.theme-crystal #login-modal .login-glass-field input::placeholder {
+  color:#3d6082 !important;-webkit-text-fill-color:#3d6082 !important;opacity:1 !important;
+}
+html body.theme-glass.theme-crystal #login-modal .login-glass-field-icon { color:#244f7d !important; }
+
+/* Keep the dark blue login variant free from the default silver-looking fields. */
+html body.theme-glass.theme-classic #login-modal .login-glass-field {
+  background:linear-gradient(120deg,rgba(19,48,83,.74),rgba(12,34,64,.68)) !important;
+  border-color:rgba(117,169,228,.54) !important;
+  box-shadow:inset 0 1px 5px rgba(2,10,23,.34),0 5px 16px rgba(0,0,0,.14) !important;
+}
+html body.theme-glass.theme-classic #login-modal .login-glass-field:focus-within {
+  background:linear-gradient(120deg,rgba(25,61,103,.86),rgba(15,43,78,.82)) !important;
+  border-color:rgba(137,190,247,.82) !important;
+  box-shadow:0 0 0 3px rgba(76,145,224,.18),inset 0 1px 5px rgba(2,10,23,.30) !important;
+}
+html body.theme-glass.theme-classic #login-modal .login-glass-field input::placeholder {
+  color:#c4d9f3 !important;-webkit-text-fill-color:#c4d9f3 !important;opacity:1 !important;
+}
+
+/* UI 3 — use the subdued charcoal and sage palette from the Soft Neutral workspace. */
+html body.theme-glass.theme-light.theme-soft #login-modal.login-glass-overlay {
+  background:
+    radial-gradient(ellipse at 82% 16%,rgba(104,139,119,.16),transparent 36%),
+    radial-gradient(ellipse at 14% 84%,rgba(69,101,82,.14),transparent 40%),
+    rgba(10,15,13,.84) !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal.login-glass-overlay::before {
+  background:radial-gradient(ellipse at 35% 35%,rgba(131,164,143,.22),transparent 62%),linear-gradient(135deg,rgba(86,119,99,.13),rgba(145,169,151,.10),transparent 74%) !important;
+  border-color:rgba(162,184,169,.14) !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal.login-glass-overlay::after {
+  background:radial-gradient(ellipse at 55% 45%,rgba(104,137,114,.17),transparent 62%),linear-gradient(135deg,rgba(55,79,64,.12),rgba(121,150,130,.10),transparent 72%) !important;
+  border-color:rgba(148,170,154,.12) !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-card {
+  background:linear-gradient(145deg,rgba(42,53,47,.94),rgba(28,37,32,.96) 55%,rgba(22,30,26,.97)) !important;
+  border-color:rgba(139,164,146,.38) !important;
+  box-shadow:0 28px 80px rgba(0,0,0,.48),inset 0 1px 0 rgba(219,233,223,.10),0 0 38px rgba(92,127,103,.10) !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-card::before {
+  background:linear-gradient(120deg,rgba(218,232,222,.07),transparent 36%,transparent 70%,rgba(124,156,135,.07)) !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal :is(.login-glass-title,.login-glass-heading) { color:#e0e7e2 !important; }
+html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-title span { color:#9fb9a8 !important; }
+html body.theme-glass.theme-light.theme-soft #login-modal :is(.login-glass-subtitle,.login-glass-footer) { color:#aab7ae !important; }
+html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-mark {
+  color:#d0ded4 !important;background:linear-gradient(145deg,rgba(112,147,123,.34),rgba(58,81,66,.42)) !important;
+  border-color:rgba(157,183,164,.38) !important;box-shadow:0 8px 24px rgba(0,0,0,.22),inset 0 1px rgba(225,240,229,.12) !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-section-label { color:#a9c4b3 !important; }
+html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-section-label::after { background:linear-gradient(90deg,rgba(137,169,148,.48),rgba(137,169,148,0)) !important; }
+html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-field {
+  background:rgba(15,22,18,.68) !important;border-color:rgba(117,143,124,.48) !important;
+  box-shadow:inset 0 1px 5px rgba(0,0,0,.24),0 5px 16px rgba(0,0,0,.12) !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-field:focus-within {
+  background:rgba(21,31,25,.84) !important;border-color:rgba(153,188,163,.78) !important;
+  box-shadow:0 0 0 3px rgba(132,169,143,.16),inset 0 1px 5px rgba(0,0,0,.22) !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-field input {
+  color:#e0e7e2 !important;-webkit-text-fill-color:#e0e7e2 !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-field input::placeholder {
+  color:#a1b1a6 !important;-webkit-text-fill-color:#a1b1a6 !important;opacity:1 !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-field-icon { color:#c1d0c6 !important; }
+html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-submit {
+  color:#f0f4f1 !important;background:linear-gradient(110deg,#566f5e,#40594a) !important;
+  border-color:rgba(167,192,174,.52) !important;box-shadow:0 9px 24px rgba(31,52,39,.30),inset 0 1px 0 rgba(235,245,238,.18) !important;
+}
+
+/* UI 2 login mirrors the dashboard's dark, colorful liquid-glass surfaces. */
+html body.theme-glass.theme-crystal #login-modal.login-glass-overlay {
+  background:
+    radial-gradient(circle at 12% 10%,rgba(255,120,90,.50),transparent 30%),
+    radial-gradient(circle at 88% 8%,rgba(40,140,255,.62),transparent 34%),
+    radial-gradient(circle at 80% 85%,rgba(150,80,255,.55),transparent 36%),
+    radial-gradient(circle at 15% 88%,rgba(20,200,170,.42),transparent 34%),
+    radial-gradient(circle at 50% 50%,rgba(255,70,150,.20),transparent 42%),
+    linear-gradient(160deg,#0a1230 0%,#150f33 50%,#06202a 100%) !important;
+  -webkit-backdrop-filter:none !important;backdrop-filter:none !important;
+}
+html body.theme-glass.theme-crystal #login-modal.login-glass-overlay::before,
+html body.theme-glass.theme-crystal #login-modal.login-glass-overlay::after { display:none !important; }
+html body.theme-glass.theme-crystal #login-modal .login-glass-card {
+  color:var(--lg-ink,#fff) !important;
+  background:linear-gradient(155deg,rgba(255,255,255,.075),rgba(255,255,255,.022) 48%,rgba(255,255,255,.045)) !important;
+  border-color:rgba(255,255,255,.30) !important;
+  box-shadow:0 24px 64px rgba(0,0,0,.34),inset 1.5px 1.5px 0 rgba(255,255,255,.44),inset -1px -1px 0 rgba(255,255,255,.10),inset 0 0 24px rgba(255,255,255,.045) !important;
+  -webkit-backdrop-filter:blur(24px) saturate(145%) !important;backdrop-filter:blur(24px) saturate(145%) !important;
+}
+html body.theme-glass.theme-crystal #login-modal .login-glass-card::before {
+  background:linear-gradient(125deg,rgba(255,255,255,.14),transparent 38%,transparent 72%,rgba(130,190,255,.08)) !important;
+}
+html body.theme-glass.theme-crystal #login-modal .login-glass-mark {
+  color:#eef6ff !important;background:linear-gradient(155deg,rgba(255,255,255,.20),rgba(255,255,255,.07)) !important;
+  border-color:rgba(255,255,255,.38) !important;box-shadow:inset 1px 1px 0 rgba(255,255,255,.46),0 8px 24px rgba(0,0,0,.24) !important;
+}
+html body.theme-glass.theme-crystal #login-modal .login-glass-title { color:#fff !important; }
+html body.theme-glass.theme-crystal #login-modal .login-glass-title span { color:#8cc8ff !important; }
+html body.theme-glass.theme-crystal #login-modal .login-glass-subtitle,
+html body.theme-glass.theme-crystal #login-modal .login-glass-footer { color:#c3d3ec !important; }
+html body.theme-glass.theme-crystal #login-modal .login-glass-section-label { color:#a9d2ff !important; }
+html body.theme-glass.theme-crystal #login-modal .login-glass-section-label::after { background:linear-gradient(90deg,rgba(140,200,255,.46),rgba(140,200,255,0)) !important; }
+html body.theme-glass.theme-crystal #login-modal .login-glass-field {
+  background:linear-gradient(155deg,rgba(255,255,255,.14),rgba(255,255,255,.06)) !important;
+  border-color:rgba(255,255,255,.30) !important;border-radius:16px !important;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.28),0 1px 0 rgba(255,255,255,.12) !important;
+}
+html body.theme-glass.theme-crystal #login-modal .login-glass-field:focus-within {
+  background:linear-gradient(155deg,rgba(255,255,255,.20),rgba(255,255,255,.09)) !important;
+  border-color:#4aa3ff !important;box-shadow:0 0 0 3px rgba(74,163,255,.28),inset 0 2px 8px rgba(0,0,0,.24) !important;
+}
+html body.theme-glass.theme-crystal #login-modal .login-glass-field input {
+  color:#fff !important;-webkit-text-fill-color:#fff !important;
+}
+html body.theme-glass.theme-crystal #login-modal .login-glass-field input::placeholder {
+  color:#a9bfdc !important;-webkit-text-fill-color:#a9bfdc !important;opacity:1 !important;
+}
+html body.theme-glass.theme-crystal #login-modal .login-glass-field-icon { color:#d7eaff !important; }
+html body.theme-glass.theme-crystal #login-modal .login-glass-submit {
+  color:#fff !important;background:linear-gradient(130deg,#286ee0,#168fc5) !important;
+  border-color:rgba(190,225,255,.48) !important;
+  box-shadow:0 10px 28px rgba(18,104,220,.30),inset 1px 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(10,46,105,.24) !important;
+}
+
+/* Match the UI 2 dashboard cards exactly; the scoped not() terms outrank legacy modal rules. */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #login-modal .login-glass-card {
+  background:var(--lg-fill) !important;
+  border:1px solid rgba(255,255,255,.20) !important;
+  border-radius:28px !important;
+  box-shadow:0 14px 40px rgba(0,0,0,.32),var(--lg-edge) !important;
+  -webkit-backdrop-filter:blur(26px) saturate(200%) !important;
+  backdrop-filter:blur(26px) saturate(200%) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #login-modal .login-glass-card::before {
+  background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 38%) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #login-modal .login-glass-card {
+  background:transparent !important;
+  -webkit-backdrop-filter:none !important;backdrop-filter:none !important;
+  box-shadow:0 18px 46px rgba(0,0,0,.16) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #login-modal .login-glass-card::before {
+  background:transparent !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #login-modal .login-glass-field {
+  background:transparent !important;
+  border:1px solid rgba(220,236,255,.62) !important;
+  box-shadow:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #login-modal .login-glass-field:focus-within {
+  background:rgba(255,255,255,.045) !important;
+  border-color:#fff !important;
+  box-shadow:0 0 0 3px rgba(165,207,255,.18) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #login-modal .login-glass-field input {
+  color:#fff !important;-webkit-text-fill-color:#fff !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #login-modal .login-glass-field input::placeholder {
+  color:rgba(255,255,255,.76) !important;-webkit-text-fill-color:rgba(255,255,255,.76) !important;opacity:1 !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #login-modal .login-glass-field-icon { color:#fff !important;opacity:.88 !important; }
+
+/* UI 2 dashboard cards: transparent surfaces with a light glass outline. */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content #tab-dashboard :is(.app-card,.dashboard-glow-card,#dashboard-hero,.dashboard-search-panel) {
+  background:transparent !important;
+  border-color:rgba(255,255,255,.24) !important;
+  box-shadow:none !important;
+  -webkit-backdrop-filter:none !important;backdrop-filter:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content #tab-dashboard :is(.app-card,.dashboard-glow-card,#dashboard-hero,.dashboard-search-panel)::before,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content #tab-dashboard :is(.app-card,.dashboard-glow-card,#dashboard-hero,.dashboard-search-panel)::after {
+  background:transparent !important;box-shadow:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content #tab-dashboard .dashboard-search-result {
+  background:transparent !important;border-color:rgba(255,255,255,.20) !important;box-shadow:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content #tab-dashboard .dashboard-search-result:is(:hover,:focus-visible) {
+  background:rgba(255,255,255,.06) !important;border-color:rgba(255,255,255,.38) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content #tab-dashboard #dashboard-hero :is(.rounded-xl.border,.rounded-2xl.border) {
+  background:transparent !important;border-color:rgba(255,255,255,.20) !important;box-shadow:none !important;
+  -webkit-backdrop-filter:none !important;backdrop-filter:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content #tab-dashboard :is(.app-card,.dashboard-glow-card,#dashboard-hero,.dashboard-search-panel) {
+  border-width:1.5px !important;border-color:rgba(255,255,255,.32) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content #tab-dashboard .dashboard-search-result,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content #tab-dashboard #dashboard-hero :is(.rounded-xl.border,.rounded-2xl.border) {
+  border-width:1.5px !important;border-color:rgba(255,255,255,.27) !important;
+}
+
+/* UI 2 modal panels: transparent glass surfaces, with the dim backdrop kept intact. */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #confirm-modal > div,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal > div,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #auto-logout-modal > div,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #appearance-panel .appearance-dialog,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-print-options > div {
+  background:transparent !important;background-color:transparent !important;
+  border:1.5px solid rgba(255,255,255,.32) !important;
+  box-shadow:0 18px 46px rgba(0,0,0,.16) !important;
+  -webkit-backdrop-filter:none !important;backdrop-filter:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #detail-save-modal > div > :is(:first-child,:last-child),
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #appearance-panel .appearance-dialog-header,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #appearance-panel .appearance-dialog-footer {
+  background:transparent !important;box-shadow:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #appearance-panel :is(.appearance-dialog-header,.appearance-theme-card,.appearance-dialog-footer,.appearance-close) {
+  background:transparent !important;
+  box-shadow:none !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #appearance-panel .appearance-theme-card {
+  border:1.5px solid rgba(255,255,255,.27) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #appearance-panel .appearance-theme-card:hover {
+  background:rgba(255,255,255,.055) !important;border-color:rgba(205,228,255,.52) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #appearance-panel .appearance-theme-card.active {
+  background:rgba(74,163,255,.10) !important;border-color:rgba(145,203,255,.74) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #appearance-panel .appearance-close {
+  border:1.5px solid rgba(255,255,255,.30) !important;
+}
+/* Match the appearance selector backdrop to the dim layer used by the logout dialog. */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #appearance-panel.appearance-overlay {
+  background:rgba(0,0,0,.75) !important;
+  -webkit-backdrop-filter:blur(4px) !important;backdrop-filter:blur(4px) !important;
+}
+
+/* Turn-signal alert: right blinks twice, then left blinks twice. */
+.blink-low-stock-red,.blink-low-stock-orange { border-width:2px !important; }
+.blink-low-stock-red::before,.blink-low-stock-red::after,
+.blink-low-stock-orange::before,.blink-low-stock-orange::after {
+  content:"" !important;position:absolute !important;display:block !important;
+  top:2px !important;bottom:2px !important;width:calc(50% - 2px) !important;
+  padding:0 !important;border:0 !important;border-radius:inherit !important;
+  pointer-events:none !important;z-index:0 !important;
+}
+.blink-low-stock-red::before,.blink-low-stock-orange::before { left:2px !important;right:auto !important; }
+.blink-low-stock-red::after,.blink-low-stock-orange::after { left:auto !important;right:2px !important; }
+.blink-low-stock-red > div,.blink-low-stock-orange > div { position:relative;z-index:1; }
+.blink-low-stock-red::before,.blink-low-stock-red::after {
+  background:linear-gradient(135deg,rgba(255,66,103,.52),rgba(255,66,103,.32)) !important;
+  box-shadow:inset 0 0 22px rgba(255,66,103,.22) !important;
+}
+.blink-low-stock-orange::before,.blink-low-stock-orange::after {
+  background:linear-gradient(135deg,rgba(255,152,46,.52),rgba(255,152,46,.32)) !important;
+  box-shadow:inset 0 0 22px rgba(255,152,46,.22) !important;
+}
+.blink-low-stock-red::after,.blink-low-stock-orange::after {
+  animation:lowStockTurnSignalRight 2.4s steps(1,end) infinite !important;
+}
+.blink-low-stock-red::before,.blink-low-stock-orange::before {
+  animation:lowStockTurnSignalLeft 2.4s steps(1,end) infinite !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard #low-stock-list > .blink-low-stock-red::before,
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard #low-stock-list > .blink-low-stock-red::after,
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard #low-stock-list > .blink-low-stock-orange::before,
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard #low-stock-list > .blink-low-stock-orange::after { display:block !important; }
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard #low-stock-list > .blink-low-stock-red::after,
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard #low-stock-list > .blink-low-stock-orange::after {
+  animation:lowStockTurnSignalRight 2.4s steps(1,end) infinite !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard #low-stock-list > .blink-low-stock-red::before,
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard #low-stock-list > .blink-low-stock-orange::before {
+  animation:lowStockTurnSignalLeft 2.4s steps(1,end) infinite !important;
+}
+html body.theme-glass #inventory-main-content #tab-dashboard #low-stock-list > .blink-low-stock-red,
+html body.theme-glass #inventory-main-content #tab-dashboard #low-stock-list > .blink-low-stock-orange {
+  background:rgba(255,255,255,.035) !important;
+  background-image:none !important;
+  border-color:rgba(210,224,238,.28) !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard #low-stock-list > .blink-low-stock-red,
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashboard #low-stock-list > .blink-low-stock-orange {
+  background:rgba(255,255,255,.035) !important;
+  background-image:none !important;
+  border-color:rgba(170,190,178,.30) !important;
+}
+@keyframes lowStockTurnSignalRight {
+  0%,12%,25%,37% { opacity:1; }
+  13%,24%,38%,100% { opacity:0; }
+}
+@keyframes lowStockTurnSignalLeft {
+  0%,49%,63%,74%,88%,100% { opacity:0; }
+  50%,62%,75%,87% { opacity:1; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .blink-low-stock-red::after,.blink-low-stock-orange::after { animation:none !important; }
+  .blink-low-stock-red::before,.blink-low-stock-orange::before { animation:none !important; }
 }

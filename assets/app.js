@@ -127,10 +127,16 @@
                 ? `${INVENTORY_UI_PREFERENCE_KEY}:soft:${encodeURIComponent(String(accountId))}`
                 : `${INVENTORY_UI_PREFERENCE_KEY}:soft`;
         }
+        function localNeonUiPreferenceKey(user) {
+            const accountId = user?.id || user?.username;
+            return accountId
+                ? `${INVENTORY_UI_PREFERENCE_KEY}:neon:${encodeURIComponent(String(accountId))}`
+                : `${INVENTORY_UI_PREFERENCE_KEY}:neon`;
+        }
 
         // Preferensi desain UI disimpan pada akun Worker.
         function normalizeAccountUiPreference(value) {
-            return ['classic', 'crystal', 'soft'].includes(value) ? value : 'classic';
+            return ['classic', 'crystal', 'soft', 'neon'].includes(value) ? value : 'classic';
         }
 
         function accountPreferenceFromMode(mode) {
@@ -140,9 +146,10 @@
         function applyAccountUiPreference(user) {
             if (!user) return;
             const localSoftPreference = localStorage.getItem(localSoftUiPreferenceKey(user)) === 'soft';
-            const preference = localSoftPreference ? 'soft' : normalizeAccountUiPreference(user.uiPreference);
+            const localNeonPreference = localStorage.getItem(localNeonUiPreferenceKey(user)) === 'neon';
+            const preference = localSoftPreference ? 'soft' : localNeonPreference ? 'neon' : normalizeAccountUiPreference(user.uiPreference);
             user.uiPreference = preference;
-            const mode = preference === 'classic' ? 'dark' : 'light';
+            const mode = ['classic','neon'].includes(preference) ? 'dark' : 'light';
             localStorage.setItem(INVENTORY_THEME_KEY, mode);
             window.applyTheme?.('glass', mode, preference);
             window.activeUserSession = user;
@@ -153,7 +160,7 @@
         async function saveAccountUiPreference(preference) {
             if (!workerToken || !window.gudangAppDb?.currentUser) return;
             const uiPreference = normalizeAccountUiPreference(preference);
-            if (uiPreference === 'soft') return;
+            if (uiPreference === 'soft' || uiPreference === 'neon') return;
             try {
                 const result = await workerRequest('/api/me/ui-preference', {
                     method: 'PUT',
@@ -1211,10 +1218,10 @@
 
         window.selectAccountUiTheme = async function(preference) {
             const selected = normalizeAccountUiPreference(preference);
-            const mode = selected === 'classic' ? 'dark' : 'light';
+            const mode = ['classic','neon'].includes(selected) ? 'dark' : 'light';
             localStorage.setItem(INVENTORY_UI_PREFERENCE_KEY, selected);
             localStorage.setItem(INVENTORY_THEME_KEY, mode);
-            if (selected === 'soft') {
+            if (selected === 'soft' || selected === 'neon') {
                 localStorage.setItem('gudang_inventory_sidebar_collapsed', 'false');
                 document.getElementById('inventory-app-layout')?.classList.remove('sidebar-collapsed');
             }
@@ -1222,10 +1229,17 @@
 
             if (window.gudangAppDb?.currentUser) {
                 const currentUser = window.gudangAppDb.currentUser;
-                if (selected === 'soft') {
+                if (selected === 'soft' || selected === 'neon') {
                     localStorage.setItem(localSoftUiPreferenceKey(currentUser), 'soft');
+                    if (selected === 'neon') {
+                        localStorage.setItem(localNeonUiPreferenceKey(currentUser), 'neon');
+                        localStorage.removeItem(localSoftUiPreferenceKey(currentUser));
+                    } else {
+                        localStorage.removeItem(localNeonUiPreferenceKey(currentUser));
+                    }
                 } else {
                     localStorage.removeItem(localSoftUiPreferenceKey(currentUser));
+                    localStorage.removeItem(localNeonUiPreferenceKey(currentUser));
                 }
                 currentUser.uiPreference = selected;
                 window.activeUserSession = currentUser;
@@ -1233,7 +1247,7 @@
                 await saveAccountUiPreference(selected);
             }
             window.closeAppearancePanel();
-            const themeName = selected === 'soft' ? 'Soft Neutral UI 3' : selected === 'crystal' ? 'Liquid Glass UI 2' : 'Classic Glass';
+            const themeName = selected === 'soft' ? 'Soft Neutral UI 3' : selected === 'neon' ? 'Black Cyan UI 4' : selected === 'crystal' ? 'Liquid Glass UI 2' : 'Classic Glass';
             showToast(`${themeName} diaktifkan.`);
         };
 
@@ -1246,20 +1260,21 @@
         window.applyTheme = function(themeName = 'glass', mode = null, preference = null) {
             const savedPreference = preference || localStorage.getItem(INVENTORY_UI_PREFERENCE_KEY) || accountPreferenceFromMode(mode || localStorage.getItem(INVENTORY_THEME_KEY) || 'dark');
             const selected = normalizeAccountUiPreference(savedPreference);
-            const safeMode = selected === 'classic' ? 'dark' : 'light';
+            const safeMode = ['classic','neon'].includes(selected) ? 'dark' : 'light';
             localStorage.setItem(INVENTORY_UI_PREFERENCE_KEY, selected);
             localStorage.setItem(INVENTORY_THEME_KEY, safeMode);
             // Pertahankan status autentikasi saat class tema diperbarui.
             // Tanpa ini, pergantian UI menghapus inventory-authenticated
             // sehingga header baru muncul kembali setelah halaman di-reload.
             const isAuthenticated = document.body.classList.contains('inventory-authenticated');
-            const themeClass = selected === 'soft' ? 'theme-light theme-soft' : safeMode === 'light' ? 'theme-light theme-crystal' : 'theme-dark theme-classic';
+            const themeClass = selected === 'soft' ? 'theme-light theme-soft' : selected === 'neon' ? 'theme-dark theme-neon' : safeMode === 'light' ? 'theme-light theme-crystal' : 'theme-dark theme-classic';
             document.body.className = `min-h-screen flex flex-col antialiased theme-glass ${themeClass}`;
             if (isAuthenticated) document.body.classList.add('inventory-authenticated');
 
             const classicBtn = document.getElementById('theme-classic-btn');
             const crystalBtn = document.getElementById('theme-crystal-btn');
             const softBtn = document.getElementById('theme-soft-btn');
+            const neonBtn = document.getElementById('theme-neon-btn');
             if (classicBtn) {
                 classicBtn.classList.toggle('active', selected === 'classic');
                 classicBtn.setAttribute('aria-pressed', String(selected === 'classic'));
@@ -1272,16 +1287,23 @@
                 softBtn.classList.toggle('active', selected === 'soft');
                 softBtn.setAttribute('aria-pressed', String(selected === 'soft'));
             }
+            if (neonBtn) {
+                neonBtn.classList.toggle('active', selected === 'neon');
+                neonBtn.setAttribute('aria-pressed', String(selected === 'neon'));
+            }
             const classicCard = document.getElementById('theme-classic-card');
             const crystalCard = document.getElementById('theme-crystal-card');
             const softCard = document.getElementById('theme-soft-card');
+            const neonCard = document.getElementById('theme-neon-card');
             if (classicCard) classicCard.classList.toggle('active', selected === 'classic');
             if (crystalCard) crystalCard.classList.toggle('active', selected === 'crystal');
             if (softCard) softCard.classList.toggle('active', selected === 'soft');
+            if (neonCard) neonCard.classList.toggle('active', selected === 'neon');
             const themeNames = {
                 classic: 'Classic Glass',
                 crystal: 'Liquid Glass',
-                soft: 'Soft Neutral UI 3'
+                soft: 'Soft Neutral UI 3',
+                neon: 'Black Cyan UI 4'
             };
             const appearanceLabel = document.getElementById('appearance-current-label');
             if (appearanceLabel) appearanceLabel.textContent = `${themeNames[selected]} aktif`;
@@ -2793,6 +2815,127 @@
 
 
         let lastLowStockRenderSignature = null;
+
+        // Dashboard search spans the modules while reusing each module's own table filter.
+        window.runDashboardSearch = function() {
+            const input = document.getElementById('dashboard-global-search');
+            const resultsBox = document.getElementById('dashboard-search-results');
+            const clearButton = document.getElementById('dashboard-search-clear');
+            if (!input || !resultsBox) return;
+
+            const query = input.value.trim().toLocaleLowerCase('id-ID');
+            clearButton?.toggleAttribute('hidden', !query);
+            resultsBox.replaceChildren();
+            resultsBox.hidden = !query;
+            if (!query) return;
+
+            const db = window.gudangAppDb || {};
+            const contains = values => values.some(value => String(value ?? '').toLocaleLowerCase('id-ID').includes(query));
+            const records = [];
+            const addRecord = (module, filterId, category, title, description, searchable) => {
+                if (contains(searchable)) records.push({ module, filterId, category, title, description });
+            };
+
+            (db.items || []).forEach(item => addRecord(
+                'master', 'search-master', 'Master Barang',
+                `${item.id || '-'} · ${window.displayItemName(item.id, item.nama)}`,
+                `${item.jenis || 'Tanpa kategori'} · Stok ${Number(item.stok || 0).toLocaleString('id-ID')} ${item.satuan || ''}`,
+                [item.id, item.nama, item.jenis]
+            ));
+            (db.masuk || []).forEach(row => addRecord(
+                'masuk', 'search-masuk', 'Barang Masuk',
+                `${row.id || row.transactionId || '-'} · ${row.nama || row.barangId || 'Barang'}`,
+                `${row.tanggal || '-'} · ${row.supplier || 'Sumber tidak dicantumkan'} · +${Number(row.qty || 0).toLocaleString('id-ID')} ${row.satuan || ''}`,
+                [row.id, row.nama, row.supplier]
+            ));
+
+            const keluarGroups = new Map();
+            (db.keluar || []).forEach(row => {
+                const transactionId = String(row.transactionId || row.groupId || row.id || '-');
+                if (!keluarGroups.has(transactionId)) keluarGroups.set(transactionId, []);
+                keluarGroups.get(transactionId).push(row);
+            });
+            keluarGroups.forEach((rows, transactionId) => rows.forEach(row => addRecord(
+                'keluar', 'search-keluar', 'Barang Keluar',
+                `${transactionId} · ${row.nama || row.barangId || 'Barang'}`,
+                `${row.tanggal || '-'} · ${row.tujuan || 'Tujuan tidak dicantumkan'} · -${Number(row.qty || 0).toLocaleString('id-ID')} ${row.satuan || ''}`,
+                [transactionId, row.id, row.tanggal, row.tujuan, row.barangId, row.nama, row.jenis, row.lebar, row.ukuran, row.poRef]
+            )));
+
+            const poGroups = new Map();
+            (db.po || []).forEach(row => {
+                const key = `${String(row.customer || '').toLocaleLowerCase('id-ID')}|${String(row.noPoCustomer || row.id || '').toLocaleLowerCase('id-ID')}`;
+                if (!poGroups.has(key)) poGroups.set(key, []);
+                poGroups.get(key).push(row);
+            });
+            poGroups.forEach(rows => rows.forEach(row => addRecord(
+                'po', 'search-po', 'PO Customer',
+                `${row.noPoCustomer || row.id || '-'} · ${row.customer || 'Customer'}`,
+                `${row.tanggal || '-'} · ${row.nama || row.barangId || 'Detail barang'} · Qty ${Number(row.qty || 0).toLocaleString('id-ID')}`,
+                [row.noPoCustomer, row.customer, row.id, row.nama]
+            )));
+
+            (db.sampel || []).forEach(row => addRecord(
+                'sampel', 'search-sampel', 'Sampel',
+                `${row.id || '-'} · ${row.nama || row.customer || 'Sampel'}`,
+                `${row.tanggal || '-'} · ${row.customer || row.jenis || 'Sampel'} · Qty ${Number(row.qty || 0).toLocaleString('id-ID')}`,
+                [row.id, row.customer, row.nama]
+            ));
+            (db.retur || []).forEach(row => addRecord(
+                'retur', 'search-retur', 'Retur Barang',
+                `${row.id || '-'} · ${row.nama || row.barangId || 'Barang'}`,
+                `${row.tanggal || '-'} · ${row.keterangan || 'Tanpa keterangan'} · Qty ${Number(row.qty || 0).toLocaleString('id-ID')}`,
+                [row.id, row.nama, row.keterangan]
+            ));
+
+            const resultHeading = document.createElement('div');
+            resultHeading.className = 'dashboard-search-count';
+            resultHeading.textContent = records.length
+                ? `${records.length.toLocaleString('id-ID')} hasil ditemukan · pilih hasil untuk membuka tabel`
+                : 'Tidak ada data yang cocok.';
+            resultsBox.append(resultHeading);
+
+            records.slice(0, 12).forEach(record => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'dashboard-search-result';
+                button.addEventListener('click', () => {
+                    const moduleSearch = document.getElementById(record.filterId);
+                    if (moduleSearch) moduleSearch.value = input.value.trim();
+                    window.switchTab(record.module);
+                    document.getElementById(record.filterId)?.focus({ preventScroll:true });
+                });
+
+                const copy = document.createElement('span');
+                copy.className = 'dashboard-search-result-copy';
+                const title = document.createElement('strong');
+                title.textContent = record.title;
+                const description = document.createElement('small');
+                description.textContent = record.description;
+                copy.append(title, description);
+
+                const category = document.createElement('span');
+                category.className = 'dashboard-search-result-category';
+                category.textContent = record.category;
+                button.append(copy, category);
+                resultsBox.append(button);
+            });
+
+            if (records.length > 12) {
+                const more = document.createElement('div');
+                more.className = 'dashboard-search-more';
+                more.textContent = `Menampilkan 12 dari ${records.length.toLocaleString('id-ID')} hasil.`;
+                resultsBox.append(more);
+            }
+        };
+
+        window.clearDashboardSearch = function() {
+            const input = document.getElementById('dashboard-global-search');
+            if (!input) return;
+            input.value = '';
+            input.focus();
+            window.runDashboardSearch();
+        };
 
         // Render Dashboard & Charts
         window.renderDashboard = function() {
