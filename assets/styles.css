@@ -13007,6 +13007,34 @@ html body.theme-glass.theme-light.theme-soft #toast-container .inventory-toast-c
   }
 }
 
+/* Stop periodic cloud refreshes from flashing PO detail row backgrounds. */
+html body.theme-glass #tab-po tr[id^="po-detail-"] tbody tr,
+html body.theme-glass #tab-po tr[id^="po-detail-"] tbody tr:hover {
+  transition:none !important;
+  animation:none !important;
+  background-color:rgba(0,0,0,.10) !important;
+  background-image:none !important;
+}
+html body.theme-glass.theme-crystal #tab-po tr[id^="po-detail-"] tbody tr,
+html body.theme-glass.theme-crystal #tab-po tr[id^="po-detail-"] tbody tr:hover {
+  background-color:rgba(255,255,255,.035) !important;
+}
+html body.theme-glass.theme-classic #tab-po tr[id^="po-detail-"] tbody tr,
+html body.theme-glass.theme-classic #tab-po tr[id^="po-detail-"] tbody tr:hover {
+  background-color:rgba(0,0,0,.10) !important;
+}
+html body.theme-glass.theme-light.theme-soft #tab-po tr[id^="po-detail-"] tbody tr,
+html body.theme-glass.theme-light.theme-soft #tab-po tr[id^="po-detail-"] tbody tr:hover {
+  background-color:rgba(195,212,201,.035) !important;
+}
+html body.theme-glass #tab-po tr[id^="po-detail-"] tbody tr:hover td,
+html body.theme-glass #tab-po tr[id^="po-detail-"] tbody tr td:hover {
+  background:transparent !important;
+  background-color:transparent !important;
+  background-image:none !important;
+  transition:none !important;
+}
+
 /* UI 1/2: avoid compositing an off-screen blurred drawer during page scrolling. */
 @media screen and (max-width:900px) {
   html body.theme-glass:is(.theme-classic,.theme-crystal) #inventory-sidebar {
@@ -13068,4 +13096,35 @@ html body.theme-glass.theme-light.theme-soft #inventory-app-layout.sidebar-colla
     width:max-content !important;
     min-width:100% !important;
   }
+}
+
+/* Keep table rows visually steady under the pointer across every UI theme. */
+html body.theme-glass #inventory-main-content [id^="tab-"] table tbody tr,
+html body.theme-glass #inventory-main-content [id^="tab-"] table tbody tr:hover,
+html body.theme-glass #inventory-main-content [id^="tab-"] table tbody tr:hover td,
+html body.theme-glass #inventory-main-content [id^="tab-"] table tbody tr td:hover {
+  transition:none !important;
+  animation:none !important;
+  background-image:none !important;
+}
+html body.theme-glass #inventory-main-content [id^="tab-"] table tbody tr:hover,
+html body.theme-glass #inventory-main-content [id^="tab-"] table tbody tr:hover td,
+html body.theme-glass #inventory-main-content [id^="tab-"] table tbody tr td:hover {
+  background-color:transparent !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content [id^="tab-"] tbody tr:hover,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content [id^="tab-"] tbody tr:hover td,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content [id^="tab-"] tbody tr td:hover {
+  background:transparent !important;
+  background-color:transparent !important;
+  background-image:none !important;
+  transition:none !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] tbody tr:hover,
+html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] tbody tr:hover td,
+html body.theme-glass.theme-light.theme-soft #inventory-main-content [id^="tab-"] tbody tr td:hover {
+  background:transparent !important;
+  background-color:transparent !important;
+  background-image:none !important;
+  transition:none !important;
 }

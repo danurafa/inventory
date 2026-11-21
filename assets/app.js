@@ -2233,7 +2233,7 @@
             const allGroups = [...groups.entries()].map(([key,rows])=>({key,rows,head:rows[0]}));
             const filtered = allGroups.filter(g => [g.head.noPoCustomer,g.head.customer,...g.rows.map(r=>r.id),...g.rows.map(r=>r.nama)].some(v=>String(v||'').toLowerCase().includes(q)));
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} PO • ${filtered.reduce((n,g)=>n+g.rows.length,0)} detail barang`;
-            tbody.innerHTML = filtered.map((g,index)=>{
+            const renderedPoRows = filtered.map((g,index)=>{
                 const groupToken = encodeURIComponent(g.key).replace(/'/g, '%27');
                 const detailExpanded = expandedKeys.has(groupToken);
                 const totalQty=g.rows.reduce((s,r)=>s+Number(r.qty||0),0);
@@ -2248,6 +2248,9 @@
                 }).join('');
                 return `<tr class="hover:bg-white/5"><td class="py-3 px-2 text-center">${index+1}</td><td class="py-3 px-3 font-mono font-semibold">${g.head.noPoCustomer||g.head.id}</td><td class="py-3 px-3">${g.head.tanggal||'-'}</td><td class="py-3 px-3">${g.head.customer||'-'}</td><td class="py-3 px-3 text-center">${g.rows.length}</td><td class="py-3 px-3 text-right font-mono">${totalQty.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-right font-mono text-emerald-300">${totalSent.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${status==='CLOSED'?'bg-emerald-500/20 text-emerald-300':'bg-sky-500/20 text-sky-300'}">${status}</span></td><td class="py-3 px-3 text-center"><button onclick="togglePoDetails('${groupToken}')" class="px-3 py-1 rounded bg-indigo-500/20 text-indigo-300 text-xs">Detail (${g.rows.length})</button></td></tr><tr id="po-detail-${groupToken}" data-po-group-key="${groupToken}" class="${detailExpanded?'':'hidden'}"><td colspan="9" class="p-2"><div class="rounded-xl border border-white/10 overflow-x-auto"><table class="w-full text-xs"><thead class="bg-white/5 text-gray-400"><tr><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">Barang</th><th class="p-2 text-right">Qty PO</th><th class="p-2 text-right">Siap</th><th class="p-2 text-right">Terkirim</th><th class="p-2 text-right">Sisa</th><th class="p-2 text-center">Status</th><th class="p-2 text-right">Atur Siap</th><th class="p-2 text-center">Aksi</th></tr></thead><tbody>${details}</tbody></table></div></td></tr>`;
             }).join('') || `<tr><td colspan="9" class="py-6 text-center opacity-50">Tidak ada PO.</td></tr>`;
+            // Polling cloud dapat merender ulang semua tampilan meski isi PO tidak berubah.
+            // Jangan menyentuh tbody jika markup identik agar detail terbuka tidak berkedip.
+            if (tbody.innerHTML !== renderedPoRows) tbody.innerHTML = renderedPoRows;
             lucide.createIcons();
         };
         window.togglePoDetails = function(groupToken) {
