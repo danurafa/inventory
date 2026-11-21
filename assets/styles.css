@@ -12878,6 +12878,22 @@ html body.theme-glass.theme-light.theme-soft #inventory-sidebar #open-appearance
   outline:2px solid #8da895 !important;
   outline-offset:2px !important;
 }
+
+/* UI 1/2: avoid compositing an off-screen blurred drawer during page scrolling. */
+@media screen and (max-width:900px) {
+  html body.theme-glass:is(.theme-classic,.theme-crystal) #inventory-sidebar {
+    -webkit-backdrop-filter:none !important;
+    backdrop-filter:none !important;
+    filter:none !important;
+    box-shadow:4px 0 14px rgba(0,0,0,.18) !important;
+    contain:paint !important;
+  }
+  html body.theme-glass:is(.theme-classic,.theme-crystal) #sidebar-mobile-backdrop {
+    -webkit-backdrop-filter:none !important;
+    backdrop-filter:none !important;
+    filter:none !important;
+  }
+}
 html body.theme-glass.theme-light.theme-soft #inventory-app-layout.sidebar-collapsed #inventory-sidebar #open-appearance-btn {
   width:44px !important;
   min-width:44px !important;

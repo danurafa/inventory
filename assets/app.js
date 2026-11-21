@@ -4945,6 +4945,14 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
     panel.append(search,list);
     select.parentNode.insertBefore(wrap,select); wrap.append(trigger,select); select.classList.add('inventory-item-select-native');
     wrap._inventoryPanel=panel;
+    let positionFrame=0;
+    function schedulePositionPanel(){
+      if(panel.hidden || !wrap.classList.contains('is-open') || positionFrame) return;
+      positionFrame=requestAnimationFrame(()=>{
+        positionFrame=0;
+        positionPanel();
+      });
+    }
 
     function sync(){
       const opt=select.options[select.selectedIndex];
@@ -4978,6 +4986,9 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
       list.style.maxHeight=maxList+'px';
     }
     function close(){
+      window.removeEventListener('scroll',schedulePositionPanel,true);
+      window.removeEventListener('resize',schedulePositionPanel);
+      if(positionFrame){cancelAnimationFrame(positionFrame);positionFrame=0;}
       panel.hidden=true;
       wrap.classList.remove('is-open');
       trigger.setAttribute('aria-expanded','false');
@@ -5030,6 +5041,8 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
         document.body.appendChild(panel); // Portal: keluar dari card/overflow ancestor.
         wrap.classList.add('is-open');
         panel.hidden=false;
+        window.addEventListener('scroll',schedulePositionPanel,{passive:true,capture:true});
+        window.addEventListener('resize',schedulePositionPanel,{passive:true});
         trigger.setAttribute('aria-expanded','true');
         search.value='';
         render();
@@ -5048,8 +5061,6 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
     document.addEventListener('keydown',e=>{
       if(e.key==='Escape'&&!panel.hidden){close();trigger.focus();}
     });
-    window.addEventListener('resize',positionPanel,{passive:true});
-    window.addEventListener('scroll',positionPanel,{passive:true,capture:true});
     select.addEventListener('change',()=>{sync();if(!panel.hidden)render();});
     const observer=new MutationObserver(()=>{sync();if(!panel.hidden)render();});
     observer.observe(select,{childList:true,subtree:true,attributes:true,characterData:true});
