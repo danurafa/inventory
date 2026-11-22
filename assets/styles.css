@@ -14463,3 +14463,48 @@ html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn:hover > * {
   html body.theme-glass.theme-neon #inventory-app-layout #inventory-sidebar { transition:transform .14s ease-out !important; }
   html body.theme-glass.theme-neon #sidebar-mobile-backdrop { transition:none !important; }
 }
+
+/* V178 — UI 2 (Liquid Glass) MOBILE ONLY: ikon Export CSV transparan seperti tema kaca.
+   Semua aturan di blok ini hanya aktif pada layar <=767px dan body.theme-crystal.
+   Typography/background aturan lama (.theme-accent-bg) sengaja tidak diubah agar
+   tampilan desktop tetap persis seperti semula. Tombol, onclick, ukuran, dan layout
+   tidak diubah. */
+@media screen and (max-width: 767px) {
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c)
+    #inventory-top-header #header-export-csv > svg,
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c)
+    #inventory-top-header #header-export-csv > i {
+    color: rgba(36, 71, 101, .5) !important;
+    stroke: rgba(36, 71, 101, .5) !important;
+    fill: none !important;
+    opacity: 1 !important;
+  }
+  /* Pastikan tidak ada sisa background/gradient dari class .theme-accent-bg. */
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c)
+    #inventory-top-header #header-export-csv {
+    background: transparent !important;
+    background-image: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+  }
+}
+
+
+/* V179 — UI 3 (Soft Neutral) SAJA: kartu ringkasan Barang Masuk & Barang Keluar pada
+   slide grafik Analisis dibuat transparan (warna background di belakang angka dihapus).
+   Kartu Selisih (.movement-summary-net), panel Top SKU, border aksi, warna teks,
+   serta UI 1/2/4 sengaja tidak diubah. */
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #movement-trend-card .movement-summary-in,
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #movement-trend-card .movement-summary-out {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+/* Aturan lama (baris ~11923) juga mewarnai background <strong> angka secara langsung. */
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #movement-total-in,
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #movement-total-out {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
