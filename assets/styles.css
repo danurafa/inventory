@@ -14444,3 +14444,22 @@ html body.theme-glass.theme-neon #inventory-main-content #dashboard-hero {
   background:linear-gradient(120deg,rgb(10,31,39),rgb(9,15,22) 58%,rgb(14,30,37)) !important;
 }
 html body.theme-glass.theme-neon #inventory-main-content :is(.blur-2xl,.blur-3xl) { filter:none !important;display:none !important; }
+
+/* UI 4 sidebar: reduced motion. No looping/hover animation, no width/layout animation; only a very short color fade. */
+html body.theme-glass.theme-neon #inventory-app-layout #inventory-sidebar {
+  transition:none !important;animation:none !important;will-change:auto !important;
+}
+html body.theme-glass.theme-neon #inventory-sidebar :is(*,*::before,*::after) {
+  animation:none !important;will-change:auto !important;
+  transition-property:background-color,border-color,color !important;
+  transition-duration:.08s !important;transition-timing-function:linear !important;
+}
+html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn:hover,
+html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn:active,
+html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn:hover > * {
+  transform:none !important;filter:none !important;
+}
+@media screen and (max-width:900px) {
+  html body.theme-glass.theme-neon #inventory-app-layout #inventory-sidebar { transition:transform .14s ease-out !important; }
+  html body.theme-glass.theme-neon #sidebar-mobile-backdrop { transition:none !important; }
+}
