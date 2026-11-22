@@ -11728,6 +11728,94 @@ html body.theme-glass.theme-light.theme-soft #po-items-container [data-po-item-r
   border-color:#394740 !important;
 }
 
+/* V188 — PO Customer: rapikan baris barang hasil tombol "Tambah Barang".
+   HANYA untuk UI 1 (Classic) dan UI 2 (Crystal). UI 3/4 sengaja tidak
+   disentuh dan memakai markup + tampilan semula.
+   - Badge "Qty Siap Dikirim" tidak dipakai (label polos biasa).
+   - Dropdown, input qty, dan tombol ✕ disamakan tingginya.
+   - Tombol ✕ jadi murni ikon: tanpa kotak, shadow, blur, maupun glow. */
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] label,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] label {
+  display:block !important;
+  min-height:14px !important;
+  margin-bottom:4px !important;
+  line-height:14px !important;
+  white-space:nowrap !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] input[data-po-field],
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .inventory-item-select-trigger,
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] input[data-po-field],
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .inventory-item-select-trigger,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn {
+  box-sizing:border-box !important;
+  height:40px !important;
+  min-height:40px !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  line-height:normal !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn {
+  /* Hapus semua chrome tema: background, border, shadow, blur, dan glow teks. */
+  all:unset !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  box-sizing:border-box !important;
+  width:100% !important;
+  height:40px !important;
+  min-height:40px !important;
+  padding:0 !important;
+  margin:0 !important;
+  background:none !important;
+  background-image:none !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  animation:none !important;
+  outline:none !important;
+  font-family:inherit !important;
+  font-size:15px !important;
+  font-weight:400 !important;
+  line-height:1 !important;
+  color:#fb7185 !important;
+  -webkit-text-fill-color:#fb7185 !important;
+  cursor:pointer !important;
+  transition:color .15s ease !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn:hover,
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn:hover *,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn:hover,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn:hover * {
+  background:none !important;
+  background-image:none !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  animation:none !important;
+  color:#fda4af !important;
+  -webkit-text-fill-color:#fda4af !important;
+}
+/* Samakan dengan breakpoint mobile aplikasi (767px), bukan 640px,
+   supaya tinggi kontrol tetap 42px di seluruh rentang mobile/tablet. */
+@media (max-width:767px) {
+  html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] input[data-po-field],
+  html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .inventory-item-select-trigger,
+  html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn,
+  html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] input[data-po-field],
+  html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .inventory-item-select-trigger,
+  html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn {
+    height:42px !important;
+    min-height:42px !important;
+  }
+}
+
 html body.theme-glass.theme-light.theme-soft .inventory-item-select-search {
   color:#d1dad5 !important;
   -webkit-text-fill-color:#d1dad5 !important;
@@ -14750,4 +14838,5 @@ html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not
   stroke:#e9fdff !important;
   -webkit-text-fill-color:#e9fdff !important;
 }
+
 

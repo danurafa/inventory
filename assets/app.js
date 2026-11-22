@@ -1645,9 +1645,9 @@
             const saved = await saveCloudDB();
             if (saved) {
                 resetMasterForm();
-                showToast(isEdit ? `Barang ${id} berhasil diperbarui.` : `Barang ${id} berhasil ditambahkan.`);
+                showToast(isEdit ? `Master Data Barang ${id} berhasil diperbarui.` : `Master Data Barang ${id} berhasil ditambahkan.`);
             } else {
-                showToast(`Perubahan Master Barang ${id} belum dikonfirmasi Worker. Jangan kirim ulang sebelum memeriksa daftar.`, 'error');
+                showToast(`Perubahan Master Data Barang ${id} belum dikonfirmasi Worker. Jangan kirim ulang sebelum memeriksa daftar.`, 'error');
             }
         };
 
@@ -1687,6 +1687,7 @@
 
         window.resetMasterForm = function() {
             document.getElementById('form-master').reset();
+            window.syncFormDropdownLabels?.('form-master');
             document.getElementById('master-edit-mode').value = 'false';
             document.getElementById('master-id').disabled = false;
             document.getElementById('master-id').value = '';
@@ -1857,9 +1858,9 @@
             const saved = await saveCloudDB();
             if (saved) {
                 resetMasukForm();
-                showToast('Transaksi masuk berhasil disimpan dan dikonfirmasi Worker!');
+                showToast('Barang Masuk berhasil disimpan dan dikonfirmasi Worker!');
             } else {
-                showToast('Transaksi masuk belum terkonfirmasi tersimpan di cloud. Periksa riwayat dan stok sebelum mencoba ulang.', 'error');
+                showToast('Barang Masuk belum terkonfirmasi tersimpan di cloud. Periksa riwayat dan stok sebelum mencoba ulang.', 'error');
             }
         };
 
@@ -1882,6 +1883,16 @@
             document.getElementById('masuk-edit-mode').value = 'false';
             document.getElementById('masuk-id').value = generateMasukSequentialId();
             document.getElementById('masuk-tanggal').valueAsDate = new Date();
+
+            // form.reset() mengembalikan select ke option pertama tetapi TIDAK
+            // memicu event change, sehingga label dropdown custom bisa tertinggal.
+            // Sinkronkan seketika supaya tombol "Pilih Barang" langsung merespons.
+            const barangSelect = document.getElementById('masuk-barang');
+            if (barangSelect) {
+                barangSelect.selectedIndex = 0;
+                window.syncInventoryItemSelect?.(barangSelect);
+            }
+            window.updateMasukItemInfo?.();
             document.getElementById('info-masuk-jenis').textContent = '-';
             document.getElementById('info-masuk-satuan').textContent = '-';
         };
@@ -2004,9 +2015,9 @@
                 await sendOperation('keluar.batchCreate', { id:baseId, tanggal, tujuan, user:username, transactionId:baseId, items:details });
                 window.refreshAllViews?.();
                 resetKeluarForm();
-                showToast(`Transaksi ${baseId} berhasil disimpan: ${details.length} jenis barang. Stok dan Qty Siap Dikirim sudah diperbarui.`);
+                showToast(`Barang Keluar ${baseId} berhasil disimpan: ${details.length} jenis barang. Stok dan Qty Siap Dikirim sudah diperbarui.`);
             } catch (error) {
-                showToast(`Transaksi Barang Keluar gagal: ${error.message}`, 'error');
+                showToast(`Barang Keluar gagal disimpan: ${error.message}`, 'error');
             }
         };
 
@@ -2036,6 +2047,7 @@
 
         window.resetKeluarForm = function() {
             document.getElementById('form-keluar').reset();
+            window.syncFormDropdownLabels?.('form-keluar');
             document.getElementById('keluar-edit-mode').value = 'false';
             document.getElementById('keluar-id').value = generateKeluarSequentialId();
             document.getElementById('keluar-tanggal').valueAsDate = new Date();
@@ -2168,7 +2180,7 @@
                 <div class="sm:col-span-5"><label class="text-[10px] text-gray-400">Barang</label><select ${n===1?'id="po-barang"':''} data-po-field="barangId" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"><option value="">-- Pilih Barang --</option>${itemOptions}</select></div>
                 <div class="sm:col-span-3"><label class="text-[10px] text-gray-400">Qty PO</label><input ${n===1?'id="po-qty"':''} data-po-field="qty" type="number" min="1" step="1" value="${values.qty ?? 1}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
                 <div class="sm:col-span-3"><label class="text-[10px] text-gray-400">Qty Siap Dikirim</label><input ${n===1?'id="po-siap"':''} data-po-field="siapKirim" type="number" min="0" step="1" value="${values.siapKirim ?? 0}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
-                <div class="sm:col-span-1 flex items-end"><button type="button" onclick="this.closest('[data-po-item-row]').remove(); refreshPoItemRowIds()" class="w-full py-2 rounded-lg bg-rose-500/15 text-rose-300 text-xs" title="Hapus baris">✕</button></div>`;
+                <div class="sm:col-span-1 flex items-end"><button type="button" onclick="this.closest('[data-po-item-row]').remove(); refreshPoItemRowIds()" class="po-remove-item-btn w-full py-2 rounded-lg bg-rose-500/15 text-rose-300 text-xs" title="Hapus baris">✕</button></div>`;
             host.appendChild(row);
             const select = row.querySelector('[data-po-field="barangId"]'); if (values.barangId) select.value = values.barangId;
             refreshPoItemRowIds();
@@ -2213,8 +2225,8 @@
                 }
                 window.refreshAllViews?.();
                 resetPoForm();
-                showToast(isEdit?'Detail PO berhasil diperbarui.':'PO multi-barang berhasil disimpan ke Cloud.');
-            } catch(error) { showToast(`Simpan PO gagal: ${error.message}`,'error'); }
+                showToast(isEdit?'PO Masuk (Customer) berhasil diperbarui.':'PO Masuk (Customer) berhasil disimpan ke Cloud.');
+            } catch(error) { showToast(`PO Masuk (Customer) gagal disimpan: ${error.message}`,'error'); }
         };
 
         window.deletePoItem = function(id) {
@@ -2236,6 +2248,7 @@
             document.getElementById('po-tanggal').valueAsDate = new Date();
             document.getElementById('po-items-container').innerHTML = '';
             addPoItemRow();
+            window.syncFormDropdownLabels?.('form-po');
             document.getElementById('po-form-title').innerHTML = '<i data-lucide="file-plus" class="w-4 h-4 text-orange-400"></i> INPUT PO CUSTOMER';
             lucide.createIcons();
         };
@@ -2320,8 +2333,8 @@
             if (document.getElementById('sampel-edit-mode').value === 'true') {
                 try {
                     await sendOperation('sampel.update', { id, record: { tanggal, customer, nama, kategori, lebar, ukuran, berat, tebal } });
-                    window.refreshAllViews?.(); resetSampelForm(); showToast('Data sampel berhasil diperbarui.');
-                } catch (error) { showToast(`Edit sampel gagal: ${error.message}`, 'error'); }
+                    window.refreshAllViews?.(); resetSampelForm(); showToast('Sampel berhasil diperbarui.');
+                } catch (error) { showToast(`Sampel gagal diperbarui: ${error.message}`, 'error'); }
                 return;
             }
             if ((window.gudangAppDb.sampel || []).some(x => String(x.id).toUpperCase() === id)) {
@@ -2332,9 +2345,9 @@
             const saved = await saveCloudDB();
             if (saved) {
                 resetSampelForm();
-                showToast('Data sampel berhasil disimpan dan dikonfirmasi Worker!');
+                showToast('Sampel berhasil disimpan dan dikonfirmasi Worker!');
             } else {
-                showToast('Data sampel belum terkonfirmasi tersimpan di Cloud. Periksa riwayat sebelum mencoba ulang.', 'error');
+                showToast('Sampel belum terkonfirmasi tersimpan di Cloud. Periksa riwayat sebelum mencoba ulang.', 'error');
             }
         };
 
@@ -2352,6 +2365,7 @@
 
         window.resetSampelForm = function() {
             document.getElementById('form-sampel').reset();
+            window.syncFormDropdownLabels?.('form-sampel');
             document.getElementById('sampel-edit-mode').value = 'false';
             document.getElementById('sampel-id').value = generateSampelSequentialId();
             document.getElementById('sampel-tanggal').valueAsDate = new Date();
@@ -2486,8 +2500,8 @@
             if (document.getElementById('retur-edit-mode').value === 'true') {
                 try {
                     await sendOperation('retur.update', { id, record: { tanggal, barangId, qty, keterangan, keluarRef, poRef: keluar.poRef || '', nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan } });
-                    window.refreshAllViews?.(); resetReturForm(); showToast('Retur berhasil diperbarui. Stok dan realisasi PO dikoreksi Worker.');
-                } catch (error) { showToast(`Edit retur gagal: ${error.message}`, 'error'); }
+                    window.refreshAllViews?.(); resetReturForm(); showToast('Retur Barang berhasil diperbarui. Stok dan realisasi PO dikoreksi Worker.');
+                } catch (error) { showToast(`Retur Barang gagal diperbarui: ${error.message}`, 'error'); }
                 return;
             }
             item.stok += qty;
@@ -2504,12 +2518,12 @@
                 const saved = await saveCloudDB();
                 if (saved) {
                     resetReturForm();
-                    showToast('Retur berhasil disimpan dan dikonfirmasi Worker. Stok dan realisasi PO diperbarui.');
+                    showToast('Retur Barang berhasil disimpan dan dikonfirmasi Worker. Stok dan realisasi PO diperbarui.');
                 } else {
-                    showToast('Retur belum terkonfirmasi tersimpan di Cloud. Periksa riwayat sebelum mencoba ulang.', 'error');
+                    showToast('Retur Barang belum terkonfirmasi tersimpan di Cloud. Periksa riwayat sebelum mencoba ulang.', 'error');
                 }
             } catch (error) {
-                showToast(`Retur gagal disimpan: ${error.message}`, 'error');
+                showToast(`Retur Barang gagal disimpan: ${error.message}`, 'error');
             }
         };
 
@@ -2544,6 +2558,7 @@
             document.getElementById('retur-id').value = generateId('RTR');
             document.getElementById('retur-tanggal').valueAsDate = new Date();
             window.updateReturReferenceOptions?.();
+            window.syncFormDropdownLabels?.('form-retur');
             document.getElementById('retur-qty').max = '';
             document.getElementById('retur-reference-info').textContent = 'Pilih barang terlebih dahulu untuk melihat transaksi keluar yang bisa diretur.';
         };
@@ -4639,33 +4654,34 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
         (function installDetailSaveConfirmation() {
             const definitions = {
                 saveMasterItem: {
-                    form: 'form-master', title: 'KONFIRMASI MASTER BARANG',
+                    form: 'form-master', label: 'Master Data Barang',
                     fields: [['master-id','ID Barang'],['master-nama','Nama Barang'],['master-jenis','Jenis Barang'],['master-lebar','Lebar'],['master-ukuran','Ukuran'],['master-berat','Berat'],['master-satuan','Satuan'],['master-min','Stok Minimum'],['master-stok','Stok Saat Ini']]
                 },
                 savePoItem: {
-                    form: 'form-po', title: 'KONFIRMASI PO CUSTOMER',
+                    form: 'form-po', label: 'PO Masuk (Customer)',
                     fields: [['po-id','ID Detail PO (utama)'],['po-no-customer','Nomor PO Customer'],['po-tanggal','Tanggal PO'],['po-customer','Customer']]
                 },
                 saveMasukItem: {
-                    form: 'form-masuk', title: 'KONFIRMASI BARANG MASUK',
+                    form: 'form-masuk', label: 'Barang Masuk',
                     fields: [['masuk-id','ID Transaksi'],['masuk-tanggal','Tanggal'],['masuk-barang','ID Barang'],['masuk-qty','Jumlah Masuk (Qty)'],['masuk-supplier','Divisi']]
                 },
                 saveKeluarItem: {
-                    form: 'form-keluar', title: 'KONFIRMASI BARANG KELUAR',
+                    form: 'form-keluar', label: 'Barang Keluar',
                     fields: [['keluar-id','ID Transaksi / Surat Jalan'],['keluar-tanggal','Tanggal'],['keluar-po-group','Nomor PO Customer'],['keluar-tujuan','Tujuan / Customer']]
                 },
                 saveSampelItem: {
-                    form: 'form-sampel', title: 'KONFIRMASI DATA SAMPEL',
+                    form: 'form-sampel', label: 'Sampel',
                     fields: [['sampel-id','ID Sampel'],['sampel-tanggal','Tanggal'],['sampel-customer','Customer'],['sampel-nama','Nama Sampel'],['sampel-kategori','Kategori'],['sampel-lebar','Lebar'],['sampel-ukuran','Ukuran'],['sampel-berat','Berat'],['sampel-tebal','Tebal']]
                 },
                 saveReturItem: {
-                    form: 'form-retur', title: 'KONFIRMASI RETUR',
+                    form: 'form-retur', label: 'Retur Barang',
                     fields: [['retur-id','ID Retur'],['retur-tanggal','Tanggal'],['retur-barang','ID Barang'],['retur-keluar-ref','Transaksi Keluar Asal'],['retur-qty','Jumlah Retur (Qty)'],['retur-keterangan','Keterangan']]
                 }
             };
 
             const modal = document.getElementById('detail-save-modal');
             const content = document.getElementById('detail-save-content');
+            const titleEl = document.getElementById('detail-save-title');
             const subtitle = document.getElementById('detail-save-subtitle');
             const backBtn = document.getElementById('detail-save-back');
             const yesBtn = document.getElementById('detail-save-yes');
@@ -4751,7 +4767,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     const rows = readPoItemRows();
                     const heading = document.createElement('div');
                     heading.className = 'mb-2 rounded-lg border border-sky-400/30 bg-sky-400/10 px-3 py-2 text-xs font-bold text-sky-200';
-                    heading.textContent = 'RINCIAN BARANG DALAM PO';
+                    heading.textContent = 'RINCIAN BARANG PO MASUK (CUSTOMER)';
                     content.appendChild(heading);
                     rows.forEach((r, i) => {
                         const item = items.find(x => String(x.id) === String(r.barangId));
@@ -4778,7 +4794,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                         .filter(x => x.qty > 0);
                     const heading = document.createElement('div');
                     heading.className = 'mb-2 rounded-lg border border-sky-400/30 bg-sky-400/10 px-3 py-2 text-xs font-bold text-sky-200';
-                    heading.textContent = 'RINCIAN BARANG YANG AKAN DISIMPAN';
+                    heading.textContent = 'RINCIAN BARANG KELUAR YANG AKAN DISIMPAN';
                     content.appendChild(heading);
                     selected.forEach((r, i) => {
                         const po = (db.po || []).find(x => String(x.id) === String(r.poRef));
@@ -4801,7 +4817,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 // MASTER BARANG: satu kartu ringkas untuk seluruh spesifikasi barang.
                 if (formName === 'saveMasterItem') {
                     const id = document.getElementById('master-id')?.value || '-';
-                    const card = makeNoticeCard('DETAIL MASTER BARANG', id);
+                    const card = makeNoticeCard('DETAIL MASTER DATA BARANG', id);
                     [['Nama Barang','master-nama'],['Jenis Barang','master-jenis'],['Lebar Barang','master-lebar'],['Ukuran Barang','master-ukuran'],['Berat','master-berat'],['Satuan','master-satuan'],['Stok Minimum','master-min'],['Stok Saat Ini','master-stok']]
                         .forEach(([label,idField]) => addDetailRow(label, document.getElementById(idField)?.value || '-', card));
                     content.appendChild(card);
@@ -4829,7 +4845,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
 
                 // SAMPEL: satu kartu pemberitahuan untuk detail sampel, tanpa bergantung pada master barang.
                 if (formName === 'saveSampelItem') {
-                    const card = makeNoticeCard('DETAIL DATA SAMPEL', document.getElementById('sampel-id')?.value || '-');
+                    const card = makeNoticeCard('DETAIL SAMPEL', document.getElementById('sampel-id')?.value || '-');
                     [['Customer','sampel-customer'],['Nama Sampel','sampel-nama'],['Kategori','sampel-kategori'],['Lebar','sampel-lebar'],['Ukuran','sampel-ukuran'],['Berat','sampel-berat'],['Tebal','sampel-tebal']]
                         .forEach(([label,idField]) => addDetailRow(label, document.getElementById(idField)?.value || '-', card));
                     content.appendChild(card);
@@ -4841,7 +4857,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     const barangId = document.getElementById('retur-barang')?.value || '';
                     const item = items.find(x => String(x.id) === String(barangId));
                     const qty = Number(document.getElementById('retur-qty')?.value || 0);
-                    const card = makeNoticeCard('DETAIL BARANG RETUR', `${qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim());
+                    const card = makeNoticeCard('DETAIL RETUR BARANG', `${qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim());
                     addDetailRow('ID Barang', barangId || '-', card);
                     addDetailRow('Nama Barang', window.displayItemName(barangId, item?.nama || barangId), card);
                     addDetailRow('Jumlah Retur', `${qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
@@ -4901,7 +4917,8 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     }
                     const isEdit = document.getElementById(def.form.replace('form-','') + '-edit-mode')?.value === 'true';
                     content.replaceChildren();
-                    subtitle.textContent = `${def.title} • ${isEdit ? 'MODE EDIT' : 'DATA BARU'} — Periksa seluruh detail sebelum menyimpan.`;
+                    titleEl.textContent = `Periksa Data ${def.label}`;
+                    subtitle.textContent = `KONFIRMASI ${def.label.toUpperCase()} • ${isEdit ? 'MODE EDIT' : 'DATA BARU'} — Periksa seluruh detail sebelum menyimpan.`;
                     def.fields.forEach(([id, label]) => addDetailRow(label, fieldValue(id)));
                     addSelectedItemDetails(functionName);
                     modal.classList.remove('hidden');
@@ -5130,12 +5147,19 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
       const available=Math.max(120,placeBelow?below:above);
       const maxList=Math.max(80,Math.min(window.innerWidth<=640?240:280,available-62));
       let widestOption=0;
+      // Ukur font sekali saja (semua option memakai kelas yang sama).
+      // Sebelumnya getComputedStyle dipanggil per option, yang membuat dropdown
+      // terasa berat membukanya, terutama setelah form di-reset.
       if(measureContext){
-        list.querySelectorAll('.inventory-item-select-option').forEach(option=>{
-          const style=getComputedStyle(option);
+        const options=list.querySelectorAll('.inventory-item-select-option');
+        const ref=options[0];
+        if(ref){
+          const style=getComputedStyle(ref);
           measureContext.font=`${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-          widestOption=Math.max(widestOption,measureContext.measureText(option.textContent).width);
-        });
+          options.forEach(option=>{
+            widestOption=Math.max(widestOption,measureContext.measureText(option.textContent).width);
+          });
+        }
       }
       const width=Math.min(Math.max(rect.width,Math.ceil(widestOption+48)),window.innerWidth-margin*2);
       const left=Math.max(margin,Math.min(rect.left,window.innerWidth-width-margin));
@@ -5181,9 +5205,10 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
         b.setAttribute('aria-selected',String(select.selectedIndex===index));
         b.addEventListener('click',()=>{
           select.selectedIndex=index;
+          close(); // Tutup dulu agar event change tidak memicu render ulang seluruh daftar.
           select.dispatchEvent(new Event('input',{bubbles:true}));
           select.dispatchEvent(new Event('change',{bubbles:true}));
-          sync(); close(); trigger.focus();
+          sync(); trigger.focus();
         });
         list.append(b);
       });
@@ -5227,6 +5252,22 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
     instances.set(select,{sync,observer,panel,wrap});
     sync();
   }
+  // Dipakai form saat di-reset: form.reset() tidak memicu event change,
+  // jadi label dropdown custom perlu disinkronkan secara eksplisit.
+  window.syncInventoryItemSelect = function(select){
+    const inst = select && instances.get(select);
+    if (inst) inst.sync();
+  };
+  // Sinkronkan semua label dropdown custom di dalam sebuah form setelah reset.
+  window.syncFormDropdownLabels = function(formId){
+    const form = document.getElementById(formId);
+    if (!form) return;
+    form.querySelectorAll('select').forEach(sel => {
+      if (sel.closest('[hidden], [aria-hidden="true"], .hidden')) return;
+      const inst = instances.get(sel);
+      if (inst) inst.sync();
+    });
+  };
   function scan(root){if(root.matches&&root.matches('select'))init(root);root.querySelectorAll&&root.querySelectorAll('select').forEach(init);}
   function start(){
     scan(document);
