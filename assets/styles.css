@@ -14528,3 +14528,35 @@ html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):no
   background: #34d399 !important;
   box-shadow: 0 0 10px #34d399 !important;
 }
+
+
+/* V182 — Panel Tampilan: preview UI 2 dan UI 3 memakai palet tema aslinya,
+   tidak tergantung tema yang sedang aktif (jadi tidak terlihat polos saat
+   dibuka dari UI 2). */
+html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .crystal-large-preview {
+  background: linear-gradient(145deg,#eaf2fc 0%,#dce8f7 48%,#f5f8fd 100%) !important;
+}
+html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .crystal-large-preview .preview-topbar i:first-child {
+  background: #2563eb !important;
+}
+html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .soft-large-preview {
+  background: #171d1b !important;
+  border-color: #394740 !important;
+}
+html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .soft-large-preview .preview-soft-rail {
+  background: #141a18 !important;
+  border-color: #394740 !important;
+}
+html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .soft-large-preview .preview-soft-rail i {
+  background: #35423b !important;
+}
+html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .soft-large-preview .preview-soft-rail i:first-child {
+  background: #6f897d !important;
+}
+html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .soft-large-preview .preview-soft-workspace i {
+  background: #202825 !important;
+  border-color: #394740 !important;
+}
+html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .soft-large-preview .preview-soft-workspace i:first-child {
+  background: #2b3630 !important;
+}
