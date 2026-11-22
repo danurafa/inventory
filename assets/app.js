@@ -805,7 +805,15 @@
                 hideLoginModal();
                 startAutoLogoutTimer();
                 document.getElementById('login-password').value = '';
-                showToast(`Login berhasil sebagai ${result.user.name} (${result.user.role.toUpperCase()}).`);
+                // Sambutan hangat saat login berhasil (berlaku di semua UI).
+                const greetingWord = window.getInventoryGreetingWord?.() || 'Selamat Datang';
+                const displayName = result.user.name || result.user.username || 'Admin';
+                const roleLabel = String(result.user.role || '').toUpperCase();
+                showToast(
+                    `${greetingWord}, ${displayName}! Semoga hari ini lancar dan menyenangkan.${roleLabel ? ` · ${roleLabel}` : ''}`,
+                    'success',
+                    { title: 'Selamat Datang Kembali!', duration: 8000 }
+                );
                 updateCloudStatusBadge('active');
             } catch (error) {
                 showToast(error.message || 'Login gagal.', 'error');
@@ -970,16 +978,20 @@
         });
 
 
+        // Kata sapaan bersama: dipakai header dan toast sambutan saat login.
+        window.getInventoryGreetingWord = function() {
+            const hour = new Date().getHours();
+            if (hour >= 4 && hour < 11) return 'Selamat Pagi';
+            if (hour >= 11 && hour < 15) return 'Selamat Siang';
+            if (hour >= 15 && hour < 18) return 'Selamat Sore';
+            return 'Selamat Malam';
+        };
+
         // Sapaan header otomatis mengikuti waktu lokal dan nama pengguna yang login.
         window.updateHeaderGreeting = function() {
             const title = document.getElementById('inventory-greeting-title');
             if (!title) return;
-            const hour = new Date().getHours();
-            let greeting = 'Selamat Datang';
-            if (hour >= 4 && hour < 11) greeting = 'Selamat Pagi';
-            else if (hour >= 11 && hour < 15) greeting = 'Selamat Siang';
-            else if (hour >= 15 && hour < 18) greeting = 'Selamat Sore';
-            else greeting = 'Selamat Malam';
+            const greeting = window.getInventoryGreetingWord();
 
             const user = window.gudangAppDb?.currentUser || window.activeUserSession || null;
             const name = user?.name || user?.username || '';
@@ -1356,7 +1368,9 @@
         setInterval(() => window.updateHeaderGreeting?.(), 60000);
         setInterval(() => window.updateInventoryWeather?.(), 10 * 60 * 1000);
 
-        window.showToast = function(msg, type = 'success') {
+        // Opsi title/icon bersifat opsional; semua toast lama tetap memakai
+        // judul & ikon bawaan sesuai tipenya.
+        window.showToast = function(msg, type = 'success', options = {}) {
             const container = document.getElementById('toast-container');
             if (!container) return;
 
@@ -1367,6 +1381,8 @@
                 info:    { icon: 'info', title: 'Informasi', tone: 'info' }
             };
             const item = config[type] || config.success;
+            const toastTitle = String(options.title || item.title);
+            const toastIcon = String(options.icon || item.icon);
             const messageText = String(msg ?? '');
             const activeToasts = () => Array.from(container.children).filter(toast =>
                 toast.classList.contains('inventory-toast') && !toast.classList.contains('toast-leaving')
@@ -1376,7 +1392,7 @@
                 if (closeButton) closeButton.click();
                 toast.remove();
             };
-            const toastKey = JSON.stringify([item.tone, messageText]);
+            const toastKey = JSON.stringify([item.tone, toastTitle, messageText]);
             const duplicate = activeToasts().find(toast => toast.dataset.toastKey === toastKey);
             if (duplicate) removeToast(duplicate);
             while (activeToasts().length >= 3) removeToast(activeToasts()[0]);
@@ -1390,7 +1406,7 @@
             const iconWrap = document.createElement('span');
             iconWrap.className = 'inventory-toast-icon';
             const icon = document.createElement('i');
-            icon.setAttribute('data-lucide', item.icon);
+            icon.setAttribute('data-lucide', toastIcon);
             iconWrap.appendChild(icon);
 
             // Gunakan blok terpisah dan inline layout agar tidak tertimpa utility CSS lama.
@@ -1400,7 +1416,7 @@
 
             const heading = document.createElement('div');
             heading.className = 'inventory-toast-title';
-            heading.textContent = item.title;
+            heading.textContent = toastTitle;
             heading.style.cssText = 'display:block!important;width:100%!important;margin:0 0 4px 0!important;line-height:1.2!important;font-size:12px!important;font-weight:750!important;';
 
             const message = document.createElement('div');
@@ -1444,7 +1460,9 @@
                 dismiss();
             });
 
-            const duration = { success: 3600, error: 7000, warning: 5200, info: 4500 }[item.tone];
+            const duration = Number(options.duration) > 0
+                ? Number(options.duration)
+                : { success: 3600, error: 7000, warning: 5200, info: 4500 }[item.tone];
             progress.style.setProperty('--toast-duration', duration + 'ms');
             timer = window.setTimeout(dismiss, duration);
         };
