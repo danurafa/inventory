@@ -14508,3 +14508,23 @@ html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):no
   background-color: transparent !important;
   background-image: none !important;
 }
+
+
+/* V180 — Dashboard hero: titik "Inventory Command Center" dan "Status Sistem"
+   memakai animasi pulse bawaan yang sama dengan titik Cloud Sync Active.
+   Aturan lama `#tab-dashboard .animate-pulse { animation:none !important }`
+   dilewati hanya untuk kedua titik di #dashboard-hero. */
+html body #tab-dashboard #dashboard-hero .animate-pulse {
+  animation: var(--animate-pulse) !important;
+}
+
+/* V181 — UI 3: warna & glow titik hero disamakan dengan UI lain.
+   Aturan lama (baris ~11885) mengubah titik biru/emerald jadi #718a79 tanpa glow. */
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #dashboard-hero .bg-blue-400 {
+  background: #60a5fa !important;
+  box-shadow: 0 0 12px #60a5fa !important;
+}
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #dashboard-hero .bg-emerald-400 {
+  background: #34d399 !important;
+  box-shadow: 0 0 10px #34d399 !important;
+}
