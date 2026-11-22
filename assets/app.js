@@ -96,6 +96,14 @@
             badge.className = `inline-flex items-center gap-1 text-[10px] ${selected[0]} px-2 py-0.5 rounded-full border font-bold`;
             badge.innerHTML = selected[1];
             badge.title = detail || (lastCloudError ? lastCloudError.message : '');
+
+            // V184: cerminkan status yang sama ke badge mobile (semua role).
+            const mobileBadge = document.getElementById('cloud-sync-status-mobile');
+            if (mobileBadge) {
+                mobileBadge.className = `cloud-sync-status-mobile inline-flex items-center gap-1 text-[10px] ${selected[0]} px-2 py-0.5 rounded-full border font-bold`;
+                mobileBadge.innerHTML = selected[1];
+                mobileBadge.title = badge.title;
+            }
         }
 
         function saveLocalDB() {

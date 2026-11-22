@@ -14464,29 +14464,27 @@ html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn:hover > * {
   html body.theme-glass.theme-neon #sidebar-mobile-backdrop { transition:none !important; }
 }
 
-/* V178 — UI 2 (Liquid Glass) MOBILE ONLY: ikon Export CSV transparan seperti tema kaca.
-   Semua aturan di blok ini hanya aktif pada layar <=767px dan body.theme-crystal.
-   Typography/background aturan lama (.theme-accent-bg) sengaja tidak diubah agar
-   tampilan desktop tetap persis seperti semula. Tombol, onclick, ukuran, dan layout
-   tidak diubah. */
+/* V178 — UI 2 (Liquid Glass) MOBILE ONLY: ikon Export CSV putih solid dengan badge
+   sendiri. Hanya aktif pada layar <=767px dan body.theme-crystal; desktop, UI lain,
+   onclick, ukuran, dan layout tetap tidak diubah. */
 @media screen and (max-width: 767px) {
-  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c)
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
     #inventory-top-header #header-export-csv > svg,
-  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c)
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
     #inventory-top-header #header-export-csv > i {
-    color: rgba(36, 71, 101, .5) !important;
-    stroke: rgba(36, 71, 101, .5) !important;
+    color: #ffffff !important;
+    stroke: #ffffff !important;
     fill: none !important;
     opacity: 1 !important;
   }
-  /* Pastikan tidak ada sisa background/gradient dari class .theme-accent-bg. */
-  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c)
+  /* Badge biru milik sendiri agar tombol CSV menonjol dari badge kaca bersama. */
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
     #inventory-top-header #header-export-csv {
-    background: transparent !important;
-    background-image: none !important;
-    background-color: transparent !important;
-    box-shadow: none !important;
-    border-color: transparent !important;
+    background-image: linear-gradient(135deg,#3d9bff,#0a62d6) !important;
+    background-color: #0a62d6 !important;
+    border: 1px solid rgba(255,255,255,.55) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 12px rgba(10,109,224,.30), inset 0 1px 0 rgba(255,255,255,.38) !important;
   }
 }
 
@@ -14559,4 +14557,79 @@ html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .sof
 }
 html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .soft-large-preview .preview-soft-workspace i:first-child {
   background: #2b3630 !important;
+}
+
+
+/* V183 — UI 2 (Liquid Glass) MOBILE ONLY: ikon Toggle (sidebar) jadi putih solid.
+   Hanya aktif pada layar <=767px dan body.theme-crystal. Aturan SVG lama memakai
+   stroke:currentColor, jadi warna di-set langsung pada svg/path agar benar-benar
+   putih solid. Desktop, UI lain, onclick, ukuran, dan layout tidak diubah. */
+@media screen and (max-width: 767px) {
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+    #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle {
+    color: #ffffff !important;
+  }
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+    #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle .sidebar-toggle-svg,
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+    #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle .sidebar-toggle-svg path {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    fill: none !important;
+    opacity: 1 !important;
+  }
+}
+
+
+/* V184 — Badge "Cloud Sync Active" tampil di mode mobile untuk SEMUA role
+   (admin, superadmin, staff, viewer) dan SEMUA UI (classic, crystal, soft, neon).
+   Badge ini adalah elemen mobile khusus di dalam #v156-mobile-greeting karena
+   #cloud-sync-status yang lama berada di dalam #header-brand-group yang di-hide
+   di semua tema saat mobile. Status teks/dot di-cerminkan dari
+   updateCloudStatusBadge() di app.js. Desktop tidak berubah. */
+.v184-mobile-status-row {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+.cloud-sync-status-mobile { display: none !important; }
+
+@media screen and (max-width: 767px) {
+  html body #v184-mobile-status-row {
+    flex-wrap: nowrap !important;
+  }
+  html body #v167-mobile-role-badge {
+    align-self: center !important;
+    flex: 0 0 auto !important;
+  }
+  html body #cloud-sync-status-mobile {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    flex: 0 0 auto !important;
+    max-width: max-content !important;
+    padding: 2px 6px !important;
+    border-radius: 999px !important;
+    background: rgba(8, 18, 26, .78) !important;
+    border: 1px solid rgba(255, 255, 255, .18) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .18) !important;
+    color: #34d399 !important;
+    white-space: nowrap !important;
+    font-size: 9px !important;
+    font-weight: 850 !important;
+    line-height: 1.2 !important;
+    letter-spacing: .01em !important;
+  }
+  html body #cloud-sync-status-mobile:has(.bg-sky-400) { color: #38bdf8 !important; }
+  html body #cloud-sync-status-mobile:has(.bg-amber-400) { color: #fbbf24 !important; }
+  html body #cloud-sync-status-mobile:has(.bg-red-400) { color: #f87171 !important; }
+}
+@media screen and (max-width: 380px) {
+  html body #cloud-sync-status-mobile {
+    font-size: 8px !important;
+    padding: 1px 4px !important;
+    gap: 3px !important;
+  }
 }
