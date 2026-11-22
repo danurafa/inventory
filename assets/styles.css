@@ -14671,3 +14671,83 @@ html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .sof
     display: none !important;
   }
 }
+
+
+/* V186 — Selected state sidebar DISERAGAMKAN di semua UI.
+   Masalah: ada garis warna lain di tepi kiri menu aktif (inset 3px 0 ...)
+   dan beberapa tema memakai putih polos. Sekarang tiap UI memakai warna
+   aksen tema masing-masing tanpa garis kiri yang menyimpang.
+   Berlaku desktop + mobile; onclick, struktur, dan layout tidak diubah. */
+
+/* UI 1 — Classic Glass: biru tua + cyan, tanpa garis kiri. */
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+  #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]),
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+  #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]):hover {
+  background:linear-gradient(100deg,rgba(37,99,235,.42),rgba(14,116,144,.22)) !important;
+  border:1px solid rgba(96,165,250,.42) !important;
+  box-shadow:0 6px 18px rgba(0,0,0,.22) !important;
+  color:#eff6ff !important;
+  text-shadow:none !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+  #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]) > :is(span,i,svg) {
+  color:#eff6ff !important;
+  stroke:#eff6ff !important;
+  -webkit-text-fill-color:#eff6ff !important;
+}
+
+/* UI 2 — Liquid Glass: biru langit khas kaca, bukan putih polos. */
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+  #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+  #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]):hover {
+  background:linear-gradient(135deg,#dcecff,#c8def8) !important;
+  border:1px solid rgba(70,130,200,.32) !important;
+  box-shadow:0 5px 14px rgba(54,105,166,.14) !important;
+  color:#17477f !important;
+  text-shadow:none !important;
+}
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+  #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]) > :is(span,i,svg) {
+  color:#17477f !important;
+  stroke:#17477f !important;
+  -webkit-text-fill-color:#17477f !important;
+}
+
+/* UI 3 — Soft Neutral: sage gelap, senada dengan sidebar. */
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+  #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]),
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+  #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]):hover {
+  background:linear-gradient(135deg,#465d52,#3b5046) !important;
+  border:1px solid #60766a !important;
+  box-shadow:0 4px 14px rgba(0,0,0,.20) !important;
+  color:#e0e7e2 !important;
+  text-shadow:none !important;
+}
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+  #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]) > :is(span,i,svg) {
+  color:#e0e7e2 !important;
+  stroke:#e0e7e2 !important;
+  -webkit-text-fill-color:#e0e7e2 !important;
+}
+
+/* UI 4 — Neon: cyan, tanpa garis kiri cyan yang terpisah. */
+html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+  #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]),
+html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+  #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]):hover {
+  background:linear-gradient(100deg,rgba(22,185,206,.28),rgba(22,185,206,.10)) !important;
+  border:1px solid rgba(53,215,232,.32) !important;
+  box-shadow:0 4px 14px rgba(0,0,0,.28) !important;
+  color:#e9fdff !important;
+  text-shadow:none !important;
+}
+html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f)
+  #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]) > :is(span,i,svg) {
+  color:#e9fdff !important;
+  stroke:#e9fdff !important;
+  -webkit-text-fill-color:#e9fdff !important;
+}
+
