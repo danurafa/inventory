@@ -14429,3 +14429,18 @@ html body.theme-glass.theme-neon #inventory-app-layout.sidebar-collapsed #invent
     display:inline-flex !important;width:19px !important;height:19px !important;flex:0 0 19px !important;margin:0 !important;
   }
 }
+
+/* UI 4 scroll performance: drop live backdrop blur on scrolling surfaces and use equivalent flat colors. */
+html body.theme-glass.theme-neon #inventory-top-header {
+  background:rgb(8,12,17) !important;
+  -webkit-backdrop-filter:none !important;backdrop-filter:none !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content :is(.app-card,.dashboard-glow-card,#dashboard-hero) {
+  background:linear-gradient(145deg,rgb(17,25,32),rgb(9,13,19)) !important;
+  box-shadow:0 6px 14px rgba(0,0,0,.22),inset 0 1px 0 rgba(181,244,250,.05) !important;
+  -webkit-backdrop-filter:none !important;backdrop-filter:none !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content #dashboard-hero {
+  background:linear-gradient(120deg,rgb(10,31,39),rgb(9,15,22) 58%,rgb(14,30,37)) !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content :is(.blur-2xl,.blur-3xl) { filter:none !important;display:none !important; }
