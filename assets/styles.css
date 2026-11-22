@@ -14374,3 +14374,167 @@ html body.theme-glass.theme-neon #inventory-app-layout:is(.sidebar-collapsed,.mo
     flex-basis:32px !important;width:32px !important;min-width:32px !important;
   }
 }
+
+/* UI 4 (Black Cyan) — restore the full-width labeled mobile drawer like UI 1/2/3.
+   CSS-only override for the legacy V70/V71 icon-only rules. Desktop is untouched. */
+@media screen and (max-width: 900px) {
+  html body.theme-glass.theme-neon #inventory-app-layout {
+    overflow: hidden !important;
+  }
+
+  html body.theme-glass.theme-neon #inventory-sidebar {
+    position: fixed !important;
+    top: 4rem !important;
+    right: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: min(17rem, 84vw) !important;
+    min-width: min(17rem, 84vw) !important;
+    max-width: min(17rem, 84vw) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    flex: 0 0 min(17rem, 84vw) !important;
+    overflow: hidden !important;
+    transform: translate3d(-105%, 0, 0) !important;
+    transition: transform .24s cubic-bezier(.2,.75,.25,1) !important;
+    z-index: 120 !important;
+    visibility: visible !important;
+    pointer-events: none !important;
+    background: rgba(8, 12, 17, .98) !important;
+    border-right: 1px solid rgba(53, 215, 232, .20) !important;
+    box-shadow: 12px 0 32px rgba(0, 0, 0, .34) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(150%) !important;
+    backdrop-filter: blur(18px) saturate(150%) !important;
+  }
+
+  html body.theme-glass.theme-neon #inventory-app-layout.mobile-sidebar-open #inventory-sidebar {
+    transform: translate3d(0, 0, 0) !important;
+    pointer-events: auto !important;
+  }
+
+  html body.theme-glass.theme-neon #inventory-sidebar nav {
+    display: flex !important;
+    flex: 1 1 auto !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: .35rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: .85rem .75rem 1rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  html body.theme-glass.theme-neon #inventory-sidebar nav > div:first-child {
+    display: block !important;
+    padding: .55rem .7rem .7rem !important;
+    color: #8caeb4 !important;
+  }
+
+  html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 44px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: .75rem !important;
+    padding: .65rem .85rem !important;
+    margin: 0 0 .2rem 0 !important;
+    overflow: visible !important;
+    text-align: left !important;
+  }
+
+  html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn > span {
+    display: inline !important;
+    visibility: visible !important;
+    width: auto !important;
+    max-width: none !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    opacity: 1 !important;
+  }
+
+  html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn > i,
+  html body.theme-glass.theme-neon #inventory-sidebar .sidebar-btn > svg {
+    display: inline-flex !important;
+    flex: 0 0 1.2rem !important;
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+    margin: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  html body.theme-glass.theme-neon #inventory-sidebar nav > div[id$="-wrapper"] {
+    display: block !important;
+    width: 100% !important;
+    padding-top: .45rem !important;
+  }
+
+  html body.theme-glass.theme-neon #inventory-sidebar #open-appearance-btn {
+    display: flex !important;
+    width: calc(100% - 1.5rem) !important;
+    min-width: 0 !important;
+    min-height: 44px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: .7rem !important;
+    margin: .65rem .75rem .85rem !important;
+    padding: .65rem .85rem !important;
+    overflow: visible !important;
+  }
+
+  html body.theme-glass.theme-neon #inventory-sidebar #open-appearance-btn > span,
+  html body.theme-glass.theme-neon #inventory-sidebar #open-appearance-btn > .appearance-open-arrow {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  html body.theme-glass.theme-neon #inventory-sidebar #open-appearance-btn > i:first-child,
+  html body.theme-glass.theme-neon #inventory-sidebar #open-appearance-btn > svg:first-child {
+    display: inline-flex !important;
+    flex: 0 0 19px !important;
+    width: 19px !important;
+    height: 19px !important;
+    margin: 0 !important;
+  }
+
+  html body.theme-glass.theme-neon #sidebar-mobile-backdrop {
+    display: block !important;
+    position: fixed !important;
+    inset: 4rem 0 0 !important;
+    z-index: 110 !important;
+    background: rgba(2, 8, 18, .58) !important;
+    -webkit-backdrop-filter: blur(3px) !important;
+    backdrop-filter: blur(3px) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transition: opacity .2s ease, visibility .2s ease !important;
+  }
+
+  html body.theme-glass.theme-neon #inventory-app-layout.mobile-sidebar-open #sidebar-mobile-backdrop {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body.theme-glass.theme-neon #inventory-sidebar,
+  html body.theme-glass.theme-neon #sidebar-mobile-backdrop {
+    transition-duration: .01ms !important;
+  }
+}
