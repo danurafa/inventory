@@ -14633,3 +14633,41 @@ html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .sof
     gap: 3px !important;
   }
 }
+
+
+/* V185 — UI 3 (Soft Neutral) MOBILE ONLY: paksa area bawah sidebar (footer
+   Tampilan Aplikasi + Reset) memakai palet gelap UI 3. Aturan lama Light-mode
+   masih menyisakan background putih pada area ini di layar <=767px.
+   Hanya theme-soft + mobile; desktop dan UI lain tidak berubah. */
+@media screen and (max-width: 767px) {
+  html body.theme-glass.theme-light.theme-soft #inventory-sidebar {
+    background: #141a18 !important;
+    background-color: #141a18 !important;
+    border-color: #303b36 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-sidebar > div:last-child {
+    background: #1b2320 !important;
+    background-color: #1b2320 !important;
+    background-image: none !important;
+    border-top: 1px solid #303b36 !important;
+    border-top-color: #303b36 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-sidebar #open-appearance-btn {
+    background: linear-gradient(135deg,#2c3831,#242d28) !important;
+    background-color: #2c3831 !important;
+    background-image: linear-gradient(135deg,#2c3831,#242d28) !important;
+    color: #d1dad5 !important;
+    border-color: #43534a !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-sidebar #reset-btn-wrapper button {
+    background: #342725 !important;
+    background-color: #342725 !important;
+    background-image: none !important;
+    color: #c49a94 !important;
+    border-color: #533b37 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-sidebar #theme-picker,
+  html body.theme-glass.theme-light.theme-soft #inventory-sidebar #theme-mode-toggle {
+    display: none !important;
+  }
+}
