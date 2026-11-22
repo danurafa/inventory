@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <link id="inventory-styles" rel="stylesheet" href="assets/styles.css?v=low-stock-neutral-idle-20261122">
+    <link id="inventory-styles" rel="stylesheet" href="assets/styles.css?v=ui4-sidebar-csv-header-20261122">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -85,7 +85,7 @@
             </div>
             <div id="current-user-banner" class="flex items-center gap-2.5 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl">
             </div>
-            <button onclick="exportCSVData()" class="px-4 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center gap-2 shadow-lg shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-95">
+            <button id="header-export-csv" type="button" onclick="exportCSVData()" title="Download data CSV" aria-label="Download data CSV" class="px-4 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center gap-2 shadow-lg shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-95">
                 <i data-lucide="download" class="w-3.5 h-3.5"></i>
                 <span>Export CSV</span>
             </button>

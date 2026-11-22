@@ -14285,3 +14285,92 @@ html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-dashbo
   .blink-low-stock-red::after,.blink-low-stock-orange::after { animation:none !important; }
   .blink-low-stock-red::before,.blink-low-stock-orange::before { animation:none !important; }
 }
+
+/* UI 4 sidebar follows the shared compact rail geometry, with its cyan palette retained. */
+html body.theme-glass.theme-neon #inventory-app-layout.sidebar-collapsed #inventory-sidebar,
+html body.theme-glass.theme-neon #inventory-app-layout.mobile-sidebar-open #inventory-sidebar {
+  width:5rem !important;min-width:5rem !important;max-width:5rem !important;
+  flex:0 0 5rem !important;
+}
+html body.theme-glass.theme-neon #inventory-app-layout:is(.sidebar-collapsed,.mobile-sidebar-open) #inventory-sidebar nav {
+  display:flex !important;flex-direction:column !important;align-items:stretch !important;
+  gap:6px !important;padding:10px 8px !important;overflow-x:hidden !important;
+}
+html body.theme-glass.theme-neon #inventory-app-layout:is(.sidebar-collapsed,.mobile-sidebar-open) #inventory-sidebar .sidebar-btn {
+  display:flex !important;width:100% !important;min-width:0 !important;min-height:44px !important;
+  align-items:center !important;justify-content:center !important;gap:0 !important;padding:0 !important;
+  border-radius:13px !important;
+}
+html body.theme-glass.theme-neon #inventory-app-layout:is(.sidebar-collapsed,.mobile-sidebar-open) #inventory-sidebar .sidebar-btn > span,
+html body.theme-glass.theme-neon #inventory-app-layout:is(.sidebar-collapsed,.mobile-sidebar-open) #inventory-sidebar nav > div:first-child {
+  display:none !important;
+}
+html body.theme-glass.theme-neon #inventory-app-layout:is(.sidebar-collapsed,.mobile-sidebar-open) #inventory-sidebar .sidebar-btn > :is(i,svg) {
+  display:inline-flex !important;width:19px !important;height:19px !important;flex:0 0 19px !important;margin:0 !important;
+}
+html body.theme-glass.theme-neon #inventory-app-layout:is(.sidebar-collapsed,.mobile-sidebar-open) #inventory-sidebar > div:last-child {
+  padding:8px 7px !important;gap:8px !important;
+}
+html body.theme-glass.theme-neon #inventory-app-layout:is(.sidebar-collapsed,.mobile-sidebar-open) #inventory-sidebar #open-appearance-btn,
+html body.theme-glass.theme-neon #inventory-app-layout:is(.sidebar-collapsed,.mobile-sidebar-open) #inventory-sidebar #reset-btn-wrapper button {
+  display:flex !important;width:100% !important;min-width:0 !important;min-height:44px !important;
+  align-items:center !important;justify-content:center !important;gap:0 !important;padding:0 !important;
+  border-radius:13px !important;
+}
+html body.theme-glass.theme-neon #inventory-app-layout:is(.sidebar-collapsed,.mobile-sidebar-open) #inventory-sidebar #open-appearance-btn > span,
+html body.theme-glass.theme-neon #inventory-app-layout:is(.sidebar-collapsed,.mobile-sidebar-open) #inventory-sidebar #open-appearance-btn > .appearance-open-arrow,
+html body.theme-glass.theme-neon #inventory-app-layout:is(.sidebar-collapsed,.mobile-sidebar-open) #inventory-sidebar #reset-btn-wrapper button > span {
+  display:none !important;
+}
+html body.theme-glass.theme-neon #inventory-app-layout:is(.sidebar-collapsed,.mobile-sidebar-open) #inventory-sidebar :is(#open-appearance-btn,#reset-btn-wrapper button) > :is(i,svg) {
+  display:inline-flex !important;width:19px !important;height:19px !important;flex:0 0 19px !important;margin:0 !important;
+}
+@media screen and (max-width:767px) {
+  html body.theme-glass.theme-neon #inventory-top-header {
+    box-sizing:border-box !important;width:100% !important;
+  }
+  html body.theme-glass.theme-neon #inventory-top-header #v156-mobile-greeting {
+    width:auto !important;max-width:none !important;margin:0 !important;padding:0 !important;
+  }
+  html body.theme-glass.theme-neon #inventory-top-header #v156-mobile-greeting-text {
+    display:block !important;line-height:1.3 !important;
+  }
+  html body.theme-glass.theme-neon #inventory-top-header #v167-mobile-role-badge {
+    align-items:center !important;align-self:flex-start !important;width:max-content !important;
+    max-width:100% !important;line-height:1.2 !important;
+  }
+  html body.theme-glass.theme-neon #inventory-top-header > div.flex.items-center.gap-4 {
+    position:relative !important;flex:0 0 auto !important;margin:0 0 0 auto !important;
+  }
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle,
+  html body.theme-glass.theme-neon #inventory-top-header #header-export-csv,
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+    display:inline-flex !important;position:static !important;grid-row:1 !important;flex:0 0 34px !important;
+    width:34px !important;min-width:34px !important;height:32px !important;min-height:32px !important;
+    margin:0 !important;padding:6px !important;align-items:center !important;justify-content:center !important;
+    border:0 !important;border-radius:9px !important;background:transparent !important;
+    color:#9eeaf0 !important;box-shadow:none !important;
+  }
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle { grid-column:1 !important; }
+  html body.theme-glass.theme-neon #inventory-top-header #header-export-csv {
+    grid-column:2 !important;visibility:visible !important;opacity:1 !important;font-size:0 !important;
+  }
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[onclick="logoutUser()"] { grid-column:3 !important; }
+  html body.theme-glass.theme-neon #inventory-top-header #header-export-csv > span { display:none !important; }
+  html body.theme-glass.theme-neon #inventory-top-header :is(#sidebar-toggle,#header-export-csv,button[onclick="logoutUser()"]):is(svg,i),
+  html body.theme-glass.theme-neon #inventory-top-header #header-export-csv > :is(svg,i) {
+    color:#9eeaf0 !important;stroke:#9eeaf0 !important;
+  }
+}
+@media screen and (max-width:380px) {
+  html body.theme-glass.theme-neon #inventory-top-header #v156-mobile-greeting { right:154px !important; }
+  html body.theme-glass.theme-neon #inventory-top-header #v156-mobile-greeting-text { font-size:13px !important; }
+  html body.theme-glass.theme-neon #inventory-top-header > div.flex.items-center.gap-4 {
+    width:106px !important;min-width:106px !important;grid-template-columns:32px 32px 32px !important;
+  }
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle,
+  html body.theme-glass.theme-neon #inventory-top-header #header-export-csv,
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+    flex-basis:32px !important;width:32px !important;min-width:32px !important;
+  }
+}
