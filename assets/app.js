@@ -4859,6 +4859,10 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 const el = document.getElementById(id);
                 if (el) el.value = '';
             });
+            // Mengubah .value lewat JS tidak memicu event change, sehingga label
+            // dropdown custom "Semua customer" bisa tertinggal. Sinkronkan eksplisit.
+            const customerSelect = document.getElementById('sj-customer');
+            if (customerSelect) window.syncInventoryItemSelect?.(customerSelect);
             sjHistoryPage = 1;
             sjFilterSignature = '';
             window._expandedSjGroupKeys.clear();
@@ -4910,7 +4914,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 const token = encodeURIComponent(g.tid).replace(/'/g, '%27');
                 const expanded = window._expandedSjGroupKeys.has(token);
                 const detailRows = g.rows.map((r, di) => `
-                    <tr class="border-t border-white/5 hover:bg-white/5">
+                    <tr class="sj-detail-item border-t border-white/5 hover:bg-white/5">
                         <td class="p-2 text-center">${di + 1}</td>
                         <td class="p-2 font-mono">${esc(r.id)}</td>
                         <td class="p-2 font-mono">${esc(r.barangId)}</td>
@@ -4923,23 +4927,23 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                         <td class="p-2 font-mono">${esc(poNoOf(r))}</td>
                     </tr>`).join('');
                 return `
-                <tr class="hover:bg-white/5">
-                    <td class="py-3 px-2 text-center opacity-70 font-mono">${startIndex + i + 1}</td>
-                    <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(g.noSj)}<span class="block mt-0.5 text-[10px] font-normal opacity-70">${esc(g.tid)}</span></td>
-                    <td class="py-3 px-3 opacity-80">${esc(g.tanggal || '-')}</td>
-                    <td class="py-3 px-3 font-medium">${esc(g.customer)}</td>
-                    <td class="py-3 px-3 text-[11px] opacity-70">${g.alamat ? esc(g.alamat).replace(/\r?\n/g, '<br>') : '-'}</td>
-                    <td class="py-3 px-3 font-mono opacity-80">${esc(g.poNumbers.join(', '))}</td>
-                    <td class="py-3 px-3 text-center">${g.rows.length} barang</td>
-                    <td class="py-3 px-3 text-right font-mono font-bold text-rose-400">${g.totalQty.toLocaleString('id-ID')}</td>
-                    <td class="py-3 px-3 text-orange-400">${esc(g.user)}</td>
-                    <td class="py-3 px-3 text-center"><div class="flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:280px">
+                <tr class="sj-card-row hover:bg-white/5">
+                    <td data-label="No" class="py-3 px-2 text-center opacity-70 font-mono">${startIndex + i + 1}</td>
+                    <td data-label="No. Surat Jalan" class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(g.noSj)}<span class="block mt-0.5 text-[10px] font-normal opacity-70">${esc(g.tid)}</span></td>
+                    <td data-label="Tanggal" class="py-3 px-3 opacity-80">${esc(g.tanggal || '-')}</td>
+                    <td data-label="Customer" class="py-3 px-3 font-medium">${esc(g.customer)}</td>
+                    <td data-label="Alamat" class="py-3 px-3 text-[11px] opacity-70">${g.alamat ? esc(g.alamat).replace(/\r?\n/g, '<br>') : '-'}</td>
+                    <td data-label="No. PO" class="py-3 px-3 font-mono opacity-80">${esc(g.poNumbers.join(', '))}</td>
+                    <td data-label="Barang" class="py-3 px-3 text-center">${g.rows.length} barang</td>
+                    <td data-label="Total Qty" class="py-3 px-3 text-right font-mono font-bold text-rose-400">${g.totalQty.toLocaleString('id-ID')}</td>
+                    <td data-label="User" class="py-3 px-3 text-orange-400">${esc(g.user)}</td>
+                    <td data-label="Aksi" class="py-3 px-3 text-center"><div class="sj-card-actions flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:280px">
                         <button type="button" onclick="toggleSjDetails('${token}', this, ${g.rows.length})" aria-expanded="${expanded ? 'true' : 'false'}" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Lihat detail barang">${expanded ? 'Tutup' : 'Detail'} (${g.rows.length})</button>
                         <button type="button" onclick="printSuratJalan('${esc(g.tid)}', 'riwayat', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button>
                         <button type="button" onclick="downloadSuratJalanExcel('${esc(g.tid)}', 'riwayat', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button>
                     </div></td>
                 </tr>
-                <tr id="sj-detail-${token}" data-sj-group-key="${token}" class="${expanded ? '' : 'hidden'}">
+                <tr id="sj-detail-${token}" data-sj-group-key="${token}" class="sj-detail-row ${expanded ? '' : 'hidden'}">
                     <td colspan="10" class="p-2 bg-black/10">
                         <div class="rounded-xl border border-white/10 overflow-x-auto">
                             <table class="w-full text-xs min-w-[900px]">
@@ -4953,12 +4957,12 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     </td>
                 </tr>`;
             }).join('');
-            let sjBodyHtml = rowsHtml || `<tr><td colspan="10" class="py-6 text-center opacity-50">Belum ada Surat Jalan.</td></tr>`;
+            let sjBodyHtml = rowsHtml || `<tr class="sj-empty-row"><td colspan="10" class="py-6 text-center opacity-50">Belum ada Surat Jalan.</td></tr>`;
             // Baris pengisi menjaga tinggi tabel tetap 12 baris, sehingga tombol halaman tidak bergeser
             // saat berpindah dari halaman terakhir (sedikit baris) ke halaman penuh.
             if (pageRows.length) {
                 const fillerRow = () => `
-                    <tr aria-hidden="true">
+                    <tr class="sj-filler-row" aria-hidden="true">
                         <td class="py-3 px-2">&nbsp;</td>
                         <td class="py-3 px-3 font-mono">&nbsp;<span class="block mt-0.5 text-[10px]">&nbsp;</span></td>
                         <td class="py-3 px-3">&nbsp;</td>
