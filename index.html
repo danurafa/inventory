@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <link id="inventory-styles" rel="stylesheet" href="assets/styles.css?v=sj-mobile-cards-20261123">
+    <link id="inventory-styles" rel="stylesheet" href="assets/styles.css?v=card-divider-join-20261124">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -855,6 +855,14 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-3 border-t border-white/10">
+                            <p id="keluar-page-info" class="text-[11px] text-gray-400">Menampilkan 0 dari 0 Transaksi</p>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="keluarChangePage(-1, this)" id="keluar-prev" aria-disabled="true" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Sebelumnya</button>
+                                <span id="keluar-page-indicator" class="text-[11px] font-semibold text-gray-300">Halaman 1 dari 1</span>
+                                <button type="button" onclick="keluarChangePage(1, this)" id="keluar-next" aria-disabled="false" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Berikutnya</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -1498,6 +1506,6 @@
 
 
 
-    <script src="assets/app.js?v=sj-mobile-cards-20261123"></script>
+    <script src="assets/app.js?v=keluar-card-pagination-20261124"></script>
 </body>
 </html>

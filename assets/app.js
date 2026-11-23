@@ -2223,6 +2223,9 @@
             updateKeluarBatchTotal();
         };
 
+        const KELUAR_HISTORY_PER_PAGE = 12;
+        let keluarHistoryPage = 1;
+        let keluarFilterSignature = '';
         window._expandedKeluarGroupKeys = window._expandedKeluarGroupKeys || new Set();
         window.renderKeluarTable = function() {
             const q = document.getElementById('search-keluar')?.value.toLowerCase().trim() || '';
@@ -2238,6 +2241,12 @@
                 if (row.classList.contains('hidden')) window._expandedKeluarGroupKeys.delete(key);
                 else window._expandedKeluarGroupKeys.add(key);
             });
+
+            if (q !== keluarFilterSignature) {
+                keluarFilterSignature = q;
+                keluarHistoryPage = 1;
+                window._expandedKeluarGroupKeys.clear();
+            }
 
             const allGroups = new Map();
             (window.gudangAppDb.keluar || []).forEach(item => {
@@ -2258,6 +2267,12 @@
             }).sort((a,b) => String(b.head.tanggal||'').localeCompare(String(a.head.tanggal||'')) ||
                               String(b.transactionId).localeCompare(String(a.transactionId)));
 
+            const totalPages = Math.max(1, Math.ceil(groups.length / KELUAR_HISTORY_PER_PAGE));
+            if (keluarHistoryPage < 1) keluarHistoryPage = 1;
+            if (keluarHistoryPage > totalPages) keluarHistoryPage = totalPages;
+            const startIndex = (keluarHistoryPage - 1) * KELUAR_HISTORY_PER_PAGE;
+            const pageGroups = groups.slice(startIndex, startIndex + KELUAR_HISTORY_PER_PAGE);
+
             const totalDetails = groups.reduce((sum, group) => sum + group.rows.length, 0);
             if (badgeTotal) badgeTotal.textContent = `${groups.length} Transaksi / Surat Jalan • ${totalDetails} detail barang`;
 
@@ -2265,7 +2280,7 @@
                 '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
             }[ch]));
 
-            const renderedKeluarRows = groups.map((group, index) => {
+            const renderedKeluarRows = pageGroups.map((group, index) => {
                 const token = encodeURIComponent(group.transactionId).replace(/'/g, '%27');
                 const expanded = window._expandedKeluarGroupKeys.has(token);
                 const totalQty = group.rows.reduce((sum, row) => sum + Number(row.qty || 0), 0);
@@ -2273,8 +2288,10 @@
                     const po = (window.gudangAppDb.po || []).find(p => String(p.id) === String(row.poRef));
                     return po?.noPoCustomer || row.poRef || '-';
                 }))];
+                const itemNames = [...new Set(group.rows.map(row => window.displayItemName(row.barangId, row.nama)))];
+                const userNames = [...new Set(group.rows.map(row => row.user).filter(Boolean))];
                 const detailRows = group.rows.map((row, detailIndex) => `
-                    <tr class="border-t border-white/5 hover:bg-white/5">
+                    <tr class="keluar-detail-item border-t border-white/5 hover:bg-white/5">
                         <td class="p-2 text-center">${detailIndex + 1}</td>
                         <td class="p-2 font-mono">${esc(row.id)}</td>
                         <td class="p-2 font-mono">${esc(row.barangId)}</td>
@@ -2293,18 +2310,19 @@
                 `).join('');
 
                 return `
-                    <tr class="hover:bg-white/5 border-b border-white/5">
-                        <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
-                        <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(group.transactionId)}<span class="block mt-0.5 text-[10px] font-normal opacity-70">SJ: ${esc(window.getKeluarNoSj(group.head))}</span></td>
-                        <td class="py-3 px-3 opacity-80">${esc(group.head.tanggal || '-')}</td>
-                        <td class="py-3 px-3 text-center">${group.rows.length} barang</td>
-                        <td class="py-3 px-3 text-right font-mono font-bold text-rose-400">-${totalQty.toLocaleString('id-ID')}</td>
-                        <td class="py-3 px-3 font-medium">${esc(group.head.tujuan || '-')}</td>
-                        <td class="py-3 px-3 font-mono opacity-80">${esc(poRefs.join(', '))}</td>
-                        <td class="py-3 px-3 text-center"><button type="button" onclick="toggleKeluarDetails('${token}', this, ${group.rows.length})" aria-expanded="${expanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button></td>
-                        <td class="py-3 px-3 text-center"><div class="flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:190px"><button onclick="printSuratJalan('${esc(group.transactionId)}', 'keluar', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan sesuai template Excel"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button><button onclick="downloadSuratJalanExcel('${esc(group.transactionId)}', 'keluar', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download template Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button></div></td>
+                    <tr class="keluar-card-row hover:bg-white/5 border-b border-white/5">
+                        <td data-label="No" class="py-3 px-2 text-center opacity-70 font-mono">${startIndex + index + 1}</td>
+                        <td data-label="ID Transaksi / Surat Jalan" class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(group.transactionId)}<span class="block mt-0.5 text-[10px] font-normal opacity-70">SJ: ${esc(window.getKeluarNoSj(group.head))}</span></td>
+                        <td data-label="Tanggal" class="py-3 px-3 opacity-80">${esc(group.head.tanggal || '-')}</td>
+                        <td data-label="Nama Barang" class="py-3 px-3 text-center" title="${esc(itemNames.join(', '))}"><span class="keluar-jumlah-desktop">${group.rows.length} barang</span><span class="keluar-nama-mobile">${esc(itemNames.join(', '))}</span></td>
+                        <td data-label="Total Qty Keluar" class="py-3 px-3 text-right font-mono font-bold text-rose-400">-${totalQty.toLocaleString('id-ID')}</td>
+                        <td data-label="Customer / Tujuan" class="py-3 px-3 font-medium">${esc(group.head.tujuan || '-')}</td>
+                        <td data-label="No. PO" class="py-3 px-3 font-mono opacity-80">${esc(poRefs.join(', '))}</td>
+                        <td data-label="Detail Barang" class="py-3 px-3 text-center"><button type="button" onclick="toggleKeluarDetails('${token}', this, ${group.rows.length})" data-keluar-detail-toggle="${token}" aria-expanded="${expanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button></td>
+                        <td data-label="Aksi" class="py-3 px-3 text-center"><div class="keluar-actions flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:190px"><button type="button" onclick="toggleKeluarDetails('${token}', this, ${group.rows.length})" data-keluar-detail-toggle="${token}" aria-expanded="${expanded ? 'true' : 'false'}" class="keluar-detail-mobile shrink-0 px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button><button onclick="printSuratJalan('${esc(group.transactionId)}', 'keluar', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan sesuai template Excel"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button><button onclick="downloadSuratJalanExcel('${esc(group.transactionId)}', 'keluar', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download template Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button></div></td>
+                        <td data-label="User" class="keluar-user-mobile py-3 px-3 opacity-80">${esc(userNames.join(', ') || group.head.user || '-')}</td>
                     </tr>
-                    <tr id="keluar-detail-${token}" data-keluar-group-key="${token}" class="${expanded ? '' : 'hidden'}">
+                    <tr id="keluar-detail-${token}" data-keluar-group-key="${token}" class="keluar-detail-row ${expanded ? '' : 'hidden'}">
                         <td colspan="9" class="p-2 bg-black/10">
                             <div class="rounded-xl border border-white/10 overflow-x-auto">
                                 <table class="w-full text-xs min-w-[900px]">
@@ -2317,9 +2335,40 @@
                             </div>
                         </td>
                     </tr>`;
-            }).join('') || `<tr><td colspan="9" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
-            setTableHtml(tbody, renderedKeluarRows);
+            }).join('');
+            let keluarBodyHtml = renderedKeluarRows || `<tr class="keluar-empty-row"><td colspan="9" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
+            if (pageGroups.length) {
+                const fillerRow = () => `<tr class="keluar-filler-row" aria-hidden="true"><td colspan="9" class="py-3 px-3">&nbsp;</td></tr>`;
+                keluarBodyHtml += Array.from({ length: KELUAR_HISTORY_PER_PAGE - pageGroups.length }, fillerRow).join('');
+            }
+            setTableHtml(tbody, keluarBodyHtml);
+
+            const firstNo = groups.length ? startIndex + 1 : 0;
+            const lastNo = Math.min(startIndex + KELUAR_HISTORY_PER_PAGE, groups.length);
+            const pageInfo = document.getElementById('keluar-page-info');
+            if (pageInfo) pageInfo.textContent = `Menampilkan ${firstNo}–${lastNo} dari ${groups.length} Transaksi`;
+            const indicator = document.getElementById('keluar-page-indicator');
+            if (indicator) indicator.textContent = `Halaman ${keluarHistoryPage} dari ${totalPages}`;
+            const setPageBtn = (btn, inactive) => {
+                if (!btn) return;
+                btn.setAttribute('aria-disabled', inactive ? 'true' : 'false');
+                btn.style.opacity = inactive ? '.45' : '';
+                btn.style.cursor = inactive ? 'not-allowed' : '';
+            };
+            setPageBtn(document.getElementById('keluar-prev'), keluarHistoryPage <= 1);
+            setPageBtn(document.getElementById('keluar-next'), keluarHistoryPage >= totalPages);
             lucide.createIcons();
+        };
+
+        window.keluarChangePage = function(delta, btn) {
+            if (btn?.getAttribute('aria-disabled') === 'true') return;
+            const scrollY = window.scrollY;
+            if (btn) btn.blur();
+            window._expandedKeluarGroupKeys.clear();
+            keluarHistoryPage += delta;
+            window.renderKeluarTable();
+            window.scrollTo(0, scrollY);
+            if (btn) requestAnimationFrame(() => btn.focus({ preventScroll: true }));
         };
 
         window.toggleKeluarDetails = function(token, button, count) {
@@ -2330,10 +2379,11 @@
             if (willOpen) window._expandedKeluarGroupKeys.add(token);
             else window._expandedKeluarGroupKeys.delete(token);
             // Label tombol ikut berubah saat diklik; jangan menunggu render ulang tabel.
-            if (button) {
-                button.textContent = `${willOpen ? 'Tutup' : 'Detail'} (${Number(count) || 0})`;
-                button.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-            }
+            // Dua tombol (desktop + mobile) disinkronkan supaya teksnya selalu sama.
+            document.querySelectorAll(`[data-keluar-detail-toggle="${token}"]`).forEach(toggle => {
+                toggle.textContent = `${willOpen ? 'Tutup' : 'Detail'} (${Number(count) || 0})`;
+                toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            });
         };
 
         // PO CRUD
@@ -3021,6 +3071,7 @@
             const clearButton = document.getElementById('dashboard-search-clear');
             if (!input || !resultsBox) return;
 
+            const SEARCH_LIMIT = 10;
             const query = input.value.trim().toLocaleLowerCase('id-ID');
             clearButton?.toggleAttribute('hidden', !query);
             resultsBox.replaceChildren();
@@ -3092,8 +3143,13 @@
                 ? `${records.length.toLocaleString('id-ID')} hasil ditemukan · pilih hasil untuk membuka tabel`
                 : 'Tidak ada data yang cocok.';
             resultsBox.append(resultHeading);
+            // Daftar hasil discroll terpisah supaya teks ringkasan dan catatan
+            // "Menampilkan X dari Y hasil" tetap diam di atas/bawah area scroll.
+            const resultScroller = document.createElement('div');
+            resultScroller.className = 'dashboard-search-results-list';
+            resultsBox.append(resultScroller);
 
-            records.slice(0, 12).forEach(record => {
+            records.slice(0, SEARCH_LIMIT).forEach(record => {
                 const button = document.createElement('button');
                 button.type = 'button';
                 button.className = 'dashboard-search-result';
@@ -3116,13 +3172,13 @@
                 category.className = 'dashboard-search-result-category';
                 category.textContent = record.category;
                 button.append(copy, category);
-                resultsBox.append(button);
+                resultScroller.append(button);
             });
 
-            if (records.length > 12) {
+            if (records.length > SEARCH_LIMIT) {
                 const more = document.createElement('div');
                 more.className = 'dashboard-search-more';
-                more.textContent = `Menampilkan 12 dari ${records.length.toLocaleString('id-ID')} hasil.`;
+                more.textContent = `Menampilkan ${SEARCH_LIMIT} dari ${records.length.toLocaleString('id-ID')} hasil.`;
                 resultsBox.append(more);
             }
         };
@@ -4913,6 +4969,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             const rowsHtml = pageRows.map((g, i) => {
                 const token = encodeURIComponent(g.tid).replace(/'/g, '%27');
                 const expanded = window._expandedSjGroupKeys.has(token);
+                const itemNames = [...new Set(g.rows.map(r => window.displayItemName(r.barangId, r.nama)))];
                 const detailRows = g.rows.map((r, di) => `
                     <tr class="sj-detail-item border-t border-white/5 hover:bg-white/5">
                         <td class="p-2 text-center">${di + 1}</td>
@@ -4932,9 +4989,9 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     <td data-label="No. Surat Jalan" class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(g.noSj)}<span class="block mt-0.5 text-[10px] font-normal opacity-70">${esc(g.tid)}</span></td>
                     <td data-label="Tanggal" class="py-3 px-3 opacity-80">${esc(g.tanggal || '-')}</td>
                     <td data-label="Customer" class="py-3 px-3 font-medium">${esc(g.customer)}</td>
-                    <td data-label="Alamat" class="py-3 px-3 text-[11px] opacity-70">${g.alamat ? esc(g.alamat).replace(/\r?\n/g, '<br>') : '-'}</td>
+                    <td data-label="Alamat" class="py-3 px-3 text-[11px] opacity-70">${g.alamat ? `<span class="sj-alamat-value">${esc(g.alamat).replace(/\r?\n/g, '<br>')}</span>` : '-'}</td>
                     <td data-label="No. PO" class="py-3 px-3 font-mono opacity-80">${esc(g.poNumbers.join(', '))}</td>
-                    <td data-label="Barang" class="py-3 px-3 text-center">${g.rows.length} barang</td>
+                    <td data-label="Nama Barang" class="py-3 px-3 text-center" title="${esc(itemNames.join(', '))}"><span class="sj-jumlah-desktop">${g.rows.length} barang</span><span class="sj-nama-mobile">${esc(itemNames.join(', '))}</span></td>
                     <td data-label="Total Qty" class="py-3 px-3 text-right font-mono font-bold text-rose-400">${g.totalQty.toLocaleString('id-ID')}</td>
                     <td data-label="User" class="py-3 px-3 text-orange-400">${esc(g.user)}</td>
                     <td data-label="Aksi" class="py-3 px-3 text-center"><div class="sj-card-actions flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:280px">

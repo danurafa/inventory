@@ -13754,8 +13754,17 @@ html body.theme-glass #inventory-main-content #dashboard-global-search:not(#lg2a
   color:#a5c2c8;background:rgba(112,165,179,.10);cursor:pointer;
 }
 .dashboard-search-field button[hidden] { display:none; }
-.dashboard-search-results { display:grid;gap:7px;margin-top:12px; }
+.dashboard-search-results { display:block;margin-top:12px; }
 .dashboard-search-results[hidden] { display:none; }
+.dashboard-search-results-list {
+  display:grid;gap:7px;
+  max-height:360px;overflow-y:auto;overscroll-behavior:contain;
+  scrollbar-width:thin;scrollbar-color:rgba(148,163,184,.45) transparent;
+  padding-right:4px;
+}
+.dashboard-search-results-list::-webkit-scrollbar { width:8px; }
+.dashboard-search-results-list::-webkit-scrollbar-thumb { background:rgba(148,163,184,.42);border-radius:999px; }
+.dashboard-search-results-list::-webkit-scrollbar-track { background:transparent; }
 .dashboard-search-count,.dashboard-search-more { padding:4px 2px;color:#96aab2;font-size:10px; }
 .dashboard-search-result {
   display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0;
@@ -13780,6 +13789,7 @@ html body.theme-glass.theme-neon .dashboard-search-result:hover,
 html body.theme-glass.theme-neon .dashboard-search-result:focus-visible { border-color:rgba(53,215,232,.38);background:rgba(27,105,114,.20); }
 @media (max-width:640px) {
   .dashboard-search-panel { padding:16px;border-radius:18px; }
+  .dashboard-search-results-list { max-height:300px; }
   .dashboard-search-result { align-items:flex-start;padding:10px; }
   .dashboard-search-result-category { font-size:8px; }
 }
@@ -14978,11 +14988,20 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
 /* V189 — Riwayat Surat Jalan jadi kartu ringkas di mobile (semua UI/tema).
    Tabel desktop tidak berubah; detail tetap bisa dibuka lewat tombol Detail. */
 @media (max-width:767px) {
-  #tab-sj .fluid-table-container {
+  /* Override aturan global mobile yang memaksa width:max-content (bikin kartu geser). */
+  html body.theme-glass #inventory-main-content #tab-sj .fluid-table-container {
+    width:100% !important;
+    max-width:100% !important;
+    max-height:none !important;
     overflow:visible !important;
+    scrollbar-gutter:auto !important;
+    touch-action:auto !important;
   }
-  #tab-sj .fluid-table-container > table {
+  html body.theme-glass #inventory-main-content #tab-sj .fluid-table-container > table {
+    display:block !important;
+    width:100% !important;
     min-width:0 !important;
+    max-width:100% !important;
     overflow-anchor:none !important;
   }
   #tab-sj .fluid-table-container thead {
@@ -14996,11 +15015,12 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
   #tab-sj #sj-table-body tr.sj-card-row,
   #tab-sj #sj-table-body tr.sj-empty-row {
     display:grid !important;
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
-    gap:6px 10px !important;
+    grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) !important;
+    gap:10px !important;
     width:100% !important;
+    max-width:100% !important;
     box-sizing:border-box !important;
-    margin:0 !important;
+    margin:0 auto !important;
     padding:12px !important;
     border:1px solid var(--theme-card-border,rgba(125,180,255,.2)) !important;
     border-radius:14px !important;
@@ -15042,23 +15062,77 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(10)::before {
     display:none !important;
   }
+  /* Baris 1: No. Surat Jalan di kiri, Tanggal di kanan. */
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(2) {
-    grid-column:1 / -1 !important;
+    grid-column:1 !important;
+    grid-row:1 !important;
     padding-bottom:8px !important;
+    padding-right:5px !important;
     margin-bottom:2px !important;
+    margin-right:-5px !important;
     border-bottom:1px solid var(--theme-card-border,rgba(125,180,255,.2)) !important;
-    font-size:13px !important;
+    font-size:12px !important;
   }
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(2) span {
     font-size:10px !important;
     opacity:.7 !important;
   }
-  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(5),
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(3) {
+    grid-column:2 !important;
+    grid-row:1 !important;
+    padding-bottom:8px !important;
+    padding-left:5px !important;
+    margin-bottom:2px !important;
+    margin-left:-5px !important;
+    border-bottom:1px solid var(--theme-card-border,rgba(125,180,255,.2)) !important;
+    justify-self:stretch !important;
+    text-align:right !important;
+    font-size:10px !important;
+  }
+  /* Baris 2: Customer di kanan, Nama Barang di kiri. */
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(4) {
+    grid-column:2 !important;
+    grid-row:2 !important;
+    text-align:right !important;
+  }
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(7) {
+    grid-column:1 !important;
+    grid-row:2 !important;
+    text-align:left !important;
+  }
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(7) .sj-jumlah-desktop { display:none !important; }
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(7) .sj-nama-mobile {
+    display:-webkit-box !important;
+    -webkit-line-clamp:2 !important;
+    -webkit-box-orient:vertical !important;
+    overflow:hidden !important;
+  }
+  /* Baris 3: Alamat penuh, dibatasi 2 baris. */
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(5) {
+    grid-column:1 / -1 !important;
+    grid-row:3 !important;
+  }
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(5) .sj-alamat-value {
+    display:-webkit-box !important;
+    -webkit-line-clamp:2 !important;
+    -webkit-box-orient:vertical !important;
+    overflow:hidden !important;
+  }
+  /* Baris 4: No. PO di kiri, User di kanan. */
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(6) {
+    grid-column:1 !important;
+    grid-row:4 !important;
+    text-align:left !important;
+  }
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(9) {
+    grid-column:2 !important;
+    grid-row:4 !important;
+    justify-self:end !important;
+    text-align:right !important;
+  }
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(10) {
     grid-column:1 / -1 !important;
-  }
-  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(8) {
-    text-align:right !important;
+    grid-row:6 !important;
   }
   #tab-sj #sj-table-body .sj-card-actions {
     display:flex !important;
@@ -15108,6 +15182,269 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     text-align:center !important;
     white-space:normal !important;
   }
+  /* Label di atas nilai; Customer dan User tetap rata kanan. Nama Barang di kiri. */
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(4),
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(9) {
+    text-align:right !important;
+  }
+  /* Tombol aksi dibagi rata selebar kartu. */
+  #tab-sj #sj-table-body .sj-card-actions {
+    justify-content:space-between !important;
+  }
+  /* V192 — scroll riwayat SJ mobile tanpa blink: blur/transisi dimatikan,
+     kartu dibuat opak agar tidak ikut repaint saat lewat header sticky. */
+  html body.theme-glass #tab-sj .app-card,
+  html body.theme-glass #tab-sj .app-card * {
+    -webkit-backdrop-filter:none !important;
+    backdrop-filter:none !important;
+    filter:none !important;
+    animation:none !important;
+    transition:none !important;
+    will-change:auto !important;
+  }
+  html body.theme-glass #tab-sj .app-card {
+    contain:paint !important;
+  }
+  #tab-sj #sj-table-body tr.sj-card-row,
+  #tab-sj #sj-table-body tr.sj-detail-row > td {
+    background:linear-gradient(var(--theme-card),var(--theme-card)),var(--theme-bg) !important;
+  }
+  #tab-sj #sj-table-body tr.sj-card-row {
+    transform:translateZ(0);
+    -webkit-backface-visibility:hidden;
+    backface-visibility:hidden;
+  }
+  /* Total Qty benar-benar di tengah kartu (50%). */
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(8) {
+    grid-column:1 / -1 !important;
+    grid-row:5 !important;
+    text-align:center !important;
+  }
+}
+
+/* Tombol Detail tambahan khusus baris aksi kartu mobile. */
+.keluar-detail-mobile { display:none !important; }
+/* Nama barang / User hanya dipakai di kartu mobile; desktop tetap "N barang". */
+.keluar-nama-mobile, .keluar-user-mobile, .sj-nama-mobile { display:none !important; }
+
+/* V193 — Barang Keluar: kartu ringkas di mobile (semua UI/tema).
+   Pola sama seperti Riwayat SJ; tabel desktop tetap tidak berubah. */
+@media (max-width:767px) {
+  /* Override aturan global mobile yang memaksa width:max-content (bikin kartu geser). */
+  html body.theme-glass #inventory-main-content #tab-keluar .fluid-table-container {
+    width:100% !important;
+    max-width:100% !important;
+    max-height:none !important;
+    overflow:visible !important;
+    scrollbar-gutter:auto !important;
+    touch-action:auto !important;
+  }
+  html body.theme-glass #inventory-main-content #tab-keluar .fluid-table-container > table {
+    display:block !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    overflow-anchor:none !important;
+  }
+  #tab-keluar .fluid-table-container thead { display:none !important; }
+  #tab-keluar #keluar-table-body {
+    display:flex !important;
+    flex-direction:column !important;
+    gap:9px !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-filler-row {
+    display:none !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-card-row,
+  #tab-keluar #keluar-table-body tr.keluar-empty-row {
+    display:grid !important;
+    grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) !important;
+    gap:10px !important;
+    width:100% !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+    margin:0 auto !important;
+    padding:11px !important;
+    border:1px solid var(--theme-card-border,rgba(125,180,255,.2)) !important;
+    border-radius:12px !important;
+    background:linear-gradient(var(--theme-card),var(--theme-card)),var(--theme-bg) !important;
+    box-shadow:0 10px 24px rgba(0,0,0,.10) !important;
+    white-space:normal !important;
+    transform:translateZ(0);
+    -webkit-backface-visibility:hidden;
+    backface-visibility:hidden;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-card-row:hover,
+  #tab-keluar #keluar-table-body tr.keluar-empty-row:hover {
+    background:linear-gradient(var(--theme-card),var(--theme-card)),var(--theme-bg) !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td {
+    display:block !important;
+    width:auto !important;
+    min-width:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere;
+    font-size:11px !important;
+    line-height:1.4 !important;
+    text-align:left !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td::before {
+    content:attr(data-label);
+    display:block;
+    margin-bottom:2px;
+    color:var(--theme-text-muted,#9fb3cc) !important;
+    font-size:9px !important;
+    font-weight:700 !important;
+    letter-spacing:.05em;
+    line-height:1.1 !important;
+    text-transform:uppercase;
+    opacity:.85;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(1),
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(8) {
+    display:none !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(9)::before {
+    display:none !important;
+  }
+  /* Baris 1: ID Transaksi / SJ di kiri, Tanggal di kanan. */
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(2) {
+    grid-column:1 !important;
+    grid-row:1 !important;
+    padding-bottom:7px !important;
+    padding-right:5px !important;
+    margin-bottom:2px !important;
+    margin-right:-5px !important;
+    border-bottom:1px solid var(--theme-card-border,rgba(125,180,255,.2)) !important;
+    font-size:11px !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(2) span {
+    font-size:10px !important;
+    opacity:.7 !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(3) {
+    grid-column:2 !important;
+    grid-row:1 !important;
+    padding-bottom:7px !important;
+    padding-left:5px !important;
+    margin-bottom:2px !important;
+    margin-left:-5px !important;
+    border-bottom:1px solid var(--theme-card-border,rgba(125,180,255,.2)) !important;
+    justify-self:stretch !important;
+    text-align:right !important;
+    font-size:10px !important;
+  }
+  /* Baris 2: Nama Barang di kiri, Customer di kanan. */
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(6) {
+    grid-column:2 !important;
+    grid-row:2 !important;
+    text-align:right !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(4) {
+    grid-column:1 !important;
+    grid-row:2 !important;
+    text-align:left !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(4) .keluar-jumlah-desktop { display:none !important; }
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(4) .keluar-nama-mobile {
+    display:-webkit-box !important;
+    -webkit-line-clamp:2 !important;
+    -webkit-box-orient:vertical !important;
+    overflow:hidden !important;
+  }
+  /* Baris 3: No. PO di kiri, User di kanan. */
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(7) {
+    grid-column:1 !important;
+    grid-row:3 !important;
+    text-align:left !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(10) {
+    display:block !important;
+    grid-column:2 !important;
+    grid-row:3 !important;
+    justify-self:end !important;
+    text-align:right !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(5) {
+    grid-column:1 / -1 !important;
+    grid-row:4 !important;
+    text-align:center !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(9) {
+    grid-column:1 / -1 !important;
+    grid-row:5 !important;
+    justify-self:stretch !important;
+  }
+  #tab-keluar #keluar-table-body .keluar-actions {
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    justify-content:space-between !important;
+    gap:6px !important;
+    min-width:0 !important;
+    width:100% !important;
+    white-space:normal !important;
+  }
+  #tab-keluar #keluar-table-body .keluar-actions[style] { min-width:0 !important; }
+  #tab-keluar #keluar-table-body .keluar-detail-mobile {
+    display:inline-flex !important;
+  }
+  #tab-keluar #keluar-table-body .keluar-actions button,
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(8) button {
+    flex:1 1 0 !important;
+    min-width:0 !important;
+    padding:7px 5px !important;
+    font-size:10px !important;
+    line-height:1.2 !important;
+    letter-spacing:0 !important;
+  }
+  #tab-keluar #keluar-table-body .keluar-actions button i {
+    width:12px !important;
+    height:12px !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-detail-row {
+    display:block !important;
+    margin-top:-6px !important;
+    padding:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-detail-row.hidden { display:none !important; }
+  #tab-keluar #keluar-table-body tr.keluar-detail-row > td {
+    display:block !important;
+    width:100% !important;
+    padding:8px !important;
+    border:1px solid var(--theme-card-border,rgba(125,180,255,.2)) !important;
+    border-radius:12px !important;
+    background:linear-gradient(var(--theme-card),var(--theme-card)),var(--theme-bg) !important;
+    white-space:normal !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-detail-row table {
+    min-width:760px !important;
+    font-size:10px !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-empty-row > td {
+    grid-column:1 / -1 !important;
+    padding:10px 0 !important;
+    border:0 !important;
+    background:transparent !important;
+    text-align:center !important;
+    white-space:normal !important;
+  }
+  html body.theme-glass #tab-keluar .app-card,
+  html body.theme-glass #tab-keluar .app-card * {
+    -webkit-backdrop-filter:none !important;
+    backdrop-filter:none !important;
+    filter:none !important;
+    animation:none !important;
+    transition:none !important;
+    will-change:auto !important;
+  }
+  html body.theme-glass #tab-keluar .app-card { contain:paint !important; }
 }
 
 
