@@ -2223,7 +2223,7 @@
             updateKeluarBatchTotal();
         };
 
-        const KELUAR_HISTORY_PER_PAGE = 12;
+        const KELUAR_HISTORY_PER_PAGE = 10;
         let keluarHistoryPage = 1;
         let keluarFilterSignature = '';
         window._expandedKeluarGroupKeys = window._expandedKeluarGroupKeys || new Set();
@@ -2338,7 +2338,7 @@
             }).join('');
             let keluarBodyHtml = renderedKeluarRows || `<tr class="keluar-empty-row"><td colspan="9" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
             if (pageGroups.length) {
-                const fillerRow = () => `<tr class="keluar-filler-row" aria-hidden="true"><td colspan="9" class="py-3 px-3">&nbsp;</td></tr>`;
+                const fillerRow = () => `<tr class="keluar-filler-row" aria-hidden="true">\n                    <td class="py-3 px-2">&nbsp;</td>\n                    <td class="py-3 px-3 font-mono">&nbsp;<span class="block mt-0.5 text-[10px]">&nbsp;</span></td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                </tr>`;
                 keluarBodyHtml += Array.from({ length: KELUAR_HISTORY_PER_PAGE - pageGroups.length }, fillerRow).join('');
             }
             setTableHtml(tbody, keluarBodyHtml);
@@ -4895,7 +4895,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             }).filter(Boolean).sort((a, b) => String(b.iso || '').localeCompare(String(a.iso || '')) || String(b.tid).localeCompare(String(a.tid)));
         }
         let sjCustomerSignature = '';
-        const SJ_HISTORY_PER_PAGE = 12;
+        const SJ_HISTORY_PER_PAGE = 10;
         let sjHistoryPage = 1;
         let sjFilterSignature = '';
         window._expandedSjGroupKeys = window._expandedSjGroupKeys || new Set();
@@ -5015,7 +5015,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 </tr>`;
             }).join('');
             let sjBodyHtml = rowsHtml || `<tr class="sj-empty-row"><td colspan="10" class="py-6 text-center opacity-50">Belum ada Surat Jalan.</td></tr>`;
-            // Baris pengisi menjaga tinggi tabel tetap 12 baris, sehingga tombol halaman tidak bergeser
+            // Baris pengisi menjaga tinggi tabel tetap 10 baris, sehingga tombol halaman tidak bergeser
             // saat berpindah dari halaman terakhir (sedikit baris) ke halaman penuh.
             if (pageRows.length) {
                 const fillerRow = () => `
@@ -6327,6 +6327,159 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
 
 (function () {
   'use strict';
+
+  // Pagination umum untuk tabel yang belum punya: master, PO, masuk, sampel, retur, user.
+  // Hanya menyembunyikan baris di luar halaman; data dan struktur tabel tidak diubah.
+  const GENERIC_TABLE_PAGE_SIZE = 10;
+  const genericTablePageState = {};
+  const genericPaginationTargets = [
+    { bodyId: 'master-table-body', label: 'Barang', searchId: 'search-master', render: 'renderMasterTable' },
+    { bodyId: 'po-table-body', label: 'PO', searchId: 'search-po', render: 'renderPoTable' },
+    { bodyId: 'masuk-table-body', label: 'Barang Masuk', searchId: 'search-masuk', render: 'renderMasukTable' },
+    { bodyId: 'sampel-table-body', label: 'Sampel', searchId: 'search-sampel', render: 'renderSampelTable' },
+    { bodyId: 'retur-table-body', label: 'Retur', searchId: 'search-retur', render: 'renderReturTable' },
+    { bodyId: 'user-table-body', label: 'User', searchId: '', render: 'renderUserTable' }
+  ];
+
+  function ensureGenericPaginationBar(cfg) {
+    const tbody = document.getElementById(cfg.bodyId);
+    if (!tbody) return null;
+    const barId = `${cfg.bodyId}-pagination`;
+    let bar = document.getElementById(barId);
+    if (!bar) {
+      const container = tbody.closest('.fluid-table-container');
+      const host = container?.parentElement || tbody.parentElement;
+      if (!host) return null;
+      bar = document.createElement('div');
+      bar.id = barId;
+      bar.className = 'flex flex-wrap items-center justify-between gap-3 mt-4 pt-3 border-t border-white/10';
+      bar.innerHTML = `
+        <p class="generic-page-info text-[11px] text-gray-400"></p>
+        <div class="flex items-center gap-2">
+          <button type="button" class="generic-page-prev px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Sebelumnya</button>
+          <span class="generic-page-indicator text-[11px] font-semibold text-gray-300"></span>
+          <button type="button" class="generic-page-next px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Berikutnya</button>
+        </div>`;
+      host.appendChild(bar);
+      const changePage = (delta, btn) => {
+        if (btn?.getAttribute('aria-disabled') === 'true') return;
+        const state = genericTablePageState[cfg.bodyId];
+        if (!state) return;
+        const scrollY = window.scrollY;
+        btn.blur();
+        state.page += delta;
+        window[cfg.render]?.();
+        window.scrollTo(0, scrollY);
+        requestAnimationFrame(() => btn.focus({ preventScroll: true }));
+      };
+      bar.querySelector('.generic-page-prev')?.addEventListener('click', event => changePage(-1, event.currentTarget));
+      bar.querySelector('.generic-page-next')?.addEventListener('click', event => changePage(1, event.currentTarget));
+    }
+    return bar;
+  }
+
+  function syncGenericFillerRows(tbody, visibleMainCount, sampleRow) {
+    const missing = GENERIC_TABLE_PAGE_SIZE - visibleMainCount;
+    if (missing <= 0) return;
+    const rowHeight = sampleRow ? Math.ceil(sampleRow.getBoundingClientRect().height) : 0;
+    const table = tbody.closest('table');
+    const colspan = table?.querySelector('thead tr')?.children.length
+      || tbody.querySelector('tr > td')?.colSpan
+      || 1;
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < missing; i += 1) {
+      const row = document.createElement('tr');
+      row.className = 'generic-filler-row';
+      row.setAttribute('aria-hidden', 'true');
+      if (rowHeight > 0) row.style.height = `${rowHeight}px`;
+      const cell = document.createElement('td');
+      cell.colSpan = colspan;
+      cell.className = 'py-3 px-3';
+      if (rowHeight > 0) cell.style.height = `${rowHeight}px`;
+      cell.innerHTML = '&nbsp;';
+      row.appendChild(cell);
+      fragment.appendChild(row);
+    }
+    tbody.appendChild(fragment);
+  }
+
+  function applyGenericTablePagination(cfg) {
+    const tbody = document.getElementById(cfg.bodyId);
+    if (!tbody) return;
+    tbody.querySelectorAll('tr.generic-filler-row').forEach(row => row.remove());
+    const allRows = Array.from(tbody.children).filter(el => el.tagName === 'TR');
+    const mainRows = allRows.filter(row => !row.id?.startsWith('po-detail-') && !row.hasAttribute('data-po-group-key'));
+    const searchValue = cfg.searchId ? (document.getElementById(cfg.searchId)?.value || '') : '';
+    const signature = `${searchValue}\u0001${mainRows.length}`;
+    const state = genericTablePageState[cfg.bodyId] || (genericTablePageState[cfg.bodyId] = { page: 1, signature: '' });
+    if (state.signature !== signature) {
+      state.page = 1;
+      state.signature = signature;
+    }
+    const totalPages = Math.max(1, Math.ceil(mainRows.length / GENERIC_TABLE_PAGE_SIZE));
+    state.page = Math.min(Math.max(1, state.page), totalPages);
+
+    // Tabel yang muat dalam satu halaman nggak perlu bar pagination — biar ringan.
+    const existingBar = document.getElementById(`${cfg.bodyId}-pagination`);
+    if (totalPages <= 1) {
+      allRows.forEach(row => row.style.removeProperty('display'));
+      syncGenericFillerRows(tbody, mainRows.length, mainRows[0]);
+      if (existingBar) existingBar.style.display = 'none';
+      return;
+    }
+    if (existingBar) existingBar.style.display = '';
+
+    const start = (state.page - 1) * GENERIC_TABLE_PAGE_SIZE;
+    const end = start + GENERIC_TABLE_PAGE_SIZE;
+
+    let mainIndex = -1;
+    let currentMainVisible = false;
+    let sampleRow = null;
+    allRows.forEach(row => {
+      const isDetail = row.id?.startsWith('po-detail-') || row.hasAttribute('data-po-group-key');
+      if (isDetail) {
+        const visible = currentMainVisible && !row.classList.contains('hidden');
+        if (visible) row.style.removeProperty('display');
+        else row.style.setProperty('display', 'none', 'important');
+        return;
+      }
+      mainIndex += 1;
+      currentMainVisible = mainIndex >= start && mainIndex < end;
+      if (currentMainVisible && !sampleRow) sampleRow = row;
+      if (currentMainVisible) row.style.removeProperty('display');
+      else row.style.setProperty('display', 'none', 'important');
+    });
+    syncGenericFillerRows(tbody, Math.min(end, mainRows.length) - start, sampleRow);
+
+    const bar = ensureGenericPaginationBar(cfg);
+    if (!bar) return;
+    bar.style.display = '';
+    const firstNo = mainRows.length ? start + 1 : 0;
+    const lastNo = Math.min(end, mainRows.length);
+    const info = bar.querySelector('.generic-page-info');
+    if (info) info.textContent = `Menampilkan ${firstNo}–${lastNo} dari ${mainRows.length} ${cfg.label}`;
+    const indicator = bar.querySelector('.generic-page-indicator');
+    if (indicator) indicator.textContent = `Halaman ${state.page} dari ${totalPages}`;
+    const setBtn = (selector, inactive) => {
+      const btn = bar.querySelector(selector);
+      if (!btn) return;
+      btn.setAttribute('aria-disabled', inactive ? 'true' : 'false');
+      btn.style.opacity = inactive ? '.45' : '';
+      btn.style.cursor = inactive ? 'not-allowed' : '';
+    };
+    setBtn('.generic-page-prev', state.page <= 1);
+    setBtn('.generic-page-next', state.page >= totalPages);
+  }
+
+  genericPaginationTargets.forEach(cfg => {
+    const original = window[cfg.render];
+    if (typeof original !== 'function') return;
+    window[cfg.render] = function(...args) {
+      const result = original.apply(this, args);
+      applyGenericTablePagination(cfg);
+      return result;
+    };
+  });
 
   function updateLoginSecurityIndicator() {
     var root = document.getElementById('login-security-status');

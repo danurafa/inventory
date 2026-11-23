@@ -6098,7 +6098,7 @@ body.theme-glass.theme-light [id^="tab-"] .rounded-2xl.border {
     -webkit-backdrop-filter: blur(14px) saturate(128%) !important;
 }
 
-/* History tables: show approximately 12 rows, keep all records and sticky header. */
+/* History tables: show approximately 10 rows per page, keep all records and sticky header. */
 .fluid-table-container {
     height: auto !important;
     max-height: 570px !important;
@@ -15445,6 +15445,50 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     will-change:auto !important;
   }
   html body.theme-glass #tab-keluar .app-card { contain:paint !important; }
+}
+
+/* Pagination menggantikan scroll vertikal internal di tabel.
+   max-height dilonggarkan supaya konten mengalir normal; scroll horizontal tetap ada. */
+html body.theme-glass #inventory-main-content :is(
+  #tab-master, #tab-po, #tab-masuk, #tab-keluar,
+  #tab-sj, #tab-sampel, #tab-retur, #tab-users
+) .fluid-table-container {
+  max-height:none !important;
+}
+
+/* Scroll horizontal tabel lebih ringan: area scroll dipromosikan ke layer
+   sendiri, efek blur/filter dimatikan supaya tidak repaint tiap frame. */
+html body.theme-glass #inventory-main-content :is(
+  #tab-master, #tab-po, #tab-masuk, #tab-keluar,
+  #tab-sj, #tab-sampel, #tab-retur, #tab-users
+) .app-card {
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+  filter:none !important;
+  will-change:auto !important;
+}
+html body.theme-glass #inventory-main-content :is(
+  #tab-master, #tab-po, #tab-masuk, #tab-keluar,
+  #tab-sj, #tab-sampel, #tab-retur, #tab-users
+) .fluid-table-container {
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+  filter:none !important;
+  transform:translateZ(0);
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
+  contain:paint;
+  overscroll-behavior-x:contain;
+}
+html body.theme-glass #inventory-main-content :is(
+  #tab-master, #tab-po, #tab-masuk, #tab-keluar,
+  #tab-sj, #tab-sampel, #tab-retur, #tab-users
+) .fluid-table-container :is(table, thead, tbody, tr, td, th, button, span, div) {
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+  filter:none !important;
+  transition:none !important;
+  will-change:auto !important;
 }
 
 
