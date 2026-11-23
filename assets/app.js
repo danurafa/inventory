@@ -31,7 +31,7 @@
                 { id: 'IN-2611-0001', tanggal: '2026-11-10', barangId: 'MARIO', nama: 'MARIO', jenis: 'ELASTIS POLOS', lebar: '30 mm', ukuran: 'SIZE M', satuan: 'YARD', qty: 500, supplier: 'PRODUKSI LOOM A', user: 'Administrator' }
             ],
             keluar: [
-                { id: 'OT-2611-0001', tanggal: '2026-11-11', barangId: 'EJ-002-001', nama: 'MANGO SPORT', jenis: 'ELASTIS HURUF', lebar: '35 mm', ukuran: 'SIZE XXL', satuan: 'YARD', qty: 300, tujuan: 'PT. MAJU JAYA', poRef: 'POC-2611-0001', user: 'Administrator' }
+                { id: 'OT-2611-0001', transactionId: 'OT-2611-0001', noSj: 'SJ-2611-0001', tanggal: '2026-11-11', barangId: 'EJ-002-001', nama: 'MANGO SPORT', jenis: 'ELASTIS HURUF', lebar: '35 mm', ukuran: 'SIZE XXL', satuan: 'YARD', qty: 300, tujuan: 'PT. MAJU JAYA', poRef: 'POC-2611-0001', user: 'Administrator' }
             ],
             po: [
                 { id: 'POC-2611-0001', noPoCustomer: 'PO/2026/XI/001', tanggal: '2026-11-12', customer: 'PT. MAJU JAYA', barangId: 'EJ-003-02', nama: 'MARCELLO RED BORDER', jenis: 'ELASTIS HURUF', lebar: '35 mm', ukuran: 'SIZE L', satuan: 'YARD', qty: 500, terkirim: 0, status: 'OPEN' },
@@ -1548,13 +1548,13 @@
             const labels = {
                 id:'ID / Nomor', tanggal:'Tanggal', nama:'Nama Barang', barangId:'ID Barang',
                 jenis:'Jenis', satuan:'Satuan', qty:'Jumlah', stok:'Stok', min:'Stok Minimum',
-                customer:'Customer', supplier:'Supplier', noPoCustomer:'No. PO Customer',
+                customer:'Customer', supplier:'Supplier', alamat:'Alamat', noPoCustomer:'No. PO Customer',
                 poRef:'Referensi PO', terkirim:'Qty Terkirim', siapKirim:'Siap Kirim',
                 status:'Status', kategori:'Kategori', lebar:'Lebar', ukuran:'Ukuran',
                 berat:'Berat', tebal:'Tebal', username:'Username', role:'Hak Akses',
                 user:'User', keterangan:'Keterangan', noSj:'No. Surat Jalan'
             };
-            const preferred = ['id','tanggal','nama','barangId','jenis','satuan','qty','customer','supplier','noPoCustomer','poRef','status','kategori','username','role'];
+            const preferred = ['id','tanggal','nama','barangId','jenis','satuan','qty','customer','supplier','noPoCustomer','poRef','status','kategori','username','role','noSj'];
             const entries = record ? preferred.filter(key => record[key] !== undefined && record[key] !== null && String(record[key]).trim() !== '').map(key => [key, record[key]]) : [];
             if (record) {
                 Object.entries(record).forEach(([key,value]) => {
@@ -1663,6 +1663,34 @@
                 candidate = `${prefix}${String(nextNumber).padStart(4, '0')}`;
             }
             return candidate;
+        };
+
+        // No. Surat Jalan mengikuti nomor transaksi OT-YYMM-#### → SJ-YYMM-####.
+        // Nilai dikirim ke Worker lewat payload keluar, dan dicatat di overlay lokal
+        // agar tetap tampil bila Worker belum menyimpan field baru ini.
+        const SJ_MAP_KEY = 'gudang_keluar_sj_map';
+        let sjMapCache = null;
+        function readSjMap() {
+            if (sjMapCache) return sjMapCache;
+            try { sjMapCache = JSON.parse(localStorage.getItem(SJ_MAP_KEY) || '{}') || {}; }
+            catch (e) { sjMapCache = {}; }
+            return sjMapCache;
+        }
+        function rememberKeluarNoSj(transactionId, noSj) {
+            const key = String(transactionId || '').trim().toUpperCase();
+            const value = String(noSj || '').trim().toUpperCase();
+            if (!key || !value) return;
+            const map = readSjMap();
+            map[key] = value;
+            try { localStorage.setItem(SJ_MAP_KEY, JSON.stringify(map)); } catch (e) { /* abaikan */ }
+        }
+        window.generateKeluarNoSj = function(baseId) {
+            return String(baseId || '').trim().toUpperCase().replace(/^OT-/i, 'SJ-');
+        };
+        window.getKeluarNoSj = function(row) {
+            const transactionId = String(row?.transactionId || row?.groupId || row?.id || '').trim().toUpperCase();
+            const saved = String(row?.noSj || readSjMap()[transactionId] || '').trim().toUpperCase();
+            return saved || window.generateKeluarNoSj(transactionId) || '-';
         };
 
         window.generatePoSequentialId = function() {
@@ -1843,6 +1871,7 @@
             document.getElementById('po-no-customer').value = r.noPoCustomer || '';
             document.getElementById('po-tanggal').value = r.tanggal || '';
             document.getElementById('po-customer').value = r.customer || '';
+            document.getElementById('po-alamat').value = r.alamat || '';
             addPoItemRow({ barangId:r.barangId, qty:r.qty, siapKirim:r.siapKirim ?? Math.max(0, Number(r.qty||0)-Number(r.terkirim||0)) });
             document.getElementById('po-edit-mode').value = 'true';
             document.getElementById('po-form-title').innerHTML = '<i data-lucide="pencil" class="w-4 h-4 text-orange-400"></i> EDIT DETAIL PO';
@@ -1861,7 +1890,7 @@
             const r = window.gudangAppDb.keluar.find(x => String(x.id) === String(id)); if (!r) return;
             const po=window.gudangAppDb.po.find(p=>p.id===r.poRef);
             if(po){const groupKey=`${String(po.customer||'').toUpperCase()}|${String(po.noPoCustomer||po.id).toUpperCase()}`;document.getElementById('keluar-po-group').value=groupKey;}
-            beginTransactionEdit('form-keluar','keluar-edit-mode', {'keluar-id':r.id,'keluar-tanggal':r.tanggal,'keluar-po-ref':r.poRef,'keluar-barang':r.barangId,'keluar-qty':r.qty,'keluar-tujuan':r.tujuan});
+            beginTransactionEdit('form-keluar','keluar-edit-mode', {'keluar-id':r.id,'keluar-tanggal':r.tanggal,'keluar-no-sj':window.getKeluarNoSj(r),'keluar-po-ref':r.poRef,'keluar-barang':r.barangId,'keluar-qty':r.qty,'keluar-tujuan':r.tujuan});
             // Tandai grup agar auto-fill tidak mengganti tujuan historis saat edit.
             const groupSelect = document.getElementById('keluar-po-group');
             if (groupSelect) groupSelect.dataset.customerGroup = groupSelect.value;
@@ -2044,6 +2073,9 @@
             document.getElementById('keluar-id').value = baseId;
             const tanggal = document.getElementById('keluar-tanggal').value;
             const tujuan = document.getElementById('keluar-tujuan').value.trim().toUpperCase();
+            const noSj = String(document.getElementById('keluar-no-sj')?.value || '').trim().toUpperCase() || window.generateKeluarNoSj(baseId);
+            const noSjInput = document.getElementById('keluar-no-sj');
+            if (noSjInput) noSjInput.value = noSj;
             const username = window.gudangAppDb.currentUser?.name || 'Administrator';
             const cards = [...document.querySelectorAll('#keluar-items-container [data-keluar-row]')];
             const selected = cards.map(card => ({
@@ -2051,7 +2083,7 @@
                 barangId: card.dataset.barangId,
                 qty: Number(card.querySelector('[data-keluar-qty]')?.value || 0)
             })).filter(row => row.qty > 0);
-            if (!baseId || !tanggal || !tujuan) { showToast('Lengkapi ID transaksi, tanggal, dan tujuan.', 'error'); return; }
+            if (!baseId || !tanggal || !tujuan || !noSj) { showToast('Lengkapi ID transaksi, tanggal, No. Surat Jalan, dan tujuan.', 'error'); return; }
             if (!selected.length) { showToast('Isi Qty minimal satu barang yang akan dikirim.', 'error'); return; }
             if (selected.some(r => !Number.isSafeInteger(r.qty) || r.qty <= 0)) { showToast('Qty setiap barang harus bilangan bulat lebih dari nol.', 'error'); return; }
 
@@ -2074,15 +2106,23 @@
                 if (selected.length !== 1) { showToast('Mode edit hanya boleh mengubah satu detail transaksi. Gunakan transaksi baru untuk multi-barang.', 'error'); return; }
                 const row = selected[0];
                 const item = window.gudangAppDb.items.find(x => x.id === row.barangId);
+                const editRecord = window.gudangAppDb.keluar.find(x => String(x.id) === String(baseId));
+                const editGroupId = String(editRecord?.transactionId || editRecord?.groupId || baseId);
                 try {
-                    await sendOperation('keluar.update', { id: baseId, record: { tanggal, poRef: row.poRef, barangId: row.barangId, nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan, qty:row.qty, tujuan } });
+                    await sendOperation('keluar.update', { id: baseId, record: { tanggal, poRef: row.poRef, barangId: row.barangId, nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan, qty:row.qty, tujuan, noSj } });
+                    rememberKeluarNoSj(editGroupId, noSj);
                     window.refreshAllViews?.(); resetKeluarForm(); showToast('Detail Barang Keluar berhasil diperbarui. Stok dan realisasi PO dikoreksi Worker.');
                 } catch (error) { showToast(`Edit Barang Keluar gagal: ${error.message}`, 'error'); }
                 return;
             }
 
             const duplicateGroup = (window.gudangAppDb.keluar||[]).some(x => String(x.transactionId||x.groupId||x.id).toUpperCase() === baseId);
-            if (duplicateGroup) { showToast('ID transaksi/surat jalan sudah digunakan.', 'error'); return; }
+            if (duplicateGroup) { showToast('ID transaksi sudah digunakan.', 'error'); return; }
+            const duplicateSj = (window.gudangAppDb.keluar||[]).some(x =>
+                String(x.transactionId||x.groupId||x.id).toUpperCase() !== baseId &&
+                window.getKeluarNoSj(x).toUpperCase() === noSj
+            );
+            if (duplicateSj) { showToast(`No. Surat Jalan ${noSj} sudah digunakan transaksi lain.`, 'error'); return; }
             const poGroups = new Set(selected.map(r => {
                 const po = window.gudangAppDb.po.find(p => p.id === r.poRef);
                 return `${String(po?.customer||'').toUpperCase()}|${String(po?.noPoCustomer||po?.id||'').toUpperCase()}`;
@@ -2091,10 +2131,11 @@
             const details = selected.map((row, index) => {
                 const item = window.gudangAppDb.items.find(x => x.id === row.barangId);
                 const detailId = selected.length === 1 ? baseId : `${baseId}-D${String(index+1).padStart(2,'0')}`;
-                return { id:detailId, poRef:row.poRef, barangId:row.barangId, qty:row.qty, nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan };
+                return { id:detailId, transactionId:baseId, noSj, poRef:row.poRef, barangId:row.barangId, qty:row.qty, nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan };
             });
             try {
-                await sendOperation('keluar.batchCreate', { id:baseId, tanggal, tujuan, user:username, transactionId:baseId, items:details });
+                await sendOperation('keluar.batchCreate', { id:baseId, tanggal, tujuan, user:username, transactionId:baseId, noSj, items:details });
+                rememberKeluarNoSj(baseId, noSj);
                 window.refreshAllViews?.();
                 resetKeluarForm();
                 showToast(`Barang Keluar ${baseId} berhasil disimpan: ${details.length} jenis barang. Stok dan Qty Siap Dikirim sudah diperbarui.`);
@@ -2131,7 +2172,10 @@
             document.getElementById('form-keluar').reset();
             window.syncFormDropdownLabels?.('form-keluar');
             document.getElementById('keluar-edit-mode').value = 'false';
-            document.getElementById('keluar-id').value = generateKeluarSequentialId();
+            const nextKeluarId = generateKeluarSequentialId();
+            document.getElementById('keluar-id').value = nextKeluarId;
+            const noSjField = document.getElementById('keluar-no-sj');
+            if (noSjField) noSjField.value = window.generateKeluarNoSj(nextKeluarId);
             document.getElementById('keluar-tanggal').valueAsDate = new Date();
             const host = document.getElementById('keluar-items-container'); if (host) host.replaceChildren();
             const groupSelect = document.getElementById('keluar-po-group');
@@ -2170,8 +2214,8 @@
                 head: rows[0]
             })).filter(group => {
                 if (!q) return true;
-                return [group.transactionId, group.head.tanggal, group.head.tujuan,
-                    ...group.rows.flatMap(r => [r.id, r.barangId, r.nama, r.jenis, r.poRef])]
+                return [group.transactionId, window.getKeluarNoSj(group.head), group.head.tanggal, group.head.tujuan,
+                    ...group.rows.flatMap(r => [r.id, r.barangId, r.nama, r.jenis, r.poRef, r.noSj])]
                     .some(value => String(value || '').toLowerCase().includes(q));
             }).sort((a,b) => String(b.head.tanggal||'').localeCompare(String(a.head.tanggal||'')) ||
                               String(b.transactionId).localeCompare(String(a.transactionId)));
@@ -2213,14 +2257,14 @@
                 return `
                     <tr class="hover:bg-white/5 border-b border-white/5">
                         <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
-                        <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(group.transactionId)}</td>
+                        <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(group.transactionId)}<span class="block mt-0.5 text-[10px] font-normal opacity-70">SJ: ${esc(window.getKeluarNoSj(group.head))}</span></td>
                         <td class="py-3 px-3 opacity-80">${esc(group.head.tanggal || '-')}</td>
                         <td class="py-3 px-3 text-center">${group.rows.length} barang</td>
                         <td class="py-3 px-3 text-right font-mono font-bold text-rose-400">-${totalQty.toLocaleString('id-ID')}</td>
                         <td class="py-3 px-3 font-medium">${esc(group.head.tujuan || '-')}</td>
                         <td class="py-3 px-3 font-mono opacity-80">${esc(poRefs.join(', '))}</td>
                         <td class="py-3 px-3 text-center"><button onclick="toggleKeluarDetails('${token}')" class="px-3 py-1 rounded bg-indigo-500/20 text-indigo-300 text-xs font-semibold">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button></td>
-                        <td class="py-3 px-3 text-center">${isViewer ? '-' : '<span class="text-[10px] text-gray-400">Aksi per barang</span>'}</td>
+                        <td class="py-3 px-3 text-center"><div class="flex flex-col items-center gap-1"><button onclick="printSuratJalan('${esc(group.transactionId)}')" class="px-3 py-1 rounded bg-emerald-500/20 text-emerald-300 text-xs font-semibold inline-flex items-center gap-1" title="Cetak Surat Jalan"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button><button onclick="downloadSuratJalanExcel('${esc(group.transactionId)}')" class="px-3 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-semibold inline-flex items-center gap-1" title="Download template Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button>${isViewer ? '' : '<span class="text-[10px] text-gray-400">Aksi per barang</span>'}</div></td>
                     </tr>
                     <tr id="keluar-detail-${token}" data-keluar-group-key="${token}" class="${expanded ? '' : 'hidden'}">
                         <td colspan="9" class="p-2 bg-black/10">
@@ -2289,6 +2333,7 @@
             const noPoCustomer = document.getElementById('po-no-customer').value.trim().toUpperCase();
             const tanggal = document.getElementById('po-tanggal').value;
             const customer = document.getElementById('po-customer').value.trim().toUpperCase();
+            const alamat = document.getElementById('po-alamat')?.value.trim() || '';
             const rows = readPoItemRows();
             if (!id || !noPoCustomer || !tanggal || !customer || !rows.length || rows.some(r => !r.barangId || !Number.isSafeInteger(r.qty) || r.qty<=0 || !Number.isSafeInteger(r.siapKirim) || r.siapKirim<0 || r.siapKirim>r.qty)) {
                 showToast('Lengkapi data PO. Qty siap harus 0 sampai Qty PO.','error'); return;
@@ -2300,10 +2345,10 @@
                     if (rows.length !== 1) throw new Error('Mode edit hanya untuk satu detail PO.');
                     const item = window.gudangAppDb.items.find(x=>x.id===rows[0].barangId);
                     if (!item) throw new Error('Barang tidak ditemukan.');
-                    await sendOperation('po.update',{id,record:{noPoCustomer,tanggal,customer,barangId:rows[0].barangId,nama:item.nama,jenis:item.jenis,lebar:item.lebar||'',ukuran:item.ukuran||'',satuan:item.satuan,qty:rows[0].qty,siapKirim:rows[0].siapKirim}});
+                    await sendOperation('po.update',{id,record:{noPoCustomer,tanggal,customer,alamat,barangId:rows[0].barangId,nama:item.nama,jenis:item.jenis,lebar:item.lebar||'',ukuran:item.ukuran||'',satuan:item.satuan,qty:rows[0].qty,siapKirim:rows[0].siapKirim}});
                 } else {
                     const items = rows.map((r,i)=>({id:i===0?id:`${id}-${String(i+1).padStart(2,'0')}`, ...r}));
-                    await sendOperation('po.batchCreate',{id,noPoCustomer,tanggal,customer,items});
+                    await sendOperation('po.batchCreate',{id,noPoCustomer,tanggal,customer,alamat,items});
                 }
                 window.refreshAllViews?.();
                 resetPoForm();
@@ -2962,9 +3007,9 @@
             });
             keluarGroups.forEach((rows, transactionId) => rows.forEach(row => addRecord(
                 'keluar', 'search-keluar', 'Barang Keluar',
-                `${transactionId} · ${row.nama || row.barangId || 'Barang'}`,
+                `${transactionId} · SJ ${window.getKeluarNoSj(row)} · ${row.nama || row.barangId || 'Barang'}`,
                 `${row.tanggal || '-'} · ${row.tujuan || 'Tujuan tidak dicantumkan'} · -${Number(row.qty || 0).toLocaleString('id-ID')} ${row.satuan || ''}`,
-                [transactionId, row.id, row.tanggal, row.tujuan, row.barangId, row.nama, row.jenis, row.lebar, row.ukuran, row.poRef]
+                [transactionId, row.id, row.tanggal, row.tujuan, row.barangId, row.nama, row.jenis, row.lebar, row.ukuran, row.poRef, window.getKeluarNoSj(row)]
             )));
 
             const poGroups = new Map();
@@ -3153,13 +3198,14 @@
             keluar: {
                 title: 'LAPORAN BARANG KELUAR', dateFilter: true, dateKey: 'tanggal',
                 fields: [
-                    ['transactionId','ID Transaksi / SJ'], ['tanggal','Tanggal'], ['id','ID Detail'],
+                    ['transactionId','ID Transaksi'], ['noSj','No. Surat Jalan'], ['tanggal','Tanggal'], ['id','ID Detail'],
                     ['barangId','ID Barang'], ['nama','Nama Barang'], ['jenis','Kategori'],
                     ['lebar','Lebar'], ['ukuran','Ukuran'], ['satuan','Satuan'],
                     ['qty','Qty Keluar'], ['tujuan','Customer / Tujuan'], ['poNumber','No. PO']
                 ],
                 prepare: rows => rows.map(r => ({ ...r,
                     transactionId: r.transactionId || r.groupId || r.id,
+                    noSj: window.getKeluarNoSj(r),
                     poNumber: (window.gudangAppDb.po || []).find(p => String(p.id) === String(r.poRef))?.noPoCustomer || r.poRef || '-'
                 }))
             },
@@ -4730,6 +4776,360 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             printWindow.focus();
         }
 
+        // SURAT JALAN per transaksi: dokumen A4 portrait terpisah dari laporan tabular.
+        window.printSuratJalan = function(transactionId) {
+            const tid = String(transactionId || '').trim();
+            if (!tid) return;
+            const rows = (window.gudangAppDb.keluar || [])
+                .filter(r => String(r.transactionId || r.groupId || r.id) === tid)
+                .sort((a, b) => String(a.id).localeCompare(String(b.id), 'id'));
+            if (!rows.length) { showToast('Transaksi Barang Keluar tidak ditemukan.', 'error'); return; }
+            const head = rows[0];
+            const noSj = window.getKeluarNoSj(head);
+            const po = (window.gudangAppDb.po || []).find(p => String(p.id) === String(head.poRef));
+            const poNumber = po?.noPoCustomer || head.poRef || '-';
+            const customer = head.tujuan || po?.customer || '-';
+            const isoDate = normalizePrintDate(head.tanggal);
+            const tanggal = isoDate ? formatPrintDate(isoDate) : String(head.tanggal || '-');
+            const totalQty = rows.reduce((sum, r) => sum + Number(r.qty || 0), 0);
+            const itemRows = rows.map((r, i) => `
+                <tr>
+                    <td class="c">${i + 1}</td>
+                    <td>${escapePrintHtml(r.barangId || '-')}</td>
+                    <td>${escapePrintHtml(window.displayItemName(r.barangId, r.nama))}</td>
+                    <td class="c">${escapePrintHtml(r.jenis || '-')}</td>
+                    <td class="c">${escapePrintHtml(r.lebar || '-')}</td>
+                    <td class="c">${escapePrintHtml(r.ukuran || '-')}</td>
+                    <td class="c">${escapePrintHtml(r.satuan || '-')}</td>
+                    <td class="r">${Number(r.qty || 0).toLocaleString('id-ID')}</td>
+                </tr>`).join('');
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) { showToast('Popup cetak diblokir browser. Izinkan popup lalu coba lagi.', 'error'); return; }
+            printWindow.document.open();
+            printWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Surat Jalan ${escapePrintHtml(noSj)}</title>
+                <style>
+                    @page{size:A4 portrait;margin:14mm}
+                    *{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#111;margin:0;font-size:11px}
+                    h1{font-size:18px;margin:0 0 2px;text-align:center;letter-spacing:.5px}
+                    .sub{text-align:center;font-size:10px;color:#444;margin:0 0 14px}
+                    .meta{width:100%;border-collapse:collapse;margin:0 0 14px}
+                    .meta td{border:1px solid #777;padding:6px 8px}
+                    .meta .k{width:120px;background:#f2f2f2;font-weight:bold}
+                    .items{width:100%;border-collapse:collapse}
+                    .items th,.items td{border:1px solid #777;padding:6px 7px;vertical-align:top}
+                    .items th{background:#f2f2f2;font-size:10px;text-align:center}
+                    .c{text-align:center}.r{text-align:right;font-weight:bold}
+                    .total{margin-top:10px;text-align:right;font-size:12px;font-weight:bold}
+                    .sign{margin-top:34px;display:flex;justify-content:space-between;gap:30px}
+                    .sign > div{flex:1;text-align:center;font-size:11px}
+                    .line{margin-top:46px;border-top:1px solid #333;padding-top:5px}
+                    .note{margin-top:18px;font-size:9px;color:#555}
+                </style></head><body>
+                    <h1>SURAT JALAN</h1>
+                    <p class="sub">Dokumen pengiriman barang keluar</p>
+                    <table class="meta">
+                        <tr><td class="k">No. Surat Jalan</td><td>${escapePrintHtml(noSj)}</td><td class="k">Tanggal</td><td>${escapePrintHtml(tanggal)}</td></tr>
+                        <tr><td class="k">Customer / Tujuan</td><td colspan="3">${escapePrintHtml(customer)}</td></tr>
+                        <tr><td class="k">No. PO Customer</td><td>${escapePrintHtml(poNumber)}</td><td class="k">ID Transaksi</td><td>${escapePrintHtml(tid)}</td></tr>
+                    </table>
+                    <table class="items">
+                        <thead><tr><th style="width:32px">No</th><th>ID Barang</th><th>Nama Barang</th><th style="width:90px">Kategori</th><th style="width:66px">Lebar</th><th style="width:76px">Ukuran</th><th style="width:56px">Satuan</th><th style="width:70px">Qty</th></tr></thead>
+                        <tbody>${itemRows}</tbody>
+                    </table>
+                    <div class="total">Total Qty: ${totalQty.toLocaleString('id-ID')}</div>
+                    <div class="sign">
+                        <div>Dibuat oleh,<div class="line">(${escapePrintHtml(window.gudangAppDb.currentUser?.name || 'Administrator')})</div></div>
+                        <div>Diterima oleh,<div class="line">(________________________)</div></div>
+                    </div>
+                    <p class="note">Dicetak dari Sistem Manajemen Inventory Gudang pada ${escapePrintHtml(new Date().toLocaleString('id-ID'))}.</p>
+                </body></html>`);
+            printWindow.onload = () => { printWindow.focus(); printWindow.print(); };
+            printWindow.document.close();
+            printWindow.focus();
+        };
+
+        // Download template Surat Jalan sebagai file .xlsx yang sudah diatur (tinggal buka & print di Excel).
+        // Library dimuat saat tombol dipakai, tidak menambah beban saat aplikasi dibuka.
+        const SJ_XLSX_CDN = 'https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js';
+        let sjXlsxPromise = null;
+        function loadSjXlsx() {
+            if (window.XLSX?.utils?.aoa_to_sheet) return Promise.resolve(window.XLSX);
+            if (!sjXlsxPromise) {
+                sjXlsxPromise = new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = SJ_XLSX_CDN;
+                    script.onload = () => {
+                        if (window.XLSX?.utils?.aoa_to_sheet) resolve(window.XLSX);
+                        else { sjXlsxPromise = null; reject(new Error('Library Excel tidak tersedia.')); }
+                    };
+                    script.onerror = () => { sjXlsxPromise = null; reject(new Error('Gagal memuat library Excel.')); };
+                    document.head.appendChild(script);
+                });
+            }
+            return sjXlsxPromise;
+        }
+        function collectSuratJalanData(transactionId) {
+            const tid = String(transactionId || '').trim();
+            const rows = (window.gudangAppDb.keluar || [])
+                .filter(r => String(r.transactionId || r.groupId || r.id) === tid)
+                .sort((a, b) => String(a.id).localeCompare(String(b.id), 'id'));
+            if (!rows.length) return null;
+            const head = rows[0];
+            const po = (window.gudangAppDb.po || []).find(p => String(p.id) === String(head.poRef));
+            const isoDate = normalizePrintDate(head.tanggal);
+            return {
+                tid, rows, head,
+                noSj: window.getKeluarNoSj(head),
+                poNumber: po?.noPoCustomer || head.poRef || '-',
+                customer: head.tujuan || po?.customer || '-',
+                alamat: po?.alamat || head.alamat || '',
+                tanggal: isoDate ? formatPrintDate(isoDate) : String(head.tanggal || '-'),
+                iso: isoDate || String(head.tanggal || ''),
+                totalQty: rows.reduce((sum, r) => sum + Number(r.qty || 0), 0)
+            };
+        }
+        function downloadFileFromBlob(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+        function downloadSuratJalanCsv(ctx) {
+            const lines = [
+                ['SURAT JALAN'],
+                ['No. Surat Jalan', ctx.noSj, 'Tanggal', ctx.tanggal],
+                ['Customer / Tujuan', ctx.customer],
+                ['No. PO Customer', ctx.poNumber, 'ID Transaksi', ctx.tid],
+                [],
+                ['No', 'ID Barang', 'Nama Barang', 'Kategori', 'Lebar', 'Ukuran', 'Satuan', 'Qty'],
+                ...ctx.rows.map((r, i) => [i + 1, r.barangId || '-', window.displayItemName(r.barangId, r.nama), r.jenis || '-', r.lebar || '-', r.ukuran || '-', r.satuan || '-', Number(r.qty || 0)]),
+                ['', '', '', '', '', '', 'TOTAL QTY', ctx.totalQty]
+            ];
+            const csv = '\uFEFF' + lines.map(row => row.map(cell => `"${String(cell ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
+            downloadFileFromBlob(new Blob([csv], { type: 'text/csv;charset=utf-8' }), `Surat-Jalan-${ctx.noSj.replace(/[^A-Za-z0-9-]/g, '_')}.csv`);
+            showToast('Library Excel tidak tersedia. File CSV sudah diunduh dan bisa dibuka di Excel.', 'warning');
+        }
+        // Template .xlsx milik pengguna dipakai apa adanya supaya logo, merge, dan format tetap utuh.
+        const SJ_JSZIP_CDN = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+        const SJ_TEMPLATE_PATH = 'assets/templates/surat-jalan.xlsx';
+        let sjJszipPromise = null;
+        function loadSjJszip() {
+            if (window.JSZip) return Promise.resolve(window.JSZip);
+            if (!sjJszipPromise) {
+                sjJszipPromise = new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = SJ_JSZIP_CDN;
+                    script.onload = () => {
+                        if (window.JSZip) resolve(window.JSZip);
+                        else { sjJszipPromise = null; reject(new Error('Library ZIP tidak tersedia.')); }
+                    };
+                    script.onerror = () => { sjJszipPromise = null; reject(new Error('Gagal memuat library ZIP.')); };
+                    document.head.appendChild(script);
+                });
+            }
+            return sjJszipPromise;
+        }
+        function getSjTemplateBuffer() {
+            if (window._sjTemplateBuffer) return Promise.resolve(window._sjTemplateBuffer);
+            return fetch(SJ_TEMPLATE_PATH, { cache: 'no-store' })
+                .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.arrayBuffer(); })
+                .then(buf => { window._sjTemplateBuffer = buf; return buf; })
+                .catch(err => new Promise((resolve, reject) => {
+                    const input = document.getElementById('sj-template-file');
+                    if (!input) { reject(err); return; }
+                    const onChange = async () => {
+                        input.removeEventListener('change', onChange);
+                        const file = input.files && input.files[0];
+                        if (!file) { reject(new Error('Template tidak dipilih.')); return; }
+                        try {
+                            window._sjTemplateBuffer = await file.arrayBuffer();
+                            resolve(window._sjTemplateBuffer);
+                        } catch (e) { reject(e); }
+                    };
+                    input.addEventListener('change', onChange);
+                    input.value = '';
+                    input.click();
+                    showToast('Template tidak bisa dibaca otomatis. Pilih file assets/templates/surat-jalan.xlsx.', 'info');
+                }));
+        }
+        function excelSerialFromIso(iso) {
+            const p = String(iso || '').split('-');
+            if (p.length !== 3 || !p.every(v => /^\d+$/.test(v))) return null;
+            const utc = Date.UTC(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+            return Math.round((utc - Date.UTC(1899, 11, 30)) / 86400000);
+        }
+        async function fillSuratJalanTemplate(zip, ctx) {
+            const sheetFile = zip.file('xl/worksheets/sheet1.xml');
+            if (!sheetFile) throw new Error('Sheet template tidak ditemukan.');
+            const xml = await sheetFile.async('string');
+            const doc = new DOMParser().parseFromString(xml, 'application/xml');
+            if (doc.getElementsByTagName('parsererror').length) throw new Error('XML template tidak valid.');
+            const NS = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+            const cells = {};
+            Array.from(doc.getElementsByTagNameNS(NS, 'c')).forEach(c => { cells[c.getAttribute('r')] = c; });
+            const setCell = (ref, value, numeric) => {
+                let cell = cells[ref];
+                if (!cell) {
+                    const rowNo = Number(String(ref).replace(/[^0-9]/g, ''));
+                    const row = Array.from(doc.getElementsByTagNameNS(NS, 'row')).find(r => Number(r.getAttribute('r')) === rowNo);
+                    if (!row) throw new Error(`Baris ${rowNo} tidak ada di template.`);
+                    cell = doc.createElementNS(NS, 'c');
+                    cell.setAttribute('r', ref);
+                    row.appendChild(cell);
+                    cells[ref] = cell;
+                }
+                while (cell.firstChild) cell.removeChild(cell.firstChild);
+                if (numeric) {
+                    cell.removeAttribute('t');
+                    const v = doc.createElementNS(NS, 'v');
+                    v.textContent = String(value);
+                    cell.appendChild(v);
+                } else {
+                    cell.setAttribute('t', 'inlineStr');
+                    const is = doc.createElementNS(NS, 'is');
+                    const t = doc.createElementNS(NS, 't');
+                    t.textContent = String(value ?? '');
+                    is.appendChild(t);
+                    cell.appendChild(is);
+                }
+            };
+
+            setCell('D6', ctx.noSj);
+            setCell('G6', ctx.customer);
+            const serial = excelSerialFromIso(ctx.iso);
+            if (serial !== null) setCell('D7', serial, true);
+            // G7:H8 sudah merge dan ber-wrapText: baris 1 = alamat customer, baris 2 = No. PO.
+            setCell('G7', [ctx.alamat, 'No. PO: ' + ctx.poNumber].filter(Boolean).join('\n'));
+
+            const SLOTS = 10;
+            for (let i = 0; i < SLOTS; i++) {
+                const row = 10 + i;
+                const item = ctx.rows[i];
+                setCell(`B${row}`, item ? i + 1 : '', !!item);
+                setCell(`C${row}`, item ? (item.barangId || '-') : '');
+                setCell(`D${row}`, item ? window.displayItemName(item.barangId, item.nama) : '');
+                setCell(`E${row}`, item ? (item.jenis || '-') : '');
+                setCell(`F${row}`, item ? (item.lebar || '-') : '');
+                setCell(`G${row}`, item ? (item.ukuran || '-') : '');
+                setCell(`H${row}`, item ? Number(item.qty || 0) : '', !!item);
+            }
+            if (ctx.rows.length > SLOTS) showToast(`Template hanya menampung ${SLOTS} barang. ${ctx.rows.length - SLOTS} barang lainnya tidak ikut; gunakan Cetak SJ untuk semua item.`, 'warning');
+
+            // XMLSerializer sudah menyertakan deklarasi XML; jangan ditambah lagi
+            // karena dua deklarasi membuat Excel menganggap file rusak.
+            let serialized = new XMLSerializer().serializeToString(doc);
+            if (!/^\s*<\?xml/i.test(serialized)) {
+                serialized = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + serialized;
+            }
+            zip.file('xl/worksheets/sheet1.xml', serialized);
+        }
+        window.downloadSuratJalanExcel = async function(transactionId) {
+            const ctx = collectSuratJalanData(transactionId);
+            if (!ctx) { showToast('Transaksi Barang Keluar tidak ditemukan.', 'error'); return; }
+
+            // Prioritas: template .xlsx milik pengguna (logo & format asli tetap utuh).
+            try {
+                const JSZip = await loadSjJszip();
+                const buffer = await getSjTemplateBuffer();
+                const zip = await JSZip.loadAsync(buffer);
+                await fillSuratJalanTemplate(zip, ctx);
+                const blob = await zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                downloadFileFromBlob(blob, `Surat-Jalan-${ctx.noSj.replace(/[^A-Za-z0-9-]/g, '_')}.xlsx`);
+                showToast(`Surat Jalan ${ctx.noSj} diisi ke template Excel-mu.`, 'success');
+                return;
+            } catch (error) {
+                console.warn('Template SJ gagal dipakai, beralih ke template bawaan:', error);
+            }
+
+            // Fallback: template bawaan yang dibuat aplikasi.
+            let XLSX;
+            try { XLSX = await loadSjXlsx(); }
+            catch (error) { downloadSuratJalanCsv(ctx); return; }
+
+            const thin = { style: 'thin', color: { rgb: '777777' } };
+            const border = { top: thin, bottom: thin, left: thin, right: thin };
+            const fillLabel = { fill: { fgColor: { rgb: 'F2F2F2' } }, font: { bold: true } };
+            const fillHead = { fill: { fgColor: { rgb: 'DCE6F1' } }, font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } };
+            const center = { alignment: { horizontal: 'center', vertical: 'center' } };
+            const right = { alignment: { horizontal: 'right', vertical: 'center' } };
+
+            const headerRow = 7;
+            const firstItemRow = headerRow + 1;
+            const lastItemRow = firstItemRow + ctx.rows.length - 1;
+            const totalRow = lastItemRow + 1;
+            const signRow = totalRow + 2;
+            const noteRow = signRow + 2;
+            const aoa = [];
+            aoa[0] = ['SURAT JALAN'];
+            aoa[1] = ['Dokumen pengiriman barang keluar'];
+            aoa[3] = ['No. Surat Jalan', ctx.noSj, '', 'Tanggal', ctx.tanggal];
+            aoa[4] = ['Customer / Tujuan', ctx.customer];
+            aoa[5] = ['No. PO Customer', ctx.poNumber, '', 'ID Transaksi', ctx.tid];
+            aoa[headerRow] = ['No', 'ID Barang', 'Nama Barang', 'Kategori', 'Lebar', 'Ukuran', 'Satuan', 'Qty'];
+            ctx.rows.forEach((r, i) => {
+                aoa[firstItemRow + i] = [i + 1, r.barangId || '-', window.displayItemName(r.barangId, r.nama), r.jenis || '-', r.lebar || '-', r.ukuran || '-', r.satuan || '-', Number(r.qty || 0)];
+            });
+            aoa[totalRow] = ['TOTAL QTY', '', '', '', '', '', '', ctx.totalQty];
+            aoa[signRow] = ['Dibuat oleh,\n\n(' + String(window.gudangAppDb.currentUser?.name || 'Administrator') + ')', '', '', '', 'Diterima oleh,\n\n(________________________)', '', '', ''];
+            aoa[noteRow] = ['Dicetak dari Sistem Manajemen Inventory Gudang pada ' + new Date().toLocaleString('id-ID')];
+
+            const ws = XLSX.utils.aoa_to_sheet(aoa);
+            const setStyle = (r, c, style) => {
+                const addr = XLSX.utils.encode_cell({ r, c });
+                if (!ws[addr]) ws[addr] = { t: 's', v: '' };
+                ws[addr].s = { ...(ws[addr].s || {}), ...style };
+            };
+            const styleBlock = (r1, c1, r2, c2, style) => {
+                for (let r = r1; r <= r2; r++) for (let c = c1; c <= c2; c++) setStyle(r, c, style);
+            };
+
+            ws['!merges'] = [
+                { s: { r: 0, c: 0 }, e: { r: 0, c: 7 } },
+                { s: { r: 1, c: 0 }, e: { r: 1, c: 7 } },
+                { s: { r: 3, c: 1 }, e: { r: 3, c: 2 } },
+                { s: { r: 3, c: 4 }, e: { r: 3, c: 7 } },
+                { s: { r: 4, c: 1 }, e: { r: 4, c: 7 } },
+                { s: { r: 5, c: 1 }, e: { r: 5, c: 2 } },
+                { s: { r: 5, c: 4 }, e: { r: 5, c: 7 } },
+                { s: { r: totalRow, c: 0 }, e: { r: totalRow, c: 6 } },
+                { s: { r: signRow, c: 0 }, e: { r: signRow, c: 3 } },
+                { s: { r: signRow, c: 4 }, e: { r: signRow, c: 7 } },
+                { s: { r: noteRow, c: 0 }, e: { r: noteRow, c: 7 } }
+            ];
+            ws['!cols'] = [{ wch: 20 }, { wch: 18 }, { wch: 36 }, { wch: 18 }, { wch: 12 }, { wch: 12 }, { wch: 10 }, { wch: 12 }];
+            ws['!rows'] = [];
+            ws['!rows'][0] = { hpt: 28 };
+            ws['!rows'][signRow] = { hpt: 70 };
+            ws['!printOptions'] = { gridLines: false, headings: false };
+            ws['!pageSetup'] = { paperSize: 9, orientation: 'portrait', fitToPage: true, fitToWidth: 1, fitToHeight: 0 };
+
+            styleBlock(0, 0, 0, 7, { font: { bold: true, sz: 16 }, alignment: { horizontal: 'center', vertical: 'center' } });
+            styleBlock(1, 0, 1, 7, { font: { sz: 10, color: { rgb: '555555' } }, alignment: { horizontal: 'center' } });
+            [3, 4, 5].forEach(r => {
+                styleBlock(r, 0, r, 7, { ...border, alignment: { vertical: 'center' } });
+                setStyle(r, 0, fillLabel);
+                if (r !== 4) setStyle(r, 3, fillLabel);
+            });
+            styleBlock(headerRow, 0, headerRow, 7, { ...border, ...fillHead });
+            styleBlock(firstItemRow, 0, lastItemRow, 7, border);
+            for (let r = firstItemRow; r <= lastItemRow; r++) {
+                setStyle(r, 0, center);
+                setStyle(r, 7, right);
+            }
+            styleBlock(totalRow, 0, totalRow, 7, { ...border, font: { bold: true }, alignment: { horizontal: 'right', vertical: 'center' } });
+            styleBlock(signRow, 0, signRow, 7, { alignment: { horizontal: 'center', vertical: 'center', wrapText: true } });
+            styleBlock(noteRow, 0, noteRow, 7, { font: { sz: 9, color: { rgb: '666666' } } });
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Surat Jalan');
+            XLSX.writeFile(wb, `Surat-Jalan-${ctx.noSj.replace(/[^A-Za-z0-9-]/g, '_')}.xlsx`);
+            showToast(`Template Excel Surat Jalan ${ctx.noSj} berhasil diunduh.`, 'success');
+        };
+
 
         // KONFIRMASI DETAIL SEBELUM MENYIMPAN: berlaku untuk seluruh form utama.
         // Fungsi simpan asli tetap dipakai agar validasi, Worker, dan sinkronisasi tidak berubah.
@@ -4741,7 +5141,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 },
                 savePoItem: {
                     form: 'form-po', label: 'PO Masuk (Customer)',
-                    fields: [['po-id','ID Detail PO (utama)'],['po-no-customer','Nomor PO Customer'],['po-tanggal','Tanggal PO'],['po-customer','Customer']]
+                    fields: [['po-id','ID Detail PO (utama)'],['po-no-customer','Nomor PO Customer'],['po-tanggal','Tanggal PO'],['po-customer','Customer'],['po-alamat','Alamat Customer']]
                 },
                 saveMasukItem: {
                     form: 'form-masuk', label: 'Barang Masuk',
@@ -4749,7 +5149,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 },
                 saveKeluarItem: {
                     form: 'form-keluar', label: 'Barang Keluar',
-                    fields: [['keluar-id','ID Transaksi / Surat Jalan'],['keluar-tanggal','Tanggal'],['keluar-po-group','Nomor PO Customer'],['keluar-tujuan','Tujuan / Customer']]
+                    fields: [['keluar-id','ID Transaksi'],['keluar-no-sj','No. Surat Jalan'],['keluar-tanggal','Tanggal'],['keluar-po-group','Nomor PO Customer'],['keluar-tujuan','Tujuan / Customer']]
                 },
                 saveSampelItem: {
                     form: 'form-sampel', label: 'Sampel',
@@ -4890,6 +5290,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     });
                     const totalCard = document.createElement('div');
                     totalCard.className = 'mt-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-3';
+                    addDetailRow('No. Surat Jalan', document.getElementById('keluar-no-sj')?.value || '-', totalCard);
                     addDetailRow('Total Jenis Barang', String(selected.length), totalCard);
                     addDetailRow('Total Qty Keluar', selected.reduce((sum, x) => sum + x.qty, 0).toLocaleString('id-ID'), totalCard);
                     content.appendChild(totalCard);
@@ -5059,7 +5460,10 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             applyTheme('glass', localStorage.getItem('gudang_inventory_theme_mode') || 'dark');
             document.getElementById('masuk-id').value = generateMasukSequentialId();
             document.getElementById('masuk-tanggal').valueAsDate = new Date();
-            document.getElementById('keluar-id').value = generateKeluarSequentialId();
+            const initialKeluarId = generateKeluarSequentialId();
+            document.getElementById('keluar-id').value = initialKeluarId;
+            const initialSjField = document.getElementById('keluar-no-sj');
+            if (initialSjField && !initialSjField.value) initialSjField.value = window.generateKeluarNoSj(initialKeluarId);
             document.getElementById('keluar-tanggal').valueAsDate = new Date();
             document.getElementById('po-id').value = generatePoSequentialId();
             document.getElementById('po-tanggal').valueAsDate = new Date();

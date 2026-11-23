@@ -23,7 +23,7 @@
 
 
         // Force version check & cache bust timestamp
-        const APP_VERSION = "2026.11.18-inventory-v99-liquid-glass-ui2";
+        const APP_VERSION = "2026.11.23-inventory-v100-surat-jalan";
         if (localStorage.getItem('gudang_version') !== APP_VERSION) {
             localStorage.setItem('gudang_version', APP_VERSION);
         }

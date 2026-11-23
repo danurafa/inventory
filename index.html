@@ -600,6 +600,10 @@
                                 <label class="text-xs block mb-1">Nama Customer *</label>
                                 <input type="text" id="po-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA" autocomplete="off">
                             </div>
+                            <div>
+                                <label class="text-xs block mb-1">Alamat Customer <span class="text-gray-400">(untuk Surat Jalan)</span></label>
+                                <textarea id="po-alamat" rows="2" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus resize-y" placeholder="Jl. Raya Contoh No. 12, Bandung, Jawa Barat" autocomplete="off"></textarea>
+                            </div>
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between gap-2">
                                     <label class="text-xs font-semibold">Daftar Barang dalam PO *</label>
@@ -766,6 +770,10 @@
                                 <input type="date" id="keluar-tanggal" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                             </div>
                             <div>
+                                <label class="text-xs block mb-1">No. Surat Jalan *</label>
+                                <input type="text" id="keluar-no-sj" required maxlength="40" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" placeholder="SJ-2611-0001" autocomplete="off">
+                            </div>
+                            <div>
                                 <label class="text-xs block mb-1">Pilih Nomor PO Customer *</label>
                                 <select id="keluar-po-group" onchange="populatePoItemOptions()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="">-- Pilih Nomor PO —</option>
@@ -812,12 +820,13 @@
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-keluar" oninput="queueTableRender('keluar')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Customer..." autocomplete="off">
+                                    <input type="text" id="search-keluar" oninput="queueTableRender('keluar')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / No. SJ / Barang / Customer..." autocomplete="off">
                                 </div>
                                 <button onclick="printKeluarTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
                                     <span>Print</span>
                                 </button>
+                                <input type="file" id="sj-template-file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="hidden">
                             </div>
                         </div>
                         <div class="fluid-table-container flex-1 pb-2">
@@ -1405,6 +1414,6 @@
 
 
 
-    <script src="assets/app.js?v=login-welcome-card-20261123"></script>
+    <script src="assets/app.js?v=keluar-surat-jalan-alamat-20261123"></script>
 </body>
 </html>
