@@ -2445,7 +2445,11 @@
                 }
                 window.refreshAllViews?.();
                 resetPoForm();
-                showToast(isEdit?'PO Masuk (Customer) berhasil diperbarui.':'PO Masuk (Customer) berhasil disimpan ke Cloud.');
+                showToast(
+                    isEdit ? `Detail PO ${id} berhasil diperbarui.` : 'PO Customer berhasil disimpan ke Cloud.',
+                    'success',
+                    isEdit ? { title: 'Perubahan Tersimpan', icon: 'pencil' } : { title: 'PO Tersimpan', icon: 'check-circle-2' }
+                );
             } catch(error) { showToast(`PO Masuk (Customer) gagal disimpan: ${error.message}`,'error'); }
         };
 
@@ -2506,13 +2510,16 @@
                 const totalSent=g.rows.reduce((s,r)=>s+Number(r.terkirim||0),0);
                 const allClosed=g.rows.every(r=>Number(r.terkirim||0)>=Number(r.qty||0));
                 const status=allClosed?'CLOSED':(totalSent>0?'PARTIAL':'OPEN');
+                const alamatHtml = escapePrintHtml(g.head.alamat || '').replace(/\r?\n/g, '<br>') || '-';
+                window._poGroupAlamat = window._poGroupAlamat || {};
+                window._poGroupAlamat[groupToken] = g.head.alamat || '';
                 const details=g.rows.map(r=>{
                     const sent=Number(r.terkirim||0), remain=Math.max(0,Number(r.qty||0)-sent);
                     const ready=getPoReadyQty(r);
                     const lineStatus=sent>=Number(r.qty||0)?'CLOSED':(sent>0?'PARTIAL':'OPEN');
                     return `<tr class="bg-black/10 border-t border-white/5"><td class="py-2 px-3 font-mono">${r.id}</td><td class="py-2 px-3">${r.barangId} — ${window.displayItemName(r.barangId, r.nama)}</td><td class="py-2 px-3 text-right">${Number(r.qty||0).toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-emerald-300">${ready.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right">${sent.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-amber-300">${remain.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-center">${lineStatus}</td><td class="py-2 px-3 text-right">${isViewer?ready.toLocaleString('id-ID'):`<input type="number" min="0" max="${Math.min(remain,Number((window.gudangAppDb.items||[]).find(x=>x.id===r.barangId)?.stok||0))}" step="1" value="${ready}" id="ready-${r.id}" class="w-20 bg-dark-700 border border-white/15 rounded px-2 py-1 text-right"><button onclick="updatePoReady('${r.id}')" class="ml-1 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Atur</button>`}</td><td class="py-2 px-3 text-center">${!isViewer?`<button onclick="editPoItem('${r.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button><button onclick="deletePoItem('${r.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>`:'-'}</td></tr>`;
                 }).join('');
-                return `<tr class="hover:bg-white/5"><td class="py-3 px-2 text-center">${index+1}</td><td class="py-3 px-3 font-mono font-semibold">${g.head.noPoCustomer||g.head.id}</td><td class="py-3 px-3">${g.head.tanggal||'-'}</td><td class="py-3 px-3">${g.head.customer||'-'}</td><td class="py-3 px-3 text-center">${g.rows.length}</td><td class="py-3 px-3 text-right font-mono">${totalQty.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-right font-mono text-emerald-300">${totalSent.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${status==='CLOSED'?'bg-emerald-500/20 text-emerald-300':'bg-sky-500/20 text-sky-300'}">${status}</span></td><td class="py-3 px-3 text-center"><button type="button" onclick="togglePoDetails('${groupToken}', this, ${g.rows.length})" aria-expanded="${detailExpanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${detailExpanded ? 'Tutup' : 'Detail'} (${g.rows.length})</button></td></tr><tr id="po-detail-${groupToken}" data-po-group-key="${groupToken}" class="${detailExpanded?'':'hidden'}"><td colspan="9" class="p-2"><div class="rounded-xl border border-white/10 overflow-x-auto"><table class="w-full text-xs"><thead class="bg-white/5 text-gray-400"><tr><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">Barang</th><th class="p-2 text-right">Qty PO</th><th class="p-2 text-right">Siap</th><th class="p-2 text-right">Terkirim</th><th class="p-2 text-right">Sisa</th><th class="p-2 text-center">Status</th><th class="p-2 text-right">Atur Siap</th><th class="p-2 text-center">Aksi</th></tr></thead><tbody>${details}</tbody></table></div></td></tr>`;
+                return `<tr class="hover:bg-white/5"><td class="py-3 px-2 text-center">${index+1}</td><td class="py-3 px-3 font-mono font-semibold">${g.head.noPoCustomer||g.head.id}</td><td class="py-3 px-3">${g.head.tanggal||'-'}</td><td class="py-3 px-3">${g.head.customer||'-'}</td><td class="py-3 px-3 text-center">${g.rows.length}</td><td class="py-3 px-3 text-right font-mono">${totalQty.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-right font-mono text-emerald-300">${totalSent.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${status==='CLOSED'?'bg-emerald-500/20 text-emerald-300':'bg-sky-500/20 text-sky-300'}">${status}</span></td><td class="py-3 px-3 text-center"><button type="button" onclick="togglePoDetails('${groupToken}', this, ${g.rows.length})" aria-expanded="${detailExpanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${detailExpanded ? 'Tutup' : 'Detail'} (${g.rows.length})</button></td></tr><tr id="po-detail-${groupToken}" data-po-group-key="${groupToken}" class="${detailExpanded?'':'hidden'}"><td colspan="9" class="p-2"><div class="po-detail-alamat mb-2 px-1 text-[11px] text-gray-300"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><span class="opacity-60 font-semibold uppercase tracking-wide mr-1">Alamat Customer:</span><span class="po-detail-alamat-value">${alamatHtml}</span></div>${!isViewer?`<button type="button" onclick="editPoGroupAlamat('${groupToken}', this)" class="po-edit-alamat shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" style="touch-action:manipulation">Ubah Alamat</button>`:''}</div></div><div class="rounded-xl border border-white/10 overflow-x-auto"><table class="w-full text-xs"><thead class="bg-white/5 text-gray-400"><tr><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">Barang</th><th class="p-2 text-right">Qty PO</th><th class="p-2 text-right">Siap</th><th class="p-2 text-right">Terkirim</th><th class="p-2 text-right">Sisa</th><th class="p-2 text-center">Status</th><th class="p-2 text-right">Atur Siap</th><th class="p-2 text-center">Aksi</th></tr></thead><tbody>${details}</tbody></table></div></td></tr>`;
             }).join('') || `<tr><td colspan="9" class="py-6 text-center opacity-50">Tidak ada PO.</td></tr>`;
             // Polling cloud dapat merender ulang semua tampilan meski isi PO tidak berubah.
             // Jangan menyentuh tbody jika markup identik agar detail terbuka tidak berkedip.
@@ -2524,12 +2531,85 @@
             if (!row) return;
             const willOpen = row.classList.contains('hidden');
             row.classList.toggle('hidden', !willOpen);
+            // Pagination generik menyimpan display:none inline pada baris detail
+            // saat induknya di luar halaman. Tanpa ini baris baru tampil setelah
+            // polling 7 detik berikutnya (terasa sebagai delay tombol Detail).
+            if (willOpen) row.style.removeProperty('display');
+            else row.style.setProperty('display', 'none', 'important');
             if (willOpen) window._expandedPoGroupKeys.add(groupToken);
             else window._expandedPoGroupKeys.delete(groupToken);
             // Label tombol langsung berubah saat diklik, termasuk setelah render ulang tabel.
             if (button) {
                 button.textContent = `${willOpen ? 'Tutup' : 'Detail'} (${Number(count) || 0})`;
                 button.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            }
+        };
+        window.editPoGroupAlamat = function(groupToken, button) {
+            const row = document.getElementById(`po-detail-${groupToken}`);
+            const host = row?.querySelector('.po-detail-alamat');
+            if (!host) return;
+            if (host.querySelector('.po-alamat-editor')) {
+                window.cancelPoGroupAlamat(groupToken);
+                return;
+            }
+            const editor = document.createElement('textarea');
+            editor.rows = 3;
+            editor.className = 'po-alamat-editor w-full mt-2 bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus resize-y';
+            editor.value = window._poGroupAlamat?.[groupToken] || '';
+            editor.placeholder = 'Alamat customer untuk seluruh PO ini...';
+            const actions = document.createElement('div');
+            actions.className = 'po-alamat-editor-actions flex items-center gap-2 mt-2';
+            const save = document.createElement('button');
+            save.type = 'button';
+            save.textContent = 'Simpan Alamat';
+            save.className = 'px-2.5 py-1.5 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none';
+            save.addEventListener('click', () => window.savePoGroupAlamat(groupToken));
+            const cancel = document.createElement('button');
+            cancel.type = 'button';
+            cancel.textContent = 'Batal';
+            cancel.className = 'px-2.5 py-1.5 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none';
+            cancel.addEventListener('click', () => window.cancelPoGroupAlamat(groupToken));
+            actions.append(save, cancel);
+            host.append(editor, actions);
+            if (button) button.textContent = 'Tutup Editor';
+            editor.focus();
+        };
+        window.cancelPoGroupAlamat = function(groupToken) {
+            const host = document.getElementById(`po-detail-${groupToken}`)?.querySelector('.po-detail-alamat');
+            if (!host) return;
+            host.querySelector('.po-alamat-editor')?.remove();
+            host.querySelector('.po-alamat-editor-actions')?.remove();
+            const btn = host.querySelector('.po-edit-alamat');
+            if (btn) btn.textContent = 'Ubah Alamat';
+        };
+        window.savePoGroupAlamat = async function(groupToken) {
+            const host = document.getElementById(`po-detail-${groupToken}`)?.querySelector('.po-detail-alamat');
+            const editor = host?.querySelector('.po-alamat-editor');
+            if (!editor) return;
+            const alamat = editor.value.trim();
+            let key;
+            try { key = decodeURIComponent(groupToken); } catch (_) { key = groupToken; }
+            const records = (window.gudangAppDb.po || []).filter(r =>
+                `${String(r.customer||'').toUpperCase()}|${String(r.noPoCustomer||r.id).toUpperCase()}` === key
+            );
+            if (!records.length) {
+                showToast('Data PO tidak ditemukan.', 'error');
+                return;
+            }
+            editor.disabled = true;
+            try {
+                for (const r of records) {
+                    await sendOperation('po.update', { id: r.id, record: { alamat } });
+                }
+                window._poGroupAlamat = window._poGroupAlamat || {};
+                window._poGroupAlamat[groupToken] = alamat;
+                window.refreshAllViews?.();
+                showToast(`Alamat customer berhasil diperbarui untuk ${records.length} barang PO.`, 'success', {
+                    title: 'Alamat PO Diperbarui', icon: 'map-pin'
+                });
+            } catch (error) {
+                editor.disabled = false;
+                showToast(`Gagal menyimpan alamat PO: ${error.message}`, 'error');
             }
         };
         window.updatePoReady = async function(id) {
@@ -5386,6 +5466,30 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             }
             return sjXlsxPromise;
         }
+        // Alamat SJ diambil dari PO, tapi data lama bisa menyimpannya hanya di
+        // salah satu detail PO. Cari dari semua baris PO dalam grup yang sama
+        // supaya Riwayat SJ tetap menampilkan alamat walau poRef tidak cocok.
+        function resolvePoAlamat(head, rows) {
+            const poList = window.gudangAppDb.po || [];
+            const byId = id => poList.find(p => String(p.id) === String(id));
+            const direct = byId(head.poRef);
+            if (direct?.alamat) return direct.alamat;
+            for (const r of rows) {
+                const po = byId(r.poRef);
+                if (po?.alamat) return po.alamat;
+            }
+            if (head.alamat) return head.alamat;
+            const groupKeys = [...new Set(rows.map(r => {
+                const po = byId(r.poRef);
+                return po ? `${String(po.customer||'').toUpperCase()}|${String(po.noPoCustomer||po.id).toUpperCase()}` : '';
+            }).filter(Boolean))];
+            for (const key of groupKeys) {
+                const match = poList.find(p => p.alamat &&
+                    `${String(p.customer||'').toUpperCase()}|${String(p.noPoCustomer||p.id).toUpperCase()}` === key);
+                if (match?.alamat) return match.alamat;
+            }
+            return '';
+        }
         function collectSuratJalanData(transactionId) {
             const tid = String(transactionId || '').trim();
             const rows = (window.gudangAppDb.keluar || [])
@@ -5400,7 +5504,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 noSj: window.getKeluarNoSj(head),
                 poNumber: po?.noPoCustomer || head.poRef || '-',
                 customer: head.tujuan || po?.customer || '-',
-                alamat: po?.alamat || head.alamat || '',
+                alamat: resolvePoAlamat(head, rows),
                 tanggal: isoDate ? formatPrintDate(isoDate) : String(head.tanggal || '-'),
                 iso: isoDate || String(head.tanggal || ''),
                 totalQty: rows.reduce((sum, r) => sum + Number(r.qty || 0), 0)

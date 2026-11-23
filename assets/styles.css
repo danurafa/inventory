@@ -15491,4 +15491,34 @@ html body.theme-glass #inventory-main-content :is(
   will-change:auto !important;
 }
 
+/* Alamat customer di dalam detail PO: teks bisa wrap, tidak ikut scroll horizontal. */
+html body.theme-glass #tab-po tr[id^="po-detail-"] > td > div.po-detail-alamat {
+  max-width:100% !important;
+  overflow:visible !important;
+  overflow-x:visible !important;
+  border:0 !important;
+  border-radius:0 !important;
+  -webkit-overflow-scrolling:auto !important;
+  line-height:1.5 !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+}
+html body.theme-glass #tab-po tr[id^="po-detail-"] .po-detail-alamat-value {
+  font-weight:600 !important;
+}
+html body.theme-glass #tab-po tr[id^="po-detail-"] .po-edit-alamat {
+  touch-action:manipulation;
+}
+html body.theme-glass #tab-po tr[id^="po-detail-"] .po-alamat-editor {
+  display:block !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+  line-height:1.5 !important;
+  white-space:pre-wrap !important;
+}
+html body.theme-glass #tab-po tr[id^="po-detail-"] .po-alamat-editor-actions button {
+  min-height:36px !important;
+  touch-action:manipulation;
+}
+
 
