@@ -136,6 +136,10 @@
                     <i data-lucide="minus-circle" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Barang Keluar</span>
                 </button>
+                <button onclick="switchTab('sj')" id="nav-sj" title="Riwayat Surat Jalan" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                    <i data-lucide="file-text" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <span>Riwayat Surat Jalan</span>
+                </button>
                 <button onclick="switchTab('sampel')" id="nav-sampel" title="Sampel" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                     <i data-lucide="box" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Sampel</span>
@@ -841,12 +845,75 @@
                                         <th class="py-3 px-3">Customer / Tujuan</th>
                                         <th class="py-3 px-3">Nomor PO</th>
                                         <th class="py-3 px-3 text-center">Detail Barang</th>
-                                        <th id="keluar-th-aksi" class="py-3 px-3 rounded-r-xl text-center">Aksi</th>
+                                        <th id="keluar-th-aksi" class="py-3 px-3 rounded-r-xl text-center" style="min-width:190px">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="keluar-table-body" class="divide-y divide-white/5">
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5b. TAB RIWAYAT SURAT JALAN -->
+            <section id="tab-sj" class="space-y-6 w-full hidden">
+                <div class="app-card p-5 rounded-2xl">
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                        <div class="flex items-center gap-3">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-500/10 text-emerald-300"><i data-lucide="file-text"></i></div>
+                            <div>
+                                <h3 class="font-bold text-xs tracking-wider uppercase text-gray-100">RIWAYAT SURAT JALAN</h3>
+                                <p id="sj-summary" class="mt-1 text-[10px] text-gray-400">Seluruh surat jalan dari transaksi barang keluar</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 mb-4">
+                        <div class="lg:col-span-4">
+                            <label class="text-[10px] block mb-1 text-gray-400">Cari No. SJ / ID / Customer / Barang</label>
+                            <input type="text" id="sj-search" oninput="queueTableRender('sj')" placeholder="Cari surat jalan..." class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
+                        </div>
+                        <div class="lg:col-span-2">
+                            <label class="text-[10px] block mb-1 text-gray-400">Dari Tanggal</label>
+                            <input type="date" id="sj-dari" onchange="queueTableRender('sj')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
+                        </div>
+                        <div class="lg:col-span-2">
+                            <label class="text-[10px] block mb-1 text-gray-400">Sampai Tanggal</label>
+                            <input type="date" id="sj-sampai" onchange="queueTableRender('sj')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
+                        </div>
+                        <div class="lg:col-span-3">
+                            <label class="text-[10px] block mb-1 text-gray-400">Customer / Tujuan</label>
+                            <select id="sj-customer" onchange="queueTableRender('sj')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off"><option value="">Semua customer</option></select>
+                        </div>
+                        <div class="lg:col-span-1 flex items-end">
+                            <button type="button" onclick="resetSjFilter()" class="w-full px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Reset</button>
+                        </div>
+                    </div>
+                    <div class="fluid-table-container overflow-x-auto">
+                        <table class="w-full text-xs min-w-[1100px]" style="overflow-anchor:none">
+                            <thead class="bg-white/5 text-gray-400">
+                                <tr>
+                                    <th class="py-3 px-2 rounded-l-xl text-center">No</th>
+                                    <th class="py-3 px-3 text-left">No. Surat Jalan</th>
+                                    <th class="py-3 px-3 text-left">Tanggal</th>
+                                    <th class="py-3 px-3 text-left">Customer / Tujuan</th>
+                                    <th class="py-3 px-3 text-left">Alamat</th>
+                                    <th class="py-3 px-3 text-left">No. PO</th>
+                                    <th class="py-3 px-3 text-center">Barang</th>
+                                    <th class="py-3 px-3 text-right">Total Qty</th>
+                                    <th class="py-3 px-3 text-left">User</th>
+                                    <th class="py-3 px-3 text-center rounded-r-xl" style="min-width:190px">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sj-table-body" class="divide-y divide-white/5"></tbody>
+                        </table>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-3 border-t border-white/10">
+                        <p id="sj-page-info" class="text-[11px] text-gray-400">Menampilkan 0 dari 0 Surat Jalan</p>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="sjChangePage(-1, this)" id="sj-prev" aria-disabled="true" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Sebelumnya</button>
+                            <span id="sj-page-indicator" class="text-[11px] font-semibold text-gray-300">Halaman 1 dari 1</span>
+                            <button type="button" onclick="sjChangePage(1, this)" id="sj-next" aria-disabled="false" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Berikutnya</button>
                         </div>
                     </div>
                 </div>
@@ -1414,6 +1481,6 @@
 
 
 
-    <script src="assets/app.js?v=keluar-surat-jalan-alamat-20261123"></script>
+    <script src="assets/app.js?v=static-search-placeholder-20261123"></script>
 </body>
 </html>

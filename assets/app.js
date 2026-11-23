@@ -1,5 +1,40 @@
 
 
+        // Lucide menyimpan atribut data-lucide juga pada SVG hasil render, sehingga
+        // createIcons() bawaan mengganti ulang SVG yang sudah jadi setiap kali dipanggil.
+        // Itu yang bikin tombol (Cetak SJ / Excel SJ) berkedip saat tabel dirender ulang.
+        // Bungkus sekali agar hanya placeholder <i data-lucide> yang belum dirender yang disentuh.
+        (function patchLucideNoBlink() {
+            const lib = window.lucide;
+            if (!lib || typeof lib.createIcons !== 'function' || lib.__inventoryNoBlink) return;
+            const original = lib.createIcons;
+            lib.createIcons = function(options = {}) {
+                const root = options.root || document;
+                const rendered = [];
+                root.querySelectorAll('svg.lucide[data-lucide]').forEach(svg => {
+                    rendered.push([svg, svg.getAttribute('data-lucide')]);
+                    svg.removeAttribute('data-lucide');
+                });
+                try {
+                    return original.call(lib, options);
+                } finally {
+                    rendered.forEach(([svg, name]) => svg.setAttribute('data-lucide', name));
+                }
+            };
+            lib.__inventoryNoBlink = true;
+        })();
+
+        // Renderer tabel menyimpan HTML terakhir agar perbandingan tidak kalah dengan
+        // SVG hasil lucide (innerHTML DOM jadi beda dari string asal walau data sama).
+        const inventoryTableHtmlCache = new WeakMap();
+        function setTableHtml(tbody, html) {
+            if (!tbody) return false;
+            if (inventoryTableHtmlCache.get(tbody) === html) return false;
+            tbody.innerHTML = html;
+            inventoryTableHtmlCache.set(tbody, html);
+            return true;
+        }
+
         // Normalisasi KHUSUS TAMPILAN: jika nama lama sudah diawali ID barang,
         // hilangkan awalan ID tersebut agar tidak tampil dua kali. Data database tidak diubah.
         window.displayItemName = function(barangId, nama) {
@@ -700,7 +735,7 @@
             if (refreshAllViewsFrame !== null) return;
             refreshAllViewsFrame = requestAnimationFrame(() => {
                 refreshAllViewsFrame = null;
-                const activeTab = ['dashboard','master','po','masuk','keluar','sampel','retur','users','backup']
+                const activeTab = ['dashboard','master','po','masuk','keluar','sj','sampel','retur','users','backup']
                     .find(tab => {
                         const section = document.getElementById(`tab-${tab}`);
                         return section && !section.classList.contains('hidden');
@@ -716,6 +751,7 @@
                     master: renderMasterTable,
                     masuk: renderMasukTable,
                     keluar: renderKeluarTable,
+                    sj: renderSjHistory,
                     po: renderPoTable,
                     sampel: renderSampelTable,
                     retur: renderReturTable,
@@ -1185,6 +1221,7 @@
                     po: window.renderPoTable,
                     masuk: window.renderMasukTable,
                     keluar: window.renderKeluarTable,
+                    sj: window.renderSjHistory,
                     sampel: window.renderSampelTable,
                     retur: window.renderReturTable
                 };
@@ -1193,7 +1230,7 @@
         };
 
         window.switchTab = function(tabId) {
-            const tabs = ['dashboard', 'master', 'po', 'masuk', 'keluar', 'sampel', 'retur', 'users', 'backup'];
+            const tabs = ['dashboard', 'master', 'po', 'masuk', 'keluar', 'sj', 'sampel', 'retur', 'users', 'backup'];
             tabs.forEach(t => {
                 const sec = document.getElementById(`tab-${t}`);
                 const btn = document.getElementById(`nav-${t}`);
@@ -1224,6 +1261,7 @@
                 po: window.renderPoTable,
                 masuk: window.renderMasukTable,
                 keluar: window.renderKeluarTable,
+                sj: window.renderSjHistory,
                 sampel: window.renderSampelTable,
                 retur: window.renderReturTable,
                 users: window.renderUserTable
@@ -1839,14 +1877,14 @@
                         <td class="py-3 px-3 text-right font-mono opacity-70">${i.min.toLocaleString('id-ID')}</td>
                         ${!isViewer ? `
                             <td class="py-3 px-3 text-center flex items-center justify-center gap-1.5">
-                                <button onclick="editMasterItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 font-semibold inline-flex items-center gap-1">Edit</button>
-                                <button onclick="deleteMasterItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-semibold inline-flex items-center gap-1">Hapus</button>
+                                <button onclick="editMasterItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                                <button onclick="deleteMasterItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                             </td>
                         ` : ''}
                     </tr>
                 `;
             }).join('') || `<tr><td colspan="${isViewer ? 10 : 11}" class="py-6 text-center opacity-50">Tidak ada data master barang.</td></tr>`;
-            if (tbody.innerHTML !== renderedMasterRows) tbody.innerHTML = renderedMasterRows;
+            setTableHtml(tbody, renderedMasterRows);
             lucide.createIcons();
         };
 
@@ -2034,13 +2072,13 @@
                     <td class="py-3 px-3 font-medium">${i.supplier}</td>
                     ${!isViewer ? `
                         <td class="py-3 px-3 text-center">
-                            <button onclick="editMasukItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-semibold mr-1">Edit</button>
-                            <button onclick="deleteMasukItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
+                            <button onclick="editMasukItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                            <button onclick="deleteMasukItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                         </td>
                     ` : ''}
                 </tr>
             `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
-            if (tbody.innerHTML !== renderedMasukRows) tbody.innerHTML = renderedMasukRows;
+            setTableHtml(tbody, renderedMasukRows);
             lucide.createIcons();
         };
 
@@ -2248,8 +2286,8 @@
                         <td class="p-2 text-right font-mono font-bold text-rose-400">-${Number(row.qty || 0).toLocaleString('id-ID')}</td>
                         <td class="p-2 font-mono">${esc((window.gudangAppDb.po || []).find(p => String(p.id) === String(row.poRef))?.noPoCustomer || row.poRef || '-')}</td>
                         <td class="p-2 text-center">${!isViewer ? `
-                            <button onclick="editKeluarItem('${esc(row.id)}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-semibold mr-1">Edit</button>
-                            <button onclick="deleteKeluarItem('${esc(row.id)}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
+                            <button onclick="editKeluarItem('${esc(row.id)}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                            <button onclick="deleteKeluarItem('${esc(row.id)}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                         ` : '-'}</td>
                     </tr>
                 `).join('');
@@ -2263,8 +2301,8 @@
                         <td class="py-3 px-3 text-right font-mono font-bold text-rose-400">-${totalQty.toLocaleString('id-ID')}</td>
                         <td class="py-3 px-3 font-medium">${esc(group.head.tujuan || '-')}</td>
                         <td class="py-3 px-3 font-mono opacity-80">${esc(poRefs.join(', '))}</td>
-                        <td class="py-3 px-3 text-center"><button onclick="toggleKeluarDetails('${token}')" class="px-3 py-1 rounded bg-indigo-500/20 text-indigo-300 text-xs font-semibold">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button></td>
-                        <td class="py-3 px-3 text-center"><div class="flex flex-col items-center gap-1"><button onclick="printSuratJalan('${esc(group.transactionId)}')" class="px-3 py-1 rounded bg-emerald-500/20 text-emerald-300 text-xs font-semibold inline-flex items-center gap-1" title="Cetak Surat Jalan"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button><button onclick="downloadSuratJalanExcel('${esc(group.transactionId)}')" class="px-3 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-semibold inline-flex items-center gap-1" title="Download template Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button>${isViewer ? '' : '<span class="text-[10px] text-gray-400">Aksi per barang</span>'}</div></td>
+                        <td class="py-3 px-3 text-center"><button type="button" onclick="toggleKeluarDetails('${token}', this, ${group.rows.length})" aria-expanded="${expanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button></td>
+                        <td class="py-3 px-3 text-center"><div class="flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:190px"><button onclick="printSuratJalan('${esc(group.transactionId)}')" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan sesuai template Excel"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button><button onclick="downloadSuratJalanExcel('${esc(group.transactionId)}')" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download template Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button></div></td>
                     </tr>
                     <tr id="keluar-detail-${token}" data-keluar-group-key="${token}" class="${expanded ? '' : 'hidden'}">
                         <td colspan="9" class="p-2 bg-black/10">
@@ -2280,17 +2318,22 @@
                         </td>
                     </tr>`;
             }).join('') || `<tr><td colspan="9" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
-            if (tbody.innerHTML !== renderedKeluarRows) tbody.innerHTML = renderedKeluarRows;
+            setTableHtml(tbody, renderedKeluarRows);
             lucide.createIcons();
         };
 
-        window.toggleKeluarDetails = function(token) {
+        window.toggleKeluarDetails = function(token, button, count) {
             const row = document.getElementById(`keluar-detail-${token}`);
             if (!row) return;
             const willOpen = row.classList.contains('hidden');
             row.classList.toggle('hidden', !willOpen);
             if (willOpen) window._expandedKeluarGroupKeys.add(token);
             else window._expandedKeluarGroupKeys.delete(token);
+            // Label tombol ikut berubah saat diklik; jangan menunggu render ulang tabel.
+            if (button) {
+                button.textContent = `${willOpen ? 'Tutup' : 'Detail'} (${Number(count) || 0})`;
+                button.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            }
         };
 
         // PO CRUD
@@ -2306,7 +2349,7 @@
                 <div class="sm:col-span-5"><label class="text-[10px] text-gray-400">Barang</label><select ${n===1?'id="po-barang"':''} data-po-field="barangId" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"><option value="">-- Pilih Barang --</option>${itemOptions}</select></div>
                 <div class="sm:col-span-3"><label class="text-[10px] text-gray-400">Qty PO</label><input ${n===1?'id="po-qty"':''} data-po-field="qty" type="number" min="1" step="1" value="${values.qty ?? 1}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
                 <div class="sm:col-span-3"><label class="text-[10px] text-gray-400">Qty Siap Dikirim</label><input ${n===1?'id="po-siap"':''} data-po-field="siapKirim" type="number" min="0" step="1" value="${values.siapKirim ?? 0}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
-                <div class="sm:col-span-1 flex items-end"><button type="button" onclick="this.closest('[data-po-item-row]').remove(); refreshPoItemRowIds()" class="po-remove-item-btn w-full py-2 rounded-lg bg-rose-500/15 text-rose-300 text-xs" title="Hapus baris">✕</button></div>`;
+                <div class="sm:col-span-1 flex items-end"><button type="button" onclick="this.closest('[data-po-item-row]').remove(); refreshPoItemRowIds()" class="po-remove-item-btn w-full py-1.5 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Hapus baris">✕</button></div>`;
             host.appendChild(row);
             const select = row.querySelector('[data-po-field="barangId"]'); if (values.barangId) select.value = values.barangId;
             refreshPoItemRowIds();
@@ -2417,22 +2460,27 @@
                     const sent=Number(r.terkirim||0), remain=Math.max(0,Number(r.qty||0)-sent);
                     const ready=getPoReadyQty(r);
                     const lineStatus=sent>=Number(r.qty||0)?'CLOSED':(sent>0?'PARTIAL':'OPEN');
-                    return `<tr class="bg-black/10 border-t border-white/5"><td class="py-2 px-3 font-mono">${r.id}</td><td class="py-2 px-3">${r.barangId} — ${window.displayItemName(r.barangId, r.nama)}</td><td class="py-2 px-3 text-right">${Number(r.qty||0).toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-emerald-300">${ready.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right">${sent.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-amber-300">${remain.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-center">${lineStatus}</td><td class="py-2 px-3 text-right">${isViewer?ready.toLocaleString('id-ID'):`<input type="number" min="0" max="${Math.min(remain,Number((window.gudangAppDb.items||[]).find(x=>x.id===r.barangId)?.stok||0))}" step="1" value="${ready}" id="ready-${r.id}" class="w-20 bg-dark-700 border border-white/15 rounded px-2 py-1 text-right"><button onclick="updatePoReady('${r.id}')" class="ml-1 px-2 py-1 rounded bg-emerald-500/15 text-emerald-300">Atur</button>`}</td><td class="py-2 px-3 text-center">${!isViewer?`<button onclick="editPoItem('${r.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 mr-1">Edit</button><button onclick="deletePoItem('${r.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-300">Hapus</button>`:'-'}</td></tr>`;
+                    return `<tr class="bg-black/10 border-t border-white/5"><td class="py-2 px-3 font-mono">${r.id}</td><td class="py-2 px-3">${r.barangId} — ${window.displayItemName(r.barangId, r.nama)}</td><td class="py-2 px-3 text-right">${Number(r.qty||0).toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-emerald-300">${ready.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right">${sent.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-amber-300">${remain.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-center">${lineStatus}</td><td class="py-2 px-3 text-right">${isViewer?ready.toLocaleString('id-ID'):`<input type="number" min="0" max="${Math.min(remain,Number((window.gudangAppDb.items||[]).find(x=>x.id===r.barangId)?.stok||0))}" step="1" value="${ready}" id="ready-${r.id}" class="w-20 bg-dark-700 border border-white/15 rounded px-2 py-1 text-right"><button onclick="updatePoReady('${r.id}')" class="ml-1 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Atur</button>`}</td><td class="py-2 px-3 text-center">${!isViewer?`<button onclick="editPoItem('${r.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button><button onclick="deletePoItem('${r.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>`:'-'}</td></tr>`;
                 }).join('');
-                return `<tr class="hover:bg-white/5"><td class="py-3 px-2 text-center">${index+1}</td><td class="py-3 px-3 font-mono font-semibold">${g.head.noPoCustomer||g.head.id}</td><td class="py-3 px-3">${g.head.tanggal||'-'}</td><td class="py-3 px-3">${g.head.customer||'-'}</td><td class="py-3 px-3 text-center">${g.rows.length}</td><td class="py-3 px-3 text-right font-mono">${totalQty.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-right font-mono text-emerald-300">${totalSent.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${status==='CLOSED'?'bg-emerald-500/20 text-emerald-300':'bg-sky-500/20 text-sky-300'}">${status}</span></td><td class="py-3 px-3 text-center"><button onclick="togglePoDetails('${groupToken}')" class="px-3 py-1 rounded bg-indigo-500/20 text-indigo-300 text-xs">Detail (${g.rows.length})</button></td></tr><tr id="po-detail-${groupToken}" data-po-group-key="${groupToken}" class="${detailExpanded?'':'hidden'}"><td colspan="9" class="p-2"><div class="rounded-xl border border-white/10 overflow-x-auto"><table class="w-full text-xs"><thead class="bg-white/5 text-gray-400"><tr><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">Barang</th><th class="p-2 text-right">Qty PO</th><th class="p-2 text-right">Siap</th><th class="p-2 text-right">Terkirim</th><th class="p-2 text-right">Sisa</th><th class="p-2 text-center">Status</th><th class="p-2 text-right">Atur Siap</th><th class="p-2 text-center">Aksi</th></tr></thead><tbody>${details}</tbody></table></div></td></tr>`;
+                return `<tr class="hover:bg-white/5"><td class="py-3 px-2 text-center">${index+1}</td><td class="py-3 px-3 font-mono font-semibold">${g.head.noPoCustomer||g.head.id}</td><td class="py-3 px-3">${g.head.tanggal||'-'}</td><td class="py-3 px-3">${g.head.customer||'-'}</td><td class="py-3 px-3 text-center">${g.rows.length}</td><td class="py-3 px-3 text-right font-mono">${totalQty.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-right font-mono text-emerald-300">${totalSent.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${status==='CLOSED'?'bg-emerald-500/20 text-emerald-300':'bg-sky-500/20 text-sky-300'}">${status}</span></td><td class="py-3 px-3 text-center"><button type="button" onclick="togglePoDetails('${groupToken}', this, ${g.rows.length})" aria-expanded="${detailExpanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${detailExpanded ? 'Tutup' : 'Detail'} (${g.rows.length})</button></td></tr><tr id="po-detail-${groupToken}" data-po-group-key="${groupToken}" class="${detailExpanded?'':'hidden'}"><td colspan="9" class="p-2"><div class="rounded-xl border border-white/10 overflow-x-auto"><table class="w-full text-xs"><thead class="bg-white/5 text-gray-400"><tr><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">Barang</th><th class="p-2 text-right">Qty PO</th><th class="p-2 text-right">Siap</th><th class="p-2 text-right">Terkirim</th><th class="p-2 text-right">Sisa</th><th class="p-2 text-center">Status</th><th class="p-2 text-right">Atur Siap</th><th class="p-2 text-center">Aksi</th></tr></thead><tbody>${details}</tbody></table></div></td></tr>`;
             }).join('') || `<tr><td colspan="9" class="py-6 text-center opacity-50">Tidak ada PO.</td></tr>`;
             // Polling cloud dapat merender ulang semua tampilan meski isi PO tidak berubah.
             // Jangan menyentuh tbody jika markup identik agar detail terbuka tidak berkedip.
-            if (tbody.innerHTML !== renderedPoRows) tbody.innerHTML = renderedPoRows;
+            setTableHtml(tbody, renderedPoRows);
             lucide.createIcons();
         };
-        window.togglePoDetails = function(groupToken) {
+        window.togglePoDetails = function(groupToken, button, count) {
             const row = document.getElementById(`po-detail-${groupToken}`);
             if (!row) return;
             const willOpen = row.classList.contains('hidden');
             row.classList.toggle('hidden', !willOpen);
             if (willOpen) window._expandedPoGroupKeys.add(groupToken);
             else window._expandedPoGroupKeys.delete(groupToken);
+            // Label tombol langsung berubah saat diklik, termasuk setelah render ulang tabel.
+            if (button) {
+                button.textContent = `${willOpen ? 'Tutup' : 'Detail'} (${Number(count) || 0})`;
+                button.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            }
         };
         window.updatePoReady = async function(id) {
             const input=document.getElementById(`ready-${id}`); if(!input) return;
@@ -2523,13 +2571,13 @@
                     <td class="py-3 px-3 text-center opacity-80 font-mono">${i.tebal || '-'}</td>
                     ${!isViewer ? `
                         <td class="py-3 px-3 text-center">
-                            <button onclick="editSampelItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-semibold mr-1">Edit</button>
-                            <button onclick="deleteSampelItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
+                            <button onclick="editSampelItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                            <button onclick="deleteSampelItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                         </td>
                     ` : ''}
                 </tr>
             `).join('') || `<tr><td colspan="${isViewer ? 10 : 11}" class="py-6 text-center opacity-50">Tidak ada data sampel.</td></tr>`;
-            if (tbody.innerHTML !== renderedSampelRows) tbody.innerHTML = renderedSampelRows;
+            setTableHtml(tbody, renderedSampelRows);
             lucide.createIcons();
         };
 
@@ -2716,13 +2764,13 @@
                     <td class="py-3 px-3 font-medium">${i.keterangan}</td>
                     ${!isViewer ? `
                         <td class="py-3 px-3 text-center">
-                            <button onclick="editReturItem('${i.id}')" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-semibold mr-1">Edit</button>
-                            <button onclick="deleteReturItem('${i.id}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>
+                            <button onclick="editReturItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                            <button onclick="deleteReturItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                         </td>
                     ` : ''}
                 </tr>
             `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
-            if (tbody.innerHTML !== renderedReturRows) tbody.innerHTML = renderedReturRows;
+            setTableHtml(tbody, renderedReturRows);
             lucide.createIcons();
         };
 
@@ -2819,15 +2867,15 @@
                         <td class="py-3 px-3 text-center">
                             ${(window.gudangAppDb.currentUser?.role === 'superadmin' || (window.gudangAppDb.currentUser?.role === 'admin' && ['staff','viewer'].includes(u.role))) && u.username !== 'superadmin' ? `
                                 <div class="flex items-center justify-center gap-2">
-                                    <button onclick="resetUserPassword('${u.username}')" class="px-2 py-1 rounded bg-amber-500/20 text-amber-300 text-xs font-semibold">Reset Password</button>
-                                    ${u.username !== window.gudangAppDb.currentUser?.username ? `<button onclick="deleteUser('${u.username}')" class="px-2 py-1 rounded bg-rose-500/20 text-rose-400 text-xs font-semibold">Hapus</button>` : ''}
+                                    <button onclick="resetUserPassword('${u.username}')" class="px-2 py-1 rounded-full border border-white/10 bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Reset Password</button>
+                                    ${u.username !== window.gudangAppDb.currentUser?.username ? `<button onclick="deleteUser('${u.username}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>` : ''}
                                 </div>
                             ` : ''}
                         </td>
                     </tr>
                 `;
             }).join('');
-            if (tbody.innerHTML !== renderedUserRows) tbody.innerHTML = renderedUserRows;
+            setTableHtml(tbody, renderedUserRows);
             lucide.createIcons();
         };
 
@@ -4776,72 +4824,212 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             printWindow.focus();
         }
 
+        // RIWAYAT SURAT JALAN — satu baris per transaksi barang keluar, memakai helper data SJ yang sama.
+        function collectSjHistoryGroups() {
+            const ids = [...new Set((window.gudangAppDb.keluar || []).map(r => String(r.transactionId || r.groupId || r.id)))];
+            return ids.map(id => {
+                const ctx = collectSuratJalanData(id);
+                if (!ctx) return null;
+                ctx.poNumbers = [...new Set(ctx.rows.map(r => {
+                    const po = (window.gudangAppDb.po || []).find(p => String(p.id) === String(r.poRef));
+                    return po?.noPoCustomer || r.poRef || '-';
+                }))];
+                ctx.user = ctx.head.user || 'Administrator';
+                return ctx;
+            }).filter(Boolean).sort((a, b) => String(b.iso || '').localeCompare(String(a.iso || '')) || String(b.tid).localeCompare(String(a.tid)));
+        }
+        let sjCustomerSignature = '';
+        const SJ_HISTORY_PER_PAGE = 12;
+        let sjHistoryPage = 1;
+        let sjFilterSignature = '';
+        function populateSjCustomerFilter() {
+            const select = document.getElementById('sj-customer');
+            if (!select) return;
+            const names = [...new Set(collectSjHistoryGroups().map(g => String(g.customer || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'id'));
+            const signature = names.join('\u0000');
+            if (signature === sjCustomerSignature) return;
+            sjCustomerSignature = signature;
+            const current = select.value;
+            select.innerHTML = '<option value="">Semua customer</option>' + names.map(n => `<option value="${escapePrintHtml(n)}">${escapePrintHtml(n)}</option>`).join('');
+            if (names.includes(current)) select.value = current;
+        }
+        window.resetSjFilter = function() {
+            ['sj-search', 'sj-dari', 'sj-sampai', 'sj-customer'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            sjHistoryPage = 1;
+            sjFilterSignature = '';
+            window.renderSjHistory();
+        };
+        window.renderSjHistory = function() {
+            const body = document.getElementById('sj-table-body');
+            if (!body) return;
+            populateSjCustomerFilter();
+            const q = (document.getElementById('sj-search')?.value || '').trim().toLowerCase();
+            const dari = document.getElementById('sj-dari')?.value || '';
+            const sampai = document.getElementById('sj-sampai')?.value || '';
+            const customer = document.getElementById('sj-customer')?.value || '';
+            const filterSignature = [q, dari, sampai, customer].join('\u0001');
+            if (filterSignature !== sjFilterSignature) {
+                sjFilterSignature = filterSignature;
+                sjHistoryPage = 1;
+            }
+            const all = collectSjHistoryGroups();
+            const filtered = all.filter(g => {
+                const date = String(g.iso || '');
+                if (dari && date < dari) return false;
+                if (sampai && date > sampai) return false;
+                if (customer && String(g.customer) !== customer) return false;
+                if (q) {
+                    const hay = [g.noSj, g.tid, g.customer, g.alamat, ...g.poNumbers,
+                        ...g.rows.flatMap(r => [r.id, r.barangId, r.nama, r.jenis, r.ukuran])]
+                        .map(v => String(v || '').toLowerCase());
+                    if (!hay.some(v => v.includes(q))) return false;
+                }
+                return true;
+            });
+            const totalPages = Math.max(1, Math.ceil(filtered.length / SJ_HISTORY_PER_PAGE));
+            if (sjHistoryPage < 1) sjHistoryPage = 1;
+            if (sjHistoryPage > totalPages) sjHistoryPage = totalPages;
+            const startIndex = (sjHistoryPage - 1) * SJ_HISTORY_PER_PAGE;
+            const pageRows = filtered.slice(startIndex, startIndex + SJ_HISTORY_PER_PAGE);
+            const esc = v => String(v ?? '').replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]));
+            const rowsHtml = pageRows.map((g, i) => `
+                <tr class="hover:bg-white/5">
+                    <td class="py-3 px-2 text-center opacity-70 font-mono">${startIndex + i + 1}</td>
+                    <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(g.noSj)}<span class="block mt-0.5 text-[10px] font-normal opacity-70">${esc(g.tid)}</span></td>
+                    <td class="py-3 px-3 opacity-80">${esc(g.tanggal || '-')}</td>
+                    <td class="py-3 px-3 font-medium">${esc(g.customer)}</td>
+                    <td class="py-3 px-3 text-[11px] opacity-70">${g.alamat ? esc(g.alamat).replace(/\r?\n/g, '<br>') : '-'}</td>
+                    <td class="py-3 px-3 font-mono opacity-80">${esc(g.poNumbers.join(', '))}</td>
+                    <td class="py-3 px-3 text-center">${g.rows.length} barang</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-rose-400">${g.totalQty.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-3 text-orange-400">${esc(g.user)}</td>
+                    <td class="py-3 px-3 text-center"><div class="flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:190px">
+                        <button type="button" onclick="printSuratJalan('${esc(g.tid)}')" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button>
+                        <button type="button" onclick="downloadSuratJalanExcel('${esc(g.tid)}')" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button>
+                    </div></td>
+                </tr>`).join('');
+            let sjBodyHtml = rowsHtml || `<tr><td colspan="10" class="py-6 text-center opacity-50">Belum ada Surat Jalan.</td></tr>`;
+            // Baris pengisi menjaga tinggi tabel tetap 12 baris, sehingga tombol halaman tidak bergeser
+            // saat berpindah dari halaman terakhir (sedikit baris) ke halaman penuh.
+            if (pageRows.length) {
+                const fillerRow = () => `
+                    <tr aria-hidden="true">
+                        <td class="py-3 px-2">&nbsp;</td>
+                        <td class="py-3 px-3 font-mono">&nbsp;<span class="block mt-0.5 text-[10px]">&nbsp;</span></td>
+                        <td class="py-3 px-3">&nbsp;</td>
+                        <td class="py-3 px-3">&nbsp;</td>
+                        <td class="py-3 px-3">&nbsp;</td>
+                        <td class="py-3 px-3">&nbsp;</td>
+                        <td class="py-3 px-3">&nbsp;</td>
+                        <td class="py-3 px-3">&nbsp;</td>
+                        <td class="py-3 px-3">&nbsp;</td>
+                        <td class="py-3 px-3">&nbsp;</td>
+                    </tr>`;
+                sjBodyHtml += Array.from({ length: SJ_HISTORY_PER_PAGE - pageRows.length }, fillerRow).join('');
+            }
+            setTableHtml(body, sjBodyHtml);
+            const summary = document.getElementById('sj-summary');
+            if (summary) summary.textContent = `${filtered.length} Surat Jalan • ${filtered.reduce((s, g) => s + g.rows.length, 0)} detail barang`;
+            const firstNo = filtered.length ? startIndex + 1 : 0;
+            const lastNo = Math.min(startIndex + SJ_HISTORY_PER_PAGE, filtered.length);
+            const pageInfo = document.getElementById('sj-page-info');
+            if (pageInfo) pageInfo.textContent = `Menampilkan ${firstNo}–${lastNo} dari ${filtered.length} Surat Jalan`;
+            const indicator = document.getElementById('sj-page-indicator');
+            if (indicator) indicator.textContent = `Halaman ${sjHistoryPage} dari ${totalPages}`;
+            // Pakai aria-disabled, bukan atribut disabled: menonaktifkan tombol yang sedang
+            // difokus membuat browser kehilangan fokus dan halaman bisa loncat ke atas.
+            const setPageBtn = (btn, inactive) => {
+                if (!btn) return;
+                btn.setAttribute('aria-disabled', inactive ? 'true' : 'false');
+                btn.style.opacity = inactive ? '.45' : '';
+                btn.style.cursor = inactive ? 'not-allowed' : '';
+            };
+            setPageBtn(document.getElementById('sj-prev'), sjHistoryPage <= 1);
+            setPageBtn(document.getElementById('sj-next'), sjHistoryPage >= totalPages);
+            lucide.createIcons();
+        };
+        window.sjChangePage = function(delta, btn) {
+            if (btn?.getAttribute('aria-disabled') === 'true') return;
+            const scrollY = window.scrollY;
+            if (btn) btn.blur();
+            sjHistoryPage += delta;
+            window.renderSjHistory();
+            window.scrollTo(0, scrollY);
+            if (btn) requestAnimationFrame(() => btn.focus({ preventScroll: true }));
+        };
+
         // SURAT JALAN per transaksi: dokumen A4 portrait terpisah dari laporan tabular.
         window.printSuratJalan = function(transactionId) {
-            const tid = String(transactionId || '').trim();
-            if (!tid) return;
-            const rows = (window.gudangAppDb.keluar || [])
-                .filter(r => String(r.transactionId || r.groupId || r.id) === tid)
-                .sort((a, b) => String(a.id).localeCompare(String(b.id), 'id'));
-            if (!rows.length) { showToast('Transaksi Barang Keluar tidak ditemukan.', 'error'); return; }
-            const head = rows[0];
-            const noSj = window.getKeluarNoSj(head);
-            const po = (window.gudangAppDb.po || []).find(p => String(p.id) === String(head.poRef));
-            const poNumber = po?.noPoCustomer || head.poRef || '-';
-            const customer = head.tujuan || po?.customer || '-';
-            const isoDate = normalizePrintDate(head.tanggal);
-            const tanggal = isoDate ? formatPrintDate(isoDate) : String(head.tanggal || '-');
-            const totalQty = rows.reduce((sum, r) => sum + Number(r.qty || 0), 0);
-            const itemRows = rows.map((r, i) => `
+            // Cetak SJ mengikuti layout template Excel: kop CV, judul, kop kanan, 7 kolom item, 3 tanda tangan.
+            const ctx = collectSuratJalanData(transactionId);
+            if (!ctx) { showToast('Transaksi Barang Keluar tidak ditemukan.', 'error'); return; }
+            const itemRows = ctx.rows.map((r, i) => `
                 <tr>
                     <td class="c">${i + 1}</td>
                     <td>${escapePrintHtml(r.barangId || '-')}</td>
                     <td>${escapePrintHtml(window.displayItemName(r.barangId, r.nama))}</td>
-                    <td class="c">${escapePrintHtml(r.jenis || '-')}</td>
-                    <td class="c">${escapePrintHtml(r.lebar || '-')}</td>
-                    <td class="c">${escapePrintHtml(r.ukuran || '-')}</td>
-                    <td class="c">${escapePrintHtml(r.satuan || '-')}</td>
+                    <td>${escapePrintHtml(r.jenis || '-')}</td>
+                    <td>${escapePrintHtml(r.lebar || '-')}</td>
+                    <td>${escapePrintHtml(r.ukuran || '-')}</td>
                     <td class="r">${Number(r.qty || 0).toLocaleString('id-ID')}</td>
                 </tr>`).join('');
+            const alamatHtml = escapePrintHtml(ctx.alamat).replace(/\r?\n/g, '<br>');
+            const poLine = 'No. PO: ' + escapePrintHtml(ctx.poNumber);
             const printWindow = window.open('', '_blank');
             if (!printWindow) { showToast('Popup cetak diblokir browser. Izinkan popup lalu coba lagi.', 'error'); return; }
             printWindow.document.open();
-            printWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Surat Jalan ${escapePrintHtml(noSj)}</title>
+            printWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Surat Jalan ${escapePrintHtml(ctx.noSj)}</title>
                 <style>
-                    @page{size:A4 portrait;margin:14mm}
-                    *{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#111;margin:0;font-size:11px}
-                    h1{font-size:18px;margin:0 0 2px;text-align:center;letter-spacing:.5px}
-                    .sub{text-align:center;font-size:10px;color:#444;margin:0 0 14px}
-                    .meta{width:100%;border-collapse:collapse;margin:0 0 14px}
-                    .meta td{border:1px solid #777;padding:6px 8px}
-                    .meta .k{width:120px;background:#f2f2f2;font-weight:bold}
-                    .items{width:100%;border-collapse:collapse}
-                    .items th,.items td{border:1px solid #777;padding:6px 7px;vertical-align:top}
-                    .items th{background:#f2f2f2;font-size:10px;text-align:center}
-                    .c{text-align:center}.r{text-align:right;font-weight:bold}
-                    .total{margin-top:10px;text-align:right;font-size:12px;font-weight:bold}
-                    .sign{margin-top:34px;display:flex;justify-content:space-between;gap:30px}
-                    .sign > div{flex:1;text-align:center;font-size:11px}
-                    .line{margin-top:46px;border-top:1px solid #333;padding-top:5px}
-                    .note{margin-top:18px;font-size:9px;color:#555}
+                    /* Layout mengikuti assets/templates/surat-jalan.xlsx */
+                    @page{size:A4 portrait;margin:10mm}
+                    *{box-sizing:border-box}
+                    body{font-family:Arial,sans-serif;color:#111;margin:0;font-size:10px;line-height:1.25}
+                    .head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
+                    .company{font-size:14px;font-weight:bold;line-height:1.15}
+                    .company .addr{display:block;font-size:8.5px;font-weight:normal;margin-top:2px;max-width:330px}
+                    .doc-title{font-size:15px;font-weight:bold;white-space:nowrap;padding-top:2px}
+                    .meta{width:100%;border-collapse:collapse;margin-bottom:8px;table-layout:fixed}
+                    .meta td{padding:2px 3px;vertical-align:top;word-break:break-word}
+                    .meta .lbl{width:72px;white-space:nowrap}
+                    .meta .sj{width:170px}
+                    .meta .date{width:150px}
+                    .meta .to{width:52%;vertical-align:top}
+                    .items{width:100%;border-collapse:collapse;table-layout:fixed}
+                    .items th,.items td{border:1px solid #333;padding:4px;vertical-align:top;word-break:break-word;overflow-wrap:anywhere}
+                    .items th{font-size:9px;text-align:center;font-weight:bold}
+                    .c{text-align:center}.r{text-align:right}
+                    .col-no{width:4.6%}.col-id{width:11.6%}.col-name{width:22.6%}.col-type{width:20.9%}.col-w{width:12.5%}.col-size{width:18%}.col-qty{width:9.8%}
+                    .sign{display:flex;justify-content:space-between;gap:18px;margin-top:22px}
+                    .sign > div{flex:1;text-align:center;font-size:10px}
+                    .sign .blank{display:block;margin-top:28px;white-space:nowrap}
                 </style></head><body>
-                    <h1>SURAT JALAN</h1>
-                    <p class="sub">Dokumen pengiriman barang keluar</p>
+                    <div class="head">
+                        <div class="company">CV. TRIASTINDO JAYA<span class="addr">Jl. Raya Majalaya-Rancaekek KM. 7 No. 299, Bandung, Jawa Barat</span></div>
+                        <div class="doc-title">SURAT JALAN</div>
+                    </div>
                     <table class="meta">
-                        <tr><td class="k">No. Surat Jalan</td><td>${escapePrintHtml(noSj)}</td><td class="k">Tanggal</td><td>${escapePrintHtml(tanggal)}</td></tr>
-                        <tr><td class="k">Customer / Tujuan</td><td colspan="3">${escapePrintHtml(customer)}</td></tr>
-                        <tr><td class="k">No. PO Customer</td><td>${escapePrintHtml(poNumber)}</td><td class="k">ID Transaksi</td><td>${escapePrintHtml(tid)}</td></tr>
+                        <tr>
+                            <td class="lbl">Nomor SJ:</td><td class="sj">${escapePrintHtml(ctx.noSj)}</td>
+                            <td class="lbl">Kepada Yth :</td><td class="to">${escapePrintHtml(ctx.customer)}</td>
+                        </tr>
+                        <tr>
+                            <td class="lbl">Tanggal :</td><td class="date">${escapePrintHtml(ctx.tanggal)}</td>
+                            <td></td><td class="to">${alamatHtml}<br>${poLine}</td>
+                        </tr>
                     </table>
                     <table class="items">
-                        <thead><tr><th style="width:32px">No</th><th>ID Barang</th><th>Nama Barang</th><th style="width:90px">Kategori</th><th style="width:66px">Lebar</th><th style="width:76px">Ukuran</th><th style="width:56px">Satuan</th><th style="width:70px">Qty</th></tr></thead>
+                        <colgroup><col class="col-no"><col class="col-id"><col class="col-name"><col class="col-type"><col class="col-w"><col class="col-size"><col class="col-qty"></colgroup>
+                        <thead><tr><th>NO</th><th>ID Barang</th><th>Nama Barang</th><th>Jenis Barang</th><th>Lebar</th><th>Ukuran</th><th>Qty</th></tr></thead>
                         <tbody>${itemRows}</tbody>
                     </table>
-                    <div class="total">Total Qty: ${totalQty.toLocaleString('id-ID')}</div>
                     <div class="sign">
-                        <div>Dibuat oleh,<div class="line">(${escapePrintHtml(window.gudangAppDb.currentUser?.name || 'Administrator')})</div></div>
-                        <div>Diterima oleh,<div class="line">(________________________)</div></div>
+                        <div>Penerima<span class="blank">(_______________)</span></div>
+                        <div>Pengirim/Sopir<span class="blank">(________________)</span></div>
+                        <div>Admin<br>Gudang<span class="blank">(_____________)</span></div>
                     </div>
-                    <p class="note">Dicetak dari Sistem Manajemen Inventory Gudang pada ${escapePrintHtml(new Date().toLocaleString('id-ID'))}.</p>
                 </body></html>`);
             printWindow.onload = () => { printWindow.focus(); printWindow.print(); };
             printWindow.document.close();
