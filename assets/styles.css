@@ -14932,4 +14932,47 @@ html body #toast-container > .inventory-toast.toast-welcome > .inventory-toast-i
   #toast-container > .inventory-toast.toast-welcome::after { display:none !important; }
 }
 
+/* V188 — Stok tipis: SATU overlay warna penuh baris + pola alarm double-flash.
+   ::before (belah kiri) dimatikan, ::after diperlebar ke seluruh baris agar tidak
+   ada sambungan warna di tengah. 2 kedip cepat (~2,8 Hz), lalu diam ~0,9 detik. */
+html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
+  #inventory-main-content #tab-dashboard #low-stock-list
+  > :is(.blink-low-stock-red,.blink-low-stock-orange)::before {
+  display:none !important;
+}
+html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
+  #inventory-main-content #tab-dashboard #low-stock-list
+  > :is(.blink-low-stock-red,.blink-low-stock-orange)::after {
+  display:block !important;
+  inset:0 !important;
+  left:0 !important;
+  right:0 !important;
+  width:auto !important;
+  border-radius:inherit !important;
+  animation:lowStockDoubleFlash 1.5s ease-in-out infinite !important;
+}
+html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
+  #inventory-main-content #tab-dashboard #low-stock-list > .blink-low-stock-red::after {
+  background:linear-gradient(135deg,rgba(255,66,103,.52),rgba(255,66,103,.32)) !important;
+  box-shadow:inset 0 0 22px rgba(255,66,103,.22) !important;
+}
+html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
+  #inventory-main-content #tab-dashboard #low-stock-list > .blink-low-stock-orange::after {
+  background:linear-gradient(135deg,rgba(255,152,46,.52),rgba(255,152,46,.32)) !important;
+  box-shadow:inset 0 0 22px rgba(255,152,46,.20) !important;
+}
+@keyframes lowStockDoubleFlash {
+  0%, 8%    { opacity:1; }
+  16%, 24%  { opacity:.10; }
+  32%, 40%  { opacity:1; }
+  48%, 100% { opacity:.10; }
+}
+@media (prefers-reduced-motion:reduce) {
+  html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
+    #inventory-main-content #tab-dashboard #low-stock-list
+    > :is(.blink-low-stock-red,.blink-low-stock-orange)::after {
+    animation:none !important;
+  }
+}
+
 
