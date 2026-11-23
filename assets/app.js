@@ -5062,19 +5062,26 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             map[key] = { ...(map[key] || {}), ...normalizeSjAudit(audit) };
             writeSjPrintedMap(map);
         }
-        async function getSjPrintRecord(tid) {
+        // `synced` menandai apakah angka counter benar-benar dibaca dari Worker.
+        // Kalau false (Worker belum deploy / offline / 404), counter bisa saja masih 0
+        // padahal SJ sudah pernah dicetak di perangkat lain — pemanggil wajib memberi
+        // peringatan agar tidak terlihat seperti "bebas password" tanpa penjelasan.
+        async function getSjPrintRecordInfo(tid) {
             const key = String(tid);
             const local = normalizeSjAudit(readSjPrintedMap()[key]);
             try {
                 const result = await workerRequest(`/api/sj/audit?tid=${encodeURIComponent(key)}`, { method: 'GET' });
-                if (!result?.audit) return local;
+                if (!result?.audit) return { record: local, synced: false };
                 const merged = mergeSjAudit(local, result.audit);
                 cacheSjAudit(key, merged);
-                return merged;
+                return { record: merged, synced: true };
             } catch (e) {
                 console.warn('Gagal membaca histori SJ dari Worker, pakai cache lokal:', e);
-                return local;
+                return { record: local, synced: false };
             }
+        }
+        async function getSjPrintRecord(tid) {
+            return (await getSjPrintRecordInfo(tid)).record;
         }
         async function markSjAction(tid, source, action) {
             const key = String(tid);
@@ -5089,15 +5096,18 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             };
             cacheSjAudit(key, next);
             const eventId = `sj-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+            let synced = false;
             try {
                 const result = await workerRequest('/api/sj/audit', {
                     method: 'POST',
                     body: JSON.stringify({ tid: key, source, action, eventId, counts: next })
                 });
                 if (result?.audit) cacheSjAudit(key, mergeSjAudit(next, result.audit));
+                synced = true;
             } catch (e) {
                 console.warn('Gagal menyimpan histori SJ ke Worker, tersimpan di cache lokal:', e);
             }
+            return synced;
         }
         async function verifySjPassword(password) {
             const username = window.gudangAppDb.currentUser?.username || window.activeUserSession?.username;
@@ -5278,7 +5288,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             const tid = String(transactionId || '');
             const dariRiwayat = source === 'riwayat' || Boolean(button?.closest?.('#tab-sj'));
             await runSjAction(`print:${tid}`, button, async () => {
-                const record = await getSjPrintRecord(tid);
+                const { record, synced } = await getSjPrintRecordInfo(tid);
                 let message = '';
                 if (dariRiwayat) {
                     message = 'Cetak dari Riwayat Surat Jalan memerlukan password.\nMasukkan password akun Anda untuk melanjutkan:';
@@ -5286,7 +5296,12 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     message = 'Surat jalan ini sudah pernah dicetak.\nMasukkan password akun Anda untuk cetak ulang:';
                 }
                 if (message && !(await requireSjPassword(message))) return;
-                if (doPrintSuratJalan(tid)) await markSjAction(tid, dariRiwayat ? 'riwayat' : 'keluar', 'print');
+                if (doPrintSuratJalan(tid)) {
+                    const saved = await markSjAction(tid, dariRiwayat ? 'riwayat' : 'keluar', 'print');
+                    if (!dariRiwayat && (!synced || !saved)) {
+                        showToast('Riwayat cetak SJ belum tersinkron ke server. Aksi ini dicatat di perangkat ini saja, jadi perangkat lain bisa menganggap SJ ini belum pernah dicetak.', 'warning');
+                    }
+                }
             });
         };
 
@@ -5580,7 +5595,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             const tid = String(transactionId || '');
             const dariRiwayat = source === 'riwayat' || Boolean(button?.closest?.('#tab-sj'));
             await runSjAction(`excel:${tid}`, button, async () => {
-                const record = await getSjPrintRecord(tid);
+                const { record, synced } = await getSjPrintRecordInfo(tid);
                 let message = '';
                 if (dariRiwayat) {
                     message = 'Download Excel dari Riwayat Surat Jalan memerlukan password.\nMasukkan password akun Anda untuk melanjutkan:';
@@ -5588,7 +5603,12 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     message = 'Excel surat jalan ini sudah pernah diunduh.\nMasukkan password akun Anda untuk mengunduh ulang:';
                 }
                 if (message && !(await requireSjPassword(message))) return;
-                if (await doDownloadSuratJalanExcel(tid)) await markSjAction(tid, dariRiwayat ? 'riwayat' : 'keluar', 'excel');
+                if (await doDownloadSuratJalanExcel(tid)) {
+                    const saved = await markSjAction(tid, dariRiwayat ? 'riwayat' : 'keluar', 'excel');
+                    if (!dariRiwayat && (!synced || !saved)) {
+                        showToast('Riwayat unduh Excel SJ belum tersinkron ke server. Aksi ini dicatat di perangkat ini saja, jadi perangkat lain bisa menganggap file ini belum pernah diunduh.', 'warning');
+                    }
+                }
             });
         };
 
