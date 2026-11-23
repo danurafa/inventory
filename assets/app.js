@@ -809,10 +809,23 @@
                 const greetingWord = window.getInventoryGreetingWord?.() || 'Selamat Datang';
                 const displayName = result.user.name || result.user.username || 'Admin';
                 const roleLabel = String(result.user.role || '').toUpperCase();
+                const welcomeTone = document.body.classList.contains('theme-neon') ? '53,215,232'
+                    : document.body.classList.contains('theme-soft') ? '143,179,151'
+                    : document.body.classList.contains('theme-crystal') ? '59,130,246'
+                    : '96,165,250';
                 showToast(
-                    `${greetingWord}, ${displayName}! Semoga hari ini lancar dan menyenangkan.${roleLabel ? ` · ${roleLabel}` : ''}`,
+                    `${greetingWord}, ${displayName}! Semoga hari ini lancar dan menyenangkan.`,
                     'success',
-                    { title: 'Selamat Datang Kembali!', duration: 8000 }
+                    {
+                        title: `${greetingWord}, ${displayName} 👋`,
+                        titlePrefix: `${greetingWord}, `,
+                        titleAccent: `${displayName} 👋`,
+                        badge: roleLabel,
+                        icon: window.getInventoryGreetingIcon?.() || 'sun',
+                        tone: welcomeTone,
+                        duration: 8000,
+                        className: 'toast-welcome'
+                    }
                 );
                 updateCloudStatusBadge('active');
             } catch (error) {
@@ -985,6 +998,15 @@
             if (hour >= 11 && hour < 15) return 'Selamat Siang';
             if (hour >= 15 && hour < 18) return 'Selamat Sore';
             return 'Selamat Malam';
+        };
+
+        // Ikon Lucide yang mengikuti kata sapaan yang sama (pagi/siang/sore/malam).
+        window.getInventoryGreetingIcon = function() {
+            const hour = new Date().getHours();
+            if (hour >= 4 && hour < 11) return 'sunrise';
+            if (hour >= 11 && hour < 15) return 'sun';
+            if (hour >= 15 && hour < 18) return 'sunset';
+            return 'moon-star';
         };
 
         // Sapaan header otomatis mengikuti waktu lokal dan nama pengguna yang login.
@@ -1399,6 +1421,13 @@
 
             const toast = document.createElement('div');
             toast.className = 'inventory-toast toast-' + item.tone;
+            if (options.className) toast.classList.add(String(options.className));
+            const isWelcome = toast.classList.contains('toast-welcome');
+            if (options.tone) toast.style.setProperty('--toast-tone', String(options.tone), 'important');
+            if (isWelcome) {
+                toast.style.setProperty('border-color', 'rgba(var(--toast-tone),.48)', 'important');
+                toast.style.setProperty('box-shadow', '0 24px 64px rgba(2,8,23,.42), inset 0 1px 0 rgba(255,255,255,.30), 0 0 34px rgba(var(--toast-tone),.20)', 'important');
+            }
             toast.dataset.toastKey = toastKey;
             toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
             toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
@@ -1416,21 +1445,56 @@
 
             const heading = document.createElement('div');
             heading.className = 'inventory-toast-title';
-            heading.textContent = toastTitle;
-            heading.style.cssText = 'display:block!important;width:100%!important;margin:0 0 4px 0!important;line-height:1.2!important;font-size:12px!important;font-weight:750!important;';
+            heading.style.cssText = isWelcome
+                ? 'display:block!important;width:100%!important;margin:0 0 6px 0!important;line-height:1.3!important;font-size:16px!important;font-weight:800!important;'
+                : 'display:block!important;width:100%!important;margin:0 0 4px 0!important;line-height:1.2!important;font-size:12px!important;font-weight:750!important;';
+            if (options.titlePrefix != null || options.titleAccent != null) {
+                if (options.titlePrefix) {
+                    const prefix = document.createElement('span');
+                    prefix.className = 'toast-title-prefix';
+                    prefix.textContent = String(options.titlePrefix);
+                    heading.appendChild(prefix);
+                }
+                if (options.titleAccent) {
+                    const accent = document.createElement('span');
+                    accent.className = 'toast-title-accent';
+                    accent.textContent = String(options.titleAccent);
+                    accent.style.setProperty('color', 'rgb(var(--toast-tone))', 'important');
+                    accent.style.setProperty('-webkit-text-fill-color', 'rgb(var(--toast-tone))', 'important');
+                    heading.appendChild(accent);
+                }
+            } else {
+                heading.textContent = toastTitle;
+            }
 
             const message = document.createElement('div');
             message.className = 'inventory-toast-message';
             message.textContent = messageText;
-            message.style.cssText = 'display:block!important;width:100%!important;margin:0!important;line-height:1.4!important;font-size:11px!important;white-space:normal!important;overflow-wrap:anywhere!important;';
+            message.style.cssText = isWelcome
+                ? 'display:block!important;width:100%!important;margin:0!important;line-height:1.5!important;font-size:12px!important;white-space:normal!important;overflow-wrap:anywhere!important;'
+                : 'display:block!important;width:100%!important;margin:0!important;line-height:1.4!important;font-size:11px!important;white-space:normal!important;overflow-wrap:anywhere!important;';
 
             copy.appendChild(heading);
+            if (options.badge) {
+                const badge = document.createElement('span');
+                badge.className = 'inventory-toast-badge';
+                badge.textContent = String(options.badge);
+                if (isWelcome) {
+                    badge.style.cssText = 'display:inline-flex!important;align-items:center!important;width:max-content!important;max-width:100%!important;margin:0 0 7px!important;padding:3px 8px!important;border:1px solid rgba(var(--toast-tone),.45)!important;border-radius:999px!important;background:rgba(var(--toast-tone),.14)!important;color:rgb(var(--toast-tone))!important;-webkit-text-fill-color:rgb(var(--toast-tone))!important;font-size:9px!important;font-weight:800!important;line-height:1.2!important;letter-spacing:.1em!important;text-transform:uppercase!important;';
+                }
+                copy.appendChild(badge);
+            }
             copy.appendChild(message);
 
             const close = document.createElement('button');
             close.type = 'button';
             close.className = 'inventory-toast-close';
             close.setAttribute('aria-label', 'Tutup notifikasi');
+            if (isWelcome) {
+                close.style.setProperty('width', '30px', 'important');
+                close.style.setProperty('height', '30px', 'important');
+                close.style.setProperty('margin-top', '-2px', 'important');
+            }
             const closeIcon = document.createElement('i');
             closeIcon.setAttribute('data-lucide', 'x');
             close.appendChild(closeIcon);
