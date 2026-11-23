@@ -5,6 +5,9 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Sistem Manajemen Inventory Gudang</title>
     <!-- V75: percepat koneksi awal ke resource eksternal tanpa mengubah urutan eksekusi library -->
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
@@ -890,7 +893,7 @@
                         </div>
                     </div>
                     <div class="fluid-table-container overflow-x-auto">
-                        <table class="w-full text-xs min-w-[1100px]" style="overflow-anchor:none">
+                        <table class="w-full text-xs" style="min-width:1250px;overflow-anchor:none">
                             <thead class="bg-white/5 text-gray-400">
                                 <tr>
                                     <th class="py-3 px-2 rounded-l-xl text-center">No</th>
@@ -902,7 +905,7 @@
                                     <th class="py-3 px-3 text-center">Barang</th>
                                     <th class="py-3 px-3 text-right">Total Qty</th>
                                     <th class="py-3 px-3 text-left">User</th>
-                                    <th class="py-3 px-3 text-center rounded-r-xl" style="min-width:190px">Aksi</th>
+                                    <th class="py-3 px-3 text-center rounded-r-xl" style="min-width:280px">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="sj-table-body" class="divide-y divide-white/5"></tbody>
@@ -1372,6 +1375,20 @@
         </div>
     </div>
 
+    <!-- VERIFIKASI PASSWORD SJ: dialog internal (prompt() native sering diblokir Safari mobile setelah await) -->
+    <div id="sj-password-modal" class="fixed inset-0 z-[95] bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="sj-password-title">
+        <div class="app-card max-w-sm w-full p-6 rounded-2xl shadow-2xl border border-white/10 space-y-4">
+            <h4 id="sj-password-title" class="font-bold text-sm text-gray-100 uppercase tracking-wide">Verifikasi Password</h4>
+            <p id="sj-password-message" class="text-xs text-gray-300 leading-relaxed"></p>
+            <input id="sj-password-input" type="password" autocomplete="current-password" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm theme-focus" placeholder="Masukkan password akun">
+            <div id="sj-password-error" class="hidden text-[11px] text-rose-300"></div>
+            <div class="flex justify-end gap-2.5 pt-1">
+                <button type="button" id="sj-password-cancel" class="px-4 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold">Batal</button>
+                <button type="button" id="sj-password-ok" class="px-4 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold shadow-lg">Verifikasi</button>
+            </div>
+        </div>
+    </div>
+
     <!-- FIREBASE CLOUD SYNC: STABLE INITIALIZATION, REALTIME LISTENER, QUEUED WRITES -->
     
 
@@ -1481,6 +1498,6 @@
 
 
 
-    <script src="assets/app.js?v=static-search-placeholder-20261123"></script>
+    <script src="assets/app.js?v=sj-safari-rw-guard-20261123"></script>
 </body>
 </html>

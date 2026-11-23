@@ -2302,7 +2302,7 @@
                         <td class="py-3 px-3 font-medium">${esc(group.head.tujuan || '-')}</td>
                         <td class="py-3 px-3 font-mono opacity-80">${esc(poRefs.join(', '))}</td>
                         <td class="py-3 px-3 text-center"><button type="button" onclick="toggleKeluarDetails('${token}', this, ${group.rows.length})" aria-expanded="${expanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button></td>
-                        <td class="py-3 px-3 text-center"><div class="flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:190px"><button onclick="printSuratJalan('${esc(group.transactionId)}')" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan sesuai template Excel"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button><button onclick="downloadSuratJalanExcel('${esc(group.transactionId)}')" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download template Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button></div></td>
+                        <td class="py-3 px-3 text-center"><div class="flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:190px"><button onclick="printSuratJalan('${esc(group.transactionId)}', 'keluar', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan sesuai template Excel"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button><button onclick="downloadSuratJalanExcel('${esc(group.transactionId)}', 'keluar', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download template Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button></div></td>
                     </tr>
                     <tr id="keluar-detail-${token}" data-keluar-group-key="${token}" class="${expanded ? '' : 'hidden'}">
                         <td colspan="9" class="p-2 bg-black/10">
@@ -2312,7 +2312,7 @@
                                         <th class="p-2 text-center">No</th><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">ID Barang</th><th class="p-2 text-left">Nama Barang</th><th class="p-2 text-left">Kategori</th><th class="p-2 text-left">Lebar</th><th class="p-2 text-left">Ukuran</th><th class="p-2 text-left">Satuan</th><th class="p-2 text-right">Qty Keluar</th><th class="p-2 text-left">No PO Ref</th><th class="p-2 text-center">Aksi</th>
                                     </tr></thead>
                                     <tbody>${detailRows}</tbody>
-                                    <tfoot class="bg-white/5 border-t border-white/10"><tr><td colspan="8" class="p-2 text-right font-semibold">Total Qty Surat Jalan</td><td class="p-2 text-right font-mono font-bold text-emerald-300">${totalQty.toLocaleString('id-ID')}</td><td colspan="2"></td></tr></tfoot>
+                                    <tfoot class="bg-white/5 border-t border-white/10"><tr><td colspan="8" class="p-2 text-right font-semibold">Subtotal Qty</td><td class="p-2 text-right font-mono font-bold text-emerald-300">${totalQty.toLocaleString('id-ID')}</td><td colspan="2"></td></tr></tfoot>
                                 </table>
                             </div>
                         </td>
@@ -4842,6 +4842,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
         const SJ_HISTORY_PER_PAGE = 12;
         let sjHistoryPage = 1;
         let sjFilterSignature = '';
+        window._expandedSjGroupKeys = window._expandedSjGroupKeys || new Set();
         function populateSjCustomerFilter() {
             const select = document.getElementById('sj-customer');
             if (!select) return;
@@ -4860,11 +4861,19 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             });
             sjHistoryPage = 1;
             sjFilterSignature = '';
+            window._expandedSjGroupKeys.clear();
             window.renderSjHistory();
         };
         window.renderSjHistory = function() {
             const body = document.getElementById('sj-table-body');
             if (!body) return;
+            // Simpan status detail yang sedang terbuka sebelum tabel dirender ulang.
+            body.querySelectorAll('tr[data-sj-group-key]').forEach(row => {
+                const key = row.dataset.sjGroupKey;
+                if (!key) return;
+                if (row.classList.contains('hidden')) window._expandedSjGroupKeys.delete(key);
+                else window._expandedSjGroupKeys.add(key);
+            });
             populateSjCustomerFilter();
             const q = (document.getElementById('sj-search')?.value || '').trim().toLowerCase();
             const dari = document.getElementById('sj-dari')?.value || '';
@@ -4874,6 +4883,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             if (filterSignature !== sjFilterSignature) {
                 sjFilterSignature = filterSignature;
                 sjHistoryPage = 1;
+                window._expandedSjGroupKeys.clear();
             }
             const all = collectSjHistoryGroups();
             const filtered = all.filter(g => {
@@ -4895,7 +4905,24 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             const startIndex = (sjHistoryPage - 1) * SJ_HISTORY_PER_PAGE;
             const pageRows = filtered.slice(startIndex, startIndex + SJ_HISTORY_PER_PAGE);
             const esc = v => String(v ?? '').replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]));
-            const rowsHtml = pageRows.map((g, i) => `
+            const poNoOf = r => (window.gudangAppDb.po || []).find(p => String(p.id) === String(r.poRef))?.noPoCustomer || r.poRef || '-';
+            const rowsHtml = pageRows.map((g, i) => {
+                const token = encodeURIComponent(g.tid).replace(/'/g, '%27');
+                const expanded = window._expandedSjGroupKeys.has(token);
+                const detailRows = g.rows.map((r, di) => `
+                    <tr class="border-t border-white/5 hover:bg-white/5">
+                        <td class="p-2 text-center">${di + 1}</td>
+                        <td class="p-2 font-mono">${esc(r.id)}</td>
+                        <td class="p-2 font-mono">${esc(r.barangId)}</td>
+                        <td class="p-2 font-medium">${esc(window.displayItemName(r.barangId, r.nama))}</td>
+                        <td class="p-2">${esc(r.jenis || '-')}</td>
+                        <td class="p-2">${esc(r.lebar || '-')}</td>
+                        <td class="p-2">${esc(r.ukuran || '-')}</td>
+                        <td class="p-2">${esc(r.satuan || '-')}</td>
+                        <td class="p-2 text-right font-mono font-bold text-rose-400">${Number(r.qty || 0).toLocaleString('id-ID')}</td>
+                        <td class="p-2 font-mono">${esc(poNoOf(r))}</td>
+                    </tr>`).join('');
+                return `
                 <tr class="hover:bg-white/5">
                     <td class="py-3 px-2 text-center opacity-70 font-mono">${startIndex + i + 1}</td>
                     <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(g.noSj)}<span class="block mt-0.5 text-[10px] font-normal opacity-70">${esc(g.tid)}</span></td>
@@ -4906,11 +4933,26 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     <td class="py-3 px-3 text-center">${g.rows.length} barang</td>
                     <td class="py-3 px-3 text-right font-mono font-bold text-rose-400">${g.totalQty.toLocaleString('id-ID')}</td>
                     <td class="py-3 px-3 text-orange-400">${esc(g.user)}</td>
-                    <td class="py-3 px-3 text-center"><div class="flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:190px">
-                        <button type="button" onclick="printSuratJalan('${esc(g.tid)}')" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button>
-                        <button type="button" onclick="downloadSuratJalanExcel('${esc(g.tid)}')" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button>
+                    <td class="py-3 px-3 text-center"><div class="flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:280px">
+                        <button type="button" onclick="toggleSjDetails('${token}', this, ${g.rows.length})" aria-expanded="${expanded ? 'true' : 'false'}" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Lihat detail barang">${expanded ? 'Tutup' : 'Detail'} (${g.rows.length})</button>
+                        <button type="button" onclick="printSuratJalan('${esc(g.tid)}', 'riwayat', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button>
+                        <button type="button" onclick="downloadSuratJalanExcel('${esc(g.tid)}', 'riwayat', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button>
                     </div></td>
-                </tr>`).join('');
+                </tr>
+                <tr id="sj-detail-${token}" data-sj-group-key="${token}" class="${expanded ? '' : 'hidden'}">
+                    <td colspan="10" class="p-2 bg-black/10">
+                        <div class="rounded-xl border border-white/10 overflow-x-auto">
+                            <table class="w-full text-xs min-w-[900px]">
+                                <thead class="bg-white/5 text-gray-400"><tr>
+                                    <th class="p-2 text-center">No</th><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">ID Barang</th><th class="p-2 text-left">Nama Barang</th><th class="p-2 text-left">Kategori</th><th class="p-2 text-left">Lebar</th><th class="p-2 text-left">Ukuran</th><th class="p-2 text-left">Satuan</th><th class="p-2 text-right">Qty SJ</th><th class="p-2 text-left">No PO</th>
+                                </tr></thead>
+                                <tbody>${detailRows}</tbody>
+                                <tfoot class="bg-white/5 border-t border-white/10"><tr><td colspan="8" class="p-2 text-right font-semibold">Subtotal Qty</td><td class="p-2 text-right font-mono font-bold text-emerald-300">${g.totalQty.toLocaleString('id-ID')}</td><td></td></tr></tfoot>
+                            </table>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
             let sjBodyHtml = rowsHtml || `<tr><td colspan="10" class="py-6 text-center opacity-50">Belum ada Surat Jalan.</td></tr>`;
             // Baris pengisi menjaga tinggi tabel tetap 12 baris, sehingga tombol halaman tidak bergeser
             // saat berpindah dari halaman terakhir (sedikit baris) ke halaman penuh.
@@ -4951,10 +4993,23 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             setPageBtn(document.getElementById('sj-next'), sjHistoryPage >= totalPages);
             lucide.createIcons();
         };
+        window.toggleSjDetails = function(token, button, count) {
+            const row = document.getElementById(`sj-detail-${token}`);
+            if (!row) return;
+            const willOpen = row.classList.contains('hidden');
+            row.classList.toggle('hidden', !willOpen);
+            if (willOpen) window._expandedSjGroupKeys.add(token);
+            else window._expandedSjGroupKeys.delete(token);
+            if (button) {
+                button.textContent = `${willOpen ? 'Tutup' : 'Detail'} (${Number(count) || 0})`;
+                button.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            }
+        };
         window.sjChangePage = function(delta, btn) {
             if (btn?.getAttribute('aria-disabled') === 'true') return;
             const scrollY = window.scrollY;
             if (btn) btn.blur();
+            window._expandedSjGroupKeys.clear();
             sjHistoryPage += delta;
             window.renderSjHistory();
             window.scrollTo(0, scrollY);
@@ -4962,10 +5017,190 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
         };
 
         // SURAT JALAN per transaksi: dokumen A4 portrait terpisah dari laporan tabular.
-        window.printSuratJalan = function(transactionId) {
+        // Guard klik ganda + aturan password. Histori aksi disimpan di Worker (Firestore),
+        // localStorage hanya jadi cache/fallback saat Worker belum bisa dihubungi.
+        const SJ_PRINTED_KEY = 'gudang_sj_printed_map';
+        const SJ_AUDIT_FIELDS = ['keluarPrint', 'keluarExcel', 'riwayatPrint', 'riwayatExcel'];
+        const sjActionLocks = new Set();
+
+        function normalizeSjAudit(value) {
+            const src = value && typeof value === 'object' ? value : {};
+            const out = {};
+            SJ_AUDIT_FIELDS.forEach(k => {
+                const legacyKey = k === 'keluarPrint' ? 'keluar' : (k === 'riwayatPrint' ? 'riwayat' : '');
+                const raw = src[k] ?? (legacyKey ? src[legacyKey] : undefined);
+                const n = Number(raw);
+                out[k] = Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
+            });
+            const total = Number(src.count);
+            const updated = Number(src.updatedAt);
+            out.count = Number.isFinite(total) && total > 0 ? Math.floor(total) : 0;
+            out.updatedAt = Number.isFinite(updated) ? updated : 0;
+            out.tid = typeof src.tid === 'string' ? src.tid : '';
+            return out;
+        }
+        function mergeSjAudit(a, b) {
+            const out = normalizeSjAudit(a);
+            const other = normalizeSjAudit(b);
+            SJ_AUDIT_FIELDS.forEach(k => { out[k] = Math.max(out[k], other[k]); });
+            out.count = Math.max(out.count, other.count);
+            out.updatedAt = Math.max(out.updatedAt, other.updatedAt);
+            out.tid = out.tid || other.tid;
+            return out;
+        }
+        function readSjPrintedMap() {
+            try { return JSON.parse(localStorage.getItem(SJ_PRINTED_KEY) || '{}') || {}; }
+            catch (e) { return {}; }
+        }
+        function writeSjPrintedMap(map) {
+            try { localStorage.setItem(SJ_PRINTED_KEY, JSON.stringify(map)); }
+            catch (e) { console.warn('Gagal menyimpan cache aksi SJ:', e); }
+        }
+        function cacheSjAudit(tid, audit) {
+            const key = String(tid);
+            const map = readSjPrintedMap();
+            map[key] = { ...(map[key] || {}), ...normalizeSjAudit(audit) };
+            writeSjPrintedMap(map);
+        }
+        async function getSjPrintRecord(tid) {
+            const key = String(tid);
+            const local = normalizeSjAudit(readSjPrintedMap()[key]);
+            try {
+                const result = await workerRequest(`/api/sj/audit?tid=${encodeURIComponent(key)}`, { method: 'GET' });
+                if (!result?.audit) return local;
+                const merged = mergeSjAudit(local, result.audit);
+                cacheSjAudit(key, merged);
+                return merged;
+            } catch (e) {
+                console.warn('Gagal membaca histori SJ dari Worker, pakai cache lokal:', e);
+                return local;
+            }
+        }
+        async function markSjAction(tid, source, action) {
+            const key = String(tid);
+            const field = `${source === 'riwayat' ? 'riwayat' : 'keluar'}${action === 'excel' ? 'Excel' : 'Print'}`;
+            const before = await getSjPrintRecord(key);
+            const next = {
+                ...before,
+                [field]: before[field] + 1,
+                count: before.count + 1,
+                updatedAt: Date.now(),
+                tid: key
+            };
+            cacheSjAudit(key, next);
+            const eventId = `sj-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+            try {
+                const result = await workerRequest('/api/sj/audit', {
+                    method: 'POST',
+                    body: JSON.stringify({ tid: key, source, action, eventId, counts: next })
+                });
+                if (result?.audit) cacheSjAudit(key, mergeSjAudit(next, result.audit));
+            } catch (e) {
+                console.warn('Gagal menyimpan histori SJ ke Worker, tersimpan di cache lokal:', e);
+            }
+        }
+        async function verifySjPassword(password) {
+            const username = window.gudangAppDb.currentUser?.username || window.activeUserSession?.username;
+            if (!username || !password) return false;
+            try {
+                const response = await fetch('https://inventory-backend-test.danurafa.workers.dev/api/login', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                if (!response.ok) return false;
+                const result = await response.json().catch(() => ({}));
+                if (result?.token) {
+                    workerToken = result.token;
+                    localStorage.setItem(WORKER_TOKEN_KEY, workerToken);
+                }
+                return Boolean(result?.user || result?.token);
+            } catch (e) { return false; }
+        }
+        // Dialog internal dipakai karena prompt() native bisa diblokir Safari mobile
+        // saat dipanggil setelah await (tidak lagi dalam user gesture).
+        let sjPasswordResolver = null;
+        function closeSjPasswordModal(result) {
+            const modal = document.getElementById('sj-password-modal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            const resolve = sjPasswordResolver;
+            sjPasswordResolver = null;
+            if (resolve) resolve(Boolean(result));
+        }
+        function showSjPasswordError(text) {
+            const box = document.getElementById('sj-password-error');
+            if (!box) return;
+            box.textContent = text;
+            box.classList.remove('hidden');
+        }
+        function requireSjPassword(message) {
+            const modal = document.getElementById('sj-password-modal');
+            if (!modal) return Promise.resolve(false);
+            if (sjPasswordResolver) return Promise.resolve(false);
+            const messageEl = document.getElementById('sj-password-message');
+            const errorEl = document.getElementById('sj-password-error');
+            const input = document.getElementById('sj-password-input');
+            if (messageEl) messageEl.textContent = message || '';
+            if (errorEl) { errorEl.textContent = ''; errorEl.classList.add('hidden'); }
+            if (input) input.value = '';
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            if (input) requestAnimationFrame(() => {
+                try { input.focus({ preventScroll: true }); }
+                catch (e) { input.focus(); }
+            });
+            return new Promise(resolve => { sjPasswordResolver = resolve; });
+        }
+        (function initSjPasswordModal() {
+            const modal = document.getElementById('sj-password-modal');
+            if (!modal) return;
+            const input = document.getElementById('sj-password-input');
+            const okBtn = document.getElementById('sj-password-ok');
+            const cancelBtn = document.getElementById('sj-password-cancel');
+            if (cancelBtn) cancelBtn.addEventListener('click', () => closeSjPasswordModal(false));
+            modal.addEventListener('click', e => { if (e.target === modal) closeSjPasswordModal(false); });
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeSjPasswordModal(false);
+            });
+            if (input) input.addEventListener('keydown', e => {
+                if (e.key === 'Enter') { e.preventDefault(); if (okBtn) okBtn.click(); }
+            });
+            if (okBtn) okBtn.addEventListener('click', async () => {
+                const pass = (input?.value || '').trim();
+                if (!pass) { showSjPasswordError('Password tidak boleh kosong.'); return; }
+                okBtn.disabled = true;
+                const ok = await verifySjPassword(pass);
+                okBtn.disabled = false;
+                if (ok) closeSjPasswordModal(true);
+                else showSjPasswordError('Password salah. Aksi dibatalkan.');
+            });
+        })();
+        async function runSjAction(key, button, task) {
+            if (sjActionLocks.has(key)) return;
+            sjActionLocks.add(key);
+            if (button) {
+                button.setAttribute('aria-busy', 'true');
+                button.style.opacity = '.55';
+                button.style.pointerEvents = 'none';
+            }
+            try { await task(); }
+            finally {
+                setTimeout(() => {
+                    sjActionLocks.delete(key);
+                    if (button) {
+                        button.removeAttribute('aria-busy');
+                        button.style.opacity = '';
+                        button.style.pointerEvents = '';
+                    }
+                }, 800);
+            }
+        }
+
+        function doPrintSuratJalan(transactionId) {
             // Cetak SJ mengikuti layout template Excel: kop CV, judul, kop kanan, 7 kolom item, 3 tanda tangan.
             const ctx = collectSuratJalanData(transactionId);
-            if (!ctx) { showToast('Transaksi Barang Keluar tidak ditemukan.', 'error'); return; }
+            if (!ctx) { showToast('Transaksi Barang Keluar tidak ditemukan.', 'error'); return false; }
             const itemRows = ctx.rows.map((r, i) => `
                 <tr>
                     <td class="c">${i + 1}</td>
@@ -4979,7 +5214,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             const alamatHtml = escapePrintHtml(ctx.alamat).replace(/\r?\n/g, '<br>');
             const poLine = 'No. PO: ' + escapePrintHtml(ctx.poNumber);
             const printWindow = window.open('', '_blank');
-            if (!printWindow) { showToast('Popup cetak diblokir browser. Izinkan popup lalu coba lagi.', 'error'); return; }
+            if (!printWindow) { showToast('Popup cetak diblokir browser. Izinkan popup lalu coba lagi.', 'error'); return false; }
             printWindow.document.open();
             printWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Surat Jalan ${escapePrintHtml(ctx.noSj)}</title>
                 <style>
@@ -5034,6 +5269,25 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             printWindow.onload = () => { printWindow.focus(); printWindow.print(); };
             printWindow.document.close();
             printWindow.focus();
+            return true;
+        }
+
+        // Barang Keluar: cetak pertama bebas, cetak ke-2 wajib password.
+        // Riwayat Surat Jalan: langsung wajib password sejak cetak pertama.
+        window.printSuratJalan = async function(transactionId, source, button) {
+            const tid = String(transactionId || '');
+            const dariRiwayat = source === 'riwayat' || Boolean(button?.closest?.('#tab-sj'));
+            await runSjAction(`print:${tid}`, button, async () => {
+                const record = await getSjPrintRecord(tid);
+                let message = '';
+                if (dariRiwayat) {
+                    message = 'Cetak dari Riwayat Surat Jalan memerlukan password.\nMasukkan password akun Anda untuk melanjutkan:';
+                } else if (Number(record.keluarPrint || 0) >= 1) {
+                    message = 'Surat jalan ini sudah pernah dicetak.\nMasukkan password akun Anda untuk cetak ulang:';
+                }
+                if (message && !(await requireSjPassword(message))) return;
+                if (doPrintSuratJalan(tid)) await markSjAction(tid, dariRiwayat ? 'riwayat' : 'keluar', 'print');
+            });
         };
 
         // Download template Surat Jalan sebagai file .xlsx yang sudah diatur (tinggal buka & print di Excel).
@@ -5215,9 +5469,9 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             }
             zip.file('xl/worksheets/sheet1.xml', serialized);
         }
-        window.downloadSuratJalanExcel = async function(transactionId) {
+        async function doDownloadSuratJalanExcel(transactionId) {
             const ctx = collectSuratJalanData(transactionId);
-            if (!ctx) { showToast('Transaksi Barang Keluar tidak ditemukan.', 'error'); return; }
+            if (!ctx) { showToast('Transaksi Barang Keluar tidak ditemukan.', 'error'); return false; }
 
             // Prioritas: template .xlsx milik pengguna (logo & format asli tetap utuh).
             try {
@@ -5228,7 +5482,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 const blob = await zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
                 downloadFileFromBlob(blob, `Surat-Jalan-${ctx.noSj.replace(/[^A-Za-z0-9-]/g, '_')}.xlsx`);
                 showToast(`Surat Jalan ${ctx.noSj} diisi ke template Excel-mu.`, 'success');
-                return;
+                return true;
             } catch (error) {
                 console.warn('Template SJ gagal dipakai, beralih ke template bawaan:', error);
             }
@@ -5236,7 +5490,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             // Fallback: template bawaan yang dibuat aplikasi.
             let XLSX;
             try { XLSX = await loadSjXlsx(); }
-            catch (error) { downloadSuratJalanCsv(ctx); return; }
+            catch (error) { downloadSuratJalanCsv(ctx); return true; }
 
             const thin = { style: 'thin', color: { rgb: '777777' } };
             const border = { top: thin, bottom: thin, left: thin, right: thin };
@@ -5316,6 +5570,26 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             XLSX.utils.book_append_sheet(wb, ws, 'Surat Jalan');
             XLSX.writeFile(wb, `Surat-Jalan-${ctx.noSj.replace(/[^A-Za-z0-9-]/g, '_')}.xlsx`);
             showToast(`Template Excel Surat Jalan ${ctx.noSj} berhasil diunduh.`, 'success');
+            return true;
+        }
+
+        // Excel SJ dari Barang Keluar: unduh pertama bebas, ke-2 wajib password.
+        // Dari Riwayat: langsung wajib password sejak unduh pertama.
+        // Keduanya tetap dikunci sebentar agar klik cepat nggak mengunduh dua kali.
+        window.downloadSuratJalanExcel = async function(transactionId, source, button) {
+            const tid = String(transactionId || '');
+            const dariRiwayat = source === 'riwayat' || Boolean(button?.closest?.('#tab-sj'));
+            await runSjAction(`excel:${tid}`, button, async () => {
+                const record = await getSjPrintRecord(tid);
+                let message = '';
+                if (dariRiwayat) {
+                    message = 'Download Excel dari Riwayat Surat Jalan memerlukan password.\nMasukkan password akun Anda untuk melanjutkan:';
+                } else if (Number(record.keluarExcel || 0) >= 1) {
+                    message = 'Excel surat jalan ini sudah pernah diunduh.\nMasukkan password akun Anda untuk mengunduh ulang:';
+                }
+                if (message && !(await requireSjPassword(message))) return;
+                if (await doDownloadSuratJalanExcel(tid)) await markSjAction(tid, dariRiwayat ? 'riwayat' : 'keluar', 'excel');
+            });
         };
 
 
