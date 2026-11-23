@@ -1,7 +1,10 @@
 # Catatan Serah Terima Sesi — Inventory Surat Jalan
 
 Dokumen ini dibuat supaya sesi baru di PC 2 bisa langsung lanjut tanpa membaca
-percakapan lama. Dibuat: 2026-11-23. Commit terakhir saat dibuat: `b4ba100`.
+percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-24 (HEAD `e5f888c`).
+
+Untuk detail pekerjaan UI terbaru (kartu mobile, pagination 10 baris, alamat PO,
+toast, scroll horizontal), baca juga `docs/TABEL-PAGINATION-ALAMAT.md`.
 
 ---
 
@@ -20,7 +23,11 @@ Fitur yang sudah selesai:
 - Surat Jalan (SJ): nomor SJ di form/tabel, cetak mirip template Excel, download template `.xlsx`, riwayat per transaksi.
 - Alamat customer ditaruh di **form PO Customer** (`po-alamat`), bukan di form SJ. Cell `G7` berisi alamat + `No. PO: ...`.
 - Tombol **Cetak SJ** = langsung print browser; **Excel SJ** = download template.
-- Menu **Riwayat Surat Jalan**: filter tanggal/customer, 12 baris/halaman + navigasi, aksi Cetak SJ & Excel SJ, tombol **Detail (n)**.
+- Menu **Riwayat Surat Jalan**: filter tanggal/customer, **10 baris/halaman** + navigasi, aksi Cetak SJ & Excel SJ, tombol **Detail (n)**.
+- Semua tabel (Master, PO, Masuk, Keluar, SJ, Sampel, Retur, User) sekarang pagination 10 baris;
+  bar pagination hanya muncul kalau datanya lebih dari 10.
+- PO Customer: panel Detail menampilkan **Alamat Customer** + tombol **Ubah Alamat**
+  (update alamat ke seluruh barang dalam satu PO). Toast dibedakan untuk simpan/edit/alamat.
 - Semua tombol aksi tabel berbentuk **badge pill**, bukan efek hover, tidak bertumpuk.
 - Placeholder pencarian **statis** (marquee sudah di-revert sesuai pilihan user).
 - Label footer detail: **Subtotal Qty** (Barang Keluar dan Riwayat SJ).
@@ -145,16 +152,21 @@ assets/templates/surat-jalan.xlsx
 assets/worker/worker.js
 index.html
 docs/SESSION-HANDOVER.md
+docs/TABEL-PAGINATION-ALAMAT.md
 ```
 
 Cache-buster saat ini:
-- `index.html` → `assets/app.js?v=sj-audit-unsynced-20261123`
-- `index.html` → `assets/styles.css?v=lowstock-oneoverlay-20261123`
+- `index.html` → `assets/app.js?v=sj-alamat-fallback-20261124`
+- `index.html` → `assets/styles.css?v=po-alamat-editor-20261124`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting:
 - `2efabc3` — perbaikan print (endpoint audit + dialog password awal)
 - `b4ba100` — peringatan audit SJ belum tersinkron
+- `54ad232` — reset filter SJ & kartu mobile
+- `a17aee2` — kartu mobile SJ/Keluar, pagination, garis pemisah
+- `4e65916` — pagination 10 baris, tinggi filler, scroll horizontal ringan
+- `e5f888c` — Ubah Alamat PO, toast berbeda, fallback alamat Riwayat SJ
 
 **Jangan pernah menyentuh** salinan lama:
 - `D:\PROJECT INVENTORY\assets\app.js`
