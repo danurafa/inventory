@@ -221,8 +221,8 @@ index.html
 Cache-buster **saat ini** (di `index.html`):
 
 ```
-assets/styles.css?v=ui3-login-footer-20261124
-assets/app.js?v=ui3-login-footer-20261124
+assets/styles.css?v=ui3-login-status-all-20261124
+assets/app.js?v=ui3-login-status-all-20261124
 ```
 
 Commit terkait:

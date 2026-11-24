@@ -14135,8 +14135,40 @@ html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-card::bef
 html body.theme-glass.theme-light.theme-soft #login-modal :is(.login-glass-title,.login-glass-heading) { color:#e0e7e2 !important; }
 html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-title span { color:#9fb9a8 !important; }
 html body.theme-glass.theme-light.theme-soft #login-modal :is(.login-glass-subtitle,.login-glass-footer) { color:#aab7ae !important; }
-/* UI 3 (Soft Neutral): teks status koneksi HTTP (insecure) sengaja dibuat
-   kontras — pill merah + teks terang supaya tidak tenggelam bersama footer. */
+/* UI 3 (Soft Neutral): status koneksi di login sengaja dibuat kontras.
+   Berlaku untuk HTTP (insecure), offline, HTTPS (secure), dan saat checking,
+   karena di hosting HTTPS (GitHub Pages) status yang tampil adalah "secure". */
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="secure"],
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="checking"] {
+  color:#d7f5e6 !important;
+  background:rgba(16,185,129,.14) !important;
+  border:1px solid rgba(52,211,153,.45) !important;
+  border-radius:999px !important;
+  padding:6px 12px !important;
+  font-size:11px !important;
+  font-weight:800 !important;
+  letter-spacing:.02em !important;
+  box-shadow:0 4px 14px rgba(16,185,129,.18) !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="checking"] {
+  color:#dbeafe !important;
+  background:rgba(59,130,246,.14) !important;
+  border-color:rgba(96,165,250,.45) !important;
+  box-shadow:0 4px 14px rgba(59,130,246,.18) !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="secure"] #login-security-status-text,
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="checking"] #login-security-status-text {
+  color:#f0fdf4 !important;
+  -webkit-text-fill-color:#f0fdf4 !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="secure"] .login-security-dot,
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="checking"] .login-security-dot {
+  background:#34d399 !important;
+  box-shadow:0 0 10px rgba(52,211,153,.85) !important;
+  width:8px !important;
+  height:8px !important;
+  flex-basis:8px !important;
+}
 html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="insecure"],
 html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="offline"] {
   color:#fecdd3 !important;
