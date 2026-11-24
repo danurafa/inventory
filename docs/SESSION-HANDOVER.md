@@ -1,7 +1,7 @@
 ﻿# Catatan Serah Terima Sesi — Inventory Surat Jalan
 
 Dokumen ini dibuat supaya sesi baru di PC 2 bisa langsung lanjut tanpa membaca
-percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-24 (HEAD `e5f888c`).
+percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-24 (HEAD `c29afd5`, working tree bersih).
 
 Untuk detail pekerjaan UI terbaru (kartu mobile, pagination 10 baris, alamat PO,
 toast, scroll horizontal), baca juga `docs/TABEL-PAGINATION-ALAMAT.md`.
@@ -41,6 +41,24 @@ Fitur yang sudah selesai:
 - Kategori di panel info Barang Masuk jadi pill (hijau di UI 3, cyan di UI 4), elipsis + tooltip `title`.
 - Form Barang Masuk UI 3 & UI 4 desktop: baris `Info / Jumlah Masuk / Divisi` dalam grid 3 kolom.
 - Tombol **Batal** saat mode edit memakai dialog konfirmasi `showConfirm` sebelum form di-reset.
+  Label tombol Reset → **Batal** langsung muncul di semua form (Master, PO, Masuk, Keluar, Sampel, Retur)
+  lewat `syncResetButtons()`; tombol Batal memakai background **merah solid** di semua 4 UI.
+- **Warna Barang** (input teks bebas, otomatis uppercase) tersedia di Master Barang, PO Customer
+  (per baris), Barang Masuk, Barang Keluar (per kartu), Retur. Kolom **Warna** tampil di tabel
+  Master/PO/Masuk/Keluar/Retur/SJ (summary + detail), ikut filter pencarian, serta ikut
+  **Cetak SJ** dan **Excel SJ**. Worker menyimpan `warna` lewat whitelist `master.create` /
+  `master.update`; `syncLocalChanges()` juga mengirim `warna` saat update Master.
+- Template Excel SJ `assets/templates/surat-jalan.xlsx` sudah dipakai: header **Warna**, data
+  kolom **B–I** (No, ID Barang, Nama Barang, Warna, Jenis Barang, Lebar, Ukuran, Qty), alamat
+  di-merge `H7:I8`. Mapping JS: `D6`, `H6`, `D7`, `H7`, `B10:I19` (10 slot).
+- Pop-up konfirmasi simpan (`#detail-save-modal`) menampilkan Warna di semua form.
+- Mitigasi delay sinkronisasi 7 detik: `refreshFromWorkerIfChanged()` (poll `/api/data` tiap
+  7000 ms) ditunda saat user sedang mengedit form transaksi (`isEditingTransactionForm()`),
+  dropdown Barang/PO/Retur di-refresh saat fokus dan saat klik Edit, dan Warna di kartu Keluar
+  diisi langsung saat kartu dibuat (tidak menunggu poll).
+- Status koneksi di modal login UI 3 (Soft Neutral) dibuat kontras untuk semua state:
+  `secure` (hijau), `checking` (biru), `insecure`/`offline` (merah), termasuk teks
+  "Inventory Gudang". GitHub Pages memakai HTTPS → state yang tampil biasanya `secure`.
 
 ---
 
@@ -90,8 +108,13 @@ Status pengecekan terakhir:
 ```
 GET /api/sj/audit?tid=test     → 401 (route ADA)
 GET /api/sj/audit-xyz?tid=test → 404 (fallback normal)
+GET /health                    → {"ok":true,"service":"inventory-backend"}
 ```
 Jadi endpoint sudah terpasang di Worker live. Deploy ulang hanya untuk memastikan versi terbaru.
+
+Worker sudah di-deploy ulang dengan dukungan field `warna` di Master (commit `0651f22` +
+`afed647`). Kalau koneksi cloud gagal saat simpan, toast **"belum dikonfirmasi Worker"**
+muncul; cek Console (`[Worker Sync] Gagal`) atau Network `/api/operations`.
 
 ### Frontend (`assets/app.js`)
 Fungsi penting:
@@ -133,8 +156,10 @@ Kalau GET/POST gagal → tetap jalan pakai cache + toast peringatan (bukan stric
   lalu JSZip + template di-prefetch **bersamaan** dengan audit/password supaya tidak berurutan.
   `getSjTemplateBuffer()` **tidak lagi** membuka file picker otomatis
   (dulu menggantung di Safari setelah `await`).
-- Mapping template: `D6`, `G6`, `D7`, `G7`, `B10:H19` — 10 slot item.
-  Lebih dari 10 item → toast peringatan. Template `G7:H8` merged + `wrapText="1"`, tanpa logo gambar.
+- Mapping template (setelah Warna Barang): `D6`, `H6`, `D7`, `H7`, `B10:I19` — 10 slot item,
+  kolom data **B–I** (No, ID, Nama, **Warna**, Jenis, Lebar, Ukuran, Qty).
+  Template `H7:I8` merged + `wrapText="1"`, tanpa logo gambar. Fallback Excel bawaan juga
+  memakai 9 kolom termasuk Warna.
 - Riwayat: `collectSjHistoryGroups()` → grup per `transactionId`; dipakai `renderSjHistory()`.
 - `toggleSjDetails(token, button, count)` memakai state `_expandedSjGroupKeys`;
   state dibersihkan saat pindah halaman/ganti filter supaya tinggi tabel stabil.
@@ -179,13 +204,18 @@ Cache-buster saat ini:
 - `index.html` → `assets/styles.css?v=ui3-login-status-all-20261124`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
-Commit penting:
-- `2efabc3` — perbaikan print (endpoint audit + dialog password awal)
-- `b4ba100` — peringatan audit SJ belum tersinkron
-- `54ad232` — reset filter SJ & kartu mobile
-- `a17aee2` — kartu mobile SJ/Keluar, pagination, garis pemisah
-- `4e65916` — pagination 10 baris, tinggi filler, scroll horizontal ringan
+Commit penting (terbaru di atas):
+- `c29afd5` — status koneksi login UI 3 ikut terang (HTTPS/checking)
+- `0e8c786` — status HTTP + teks "Inventory Gudang" diperjelas di UI 3
+- `1814b36` — dropdown terisi saat klik Edit + mitigasi delay sinkron 7 detik
+- `b618017` — Warna di popup, tombol Batal merah semua UI, sinkron Batal Master/PO
+- `afed647` — kirim `warna` saat update Master ke Worker
+- `efb010e` — revert V207 badge aksi per tema
+- `0651f22` — Warna Barang di form/tabel/cetak/Excel SJ
+- `dfc02ba` — keterangan sampel + konfirmasi batal edit
+- `3a77a6f` — download Excel SJ: progress, prefetch paralel, tautan manual Safari
 - `e5f888c` — Ubah Alamat PO, toast berbeda, fallback alamat Riwayat SJ
+- `4e65916`, `a17aee2`, `54ad232` — pagination 10 baris & kartu mobile SJ/Keluar
 
 **Jangan pernah menyentuh** salinan lama:
 - `D:\PROJECT INVENTORY\assets\app.js`
@@ -232,9 +262,13 @@ dan isi Console especially response `/api/sj/audit`.
 
 ## 8. Kendala lingkungan
 
-- Tidak ada runtime JS/Python di mesin pengembangan (`node`, `bun`, `deno`, `qjs`, `python` tidak tersedia).
-  Verifikasi memakai `git diff --check` + review manual.
+- Tidak ada runtime `node`, `bun`, `deno`, `python` di mesin pengembangan. Alternatif yang dipakai:
+  `git diff --check` + syntax check `assets/app.js` lewat **Chrome headless**
+  (`chrome.exe --headless=new --allow-file-access-from-files --dump-dom`, lalu `new Function(src)`).
 - Deploy Worker dilakukan manual oleh user (`npx wrangler deploy worker.js --name inventory-backend-test`).
   Nama Worker harus tetap `inventory-backend-test` karena tidak ada `wrangler.toml` di repo.
+- Frontend di-deploy otomatis lewat **GitHub Pages** (`https://danurafa.github.io/inventory/`).
+  Setiap perubahan `app.js`/`styles.css` wajib mengganti `?v=` di `index.html` + **hard refresh**.
+  Halaman GitHub Pages memakai HTTPS, jadi status login yang muncul adalah `secure`, bukan `insecure`.
 - Popup cetak di Safari iOS kadang diblokir bila dipanggil setelah `await`;
   kalau terjadi, rencana cadangan: pakai `window.print()` di halaman yang sama.

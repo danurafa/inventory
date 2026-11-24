@@ -225,13 +225,18 @@ assets/styles.css?v=ui3-login-status-all-20261124
 assets/app.js?v=ui3-login-status-all-20261124
 ```
 
-Commit terkait:
+Commit terkait (terbaru di atas):
 
 ```
+c29afd5  status koneksi login UI 3 ikut terang (HTTPS/checking)
+0e8c786  status HTTP + Inventory Gudang diperjelas di UI 3
+1814b36  dropdown Edit terisi + mitigasi delay 7 detik
+b618017  warna di popup, Batal merah semua UI
+0651f22  warna barang di form/tabel/cetak/Excel SJ
+e5f888c  ubah alamat PO, toast beda, fallback alamat riwayat SJ
 54ad232  reset filter, kartu mobile SJ, jarak tombol reset
 a17aee2  kartu mobile SJ + keluar, pagination, garis pemisah
 4e65916  pagination 10 baris, tinggi filler, scroll horizontal
-e5f888c  ubah alamat PO, toast beda, fallback alamat riwayat SJ
 ```
 
 Jangan pernah menyunting salinan lama:
@@ -257,13 +262,18 @@ Path kerja yang benar: `D:\PROJECT INVENTORY\inventory`.
 7. Cetak SJ / Excel SJ → alamat di header ikut terbarui.
 8. Login sebagai `viewer` → tombol Edit / Ubah Alamat / Atur tidak muncul, data tetap terbaca.
 9. Geser tabel ke samping → tidak tersendat, halaman tidak ikut bergeser.
+10. Klik Edit di Master/PO/Masuk/Keluar/Sampel/Retur → dropdown terisi langsung, tombol
+    Reset berubah jadi **Batal** ber-background merah, custom dropdown (Kategori/Lebar/Ukuran)
+    menampilkan nilai lama.
+11. Cek pop-up konfirmasi simpan → baris **Warna** ikut tampil.
+12. Login di UI 3 → status koneksi (HTTPS/checking/HTTP/offline) dan "Inventory Gudang" jelas terbaca.
 
 ---
 
 ## 8. Kendala lingkungan
 
-- Tidak ada runtime JS/Python di mesin pengembangan (`node`, `python`, dll.).
-  Verifikasi memakai review manual + `git diff --check`.
+- Tidak ada runtime `node`/`python`; verifikasi memakai `git diff --check` + Chrome headless.
 - Worker di-deploy manual oleh user via Wrangler dengan nama `inventory-backend-test`.
-- Karena fitur alamat memakai `po.update` yang sudah ada, **tidak ada perubahan Worker**
-  pada pekerjaan ini.
+- Frontend otomatis via GitHub Pages (HTTPS). Karena itu status koneksi di login UI 3
+  memakai state `secure` ("Koneksi HTTPS aktif"), sudah ikut dibuat kontras.
+- Worker sudah diperbarui dengan whitelist `warna` (commit `0651f22` / `afed647`).
