@@ -446,6 +446,44 @@
                 return el && el.value === 'true';
             });
         }
+
+        // Form yang isiannya sudah disentuh user tetapi belum disimpan.
+        // Memakai event input/change (bukan diff nilai) supaya nilai default dan
+        // pengisian otomatis dari JS tidak memicu peringatan palsu.
+        const UNSAVED_WATCHED_FORMS = [
+            'form-master', 'form-po', 'form-masuk', 'form-keluar',
+            'form-sampel', 'form-retur', 'form-user'
+        ];
+        const unsavedFormIds = new Set();
+        function markUnsavedForm(form) {
+            if (form && form.id && UNSAVED_WATCHED_FORMS.includes(form.id)) {
+                unsavedFormIds.add(form.id);
+            }
+        }
+        function clearUnsavedForm(formOrId) {
+            const id = typeof formOrId === 'string' ? formOrId : formOrId?.id;
+            if (id) unsavedFormIds.delete(id);
+        }
+        window.clearUnsavedFormFlag = clearUnsavedForm;
+        function hasUnsavedFormInput() {
+            return unsavedFormIds.size > 0;
+        }
+        function initUnsavedFormWatchers() {
+            UNSAVED_WATCHED_FORMS.forEach(id => {
+                const form = document.getElementById(id);
+                if (!form || form.dataset.unsavedWatcherReady === '1') return;
+                form.dataset.unsavedWatcherReady = '1';
+                const onEdit = event => {
+                    const target = event.target;
+                    if (target && target.tagName === 'INPUT' && target.type === 'hidden') return;
+                    markUnsavedForm(form);
+                };
+                form.addEventListener('input', onEdit, true);
+                form.addEventListener('change', onEdit, true);
+            });
+        }
+        initUnsavedFormWatchers();
+
         let workerRefreshPendingWhileEditing = false;
 
         async function refreshFromWorkerIfChanged() {
@@ -1315,12 +1353,19 @@
             }, 120);
         };
 
-        // Jika user sedang dalam mode edit form transaksi, ganti menjadi langsung,
-        // lalu konfirmasi supaya form tidak tiba-tiba hilang saat ke menu lain.
+        // Jika user sedang mode edit ATAU sudah mengubah isian form (meski belum
+        // klik Edit), konfirmasi dulu supaya form tidak hilang saat pindah menu.
+        // Berlaku sama di desktop dan drawer mobile karena tombol menu memakai
+        // window.switchTab yang sama.
         window.switchTab = function(tabId) {
-            if (isEditingTransactionForm()) {
-                showConfirm('Mode Edit Aktif',
-                    'Mode edit transaksi masih aktif. Klik Ya, Lanjutkan untuk beralih ke menu ini, atau Batal untuk tetap melengkapi form terlebih dahulu.',
+            const editing = isEditingTransactionForm();
+            const hasUnsavedInput = hasUnsavedFormInput();
+            if (editing || hasUnsavedInput) {
+                const title = editing ? 'Mode Edit Aktif' : 'Form Belum Disimpan';
+                const message = editing
+                    ? 'Mode edit transaksi masih aktif. Klik Ya, Lanjutkan untuk beralih ke menu ini, atau Batal untuk tetap melengkapi form terlebih dahulu.'
+                    : 'Isian form sudah ada perubahan yang belum disimpan. Klik Ya, Lanjutkan untuk beralih ke menu ini, atau Batal untuk tetap melengkapi form terlebih dahulu.';
+                showConfirm(title, message,
                     () => switchTabInternal(tabId),
                     { confirmLabel: 'Ya, Lanjutkan' });
                 return;
@@ -1905,6 +1950,7 @@
             const item = window.gudangAppDb.items.find(x => x.id === id);
             if (!item) return;
 
+            clearUnsavedForm('form-master');
             document.getElementById('master-edit-mode').value = 'true';
             document.getElementById('master-id').value = item.id;
             document.getElementById('master-id').disabled = true;
@@ -1937,6 +1983,7 @@
         };
 
         window.resetMasterForm = function() {
+            clearUnsavedForm('form-master');
             document.getElementById('form-master').reset();
             window.syncFormDropdownLabels?.('form-master');
             document.getElementById('master-edit-mode').value = 'false';
@@ -1997,6 +2044,7 @@
         function beginTransactionEdit(formId, modeId, values) {
             const form = document.getElementById(formId);
             if (!form) return;
+            clearUnsavedForm(form);
             Object.entries(values).forEach(([id, value]) => {
                 const el = document.getElementById(id);
                 if (el) el.value = value ?? '';
@@ -2053,6 +2101,7 @@
         window.editPoItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
             const r = window.gudangAppDb.po.find(x => String(x.id) === String(id)); if (!r) return;
+            clearUnsavedForm('form-po');
             document.getElementById('form-po').reset();
             document.getElementById('po-items-container').innerHTML = '';
             document.getElementById('po-id').value = r.id;
@@ -2219,6 +2268,7 @@
         };
 
         window.resetMasukForm = function() {
+            clearUnsavedForm('form-masuk');
             document.getElementById('form-masuk').reset();
             document.getElementById('masuk-edit-mode').value = 'false';
             window.syncResetButtons?.();
@@ -2403,6 +2453,7 @@
         };
 
         window.resetKeluarForm = function() {
+            clearUnsavedForm('form-keluar');
             document.getElementById('form-keluar').reset();
             window.syncFormDropdownLabels?.('form-keluar');
             document.getElementById('keluar-edit-mode').value = 'false';
@@ -2669,6 +2720,7 @@
         };
 
         window.resetPoForm = function() {
+            clearUnsavedForm('form-po');
             document.getElementById('form-po').reset();
             document.getElementById('po-edit-mode').value = 'false';
             window.syncResetButtons?.();
@@ -2874,6 +2926,7 @@
         };
 
         window.resetSampelForm = function() {
+            clearUnsavedForm('form-sampel');
             document.getElementById('form-sampel').reset();
             window.syncFormDropdownLabels?.('form-sampel');
             document.getElementById('sampel-edit-mode').value = 'false';
@@ -3067,6 +3120,7 @@
         };
 
         window.resetReturForm = function() {
+            clearUnsavedForm('form-retur');
             document.getElementById('form-retur').reset();
             document.getElementById('retur-edit-mode').value = 'false';
             window.syncResetButtons?.();
@@ -3131,6 +3185,7 @@
                 await workerRequest('/api/users', { method:'POST', body:JSON.stringify({username,name,password,role}) });
                 await loadUsersFromWorker();
                 window.refreshAllViews?.();
+                clearUnsavedForm('form-user');
                 document.getElementById('form-user').reset();
                 showToast(`User ${username} berhasil ditambahkan.`);
             } catch (error) { showToast(error.message, 'error'); }

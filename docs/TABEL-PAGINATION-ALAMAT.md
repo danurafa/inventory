@@ -206,6 +206,23 @@ juga tepat di tengah tombol (flex center).
   Selector UI 4 sengaja dipanjangkan lewat `#masuk-form-card` untuk mengalahkan
   aturan generik `form[id^="form-"] > .grid` yang memaksa panel Info jadi `grid-column:1/-1`.
 
+### 5.3 Guard pindah menu saat form belum disimpan
+
+- `window.switchTab()` memeriksa dua kondisi sebelum memindah tab:
+  1. `isEditingTransactionForm()` — flag `<menu>-edit-mode = 'true'`.
+  2. `hasUnsavedFormInput()` — user sudah mengubah isian form lewat event
+     `input`/`change`, walau belum klik tombol Edit.
+- Form yang dipantau: Master, PO, Masuk, Keluar, Sampel, Retur, dan User.
+- Nilai default / pengisian otomatis dari JS tidak memicu guard karena deteksi
+  memakai event user, bukan perbandingan nilai.
+- Dialog memakai `showConfirm(..., { confirmLabel:'Ya, Lanjutkan' })`:
+  - Mode edit → judul **Mode Edit Aktif**.
+  - Baru ngetik → judul **Form Belum Disimpan**.
+- Flag perubahan dibersihkan oleh `clearUnsavedFormFlag()` saat form di-reset,
+  disimpan, atau masuk mode edit. **Batal** pada dialog membuat user tetap di menu
+  saat ini; **Ya, Lanjutkan** memindah tab tanpa mereset isian form.
+- Berlaku di desktop dan drawer mobile karena keduanya memanggil `switchTab()`.
+
 ---
 
 ## 6. File & cache
