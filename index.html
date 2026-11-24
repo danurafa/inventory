@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="id">
 <head>
-    <link id="inventory-styles" rel="stylesheet" href="assets/styles.css?v=ui3-login-status-all-20261124">
+    <link id="inventory-styles" rel="stylesheet" href="assets/styles.css?v=toast-bounce-20261124">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -441,15 +441,15 @@
                             <input type="hidden" id="master-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Barang (SKU) *</label>
-                                <input type="text" id="master-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" placeholder="Contoh: EJ-003-03" autocomplete="off">
+                                <input type="text" id="master-id" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" placeholder="Ketik ID barang (SKU)..." autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Nama Barang *</label>
-                                <input type="text" id="master-nama" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Contoh: ELASTIS LURUS" autocomplete="off">
+                                <input type="text" id="master-nama" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Ketik nama barang..." autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Warna Barang</label>
-                                <input type="text" id="master-warna" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus uppercase" placeholder="Contoh: MERAH / NAVY / HITAM" autocomplete="off">
+                                <input type="text" id="master-warna" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus uppercase" placeholder="Isi warna barang..." autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Kategori *</label>
@@ -507,7 +507,7 @@
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label class="text-xs block mb-1">Berat (gr)</label>
-                                    <input type="text" id="master-berat" value="0" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" placeholder="Contoh: 45.5" autocomplete="off">
+                                    <input type="text" id="master-berat" value="0" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" placeholder="Isi berat (gram)..." autocomplete="off">
                                 </div>
                                 <div>
                                     <label class="text-xs block mb-1">Satuan *</label>
@@ -602,7 +602,7 @@
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">No. PO Customer *</label>
-                                <input type="text" id="po-no-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" placeholder="PO/2026/XI/001" autocomplete="off">
+                                <input type="text" id="po-no-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" placeholder="Ketik nomor PO..." autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Tanggal PO *</label>
@@ -610,11 +610,11 @@
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Nama Customer *</label>
-                                <input type="text" id="po-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA" autocomplete="off">
+                                <input type="text" id="po-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Ketik nama customer..." autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Alamat Customer <span class="text-gray-400">(untuk Surat Jalan)</span></label>
-                                <textarea id="po-alamat" rows="2" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus resize-y" placeholder="Jl. Raya Contoh No. 12, Bandung, Jawa Barat" autocomplete="off"></textarea>
+                                <textarea id="po-alamat" rows="2" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus resize-y" placeholder="Isi alamat lengkap..." autocomplete="off"></textarea>
                             </div>
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between gap-2">
@@ -703,8 +703,8 @@
                                 <div><span class="text-gray-300 block mb-0.5 font-medium">Kategori:</span> <span id="info-masuk-jenis" class="font-bold text-white">-</span></div>
                                 <div><span class="text-gray-300 block mb-0.5 font-medium">Satuan:</span> <span id="info-masuk-satuan" class="font-bold text-white">-</span></div>
                                 <div class="col-span-2">
-                                    <label class="text-gray-300 block mb-0.5 font-medium" for="masuk-warna">Warna Barang</label>
-                                    <input type="text" id="masuk-warna" class="w-full bg-dark-700/80 border border-white/15 rounded-lg px-2 py-1.5 text-xs theme-focus uppercase" placeholder="Contoh: MERAH / NAVY / HITAM" autocomplete="off">
+                                    <span class="text-gray-300 block mb-0.5 font-medium">Warna Barang:</span>
+                                    <span id="info-masuk-warna" class="font-bold text-white">-</span>
                                 </div>
                             </div>
                             <div>
@@ -713,7 +713,7 @@
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Divisi *</label>
-                                <input type="text" id="masuk-supplier" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Divisi 1 / Divisi 2" autocomplete="off">
+                                <input type="text" id="masuk-supplier" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Isi divisi / sumber barang..." autocomplete="off">
                             </div>
                             <div class="pt-2 flex gap-2">
                                 <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
@@ -789,7 +789,7 @@
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">No. Surat Jalan *</label>
-                                <input type="text" id="keluar-no-sj" required maxlength="40" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" placeholder="SJ-2611-0001" autocomplete="off">
+                                <input type="text" id="keluar-no-sj" required maxlength="40" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus uppercase" placeholder="Ketik nomor surat jalan..." autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Pilih Nomor PO Customer *</label>
@@ -816,7 +816,7 @@
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Customer / Tujuan *</label>
-                                <input type="text" id="keluar-tujuan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA" autocomplete="off">
+                                <input type="text" id="keluar-tujuan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Ketik customer / tujuan..." autocomplete="off">
                             </div>
                             <div class="pt-2 flex gap-2">
                                 <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
@@ -962,15 +962,15 @@
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Customer *</label>
-                                <input type="text" id="sampel-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="PT. MAJU JAYA" autocomplete="off">
+                                <input type="text" id="sampel-customer" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Ketik nama customer..." autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Nama Sampel *</label>
-                                <input type="text" id="sampel-nama" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Contoh: Sampel Kustom A" autocomplete="off">
+                                <input type="text" id="sampel-nama" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Ketik nama sampel..." autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Keterangan</label>
-                                <textarea id="sampel-keterangan" rows="2" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Contoh: Warna merah, cetak logo di depan" autocomplete="off"></textarea>
+                                <textarea id="sampel-keterangan" rows="2" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Isi keterangan sampel..." autocomplete="off"></textarea>
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Kategori *</label>
@@ -1028,11 +1028,11 @@
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label class="text-xs block mb-1">Berat (gr)</label>
-                                    <input type="text" id="sampel-berat" value="0" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" placeholder="Contoh: 45.5" autocomplete="off">
+                                    <input type="text" id="sampel-berat" value="0" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono theme-focus" placeholder="Isi berat (gram)..." autocomplete="off">
                                 </div>
                                 <div>
                                     <label class="text-xs block mb-1">Tebal (mm)</label>
-                                    <input type="text" id="sampel-tebal" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="1.2 mm" autocomplete="off">
+                                    <input type="text" id="sampel-tebal" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Isi ketebalan (mm)..." autocomplete="off">
                                 </div>
                             </div>
                             <div class="pt-2 flex gap-2">
@@ -1114,7 +1114,7 @@
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Warna Barang</label>
-                                <input type="text" id="retur-warna" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus uppercase" placeholder="Contoh: MERAH / NAVY / HITAM" autocomplete="off">
+                                <input type="text" id="retur-warna" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus uppercase" placeholder="Isi warna barang..." autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Referensi Barang Keluar *</label>
@@ -1129,7 +1129,7 @@
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Keterangan / Alasan *</label>
-                                <input type="text" id="retur-keterangan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Contoh: Barang cacat" autocomplete="off">
+                                <input type="text" id="retur-keterangan" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Isi alasan / keterangan retur..." autocomplete="off">
                             </div>
                             <div class="pt-2 flex gap-2">
                                 <button type="submit" class="flex-1 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
@@ -1195,15 +1195,15 @@
                         <form id="form-user" onsubmit="saveNewUser(event)" class="space-y-4" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">Username *</label>
-                                <input type="text" id="new-user-username" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="budi_gudang" autocomplete="off">
+                                <input type="text" id="new-user-username" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Ketik username..." autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Nama Lengkap *</label>
-                                <input type="text" id="new-user-name" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Budi Santoso" autocomplete="off">
+                                <input type="text" id="new-user-name" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Ketik nama lengkap..." autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Password *</label>
-                                <input type="text" id="new-user-pass" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="rahasia123" autocomplete="off">
+                                <input type="text" id="new-user-pass" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Ketik password..." autocomplete="off">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Hak Akses (Role) *</label>
@@ -1529,6 +1529,6 @@
 
 
 
-    <script src="assets/app.js?v=ui3-login-status-all-20261124"></script>
+    <script src="assets/app.js?v=placeholder-action-copy-20261124"></script>
 </body>
 </html>

@@ -1315,7 +1315,20 @@
             }, 120);
         };
 
+        // Jika user sedang dalam mode edit form transaksi, ganti menjadi langsung,
+        // lalu konfirmasi supaya form tidak tiba-tiba hilang saat ke menu lain.
         window.switchTab = function(tabId) {
+            if (isEditingTransactionForm()) {
+                showConfirm('Mode Edit Aktif',
+                    'Mode edit transaksi masih aktif. Klik Ya, Lanjutkan untuk beralih ke menu ini, atau Batal untuk tetap melengkapi form terlebih dahulu.',
+                    () => switchTabInternal(tabId),
+                    { confirmLabel: 'Ya, Lanjutkan' });
+                return;
+            }
+            switchTabInternal(tabId);
+        };
+
+        function switchTabInternal(tabId) {
             const tabs = ['dashboard', 'master', 'po', 'masuk', 'keluar', 'sj', 'sampel', 'retur', 'users', 'backup'];
             tabs.forEach(t => {
                 const sec = document.getElementById(`tab-${t}`);
@@ -2058,7 +2071,7 @@
         window.editMasukItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
             const r = window.gudangAppDb.masuk.find(x => String(x.id) === String(id)); if (!r) return;
-            beginTransactionEdit('form-masuk','masuk-edit-mode', {'masuk-id':r.id,'masuk-tanggal':r.tanggal,'masuk-barang':r.barangId,'masuk-warna':r.warna || '','masuk-qty':r.qty,'masuk-supplier':r.supplier});
+            beginTransactionEdit('form-masuk','masuk-edit-mode', {'masuk-id':r.id,'masuk-tanggal':r.tanggal,'masuk-barang':r.barangId,'masuk-qty':r.qty,'masuk-supplier':r.supplier});
             // Ambil fresh daftar Barang saat masuk mode edit biar pengguna langsung bisa pilih.
             window.populateItemDropdowns?.();
             window.updateMasukItemInfo?.();
@@ -2125,14 +2138,17 @@
             const item = window.gudangAppDb.items.find(x => x.id === barangId);
             const jenisEl = document.getElementById('info-masuk-jenis');
             const jenisValue = item ? item.jenis : '-';
-            // Nilai kategori bisa panjang: dipotong jadi pill di CSS UI 3,
-            // tapi teks lengkap tetap terbaca lewat tooltip.
+            // Kategori tidak lagi ditampilkan sebagai pill, hanya text biasa;
             jenisEl.textContent = jenisValue;
             jenisEl.title = jenisValue;
             document.getElementById('info-masuk-satuan').textContent = item ? item.satuan : '-';
-            // Warna boleh ditimpa manual; otomatis isi dari Master saat masih kosong.
-            const warnaEl = document.getElementById('masuk-warna');
-            if (warnaEl && item?.warna && !warnaEl.value.trim()) warnaEl.value = item.warna;
+            // Warna ditampilkan read-only dari Master; tidak bisa diedit di form.
+            const warnaInfo = document.getElementById('info-masuk-warna');
+            const warnaValue = item ? (item.warna || '-') : '-';
+            if (warnaInfo) {
+                warnaInfo.textContent = warnaValue;
+                warnaInfo.title = warnaValue;
+            }
         };
 
         window.saveMasukItem = async function(e) {
@@ -2151,7 +2167,7 @@
             const username = window.gudangAppDb.currentUser?.name || 'Administrator';
 
             const item = window.gudangAppDb.items.find(x => x.id === barangId);
-            const warna = document.getElementById('masuk-warna')?.value.trim().toUpperCase() || item?.warna || '';
+            const warna = String(item?.warna || '').trim().toUpperCase();
             if (!id || !tanggal || !barangId || !supplier || !Number.isInteger(qty) || qty <= 0) {
                 showToast('Lengkapi data Barang Masuk dan pastikan Qty lebih dari nol.', 'error');
                 return;
@@ -2583,7 +2599,7 @@
                 <div class="col-span-2"><label class="text-[10px] text-gray-400">Barang</label><select ${n===1?'id="po-barang"':''} data-po-field="barangId" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"><option value="">-- Pilih Barang --</option>${itemOptions}</select></div>
                 <div><label class="text-[10px] text-gray-400">Qty PO</label><input ${n===1?'id="po-qty"':''} data-po-field="qty" type="number" min="1" step="1" value="${values.qty ?? 1}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
                 <div><label class="text-[10px] text-gray-400">Qty Siap</label><input ${n===1?'id="po-siap"':''} data-po-field="siapKirim" type="number" min="0" step="1" value="${values.siapKirim ?? 0}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
-                <div><label class="text-[10px] text-gray-400">Warna Barang</label><input ${n===1?'id="po-warna"':''} data-po-field="warna" type="text" value="${String(values.warna ?? '').replace(/"/g,'&quot;')}" class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs uppercase" placeholder="MERAH / NAVY"></div>
+                <div><label class="text-[10px] text-gray-400">Warna Barang</label><input ${n===1?'id="po-warna"':''} data-po-field="warna" type="text" value="${String(values.warna ?? '').replace(/"/g,'&quot;')}" class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs uppercase" placeholder="Isi warna barang..."></div>
                 <div class="flex items-end"><button type="button" onclick="this.closest('[data-po-item-row]').remove(); refreshPoItemRowIds()" class="po-remove-item-btn w-full h-10 rounded-lg border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Hapus baris">Hapus</button></div>`;
             host.appendChild(row);
             const select = row.querySelector('[data-po-field="barangId"]'); if (values.barangId) select.value = values.barangId;
@@ -6223,7 +6239,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     const card = makeNoticeCard('DETAIL BARANG MASUK', `${qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim());
                     addDetailRow('ID Barang', barangId || '-', card);
                     addDetailRow('Nama Barang', window.displayItemName(barangId, item?.nama || barangId), card);
-                    addDetailRow('Warna Barang', document.getElementById('masuk-warna')?.value.trim().toUpperCase() || item?.warna || '-', card);
+                    addDetailRow('Warna Barang', item?.warna || '-', card);
                     addDetailRow('Jumlah Masuk', `${qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
                     addDetailRow('Divisi', document.getElementById('masuk-supplier')?.value || '-', card);
                     if (item) {
@@ -6516,6 +6532,11 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
     const search=document.createElement('input'); search.type='search'; search.className='inventory-item-select-search'; search.placeholder='Cari pilihan…'; search.autocomplete='off'; search.setAttribute('aria-label','Cari pilihan');
     const list=document.createElement('div'); list.className='inventory-item-select-list'; list.setAttribute('role','listbox');
     panel.append(search,list);
+    // Penyesuaian ukuran hanya untuk "Pilih Barang" di Barang Masuk.
+    if(select.id==='masuk-barang'){
+      wrap.classList.add('barang-masuk-dropdown');
+      panel.classList.add('barang-masuk-dropdown-panel');
+    }
     select.parentNode.insertBefore(wrap,select); wrap.append(trigger,select); select.classList.add('inventory-item-select-native');
     wrap._inventoryPanel=panel;
     let positionFrame=0;
@@ -6542,10 +6563,10 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
       const placeBelow=below>=Math.min(220,above) || below>=above;
       const available=Math.max(120,placeBelow?below:above);
       const maxList=Math.max(80,Math.min(window.innerWidth<=640?240:280,available-62));
-      let widestOption=0;
       // Ukur font sekali saja (semua option memakai kelas yang sama).
       // Sebelumnya getComputedStyle dipanggil per option, yang membuat dropdown
       // terasa berat membukanya, terutama setelah form di-reset.
+      let widestOption=0;
       if(measureContext){
         const options=list.querySelectorAll('.inventory-item-select-option');
         const ref=options[0];
@@ -6557,7 +6578,12 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
           });
         }
       }
-      const width=Math.min(Math.max(rect.width,Math.ceil(widestOption+48)),window.innerWidth-margin*2);
+      // Khusus "Pilih Barang" di Barang Masuk, panel mengikuti lebar trigger
+      // supaya tidak melebar ke kanan. Menu lain tetap memakai lebar opsi.
+      const isMasukBarang=select.id==='masuk-barang';
+      const width=isMasukBarang
+        ? Math.min(rect.width,window.innerWidth-margin*2)
+        : Math.min(Math.max(rect.width,Math.ceil(widestOption+48)),window.innerWidth-margin*2);
       const left=Math.max(margin,Math.min(rect.left,window.innerWidth-width-margin));
       panel.style.width=width+'px';
       panel.style.left=left+'px';

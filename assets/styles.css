@@ -8545,54 +8545,82 @@ html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [id^="tab-"
   font-weight:700;
 }
 html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .fluid-table-container { border-radius:22px !important; overflow:hidden; }
-/* Dropdown custom */
-html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="inventory-item-select"] { color:var(--lg-ink); }
+/* Dropdown custom UI 2: kaca gelap yang tidak tembus (alpha tinggi + blur),
+   bukan latar putih. Tipografi dirapikan: weight 600, size 12.5px, tracking
+   tipis, dan warna off-white supaya enak dibaca di background theme-crystal. */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="inventory-item-select"] { color:var(--lg-ink) !important; }
 html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-item-select-trigger {
-  background:linear-gradient(155deg,rgba(255,255,255,.28),rgba(255,255,255,.08)) !important;
-  border:1px solid rgba(255,255,255,.40) !important;
+  background:rgba(10,18,36,.78) !important;
+  border:1.5px solid rgba(255,255,255,.32) !important;
   border-radius:16px !important;
-  color:#fff !important;
-  box-shadow:inset 1px 1px 0 rgba(255,255,255,.45),0 8px 20px rgba(0,0,0,.32) !important;
+  color:var(--lg-ink-2) !important;
+  -webkit-text-fill-color:var(--lg-ink-2) !important;
+  font-size:12.5px !important;
+  font-weight:600 !important;
+  letter-spacing:.012em !important;
+  line-height:1.45 !important;
+  -webkit-font-smoothing:antialiased !important;
+  box-shadow:none !important;
+  -webkit-backdrop-filter:blur(14px) saturate(140%) !important;backdrop-filter:blur(14px) saturate(140%) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-item-select-value {
+  color:#f8fbff !important;
+  -webkit-text-fill-color:#f8fbff !important;
+  font-weight:700 !important;
+  letter-spacing:.015em !important;
 }
 html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="inventory-item-select"][class*="panel"],
 html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="inventory-item-select"][class*="menu"],
 html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) [class*="inventory-item-select"][class*="list"] {
-  background:linear-gradient(160deg,rgba(40,48,92,.78),rgba(22,28,62,.82)) !important;
-  border:1px solid rgba(255,255,255,.30) !important;
+  background:rgba(9,17,34,.90) !important;
+  border:1.5px solid rgba(255,255,255,.32) !important;
   border-radius:20px !important;
-  color:#fff !important;
-  box-shadow:0 18px 44px rgba(0,0,0,.50),var(--lg-edge) !important;
-  backdrop-filter:blur(30px) saturate(190%);
-  -webkit-backdrop-filter:blur(30px) saturate(190%);
+  color:var(--lg-ink-2) !important;
+  box-shadow:0 16px 36px rgba(0,0,0,.28) !important;
+  -webkit-backdrop-filter:blur(20px) saturate(140%) !important;backdrop-filter:blur(20px) saturate(140%) !important;
 }
 html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-item-select-search {
-  background:linear-gradient(155deg,rgba(255,255,255,.18),rgba(255,255,255,.06)) !important;
-  border:1px solid rgba(255,255,255,.32) !important;
-  border-radius:12px !important;
-  box-shadow:inset 0 2px 8px rgba(0,0,0,.25) !important;
-  color:#fff !important;
-  -webkit-text-fill-color:#fff !important;
-}
-html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-item-select-search::placeholder {
-  color:#c6d9f3 !important;
-  -webkit-text-fill-color:#c6d9f3 !important;
-}
-html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-item-select-option {
-  background:transparent !important;
-  border:1px solid transparent !important;
+  background:rgba(148,163,184,.26) !important;
+  border:1px solid rgba(255,255,255,.24) !important;
   border-radius:12px !important;
   box-shadow:none !important;
-  color:#f4f8ff !important;
+  color:var(--lg-ink-2) !important;
+  -webkit-text-fill-color:var(--lg-ink-2) !important;
+  font-size:12px !important;
+  font-weight:500 !important;
+  letter-spacing:.01em !important;
+  -webkit-font-smoothing:antialiased !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-item-select-search::placeholder {
+  color:rgba(226,236,247,.78) !important;
+  -webkit-text-fill-color:rgba(226,236,247,.78) !important;
+}
+/* Setiap baris option dibuat badge abu-abu, cukup pekat supaya tidak tembus. */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-item-select-option {
+  background:rgba(148,163,184,.28) !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  border-radius:12px !important;
+  box-shadow:none !important;
+  color:var(--lg-ink-2) !important;
+  -webkit-text-fill-color:var(--lg-ink-2) !important;
+  font-size:12.5px !important;
+  font-weight:600 !important;
+  letter-spacing:.012em !important;
+  line-height:1.45 !important;
+  -webkit-font-smoothing:antialiased !important;
   text-shadow:none !important;
 }
 html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-item-select-option:hover,
 html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-item-select-option[aria-selected="true"] {
-  background:linear-gradient(155deg,rgba(100,174,255,.32),rgba(92,112,220,.22)) !important;
-  border-color:rgba(255,255,255,.24) !important;
-  box-shadow:inset 1px 1px 0 rgba(255,255,255,.25) !important;
+  background:rgba(148,163,184,.42) !important;
+  border-color:rgba(255,255,255,.38) !important;
+  box-shadow:none !important;
   color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  font-weight:700 !important;
 }
 html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-item-select-list {
+  display:flex !important;flex-direction:column !important;gap:6px !important;
   scrollbar-color:rgba(174,207,255,.72) rgba(255,255,255,.08);
 }
 html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-item-select-list::-webkit-scrollbar-track {
@@ -8600,6 +8628,57 @@ html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-
 }
 html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-item-select-list::-webkit-scrollbar-thumb {
   background:rgba(174,207,255,.72);
+}
+/* Ringkas & batasi lebar HANYA "Pilih Barang" di menu Barang Masuk.
+   Class di-set saat JS membuat dropdown untuk #masuk-barang. */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .barang-masuk-dropdown .inventory-item-select-trigger {
+  min-height:40px !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .barang-masuk-dropdown-panel {
+  padding:6px !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .barang-masuk-dropdown-panel .inventory-item-select-option {
+  padding:7px 10px !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .barang-masuk-dropdown-panel .inventory-item-select-list {
+  gap:4px !important;
+  max-height:220px !important;
+}
+@media (max-width:640px) {
+  html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .barang-masuk-dropdown-panel .inventory-item-select-list {
+    max-height:190px !important;
+  }
+}
+/* UI 2 — cadangan native select di semua menu: samakan palet kaca gelap
+   dengan dropdown custom, jadi tidak ada yang masih putih saat belum
+   dikonversi atau saat daftar opsi native dipakai. */
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content select,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content select option,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content select optgroup {
+  color-scheme:dark !important;
+  background:rgba(10,18,36,.86) !important;
+  color:var(--lg-ink-2) !important;
+  border-color:rgba(255,255,255,.28) !important;
+  font-size:12.5px !important;
+  font-weight:600 !important;
+  letter-spacing:.012em !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content select option:checked {
+  background:rgba(148,163,184,.42) !important;
+  color:#fff !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content select:focus {
+  border-color:rgba(255,255,255,.42) !important;
+  box-shadow:0 0 0 3px rgba(148,163,184,.18) !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-item-select-empty {
+  color:var(--lg-muted) !important;
+  font-weight:600 !important;
+  letter-spacing:.012em !important;
+}
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) .inventory-item-select-chevron {
+  color:var(--lg-ink-2) !important;
+  opacity:.88 !important;
 }
 /* Modal & toast */
 html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #login-modal .login-glass-card,
@@ -15901,31 +15980,27 @@ html body.theme-glass.theme-neon #sj-password-modal #sj-password-ok {
   box-shadow:0 8px 20px rgba(20,190,207,.18) !important;
 }
 
-/* V203 — UI 3 (Soft Neutral) saja: nilai Kategori di panel info form Barang
-   Masuk dibuat pill hijau soft. Teks panjang dipotong satu baris dengan elipsis;
-   nilai lengkap ada di tooltip `title` yang diisi updateMasukItemInfo(). */
-html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk #masuk-item-info > div {
+/* V203 — Fitur pill Kategori pada info form Barang Masuk dihilangkan (dibuat
+   plain text). Lock di sini agar tema lain juga tidak mengulasinya lagi. */
+html body.theme-glass #inventory-main-content #tab-masuk #form-masuk #masuk-item-info > div {
   min-width:0 !important;
 }
-html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk #info-masuk-jenis {
-  display:inline-flex !important;
-  align-items:center !important;
-  box-sizing:border-box !important;
-  max-width:100% !important;
-  padding:3px 9px !important;
-  border:1px solid rgba(82,107,94,.55) !important;
-  border-radius:999px !important;
-  background:rgba(82,107,94,.22) !important;
-  color:#cbd8d0 !important;
-  -webkit-text-fill-color:#cbd8d0 !important;
-  font-size:10px !important;
+html body.theme-glass #inventory-main-content #tab-masuk #form-masuk #info-masuk-jenis {
+  display:inline !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:#e5e7eb !important;
+  -webkit-text-fill-color:#e5e7eb !important;
+  font-size:12px !important;
   font-weight:700 !important;
-  line-height:1.2 !important;
-  letter-spacing:.02em !important;
-  white-space:nowrap !important;
-  overflow:hidden !important;
-  text-overflow:ellipsis !important;
-  vertical-align:middle !important;
+  line-height:1.4 !important;
+  letter-spacing:normal !important;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  vertical-align:baseline !important;
 }
 
 /* V204 — UI 3 (Soft Neutral): baris form Barang Masuk dirapikan jadi 3 kolom
@@ -15976,32 +16051,27 @@ html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk 
   }
 }
 
-/* V205 — UI 4 (Black Cyan): samakan perlakuan Barang Masuk dengan UI 3.
-   Baris 1 ID / Tanggal / Barang, baris 2 Info (Kategori|Satuan) / Jumlah Masuk /
-   Divisi, baris 3 tombol penuh. Pill kategori memakai palet cyan; tooltip `title`
-   sudah diisi updateMasukItemInfo() untuk kedua tema. */
+/* V205 — Fitur pill Kategori pada info form Barang Masuk dihilangkan (plain text).
+   Override neon disini; tips tooltip updateMasukItemInfo() ikut normal. */
 html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk #masuk-item-info > div {
   min-width:0 !important;
 }
 html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk #info-masuk-jenis {
-  display:inline-flex !important;
-  align-items:center !important;
-  box-sizing:border-box !important;
-  max-width:100% !important;
-  padding:3px 9px !important;
-  border:1px solid rgba(53,215,232,.26) !important;
-  border-radius:999px !important;
-  background:rgba(53,215,232,.10) !important;
-  color:#a9e4e9 !important;
-  -webkit-text-fill-color:#a9e4e9 !important;
-  font-size:10px !important;
+  display:inline !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:#e5e7eb !important;
+  -webkit-text-fill-color:#e5e7eb !important;
+  font-size:12px !important;
   font-weight:700 !important;
-  line-height:1.2 !important;
-  letter-spacing:.02em !important;
-  white-space:nowrap !important;
-  overflow:hidden !important;
-  text-overflow:ellipsis !important;
-  vertical-align:middle !important;
+  line-height:1.4 !important;
+  letter-spacing:normal !important;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  vertical-align:baseline !important;
 }
 @media (min-width:1000px) {
   html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk {
@@ -16080,4 +16150,163 @@ html body #inventory-main-content #tab-sj > .app-card > .fluid-table-container {
     gap:12px !important;
     margin-bottom:20px !important;
   }
+}
+
+/* Wheel/kursor di atas tabel tetap menggulir seluruh halaman.
+   Scroll vertikal internal dimatikan; scroll horizontal dipertahankan. */
+@media (min-width:768px) {
+  html body.theme-glass #inventory-main-content :is(
+    #tab-master, #tab-po, #tab-masuk, #tab-keluar,
+    #tab-sj, #tab-sampel, #tab-retur, #tab-users
+  ) .fluid-table-container {
+    overflow-y:clip !important;
+    overscroll-behavior-y:auto !important;
+    overscroll-behavior-x:contain !important;
+    touch-action:pan-x pan-y !important;
+  }
+}
+@media (max-width:767px) {
+  html body.theme-glass #inventory-main-content :is(
+    #tab-master, #tab-po, #tab-masuk, #tab-sampel, #tab-retur, #tab-users
+  ) .fluid-table-container {
+    overflow-y:clip !important;
+    overscroll-behavior-y:auto !important;
+    overscroll-behavior-x:contain !important;
+    touch-action:pan-x pan-y !important;
+  }
+}
+
+/* Barang Masuk: Kategori / Satuan / Warna sejajar satu baris di desktop.
+   Mobile tetap dua kolom dengan Warna penuh (col-span-2). */
+@media (min-width:768px) {
+  html body #inventory-main-content #tab-masuk #form-masuk #masuk-item-info {
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+  html body #inventory-main-content #tab-masuk #form-masuk #masuk-item-info > div:last-child {
+    grid-column:auto !important;
+  }
+}
+
+/* V206 — UI 4 (Neon) Master Barang: layout disamakan ke UI 3 (Soft Neutral).
+   Warna/tema neon tetap dipakai; yang disamakan hanya grid, gap, padding, dan radius.
+   Selector menyertakan :not() agar menang atas aturan UI 4 yang memakai :not() juga. */
+html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) > .grid:first-child {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  grid-template-areas:none !important;
+  align-items:start !important;
+  gap:16px !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) > .grid:first-child > .app-card {
+  grid-area:auto !important;
+  grid-column:1/-1 !important;
+  width:100% !important;
+  min-width:0 !important;
+  border-radius:16px !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) > .grid:first-child > .app-card:first-child {
+  padding:20px !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) > .grid:first-child > .app-card:nth-child(2) {
+  padding:24px !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) #form-master {
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  align-items:end !important;
+  gap:12px 14px !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) #form-master > * {
+  min-width:0 !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) #form-master > * + * {
+  margin-top:0 !important;
+}
+/* Kunci UI 3: pasangan field (Lebar/Ukuran, Berat/Satuan, Stok Min/Awal) berbagi baris. */
+html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) #form-master > .grid {
+  grid-column:span 2 !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) #form-master > .space-y-2,
+html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) #form-master > .rounded-xl.border,
+html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) #form-master > .pt-2 {
+  grid-column:1/-1 !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) #form-master > .pt-2 {
+  display:flex !important;
+  justify-content:flex-end !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) #form-master > .pt-2 button {
+  min-width:120px !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) .fluid-table-container {
+  border-radius:16px !important;
+}
+@media (max-width:999px) {
+  html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) #form-master {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+  html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) #form-master > .grid {
+    grid-column:1/-1 !important;
+  }
+}
+@media (max-width:640px) {
+  html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-dashboard):not(#tab-backup) #form-master {
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+}
+
+/* V207 — Toast biasa: spring drop + ikon pop + teks bertahap + glow progress.
+   Kartu sambutan (.toast-welcome) sengaja dikecualikan karena punya animasi sendiri. */
+html body #toast-container > .inventory-toast:not(.toast-welcome) {
+  animation:toastSpringEnter .62s cubic-bezier(.2,.8,.25,1.12) both !important;
+}
+html body #toast-container > .inventory-toast.toast-leaving:not(.toast-welcome) {
+  animation:toastSpringExit .22s ease-in forwards !important;
+}
+html body #toast-container > .inventory-toast:not(.toast-welcome) > .inventory-toast-icon {
+  animation:toastSpringIcon .58s .06s cubic-bezier(.2,.9,.3,1.28) both !important;
+}
+html body #toast-container > .inventory-toast:not(.toast-welcome) .inventory-toast-title {
+  animation:toastSpringText .34s .12s ease-out both !important;
+}
+html body #toast-container > .inventory-toast:not(.toast-welcome) .inventory-toast-message {
+  animation:toastSpringText .38s .16s ease-out both !important;
+}
+html body #toast-container > .inventory-toast:not(.toast-welcome) > .inventory-toast-progress {
+  animation:toastSpringProgress var(--toast-duration,3600ms) linear forwards !important;
+}
+@keyframes toastSpringEnter {
+  0%   { opacity:0; transform:translate3d(0,-30px,0) scale(.90); filter:blur(4px); }
+  42%  { opacity:1; transform:translate3d(0,11px,0) scale3d(1.04,1.06,1); filter:blur(0); }
+  60%  { transform:translate3d(0,-8px,0) scale3d(.985,.975,1); }
+  76%  { transform:translate3d(0,5px,0) scale3d(1.02,1.03,1); }
+  90%  { transform:translate3d(0,-2px,0) scale(.996); }
+  100% { opacity:1; transform:translate3d(0,0,0) scale(1); filter:blur(0); }
+}
+@keyframes toastSpringExit {
+  to { opacity:0; transform:translate3d(0,-10px,0) scale(.98); filter:blur(2px); }
+}
+@keyframes toastSpringIcon {
+  0%   { opacity:0; transform:scale(.4) rotate(-18deg); }
+  50%  { opacity:1; transform:scale(1.28) rotate(6deg); }
+  70%  { transform:scale(.90) rotate(-2deg); }
+  86%  { transform:scale(1.07) rotate(1deg); }
+  100% { opacity:1; transform:scale(1) rotate(0); }
+}
+@keyframes toastSpringText {
+  from { opacity:0; transform:translate3d(0,6px,0); }
+  to   { opacity:1; transform:translate3d(0,0,0); }
+}
+@keyframes toastSpringProgress {
+  0%   { transform:scaleX(1); box-shadow:0 0 12px rgba(var(--toast-tone),.75),0 0 3px rgba(var(--toast-tone),.85); }
+  70%  { box-shadow:0 0 14px rgba(var(--toast-tone),.70),0 0 4px rgba(var(--toast-tone),.80); }
+  100% { transform:scaleX(0); box-shadow:0 0 6px rgba(var(--toast-tone),.25); }
+}
+@media (prefers-reduced-motion:reduce) {
+  html body #toast-container > .inventory-toast:not(.toast-welcome),
+  html body #toast-container > .inventory-toast.toast-leaving:not(.toast-welcome),
+  html body #toast-container > .inventory-toast:not(.toast-welcome) > .inventory-toast-icon,
+  html body #toast-container > .inventory-toast:not(.toast-welcome) .inventory-toast-title,
+  html body #toast-container > .inventory-toast:not(.toast-welcome) .inventory-toast-message,
+  html body #toast-container > .inventory-toast:not(.toast-welcome) > .inventory-toast-progress { animation:none !important; }
 }
