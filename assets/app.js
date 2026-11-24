@@ -430,12 +430,21 @@
                 !same(local.sampel, lastSyncedData.sampel) ||
                 !same(local.retur, lastSyncedData.retur);
         }
-        // Jangan render ulang tabel PO saat pengguna sedang mengedit Qty Siap.
-        // Polling berjalan setiap 7 detik; applyWorkerData() memanggil refreshAllViews(),
-        // lalu renderPoTable() mengganti tbody.innerHTML dan menghilangkan fokus input.
+        // Jangan render ulang form transaksi saat pengguna sedang mengedit.
+        // Polling berjalan setiap 7 detik; applyWorkerData() memanggil refreshAllViews()
+        // yang akan mereset isian form & kehilangan fokus saat user lagi mengetik.
         function isEditingPoReadyInput() {
             const active = document.activeElement;
             return !!active && active.matches('#po-table-body input[id^="ready-"]');
+        }
+        function isEditingTransactionForm() {
+            return [
+                'master-edit-mode', 'po-edit-mode', 'masuk-edit-mode',
+                'keluar-edit-mode', 'sampel-edit-mode', 'retur-edit-mode'
+            ].some(id => {
+                const el = document.getElementById(id);
+                return el && el.value === 'true';
+            });
         }
         let workerRefreshPendingWhileEditing = false;
 
@@ -446,9 +455,11 @@
                 const result = await workerRequest('/api/data', { method:'GET' });
                 const incoming = publicData(result.data);
                 if (!same(incoming, lastSyncedData)) {
-                    // Tunda penerapan data cloud selama input Qty Siap sedang aktif.
-                    // Data tidak dibuang; polling berikutnya akan mengambil versi terbaru.
-                    if (isEditingPoReadyInput()) {
+                    // Tunda penerapan data cloud saat pengguna lagi mengedit
+                    // (input Qty Siap sedang diisi, atau mode edit transaksi lain
+                    // seperti Master/PO/Masuk/Keluar/Sampel/Retur).
+                    // Data tidak dibuang; polling berikutnya akan ambil versi terbaru.
+                    if (isEditingPoReadyInput() || isEditingTransactionForm()) {
                         workerRefreshPendingWhileEditing = true;
                     } else if (!hasUnsavedLocalChanges()) {
                         workerRefreshPendingWhileEditing = false;
@@ -473,7 +484,7 @@
             if (next && next.closest?.('#po-table-body button')) return;
             if (workerRefreshPendingWhileEditing) {
                 setTimeout(() => {
-                    if (!isEditingPoReadyInput()) refreshFromWorkerIfChanged();
+                    if (!isEditingPoReadyInput() && !isEditingTransactionForm()) refreshFromWorkerIfChanged();
                 }, 150);
             }
         }, true);
@@ -549,6 +560,39 @@
             });
         };
 
+        // Opsi statik Sampel (Kategori/Lebar/Ukuran). Dibuat dari JS juga agar jika
+        // HTML sempat mengalami perubahan/asset block, dropdown di menu Sampel selalu ada.
+        window.populateSampelReferenceOptions = function() {
+            const opts = {
+                'sampel-kategori': ['ELASTIS HURUF','ELASTIS POLOS','WEBBING PP HURUF','WEBBING POLY HURUF','WEBBING PP','WEBBING POLY','WEBBING NYLON FIL','NYLON TEXTURE','WEBBING SPUNPOLY','IMITASI NYLON'],
+                'sampel-lebar': ['7 mm','10 mm','12 mm','15 mm','20 mm','22 mm','25 mm','30 mm','32 mm','35 mm','38 mm','40 mm','45 mm','50 mm','55 mm'],
+                'sampel-ukuran': ['SIZE S','SIZE M','SIZE L','SIZE XL','SIZE XXL','SIZE XXXL','REPEAT','NO SIZE']
+            };
+            for (const [id, values] of Object.entries(opts)) {
+                const sel = document.getElementById(id);
+                if (!sel) continue;
+                const hasOptions = [...sel.options].some(o => values.includes(o.value));
+                if (!hasOptions) {
+                    sel.innerHTML = '<option value="">-- Pilih --</option>' + values.map(v => `<option value="${v}">${v}</option>`).join('');
+                }
+            }
+        };
+        if (document.getElementById('tab-sampel')) window.populateSampelReferenceOptions();
+
+        // Preventar pemilihan barang memakan waktu 7 detik: jika sebelumnya
+        // daftar barang mengganggu (mis. user masih di tab lain atau polling belum
+        // selesai), refresh dropdown lagi saat pengguna memasukkan fokus ke select.
+        ['masuk-barang', 'keluar-barang', 'po-barang', 'retur-barang'].forEach(id => {
+            const sel = document.getElementById(id);
+            if (sel) sel.addEventListener('focus', () => window.populateItemDropdowns?.());
+        });
+        // Sama untuk dropdown transaksi keluar asal di Retur: selalu refresh
+        // segala daftar transaksi saat user nyari/fokus kolom ini.
+        ['retur-keluar-ref'].forEach(id => {
+            const sel = document.getElementById(id);
+            if (sel) sel.addEventListener('focus', () => window.updateReturReferenceOptions?.());
+        });
+
         window.getPoReadyQty = function(po) {
             if (!po) return 0;
             const remain = Math.max(0, Number(po.qty||0) - Number(po.terkirim||0));
@@ -560,7 +604,14 @@
         window.populatePoDropdowns = function() {
             const groupSel=document.getElementById('keluar-po-group'); if(!groupSel) return;
             const current=groupSel.value; const groups=new Map();
-            (window.gudangAppDb.po||[]).filter(p=>Number(p.qty||0)>Number(p.terkirim||0)).forEach(p=>{const key=`${String(p.customer||'').toUpperCase()}|${String(p.noPoCustomer||p.id).toUpperCase()}`; if(!groups.has(key)) groups.set(key,{key,label:`${p.noPoCustomer||p.id} — ${p.customer||''}`});});
+            // Saat mode edit, PO yang sudah terpenuhi tetap harus muncul sebagai opsi.
+            // Tanpa ini kartu barang (termasuk input Warna) tidak terbentuk saat edit,
+            // sehingga warnanya seolah "telat muncul" setelah pengguna memilih ulang PO.
+            const editId=document.getElementById('keluar-id')?.value;
+            const editRow=document.getElementById('keluar-edit-mode')?.value==='true'
+                ? (window.gudangAppDb.keluar||[]).find(x=>String(x.id)===String(editId)) : null;
+            const editPo=editRow ? (window.gudangAppDb.po||[]).find(p=>String(p.id)===String(editRow.poRef)) : null;
+            (window.gudangAppDb.po||[]).filter(p=>Number(p.qty||0)>Number(p.terkirim||0) || (editPo && String(p.id)===String(editPo.id))).forEach(p=>{const key=`${String(p.customer||'').toUpperCase()}|${String(p.noPoCustomer||p.id).toUpperCase()}`; if(!groups.has(key)) groups.set(key,{key,label:`${p.noPoCustomer||p.id} — ${p.customer||''}`});});
             groupSel.innerHTML='<option value="">-- Pilih Nomor PO --</option>'+[...groups.values()].map(g=>`<option value="${g.key}">${g.label}</option>`).join('');
             if(current && groups.has(current)) groupSel.value=current;
             populatePoItemOptions();
@@ -696,6 +747,11 @@
                     warnaField.placeholder = 'MERAH / NAVY';
                     warnaField.autocomplete = 'off';
                     warnaField.dataset.keluarWarna = '1';
+                    // Saat edit, isi Warna langsung dari transaksi yang diedit sejak
+                    // kartu dibuat. Jangan menunggu pass pengisian setelah render.
+                    const editWarna = editingRow && String(editingRow.poRef) === String(po.id)
+                        ? String(editingRow.warna || '') : '';
+                    warnaField.value = editWarna || String(po.warna || item?.warna || '');
                     warnaWrap.append(warnaLabel, warnaField);
                     card.append(warnaWrap);
                 }
@@ -1284,6 +1340,7 @@
             if (['po','masuk','keluar','retur'].includes(tabId)) {
                 populateItemDropdowns();
             }
+            if (tabId === 'sampel') window.populateSampelReferenceOptions?.();
             if (tabId === 'keluar') populatePoDropdowns();
             const renderers = {
                 dashboard: window.renderDashboard,
@@ -1594,7 +1651,7 @@
 
             const duration = Number(options.duration) > 0
                 ? Number(options.duration)
-                : { success: 3600, error: 7000, warning: 5200, info: 4500 }[item.tone];
+                : { success: 3600, error: 4500, warning: 5200, info: 4500 }[item.tone];
             progress.style.setProperty('--toast-duration', duration + 'ms');
             timer = window.setTimeout(dismiss, duration);
         };
@@ -1931,6 +1988,10 @@
                 const el = document.getElementById(id);
                 if (el) el.value = value ?? '';
             });
+            // Custom dropdown (Kategori/Lebar/Ukuran dll) hanya sinkron lewat event
+            // change atau MutationObserver. Mengisi .value lewat JS tidak memicu keduanya,
+            // jadi label yang terlihat tetap "-- Pilih --" walaupun nilainya sudah benar.
+            window.syncFormDropdownLabels?.(formId);
             document.getElementById(modeId).value = 'true';
             window.syncResetButtons?.();
             form.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1998,24 +2059,42 @@
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
             const r = window.gudangAppDb.masuk.find(x => String(x.id) === String(id)); if (!r) return;
             beginTransactionEdit('form-masuk','masuk-edit-mode', {'masuk-id':r.id,'masuk-tanggal':r.tanggal,'masuk-barang':r.barangId,'masuk-warna':r.warna || '','masuk-qty':r.qty,'masuk-supplier':r.supplier});
+            // Ambil fresh daftar Barang saat masuk mode edit biar pengguna langsung bisa pilih.
+            window.populateItemDropdowns?.();
             window.updateMasukItemInfo?.();
         };
         window.editKeluarItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
             const r = window.gudangAppDb.keluar.find(x => String(x.id) === String(id)); if (!r) return;
             const po=window.gudangAppDb.po.find(p=>p.id===r.poRef);
-            if(po){const groupKey=`${String(po.customer||'').toUpperCase()}|${String(po.noPoCustomer||po.id).toUpperCase()}`;document.getElementById('keluar-po-group').value=groupKey;}
+            const groupSelect = document.getElementById('keluar-po-group');
+            if (po && groupSelect) {
+                const groupKey=`${String(po.customer||'').toUpperCase()}|${String(po.noPoCustomer||po.id).toUpperCase()}`;
+                // Pastikan opsi grup PO tersedia SEBELUM form diisi. Kalau opsi belum ada
+                // (mis. dropdown belum di-refresh atau PO sudah terpenuhi), nilai select
+                // gagal diset dan kartu barang + input Warna tidak terbentuk.
+                const hasOption = [...groupSelect.options].some(o => String(o.value) === groupKey);
+                if (!hasOption) {
+                    const opt = document.createElement('option');
+                    opt.value = groupKey;
+                    opt.textContent = `${po.noPoCustomer || po.id} — ${po.customer || ''}`;
+                    groupSelect.appendChild(opt);
+                }
+                groupSelect.value = groupKey;
+            }
             beginTransactionEdit('form-keluar','keluar-edit-mode', {'keluar-id':r.id,'keluar-tanggal':r.tanggal,'keluar-no-sj':window.getKeluarNoSj(r),'keluar-po-ref':r.poRef,'keluar-barang':r.barangId,'keluar-qty':r.qty,'keluar-tujuan':r.tujuan});
             // Tandai grup agar auto-fill tidak mengganti tujuan historis saat edit.
-            const groupSelect = document.getElementById('keluar-po-group');
             if (groupSelect) groupSelect.dataset.customerGroup = groupSelect.value;
             populatePoItemOptions();
             document.getElementById('keluar-tujuan').value = r.tujuan || po?.customer || '';
             document.querySelectorAll('#keluar-items-container [data-keluar-row]').forEach(card => {
                 const input = card.querySelector('[data-keluar-qty]');
-                if (input) input.value = card.dataset.poRef === r.poRef ? String(r.qty) : '0';
+                const isEditedRow = card.dataset.poRef === r.poRef;
+                if (input) input.value = isEditedRow ? String(r.qty) : '0';
                 const warnaField = card.querySelector('[data-keluar-warna]');
-                if (warnaField && card.dataset.poRef === r.poRef) warnaField.value = r.warna || '';
+                // Jangan kosongkan Warna kalau transaksi lama belum punya field warna;
+                // biarkan nilai awal dari PO/Master tetap tampil sejak kartu dibuat.
+                if (warnaField && isEditedRow && r.warna) warnaField.value = r.warna;
             });
             updateKeluarBatchTotal(); updateKeluarFromPo();
         };
@@ -2023,13 +2102,21 @@
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
             const r = (window.gudangAppDb.sampel||[]).find(x => String(x.id) === String(id)); if (!r) return;
             beginTransactionEdit('form-sampel','sampel-edit-mode', {'sampel-id':r.id,'sampel-tanggal':r.tanggal,'sampel-customer':r.customer,'sampel-nama':r.nama,'sampel-keterangan':r.keterangan || '','sampel-kategori':r.kategori,'sampel-lebar':r.lebar,'sampel-ukuran':r.ukuran,'sampel-berat':r.berat,'sampel-tebal':r.tebal});
+            // Ambil fresh daftar Barang di fokus: menghindari "dropdown tidak terisi saat edit".
+            window.populateItemDropdowns?.();
+            window.populateSampelReferenceOptions?.();
         };
         window.editReturItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
             const r = (window.gudangAppDb.retur||[]).find(x => String(x.id) === String(id)); if (!r) return;
             beginTransactionEdit('form-retur','retur-edit-mode', {'retur-id':r.id,'retur-tanggal':r.tanggal,'retur-barang':r.barangId,'retur-warna':r.warna || '','retur-keluar-ref':r.keluarRef,'retur-qty':r.qty,'retur-keterangan':r.keterangan});
+            // Ambil fresh daftar Barang saat masuk mode edit biar pengguna langsung bisa pilih.
+            window.populateItemDropdowns?.();
+            const barangEl = document.getElementById('retur-barang');
+            if (barangEl && !barangEl.value && r.barangId) barangEl.value = r.barangId;
             window.updateReturReferenceOptions?.();
             document.getElementById('retur-keluar-ref').value = r.keluarRef || '';
+            window.updateReturReferenceInfo?.();
         };
 
         // Barang Masuk CRUD

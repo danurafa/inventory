@@ -175,8 +175,8 @@ docs/TABEL-PAGINATION-ALAMAT.md
 ```
 
 Cache-buster saat ini:
-- `index.html` → `assets/app.js?v=batal-merah-semua-ui-20261124`
-- `index.html` → `assets/styles.css?v=batal-merah-semua-ui-20261124`
+- `index.html` → `assets/app.js?v=sampel-dropdown-sync-20261124`
+- `index.html` → `assets/styles.css?v=sampel-dropdown-sync-20261124`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting:

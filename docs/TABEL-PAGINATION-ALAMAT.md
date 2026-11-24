@@ -221,8 +221,8 @@ index.html
 Cache-buster **saat ini** (di `index.html`):
 
 ```
-assets/styles.css?v=batal-merah-semua-ui-20261124
-assets/app.js?v=batal-merah-semua-ui-20261124
+assets/styles.css?v=sampel-dropdown-sync-20261124
+assets/app.js?v=sampel-dropdown-sync-20261124
 ```
 
 Commit terkait:
