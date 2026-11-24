@@ -221,8 +221,8 @@ index.html
 Cache-buster **saat ini** (di `index.html`):
 
 ```
-assets/styles.css?v=warna-sync-fix-20261124
-assets/app.js?v=warna-sync-fix-20261124
+assets/styles.css?v=batal-merah-semua-ui-20261124
+assets/app.js?v=batal-merah-semua-ui-20261124
 ```
 
 Commit terkait:
@@ -267,6 +267,3 @@ Path kerja yang benar: `D:\PROJECT INVENTORY\inventory`.
 - Worker di-deploy manual oleh user via Wrangler dengan nama `inventory-backend-test`.
 - Karena fitur alamat memakai `po.update` yang sudah ada, **tidak ada perubahan Worker**
   pada pekerjaan ini.
-
-
-

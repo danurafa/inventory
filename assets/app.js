@@ -1848,6 +1848,7 @@
             document.getElementById('master-min').value = item.min || 50;
             document.getElementById('master-stok').value = item.stok || 0;
             document.getElementById('master-form-title').innerHTML = `<i data-lucide="edit" class="w-4 h-4 text-orange-400"></i> EDIT MASTER BARANG (${id})`;
+            window.syncResetButtons?.();
             lucide.createIcons();
         };
 
@@ -1988,6 +1989,7 @@
             addPoItemRow({ barangId:r.barangId, qty:r.qty, siapKirim:r.siapKirim ?? Math.max(0, Number(r.qty||0)-Number(r.terkirim||0)), warna:r.warna || '' });
             document.getElementById('po-edit-mode').value = 'true';
             document.getElementById('po-form-title').innerHTML = '<i data-lucide="pencil" class="w-4 h-4 text-orange-400"></i> EDIT DETAIL PO';
+            window.syncResetButtons?.();
             document.getElementById('form-po').scrollIntoView({behavior:'smooth',block:'center'});
             lucide.createIcons();
             showToast('Mode edit detail PO aktif.', 'info');
@@ -5954,7 +5956,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             const definitions = {
                 saveMasterItem: {
                     form: 'form-master', label: 'Master Data Barang',
-                    fields: [['master-id','ID Barang'],['master-nama','Nama Barang'],['master-jenis','Jenis Barang'],['master-lebar','Lebar'],['master-ukuran','Ukuran'],['master-berat','Berat'],['master-satuan','Satuan'],['master-min','Stok Minimum'],['master-stok','Stok Saat Ini']]
+                    fields: [['master-id','ID Barang'],['master-nama','Nama Barang'],['master-warna','Warna Barang'],['master-jenis','Jenis Barang'],['master-lebar','Lebar'],['master-ukuran','Ukuran'],['master-berat','Berat'],['master-satuan','Satuan'],['master-min','Stok Minimum'],['master-stok','Stok Saat Ini']]
                 },
                 savePoItem: {
                     form: 'form-po', label: 'PO Masuk (Customer)',
@@ -6073,6 +6075,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                         const card = makeNoticeCard(`BARANG ${i + 1}`, `${Number(r.qty || 0).toLocaleString('id-ID')} ${item?.satuan || ''}`.trim());
                         addDetailRow('ID Barang', r.barangId || '-', card);
                         addDetailRow('Nama Barang', window.displayItemName(r.barangId, item?.nama || r.nama || r.barangId), card);
+                        addDetailRow('Warna Barang', r.warna || item?.warna || '-', card);
                         addDetailRow('Qty PO', `${Number(r.qty || 0).toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
                         addDetailRow('Qty Siap Dikirim', `${Number(r.siapKirim || 0).toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
                         content.appendChild(card);
@@ -6089,7 +6092,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 // BARANG KELUAR: pertahankan format kartu acuan yang sudah disetujui.
                 if (formName === 'saveKeluarItem') {
                     const selected = [...document.querySelectorAll('#keluar-items-container [data-keluar-row]')]
-                        .map(card => ({poRef:card.dataset.poRef,barangId:card.dataset.barangId,qty:Number(card.querySelector('[data-keluar-qty]')?.value||0)}))
+                        .map(card => ({poRef:card.dataset.poRef,barangId:card.dataset.barangId,qty:Number(card.querySelector('[data-keluar-qty]')?.value||0),warna:String(card.querySelector('[data-keluar-warna]')?.value||'').trim().toUpperCase()}))
                         .filter(x => x.qty > 0);
                     const heading = document.createElement('div');
                     heading.className = 'mb-2 rounded-lg border border-sky-400/30 bg-sky-400/10 px-3 py-2 text-xs font-bold text-sky-200';
@@ -6101,6 +6104,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                         const card = makeNoticeCard(`BARANG ${i + 1}`, `${r.qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim());
                         addDetailRow('ID Barang', r.barangId, card);
                         addDetailRow('Nama Barang', window.displayItemName(r.barangId, item?.nama || r.nama || r.barangId), card);
+                        addDetailRow('Warna Barang', r.warna || item?.warna || '-', card);
                         addDetailRow('Qty Keluar', `${r.qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
                         if (po) addDetailRow('Qty PO / Terkirim / Siap', `${Number(po.qty || 0).toLocaleString('id-ID')} / ${Number(po.terkirim || 0).toLocaleString('id-ID')} / ${getPoReadyQty(po).toLocaleString('id-ID')}`, card);
                         content.appendChild(card);
@@ -6118,7 +6122,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 if (formName === 'saveMasterItem') {
                     const id = document.getElementById('master-id')?.value || '-';
                     const card = makeNoticeCard('DETAIL MASTER DATA BARANG', id);
-                    [['Nama Barang','master-nama'],['Jenis Barang','master-jenis'],['Lebar Barang','master-lebar'],['Ukuran Barang','master-ukuran'],['Berat','master-berat'],['Satuan','master-satuan'],['Stok Minimum','master-min'],['Stok Saat Ini','master-stok']]
+                    [['Nama Barang','master-nama'],['Warna Barang','master-warna'],['Jenis Barang','master-jenis'],['Lebar Barang','master-lebar'],['Ukuran Barang','master-ukuran'],['Berat','master-berat'],['Satuan','master-satuan'],['Stok Minimum','master-min'],['Stok Saat Ini','master-stok']]
                         .forEach(([label,idField]) => addDetailRow(label, document.getElementById(idField)?.value || '-', card));
                     content.appendChild(card);
                     return;
@@ -6132,6 +6136,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     const card = makeNoticeCard('DETAIL BARANG MASUK', `${qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim());
                     addDetailRow('ID Barang', barangId || '-', card);
                     addDetailRow('Nama Barang', window.displayItemName(barangId, item?.nama || barangId), card);
+                    addDetailRow('Warna Barang', document.getElementById('masuk-warna')?.value.trim().toUpperCase() || item?.warna || '-', card);
                     addDetailRow('Jumlah Masuk', `${qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
                     addDetailRow('Divisi', document.getElementById('masuk-supplier')?.value || '-', card);
                     if (item) {
@@ -6160,6 +6165,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     const card = makeNoticeCard('DETAIL RETUR BARANG', `${qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim());
                     addDetailRow('ID Barang', barangId || '-', card);
                     addDetailRow('Nama Barang', window.displayItemName(barangId, item?.nama || barangId), card);
+                    addDetailRow('Warna Barang', document.getElementById('retur-warna')?.value.trim().toUpperCase() || item?.warna || '-', card);
                     addDetailRow('Jumlah Retur', `${qty.toLocaleString('id-ID')} ${item?.satuan || ''}`.trim(), card);
                     addDetailRow('Keterangan', document.getElementById('retur-keterangan')?.value || '-', card);
                     if (item) {

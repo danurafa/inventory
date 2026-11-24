@@ -15567,14 +15567,36 @@ html body #inventory-main-content #tab-keluar #keluar-items-container
   }
 }
 
-/* V195 — Tombol Reset berubah jadi "Batal" saat mode edit aktif. */
-html body #inventory-main-content button[data-reset-form].reset-form-batal {
-  background:rgba(244,63,94,.12) !important;
-  border-color:rgba(244,63,94,.40) !important;
-  color:#fda4af !important;
+/* V195 — Tombol Reset berubah jadi "Batal" saat mode edit aktif.
+   Saat mode edit, tombol langsung jadi merah solid supaya jelas bahwa
+   aksi ini membatalkan perubahan (bukan sekadar reset form kosong).
+   Berlaku untuk SEMUA desain UI (Classic, Crystal, Soft Neutral, Black Cyan).
+   Selector per-tema dibuat sekuat aturan tombol sekunder tema agar
+   background merah tidak tertimpa efek glass/gradient bawaan UI. */
+html body #inventory-main-content button[data-reset-form].reset-form-batal,
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-reset-form].reset-form-batal,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-reset-form].reset-form-batal,
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-reset-form].reset-form-batal,
+html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-reset-form].reset-form-batal {
+  background-color:#e11d48 !important;
+  background-image:linear-gradient(135deg,#e11d48 0%,#be123c 100%) !important;
+  border-color:#fb7185 !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  box-shadow:0 4px 14px rgba(225,29,72,.35) !important;
+  text-shadow:none !important;
 }
-html body #inventory-main-content button[data-reset-form].reset-form-batal:hover {
-  background:rgba(244,63,94,.22) !important;
+html body #inventory-main-content button[data-reset-form].reset-form-batal:hover,
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-reset-form].reset-form-batal:hover,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-reset-form].reset-form-batal:hover,
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-reset-form].reset-form-batal:hover,
+html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-reset-form].reset-form-batal:hover {
+  background-color:#f43f5e !important;
+  background-image:linear-gradient(135deg,#f43f5e 0%,#e11d48 100%) !important;
+  border-color:#fda4af !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  box-shadow:0 6px 18px rgba(225,29,72,.45) !important;
 }
 
 /* V196 — UI 4 (Black Cyan): form Sampel mengikuti tata letak UI 3 (Soft Neutral).
