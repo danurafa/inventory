@@ -1,4 +1,4 @@
-# Dokumentasi Tabel, Pagination, dan Alamat PO
+﻿# Dokumentasi Tabel, Pagination, dan Alamat PO
 
 Dibuat: 2026-11-24 · Commit terakhir: `e5f888c` · Remote: `origin/main`
 
@@ -153,6 +153,11 @@ detail PO. Sumber yang sama dipakai **Cetak SJ** dan **Excel SJ**, jadi keduanya
 ikut berubah. Kalau SJ lama memang tidak punya alamat di PO mana pun, tetap `-`
 dan harus diisi lewat **Ubah Alamat** di PO Customer.
 
+Baris filter Riwayat SJ (Cari / Dari / Sampai / Customer / Reset) sekarang punya
+jarak bawah 24px (20px di mobile) dari tabel, gap 14px 16px antar input, dan tombol
+Reset disamakan tinggi 34px supaya nggak mepet / desak tabel. Teks **Reset**
+juga tepat di tengah tombol (flex center).
+
 ---
 
 ## 5. Scroll horizontal tabel
@@ -192,6 +197,14 @@ dan harus diisi lewat **Ubah Alamat** di PO Customer.
   Berat/Tebal) cukup `span 2` (bukan baris penuh seperti aturan generik UI 4),
   tombol min-width 120px. Responsif: 2 kolom ≤999px, 1 kolom ≤640px.
   Warna tetap palet Black Cyan; tema lain tidak terpengaruh.
+- **UI 3 & UI 4 — form Barang Masuk**: nilai Kategori di panel info
+  (`#info-masuk-jenis`) berupa pill (hijau soft di UI 3, cyan di UI 4), dipotong
+  elipsis satu baris, dengan tooltip `title` berisi teks lengkap dari
+  `updateMasukItemInfo()`. Di desktop (≥1000px) form pakai grid 3 kolom:
+  baris 1 `ID / Tanggal / Barang`, baris 2 `Info (Kategori|Satuan) / Jumlah Masuk /
+  Divisi`, baris 3 tombol penuh. Warna tetap mengikuti tema masing-masing.
+  Selector UI 4 sengaja dipanjangkan lewat `#masuk-form-card` untuk mengalahkan
+  aturan generik `form[id^="form-"] > .grid` yang memaksa panel Info jadi `grid-column:1/-1`.
 
 ---
 
@@ -208,8 +221,8 @@ index.html
 Cache-buster **saat ini** (di `index.html`):
 
 ```
-assets/styles.css?v=batal-sampel-20261124
-assets/app.js?v=batal-sampel-20261124
+assets/styles.css?v=warna-barang-fix-20261124
+assets/app.js?v=warna-barang-fix-20261124
 ```
 
 Commit terkait:
@@ -254,3 +267,4 @@ Path kerja yang benar: `D:\PROJECT INVENTORY\inventory`.
 - Worker di-deploy manual oleh user via Wrangler dengan nama `inventory-backend-test`.
 - Karena fitur alamat memakai `po.update` yang sudah ada, **tidak ada perubahan Worker**
   pada pekerjaan ini.
+

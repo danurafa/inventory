@@ -15059,7 +15059,7 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     opacity:.85;
   }
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(1),
-  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(10)::before {
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(11)::before {
     display:none !important;
   }
   /* Baris 1: No. Surat Jalan di kiri, Tanggal di kanan. */
@@ -15118,19 +15118,30 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     -webkit-box-orient:vertical !important;
     overflow:hidden !important;
   }
-  /* Baris 4: No. PO di kiri, User di kanan. */
+  /* Baris 4: No. PO di kiri, Warna di kanan. */
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(6) {
     grid-column:1 !important;
     grid-row:4 !important;
     text-align:left !important;
   }
-  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(9) {
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(8) {
     grid-column:2 !important;
     grid-row:4 !important;
+    text-align:right !important;
+  }
+  /* Baris 5: Total Qty di kiri, User di kanan. */
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(9) {
+    grid-column:1 !important;
+    grid-row:5 !important;
+    text-align:left !important;
+  }
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(10) {
+    grid-column:2 !important;
+    grid-row:5 !important;
     justify-self:end !important;
     text-align:right !important;
   }
-  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(10) {
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(11) {
     grid-column:1 / -1 !important;
     grid-row:6 !important;
   }
@@ -15305,10 +15316,10 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     opacity:.85;
   }
   #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(1),
-  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(8) {
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(9) {
     display:none !important;
   }
-  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(9)::before {
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(10)::before {
     display:none !important;
   }
   /* Baris 1: ID Transaksi / SJ di kiri, Tanggal di kanan. */
@@ -15339,7 +15350,7 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     font-size:10px !important;
   }
   /* Baris 2: Nama Barang di kiri, Customer di kanan. */
-  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(6) {
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(7) {
     grid-column:2 !important;
     grid-row:2 !important;
     text-align:right !important;
@@ -15356,25 +15367,31 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     -webkit-box-orient:vertical !important;
     overflow:hidden !important;
   }
-  /* Baris 3: No. PO di kiri, User di kanan. */
-  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(7) {
+  /* Baris 3: Warna di kiri, No. PO di kanan. */
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(5) {
     grid-column:1 !important;
     grid-row:3 !important;
     text-align:left !important;
   }
-  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(10) {
-    display:block !important;
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(8) {
     grid-column:2 !important;
     grid-row:3 !important;
+    text-align:right !important;
+  }
+  /* Baris 4: Total Qty di kiri, User di kanan. */
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(6) {
+    grid-column:1 !important;
+    grid-row:4 !important;
+    text-align:left !important;
+  }
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(11) {
+    display:block !important;
+    grid-column:2 !important;
+    grid-row:4 !important;
     justify-self:end !important;
     text-align:right !important;
   }
-  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(5) {
-    grid-column:1 / -1 !important;
-    grid-row:4 !important;
-    text-align:center !important;
-  }
-  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(9) {
+  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(10) {
     grid-column:1 / -1 !important;
     grid-row:5 !important;
     justify-self:stretch !important;
@@ -15392,8 +15409,7 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
   #tab-keluar #keluar-table-body .keluar-detail-mobile {
     display:inline-flex !important;
   }
-  #tab-keluar #keluar-table-body .keluar-actions button,
-  #tab-keluar #keluar-table-body tr.keluar-card-row > td:nth-child(8) button {
+  #tab-keluar #keluar-table-body .keluar-actions button {
     flex:1 1 0 !important;
     min-width:0 !important;
     padding:7px 5px !important;
@@ -15604,3 +15620,465 @@ html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-d
   }
 }
 
+/* V202 — Pop-up "Verifikasi Password" SJ (#sj-password-modal) mengikuti palet
+   tema aktif. Sebelumnya modal ini hanya memakai utilitas generik, jadi warnanya
+   tidak sinkron dengan #confirm-modal di masing-masing tema. */
+
+/* Classic / default — dark glass biru */
+body.theme-glass #sj-password-modal {
+  background:rgba(2,8,18,.78) !important;
+  -webkit-backdrop-filter:blur(4px) !important;
+  backdrop-filter:blur(4px) !important;
+}
+body.theme-glass #sj-password-modal > div {
+  color:#f1f7ff !important;
+  background:#0e2038 !important;
+  background-image:none !important;
+  border:1px solid rgba(125,180,225,.38) !important;
+  box-shadow:0 24px 70px rgba(0,0,0,.5) !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+body.theme-glass #sj-password-modal :is(h4,p,strong,.text-gray-100,.text-gray-200,.text-gray-300) {
+  color:#f1f7ff !important;
+  -webkit-text-fill-color:#f1f7ff !important;
+}
+body.theme-glass #sj-password-modal #sj-password-input {
+  color:#f1f7ff !important;
+  -webkit-text-fill-color:#f1f7ff !important;
+  background:rgba(2,8,18,.55) !important;
+  border:1px solid rgba(125,180,225,.38) !important;
+}
+body.theme-glass #sj-password-modal #sj-password-input::placeholder {
+  color:#b9cbe0 !important;
+  -webkit-text-fill-color:#b9cbe0 !important;
+  opacity:1 !important;
+}
+body.theme-glass #sj-password-modal #sj-password-error {
+  color:#fecdd3 !important;
+  -webkit-text-fill-color:#fecdd3 !important;
+}
+body.theme-glass #sj-password-modal #sj-password-cancel {
+  color:#f1f7ff !important;
+  -webkit-text-fill-color:#f1f7ff !important;
+  background:rgba(255,255,255,.10) !important;
+  border:1px solid rgba(255,255,255,.26) !important;
+}
+body.theme-glass #sj-password-modal #sj-password-ok {
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  background:linear-gradient(135deg,#1d5fd1,#0a6aa3) !important;
+  border:1px solid rgba(255,255,255,.28) !important;
+}
+body.theme-glass #sj-password-modal #sj-password-ok:disabled { opacity:.7 !important; cursor:wait !important; }
+
+/* Premium Crystal — terang */
+body.theme-glass.theme-crystal #sj-password-modal {
+  background:rgba(20,38,62,.55) !important;
+}
+body.theme-glass.theme-crystal #sj-password-modal > div {
+  color:#14304f !important;
+  background:#f3f8fe !important;
+  background-image:none !important;
+  border:1px solid rgba(45,90,140,.38) !important;
+  box-shadow:0 24px 64px rgba(27,48,75,.30) !important;
+}
+body.theme-glass.theme-crystal #sj-password-modal :is(h4,p,strong,.text-gray-100,.text-gray-200,.text-gray-300) {
+  color:#14304f !important;
+  -webkit-text-fill-color:#14304f !important;
+}
+body.theme-glass.theme-crystal #sj-password-modal #sj-password-input {
+  color:#14304f !important;
+  -webkit-text-fill-color:#14304f !important;
+  background:#ffffff !important;
+  border:1px solid #a9c1db !important;
+}
+body.theme-glass.theme-crystal #sj-password-modal #sj-password-input::placeholder {
+  color:#46627f !important;
+  -webkit-text-fill-color:#46627f !important;
+  opacity:1 !important;
+}
+body.theme-glass.theme-crystal #sj-password-modal #sj-password-error {
+  color:#9f1239 !important;
+  -webkit-text-fill-color:#9f1239 !important;
+}
+body.theme-glass.theme-crystal #sj-password-modal #sj-password-cancel {
+  color:#17304d !important;
+  -webkit-text-fill-color:#17304d !important;
+  background:#e2edf9 !important;
+  border:1px solid #a9c1db !important;
+}
+body.theme-glass.theme-crystal #sj-password-modal #sj-password-ok {
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  background:linear-gradient(135deg,#1f6fd0,#0f5fa8) !important;
+  border:1px solid rgba(255,255,255,.28) !important;
+}
+
+/* Soft Neutral — hijau abu gelap */
+html body.theme-glass.theme-light.theme-soft #sj-password-modal > div {
+  color:#d1dad5 !important;
+  background:#202825 !important;
+  background-image:none !important;
+  border-color:#46554c !important;
+  box-shadow:0 22px 60px rgba(0,0,0,.48) !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+html body.theme-glass.theme-light.theme-soft #sj-password-modal :is(h4,p,strong,.text-gray-100,.text-gray-200,.text-gray-300) {
+  color:#d1dad5 !important;
+  -webkit-text-fill-color:#d1dad5 !important;
+}
+html body.theme-glass.theme-light.theme-soft #sj-password-modal #sj-password-input {
+  color:#d1dad5 !important;
+  -webkit-text-fill-color:#d1dad5 !important;
+  background:#181f1c !important;
+  border:1px solid #46554c !important;
+}
+html body.theme-glass.theme-light.theme-soft #sj-password-modal #sj-password-input::placeholder {
+  color:#aab8b0 !important;
+  -webkit-text-fill-color:#aab8b0 !important;
+  opacity:1 !important;
+}
+html body.theme-glass.theme-light.theme-soft #sj-password-modal #sj-password-error {
+  color:#fda4af !important;
+  -webkit-text-fill-color:#fda4af !important;
+}
+html body.theme-glass.theme-light.theme-soft #sj-password-modal #sj-password-cancel {
+  color:#d1dad5 !important;
+  -webkit-text-fill-color:#d1dad5 !important;
+  background:#344039 !important;
+  border:1px solid #46554c !important;
+}
+html body.theme-glass.theme-light.theme-soft #sj-password-modal #sj-password-ok {
+  color:#e4ebe6 !important;
+  -webkit-text-fill-color:#e4ebe6 !important;
+  background:#526b5e !important;
+  background-image:none !important;
+  border:1px solid #71877a !important;
+  box-shadow:none !important;
+}
+
+/* Black Cyan — UI 4 */
+html body.theme-glass.theme-neon #sj-password-modal {
+  background-color:rgba(2,6,10,.78) !important;
+  -webkit-backdrop-filter:blur(10px) !important;
+  backdrop-filter:blur(10px) !important;
+}
+html body.theme-glass.theme-neon #sj-password-modal > div {
+  color:#e7edf1 !important;
+  background:linear-gradient(145deg,rgba(20,31,39,.97),rgba(7,12,17,.97)) !important;
+  background-image:linear-gradient(145deg,rgba(20,31,39,.97),rgba(7,12,17,.97)) !important;
+  border:1px solid rgba(53,215,232,.24) !important;
+  border-radius:20px !important;
+  box-shadow:0 24px 72px rgba(0,0,0,.62),inset 0 1px 0 rgba(215,250,252,.06),0 0 28px rgba(53,215,232,.07) !important;
+  -webkit-backdrop-filter:blur(18px) saturate(125%) !important;
+  backdrop-filter:blur(18px) saturate(125%) !important;
+}
+html body.theme-glass.theme-neon #sj-password-modal :is(h4,p,strong,.text-gray-100,.text-gray-200,.text-gray-300) {
+  color:#e7edf1 !important;
+  -webkit-text-fill-color:#e7edf1 !important;
+}
+html body.theme-glass.theme-neon #sj-password-modal #sj-password-input {
+  color:#e7edf1 !important;
+  -webkit-text-fill-color:#e7edf1 !important;
+  background:rgba(5,10,15,.78) !important;
+  border:1px solid rgba(111,157,167,.27) !important;
+}
+html body.theme-glass.theme-neon #sj-password-modal #sj-password-input::placeholder {
+  color:#9aabb4 !important;
+  -webkit-text-fill-color:#9aabb4 !important;
+  opacity:1 !important;
+}
+html body.theme-glass.theme-neon #sj-password-modal #sj-password-error {
+  color:#fda4af !important;
+  -webkit-text-fill-color:#fda4af !important;
+}
+html body.theme-glass.theme-neon #sj-password-modal #sj-password-cancel {
+  color:#d3e0e4 !important;
+  -webkit-text-fill-color:#d3e0e4 !important;
+  background:rgba(116,145,155,.12) !important;
+  border:1px solid rgba(132,170,180,.22) !important;
+}
+html body.theme-glass.theme-neon #sj-password-modal #sj-password-ok {
+  color:#061216 !important;
+  -webkit-text-fill-color:#061216 !important;
+  background:linear-gradient(135deg,#48e3ed,#16aebe) !important;
+  border:1px solid rgba(102,239,247,.55) !important;
+  box-shadow:0 8px 20px rgba(20,190,207,.18) !important;
+}
+
+/* V203 — UI 3 (Soft Neutral) saja: nilai Kategori di panel info form Barang
+   Masuk dibuat pill hijau soft. Teks panjang dipotong satu baris dengan elipsis;
+   nilai lengkap ada di tooltip `title` yang diisi updateMasukItemInfo(). */
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk #masuk-item-info > div {
+  min-width:0 !important;
+}
+html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk #info-masuk-jenis {
+  display:inline-flex !important;
+  align-items:center !important;
+  box-sizing:border-box !important;
+  max-width:100% !important;
+  padding:3px 9px !important;
+  border:1px solid rgba(82,107,94,.55) !important;
+  border-radius:999px !important;
+  background:rgba(82,107,94,.22) !important;
+  color:#cbd8d0 !important;
+  -webkit-text-fill-color:#cbd8d0 !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  line-height:1.2 !important;
+  letter-spacing:.02em !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  vertical-align:middle !important;
+}
+
+/* V204 — UI 3 (Soft Neutral): baris form Barang Masuk dirapikan jadi 3 kolom
+   di desktop. Baris 1 ID / Tanggal / Barang, baris 2 Info (Kategori|Satuan) /
+   Jumlah Masuk / Divisi, baris 3 tombol penuh. Hanya #tab-masuk UI 3. */
+@media (min-width:1000px) {
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk {
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    align-items:end !important;
+    gap:12px 14px !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk > * + * {
+    margin-top:0 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk > div {
+    min-width:0 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk > div:nth-of-type(1) { grid-area:1/1 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk > div:nth-of-type(2) { grid-area:1/2 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk > div:nth-of-type(3) { grid-area:1/3 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk > div:nth-of-type(4) { grid-area:2/1 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk > div:nth-of-type(5) { grid-area:2/2 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk > div:nth-of-type(6) { grid-area:2/3 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk > .pt-2 { grid-area:3/1/4/4 !important; }
+}
+@media (max-width:999px) {
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk {
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    align-items:end !important;
+    gap:12px !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk > * + * {
+    margin-top:0 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk > div {
+    min-width:0 !important;
+  }
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk > #masuk-item-info,
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk > .pt-2 {
+    grid-column:1/-1 !important;
+  }
+}
+@media (max-width:640px) {
+  html body.theme-glass.theme-light.theme-soft #inventory-main-content #tab-masuk #form-masuk {
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+}
+
+/* V205 — UI 4 (Black Cyan): samakan perlakuan Barang Masuk dengan UI 3.
+   Baris 1 ID / Tanggal / Barang, baris 2 Info (Kategori|Satuan) / Jumlah Masuk /
+   Divisi, baris 3 tombol penuh. Pill kategori memakai palet cyan; tooltip `title`
+   sudah diisi updateMasukItemInfo() untuk kedua tema. */
+html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk #masuk-item-info > div {
+  min-width:0 !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk #info-masuk-jenis {
+  display:inline-flex !important;
+  align-items:center !important;
+  box-sizing:border-box !important;
+  max-width:100% !important;
+  padding:3px 9px !important;
+  border:1px solid rgba(53,215,232,.26) !important;
+  border-radius:999px !important;
+  background:rgba(53,215,232,.10) !important;
+  color:#a9e4e9 !important;
+  -webkit-text-fill-color:#a9e4e9 !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  line-height:1.2 !important;
+  letter-spacing:.02em !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  vertical-align:middle !important;
+}
+@media (min-width:1000px) {
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk {
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    align-items:end !important;
+    gap:12px 14px !important;
+  }
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk > * + * {
+    margin-top:0 !important;
+  }
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk > div {
+    min-width:0 !important;
+  }
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk > div:nth-of-type(1) { grid-area:1/1 !important; }
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk > div:nth-of-type(2) { grid-area:1/2 !important; }
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk > div:nth-of-type(3) { grid-area:1/3 !important; }
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk > div:nth-of-type(4) { grid-area:2/1 !important; grid-column:1/2 !important; grid-row:2/3 !important; }
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk > div:nth-of-type(5) { grid-area:2/2 !important; }
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk > div:nth-of-type(6) { grid-area:2/3 !important; }
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk > .pt-2 { grid-area:3/1/4/4 !important; }
+}
+@media (max-width:999px) {
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk {
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    align-items:end !important;
+    gap:12px !important;
+  }
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk > * + * {
+    margin-top:0 !important;
+  }
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk > div {
+    min-width:0 !important;
+  }
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk > #masuk-item-info,
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk > .pt-2 {
+    grid-column:1/-1 !important;
+  }
+}
+@media (max-width:640px) {
+  html body.theme-glass.theme-neon #inventory-main-content #tab-masuk #masuk-form-card #form-masuk {
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+}
+
+/* V206 — Riwayat Surat Jalan: baris filter (Cari / Tanggal / Customer / Reset)
+   diberi jarak lebih lega dari tabel dan tombol Reset disamakan tingginya dengan
+   input di sebelahnya, supaya nggak kelihatan mepet / desak tabel. */
+html body #inventory-main-content #tab-sj > .app-card > .grid {
+  gap:14px 16px !important;
+  margin-bottom:24px !important;
+}
+html body #inventory-main-content #tab-sj > .app-card > .grid label {
+  margin-bottom:5px !important;
+}
+html body #inventory-main-content #tab-sj > .app-card > .grid > div:last-child {
+  align-self:end !important;
+  margin-bottom:0 !important;
+}
+html body #inventory-main-content #tab-sj > .app-card > .grid > div:last-child button {
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  min-width:88px !important;
+  height:34px !important;
+  line-height:1 !important;
+}
+html body #inventory-main-content #tab-sj > .app-card > .fluid-table-container {
+  margin-top:2px !important;
+}
+@media (max-width:767px) {
+  html body #inventory-main-content #tab-sj > .app-card > .grid {
+    gap:12px !important;
+    margin-bottom:20px !important;
+  }
+}
+
+/* V207 — Badge aksi di Master Barang, PO Customer, Barang Masuk, Barang Keluar,
+   dan Retur mengikuti tema aktif. Empat golongan warna tetap bermakna:
+   biru/utama = Edit, Excel SJ; merah = Hapus; oranye = Atur/Cetak SJ/Ubah Alamat;
+   abu = Detail/Tutup. Hanya warna yang berganti — bentuk pill & layout tetap. */
+
+/* Classic — biru glass */
+html body.theme-glass.theme-classic {
+  --tbl-act-primary-bg:rgba(96,165,250,.18) !important;
+  --tbl-act-primary-fg:#bfdbfe !important;
+  --tbl-act-primary-bd:rgba(96,165,250,.38) !important;
+  --tbl-act-danger-bg:rgba(251,113,133,.16) !important;
+  --tbl-act-danger-fg:#fda4af !important;
+  --tbl-act-danger-bd:rgba(251,113,133,.34) !important;
+  --tbl-act-warn-bg:rgba(251,146,60,.16) !important;
+  --tbl-act-warn-fg:#fdba74 !important;
+  --tbl-act-warn-bd:rgba(251,146,60,.34) !important;
+  --tbl-act-neutral-bg:rgba(148,163,184,.14) !important;
+  --tbl-act-neutral-fg:#cbd5e1 !important;
+  --tbl-act-neutral-bd:rgba(148,163,184,.26) !important;
+}
+
+/* Crystal — biru terang */
+html body.theme-glass.theme-crystal {
+  --tbl-act-primary-bg:rgba(37,99,235,.12) !important;
+  --tbl-act-primary-fg:#1d4ed8 !important;
+  --tbl-act-primary-bd:rgba(37,99,235,.28) !important;
+  --tbl-act-danger-bg:rgba(225,29,72,.10) !important;
+  --tbl-act-danger-fg:#be123c !important;
+  --tbl-act-danger-bd:rgba(225,29,72,.24) !important;
+  --tbl-act-warn-bg:rgba(234,88,12,.10) !important;
+  --tbl-act-warn-fg:#c2410c !important;
+  --tbl-act-warn-bd:rgba(234,88,12,.24) !important;
+  --tbl-act-neutral-bg:rgba(71,85,105,.08) !important;
+  --tbl-act-neutral-fg:#334155 !important;
+  --tbl-act-neutral-bd:rgba(71,85,105,.18) !important;
+}
+
+/* Soft Neutral (UI 3) — sage / hijau-abu */
+html body.theme-glass.theme-light.theme-soft {
+  --tbl-act-primary-bg:rgba(111,137,125,.24) !important;
+  --tbl-act-primary-fg:#cbd8d0 !important;
+  --tbl-act-primary-bd:rgba(111,137,125,.55) !important;
+  --tbl-act-danger-bg:rgba(190,110,96,.20) !important;
+  --tbl-act-danger-fg:#e2aaa0 !important;
+  --tbl-act-danger-bd:rgba(190,110,96,.42) !important;
+  --tbl-act-warn-bg:rgba(190,150,90,.20) !important;
+  --tbl-act-warn-fg:#dfc79c !important;
+  --tbl-act-warn-bd:rgba(190,150,90,.42) !important;
+  --tbl-act-neutral-bg:rgba(150,165,155,.16) !important;
+  --tbl-act-neutral-fg:#b8c6bd !important;
+  --tbl-act-neutral-bd:rgba(150,165,155,.34) !important;
+}
+
+/* Black Cyan (UI 4) — cyan */
+html body.theme-glass.theme-neon {
+  --tbl-act-primary-bg:rgba(53,215,232,.12) !important;
+  --tbl-act-primary-fg:#a9e4e9 !important;
+  --tbl-act-primary-bd:rgba(53,215,232,.30) !important;
+  --tbl-act-danger-bg:rgba(244,114,133,.14) !important;
+  --tbl-act-danger-fg:#f5a8b3 !important;
+  --tbl-act-danger-bd:rgba(244,114,133,.32) !important;
+  --tbl-act-warn-bg:rgba(251,191,36,.13) !important;
+  --tbl-act-warn-fg:#fcd34d !important;
+  --tbl-act-warn-bd:rgba(251,191,36,.30) !important;
+  --tbl-act-neutral-bg:rgba(148,180,190,.12) !important;
+  --tbl-act-neutral-fg:#a9bdc4 !important;
+  --tbl-act-neutral-bd:rgba(148,180,190,.28) !important;
+}
+
+html body #inventory-main-content :is(#tab-master,#tab-po,#tab-masuk,#tab-keluar,#tab-retur) tbody button[class*="bg-sky-500/20"] {
+  background:var(--tbl-act-primary-bg) !important;
+  color:var(--tbl-act-primary-fg) !important;
+  -webkit-text-fill-color:var(--tbl-act-primary-fg) !important;
+  border-color:var(--tbl-act-primary-bd) !important;
+}
+html body #inventory-main-content :is(#tab-master,#tab-po,#tab-masuk,#tab-keluar,#tab-retur) tbody button[class*="bg-rose-500/20"] {
+  background:var(--tbl-act-danger-bg) !important;
+  color:var(--tbl-act-danger-fg) !important;
+  -webkit-text-fill-color:var(--tbl-act-danger-fg) !important;
+  border-color:var(--tbl-act-danger-bd) !important;
+}
+html body #inventory-main-content :is(#tab-master,#tab-po,#tab-masuk,#tab-keluar,#tab-retur) tbody button[class*="bg-orange-500/20"] {
+  background:var(--tbl-act-warn-bg) !important;
+  color:var(--tbl-act-warn-fg) !important;
+  -webkit-text-fill-color:var(--tbl-act-warn-fg) !important;
+  border-color:var(--tbl-act-warn-bd) !important;
+}
+html body #inventory-main-content :is(#tab-master,#tab-po,#tab-masuk,#tab-keluar,#tab-retur) tbody button[class*="bg-white/10"] {
+  background:var(--tbl-act-neutral-bg) !important;
+  color:var(--tbl-act-neutral-fg) !important;
+  -webkit-text-fill-color:var(--tbl-act-neutral-fg) !important;
+  border-color:var(--tbl-act-neutral-bd) !important;
+}

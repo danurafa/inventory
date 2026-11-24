@@ -417,6 +417,7 @@ function applyInventoryOperation(data, actor, type, payload) {
     data.items.unshift({
       id,
       nama: cleanString(row.nama, 120).toUpperCase(),
+      warna: cleanString(row.warna, 80).toUpperCase(),
       jenis: cleanString(row.jenis, 80),
       lebar: cleanString(row.lebar, 40),
       ukuran: cleanString(row.ukuran, 40),
@@ -460,6 +461,7 @@ function applyInventoryOperation(data, actor, type, payload) {
 
     for (const key of [
       "nama",
+      "warna",
       "jenis",
       "lebar",
       "ukuran",

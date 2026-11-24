@@ -1,4 +1,4 @@
-# Catatan Serah Terima Sesi — Inventory Surat Jalan
+﻿# Catatan Serah Terima Sesi — Inventory Surat Jalan
 
 Dokumen ini dibuat supaya sesi baru di PC 2 bisa langsung lanjut tanpa membaca
 percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-24 (HEAD `e5f888c`).
@@ -23,6 +23,8 @@ Fitur yang sudah selesai:
 - Surat Jalan (SJ): nomor SJ di form/tabel, cetak mirip template Excel, download template `.xlsx`, riwayat per transaksi.
 - Alamat customer ditaruh di **form PO Customer** (`po-alamat`), bukan di form SJ. Cell `G7` berisi alamat + `No. PO: ...`.
 - Tombol **Cetak SJ** = langsung print browser; **Excel SJ** = download template.
+- Ukuran kertas **Cetak SJ**: custom `@page{size:9.5in 11in;margin:10mm}` (lebar 9.5 inci × panjang 11 inci), bukan A4 portrait. Print tabel lain tetap A4 landscape.
+- Di header Cetak SJ, **No. PO** berada di baris tersendiri tepat di bawah **Tanggal** (kolom kiri); blok kanan cukup `Kepada Yth` + alamat.
 - Menu **Riwayat Surat Jalan**: filter tanggal/customer, **10 baris/halaman** + navigasi, aksi Cetak SJ & Excel SJ, tombol **Detail (n)**.
 - Semua tabel (Master, PO, Masuk, Keluar, SJ, Sampel, Retur, User) sekarang pagination 10 baris;
   bar pagination hanya muncul kalau datanya lebih dari 10.
@@ -36,6 +38,8 @@ Fitur yang sudah selesai:
 - Form Sampel punya field **Keterangan** opsional (`sampel-keterangan`), tampil sebagai kolom
   tabel dan ikut laporan cetak. Worker tidak diubah (create/update memakai spread record).
   Di UI 4 form Sampel mengikuti tata letak UI 3 (grid 4 kolom, `.grid` span 2, tombol 120px).
+- Kategori di panel info Barang Masuk jadi pill (hijau di UI 3, cyan di UI 4), elipsis + tooltip `title`.
+- Form Barang Masuk UI 3 & UI 4 desktop: baris `Info / Jumlah Masuk / Divisi` dalam grid 3 kolom.
 - Tombol **Batal** saat mode edit memakai dialog konfirmasi `showConfirm` sebelum form di-reset.
 
 ---
@@ -59,6 +63,8 @@ Catatan:
 Dialog verifikasi memakai modal internal `#sj-password-modal` (bukan `prompt()`native).
 Alasan: Safari mobile memblokir `prompt()` yang dipanggil setelah `await` (di luar user gesture),
 sehingga dulu cetak Riwayat lolos tanpa password di Safari.
+Warna dialog ini sekarang mengikuti tema aktif (Classic, Crystal, Soft Neutral, Black Cyan),
+termasuk input, pesan error, dan kedua tombol — disamakan dengan `#confirm-modal`.
 
 Guard tambahan: `dariRiwayat = source === 'riwayat' || Boolean(button?.closest?.('#tab-sj'))`
 — berlaku untuk Cetak SJ dan Excel SJ, jadi tombol lama pun tetap dianggap Riwayat.
@@ -143,6 +149,14 @@ Kalau GET/POST gagal → tetap jalan pakai cache + toast peringatan (bukan stric
 
 Catatan UI 3 (Soft Neutral): ada override CSS lama yang mengubah badge sky → sage dan
 rose → merah kecoklatan di layar ≤767px. Fungsi tetap aman; yang berbeda cuma warna.
+
+**V207 — badge aksi mengikuti tema:** di Master Barang, PO Customer, Barang Masuk,
+Barang Keluar, dan Retur, warna tombol aksi tabel sekarang memakai variabel
+`--tbl-act-*` per tema: Classic biru, Crystal biru terang, Soft Neutral sage,
+Black Cyan cyan. Empat golongan tetap bermakna — `sky` = Edit/Excel SJ,
+`rose` = Hapus, `orange` = Atur/Cetak SJ/Ubah Alamat, `white` = Detail/Tutup.
+Hanya warna yang diganti; bentuk pill, ukuran, dan layout tetap. Sampel & User
+belum terkena aturan ini.
 Belum ada keputusan final apakah mau dipaksa seragam dengan UI 1/2.
 
 ---
@@ -165,8 +179,8 @@ docs/TABEL-PAGINATION-ALAMAT.md
 ```
 
 Cache-buster saat ini:
-- `index.html` → `assets/app.js?v=batal-sampel-20261124`
-- `index.html` → `assets/styles.css?v=batal-sampel-20261124`
+- `index.html` → `assets/app.js?v=warna-barang-fix-20261124`
+- `index.html` → `assets/styles.css?v=warna-barang-fix-20261124`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting:
@@ -228,3 +242,4 @@ dan isi Console especially response `/api/sj/audit`.
   Nama Worker harus tetap `inventory-backend-test` karena tidak ada `wrangler.toml` di repo.
 - Popup cetak di Safari iOS kadang diblokir bila dipanggil setelah `await`;
   kalau terjadi, rencana cadangan: pakai `window.print()` di halaman yang sama.
+

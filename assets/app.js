@@ -685,6 +685,19 @@
                     note.className = 'text-[10px] text-amber-300';
                     note.dataset.keluarNote = '1';
                     card.append(note);
+                    const warnaWrap = document.createElement('div');
+                    warnaWrap.className = 'flex items-center gap-2';
+                    const warnaLabel = document.createElement('label');
+                    warnaLabel.className = 'text-[10px] text-gray-400 shrink-0';
+                    warnaLabel.textContent = 'Warna';
+                    const warnaField = document.createElement('input');
+                    warnaField.type = 'text';
+                    warnaField.className = 'w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-1 text-[11px] uppercase';
+                    warnaField.placeholder = 'MERAH / NAVY';
+                    warnaField.autocomplete = 'off';
+                    warnaField.dataset.keluarWarna = '1';
+                    warnaWrap.append(warnaLabel, warnaField);
+                    card.append(warnaWrap);
                 }
 
                 // Perbarui teks dan batas tanpa mengganti node input.
@@ -693,6 +706,8 @@
                 const stockSpan = card.querySelector('[data-keluar-stock]');
                 const input = card.querySelector('[data-keluar-qty]');
                 const note = card.querySelector('[data-keluar-note]');
+                const warnaField = card.querySelector('[data-keluar-warna]');
+                if (warnaField && !warnaField.value.trim()) warnaField.value = String(po.warna || item?.warna || '');
                 if (title) title.textContent = `${window.displayItemName(po.barangId, po.nama || item?.nama || po.barangId)} (${po.barangId})`;
                 if (metaPrefix) metaPrefix.textContent = `PO: ${Number(po.qty||0).toLocaleString('id-ID')} · Terkirim: ${Number(po.terkirim||0).toLocaleString('id-ID')} · Siap: ${ready.toLocaleString('id-ID')} · `;
                 if (stockSpan) {
@@ -1777,6 +1792,7 @@
             }
             const id = document.getElementById('master-id').value.trim().toUpperCase();
             const nama = document.getElementById('master-nama').value.trim().toUpperCase();
+            const warna = document.getElementById('master-warna').value.trim().toUpperCase();
             const jenis = document.getElementById('master-jenis').value;
             const lebar = document.getElementById('master-lebar').value;
             const ukuran = document.getElementById('master-ukuran').value;
@@ -1800,10 +1816,10 @@
                 showToast(existing ? `ID Barang ${id} sudah digunakan.` : `Barang ${id} tidak ditemukan.`, 'error'); return;
             }
             if (isEdit) {
-                Object.assign(existing, { nama, jenis, lebar, ukuran, berat, satuan, min });
+                Object.assign(existing, { nama, warna, jenis, lebar, ukuran, berat, satuan, min });
                 // Stok tidak boleh diedit melalui Master Barang.
             } else {
-                window.gudangAppDb.items.unshift({ id, nama, jenis, lebar, ukuran, berat, satuan, min, stok });
+                window.gudangAppDb.items.unshift({ id, nama, warna, jenis, lebar, ukuran, berat, satuan, min, stok });
             }
             const saved = await saveCloudDB();
             if (saved) {
@@ -1823,6 +1839,7 @@
             document.getElementById('master-id').value = item.id;
             document.getElementById('master-id').disabled = true;
             document.getElementById('master-nama').value = item.nama;
+            document.getElementById('master-warna').value = item.warna || '';
             document.getElementById('master-jenis').value = item.jenis || '';
             document.getElementById('master-lebar').value = item.lebar || '';
             document.getElementById('master-ukuran').value = item.ukuran || '';
@@ -1866,7 +1883,7 @@
             const isViewer = ['viewer','staff'].includes(window.gudangAppDb.currentUser?.role);
 
             const filtered = window.gudangAppDb.items.filter(i => 
-                i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.jenis.toLowerCase().includes(q)
+                i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || String(i.warna||'').toLowerCase().includes(q) || i.jenis.toLowerCase().includes(q)
             );
 
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Item terdaftar`;
@@ -1884,6 +1901,7 @@
                         <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
                         <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.transactionId || i.groupId || i.id}</td>
                         <td class="py-3 px-3 font-medium">${window.displayItemName(i.id, i.nama)}</td>
+                        <td class="py-3 px-2 opacity-80">${i.warna || '-'}</td>
                         <td class="py-3 px-3 opacity-80">${i.jenis}</td>
                         <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
                         <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
@@ -1899,7 +1917,7 @@
                         ` : ''}
                     </tr>
                 `;
-            }).join('') || `<tr><td colspan="${isViewer ? 10 : 11}" class="py-6 text-center opacity-50">Tidak ada data master barang.</td></tr>`;
+            }).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada data master barang.</td></tr>`;
             setTableHtml(tbody, renderedMasterRows);
             lucide.createIcons();
         };
@@ -1967,7 +1985,7 @@
             document.getElementById('po-tanggal').value = r.tanggal || '';
             document.getElementById('po-customer').value = r.customer || '';
             document.getElementById('po-alamat').value = r.alamat || '';
-            addPoItemRow({ barangId:r.barangId, qty:r.qty, siapKirim:r.siapKirim ?? Math.max(0, Number(r.qty||0)-Number(r.terkirim||0)) });
+            addPoItemRow({ barangId:r.barangId, qty:r.qty, siapKirim:r.siapKirim ?? Math.max(0, Number(r.qty||0)-Number(r.terkirim||0)), warna:r.warna || '' });
             document.getElementById('po-edit-mode').value = 'true';
             document.getElementById('po-form-title').innerHTML = '<i data-lucide="pencil" class="w-4 h-4 text-orange-400"></i> EDIT DETAIL PO';
             document.getElementById('form-po').scrollIntoView({behavior:'smooth',block:'center'});
@@ -1977,7 +1995,7 @@
         window.editMasukItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
             const r = window.gudangAppDb.masuk.find(x => String(x.id) === String(id)); if (!r) return;
-            beginTransactionEdit('form-masuk','masuk-edit-mode', {'masuk-id':r.id,'masuk-tanggal':r.tanggal,'masuk-barang':r.barangId,'masuk-qty':r.qty,'masuk-supplier':r.supplier});
+            beginTransactionEdit('form-masuk','masuk-edit-mode', {'masuk-id':r.id,'masuk-tanggal':r.tanggal,'masuk-barang':r.barangId,'masuk-warna':r.warna || '','masuk-qty':r.qty,'masuk-supplier':r.supplier});
             window.updateMasukItemInfo?.();
         };
         window.editKeluarItem = function(id) {
@@ -1994,6 +2012,8 @@
             document.querySelectorAll('#keluar-items-container [data-keluar-row]').forEach(card => {
                 const input = card.querySelector('[data-keluar-qty]');
                 if (input) input.value = card.dataset.poRef === r.poRef ? String(r.qty) : '0';
+                const warnaField = card.querySelector('[data-keluar-warna]');
+                if (warnaField && card.dataset.poRef === r.poRef) warnaField.value = r.warna || '';
             });
             updateKeluarBatchTotal(); updateKeluarFromPo();
         };
@@ -2005,7 +2025,7 @@
         window.editReturItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
             const r = (window.gudangAppDb.retur||[]).find(x => String(x.id) === String(id)); if (!r) return;
-            beginTransactionEdit('form-retur','retur-edit-mode', {'retur-id':r.id,'retur-tanggal':r.tanggal,'retur-barang':r.barangId,'retur-keluar-ref':r.keluarRef,'retur-qty':r.qty,'retur-keterangan':r.keterangan});
+            beginTransactionEdit('form-retur','retur-edit-mode', {'retur-id':r.id,'retur-tanggal':r.tanggal,'retur-barang':r.barangId,'retur-warna':r.warna || '','retur-keluar-ref':r.keluarRef,'retur-qty':r.qty,'retur-keterangan':r.keterangan});
             window.updateReturReferenceOptions?.();
             document.getElementById('retur-keluar-ref').value = r.keluarRef || '';
         };
@@ -2014,8 +2034,16 @@
         window.updateMasukItemInfo = function() {
             const barangId = document.getElementById('masuk-barang')?.value;
             const item = window.gudangAppDb.items.find(x => x.id === barangId);
-            document.getElementById('info-masuk-jenis').textContent = item ? item.jenis : '-';
+            const jenisEl = document.getElementById('info-masuk-jenis');
+            const jenisValue = item ? item.jenis : '-';
+            // Nilai kategori bisa panjang: dipotong jadi pill di CSS UI 3,
+            // tapi teks lengkap tetap terbaca lewat tooltip.
+            jenisEl.textContent = jenisValue;
+            jenisEl.title = jenisValue;
             document.getElementById('info-masuk-satuan').textContent = item ? item.satuan : '-';
+            // Warna boleh ditimpa manual; otomatis isi dari Master saat masih kosong.
+            const warnaEl = document.getElementById('masuk-warna');
+            if (warnaEl && item?.warna && !warnaEl.value.trim()) warnaEl.value = item.warna;
         };
 
         window.saveMasukItem = async function(e) {
@@ -2034,6 +2062,7 @@
             const username = window.gudangAppDb.currentUser?.name || 'Administrator';
 
             const item = window.gudangAppDb.items.find(x => x.id === barangId);
+            const warna = document.getElementById('masuk-warna')?.value.trim().toUpperCase() || item?.warna || '';
             if (!id || !tanggal || !barangId || !supplier || !Number.isInteger(qty) || qty <= 0) {
                 showToast('Lengkapi data Barang Masuk dan pastikan Qty lebih dari nol.', 'error');
                 return;
@@ -2044,7 +2073,7 @@
             }
             if (document.getElementById('masuk-edit-mode').value === 'true') {
                 try {
-                    await sendOperation('masuk.update', { id, record: { tanggal, barangId, nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan, qty, supplier } });
+                    await sendOperation('masuk.update', { id, record: { tanggal, barangId, nama:item.nama, warna, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan, qty, supplier } });
                     window.refreshAllViews?.(); resetMasukForm(); showToast('Barang Masuk berhasil diperbarui. Stok dikoreksi otomatis oleh Worker.');
                 } catch (error) { showToast(`Edit Barang Masuk gagal: ${error.message}`, 'error'); }
                 return;
@@ -2057,7 +2086,7 @@
             // Mutasi lokal hanya sebagai draft optimistis. Worker menjadi sumber kebenaran.
             item.stok = Number(item.stok || 0) + qty;
             window.gudangAppDb.masuk.unshift({
-                id, tanggal, barangId, nama: item.nama, jenis: item.jenis,
+                id, tanggal, barangId, nama: item.nama, warna, jenis: item.jenis,
                 lebar: item.lebar || '', ukuran: item.ukuran || '', satuan: item.satuan, qty, supplier, user: username
             });
 
@@ -2100,7 +2129,9 @@
                 window.syncInventoryItemSelect?.(barangSelect);
             }
             window.updateMasukItemInfo?.();
-            document.getElementById('info-masuk-jenis').textContent = '-';
+            const jenisEl = document.getElementById('info-masuk-jenis');
+            jenisEl.textContent = '-';
+            jenisEl.title = '-';
             document.getElementById('info-masuk-satuan').textContent = '-';
         };
 
@@ -2111,7 +2142,7 @@
             const isViewer = window.gudangAppDb.currentUser?.role === 'viewer';
 
             const filtered = window.gudangAppDb.masuk.filter(i => 
-                i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.supplier.toLowerCase().includes(q)
+                i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || String(i.warna||'').toLowerCase().includes(q) || i.supplier.toLowerCase().includes(q)
             );
             if (badgeTotal) badgeTotal.textContent = `${new Set(filtered.map(i => String(i.transactionId||i.groupId||i.id))).size} Surat Jalan · ${filtered.length} Detail Barang`;
 
@@ -2122,6 +2153,7 @@
                     <td class="py-3 px-3 opacity-80">${i.tanggal}</td>
                     <td class="py-3 px-3 font-mono opacity-80">${i.barangId}</td>
                     <td class="py-3 px-3 font-medium">${window.displayItemName(i.id, i.nama)}</td>
+                    <td class="py-3 px-2 opacity-80">${i.warna || '-'}</td>
                     <td class="py-3 px-3 opacity-80">${i.jenis}</td>
                     <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
                     <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
@@ -2135,7 +2167,7 @@
                         </td>
                     ` : ''}
                 </tr>
-            `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
+            `).join('') || `<tr><td colspan="${isViewer ? 12 : 13}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
             setTableHtml(tbody, renderedMasukRows);
             lucide.createIcons();
         };
@@ -2177,7 +2209,8 @@
             const selected = cards.map(card => ({
                 poRef: card.dataset.poRef,
                 barangId: card.dataset.barangId,
-                qty: Number(card.querySelector('[data-keluar-qty]')?.value || 0)
+                qty: Number(card.querySelector('[data-keluar-qty]')?.value || 0),
+                warna: card.querySelector('[data-keluar-warna]')?.value.trim().toUpperCase() || ''
             })).filter(row => row.qty > 0);
             if (!baseId || !tanggal || !tujuan || !noSj) { showToast('Lengkapi ID transaksi, tanggal, No. Surat Jalan, dan tujuan.', 'error'); return; }
             if (!selected.length) { showToast('Isi Qty minimal satu barang yang akan dikirim.', 'error'); return; }
@@ -2205,7 +2238,7 @@
                 const editRecord = window.gudangAppDb.keluar.find(x => String(x.id) === String(baseId));
                 const editGroupId = String(editRecord?.transactionId || editRecord?.groupId || baseId);
                 try {
-                    await sendOperation('keluar.update', { id: baseId, record: { tanggal, poRef: row.poRef, barangId: row.barangId, nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan, qty:row.qty, tujuan, noSj } });
+                    await sendOperation('keluar.update', { id: baseId, record: { tanggal, poRef: row.poRef, barangId: row.barangId, nama:item.nama, warna:row.warna || item.warna || '', jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan, qty:row.qty, tujuan, noSj } });
                     rememberKeluarNoSj(editGroupId, noSj);
                     window.refreshAllViews?.(); resetKeluarForm(); showToast('Detail Barang Keluar berhasil diperbarui. Stok dan realisasi PO dikoreksi Worker.');
                 } catch (error) { showToast(`Edit Barang Keluar gagal: ${error.message}`, 'error'); }
@@ -2227,7 +2260,7 @@
             const details = selected.map((row, index) => {
                 const item = window.gudangAppDb.items.find(x => x.id === row.barangId);
                 const detailId = selected.length === 1 ? baseId : `${baseId}-D${String(index+1).padStart(2,'0')}`;
-                return { id:detailId, transactionId:baseId, noSj, poRef:row.poRef, barangId:row.barangId, qty:row.qty, nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan };
+                return { id:detailId, transactionId:baseId, noSj, poRef:row.poRef, barangId:row.barangId, qty:row.qty, nama:item.nama, warna:row.warna || item.warna || '', jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan };
             });
             try {
                 await sendOperation('keluar.batchCreate', { id:baseId, tanggal, tujuan, user:username, transactionId:baseId, noSj, items:details });
@@ -2321,7 +2354,7 @@
             })).filter(group => {
                 if (!q) return true;
                 return [group.transactionId, window.getKeluarNoSj(group.head), group.head.tanggal, group.head.tujuan,
-                    ...group.rows.flatMap(r => [r.id, r.barangId, r.nama, r.jenis, r.poRef, r.noSj])]
+                    ...group.rows.flatMap(r => [r.id, r.barangId, r.nama, r.warna, r.jenis, r.poRef, r.noSj])]
                     .some(value => String(value || '').toLowerCase().includes(q));
             }).sort((a,b) => String(b.head.tanggal||'').localeCompare(String(a.head.tanggal||'')) ||
                               String(b.transactionId).localeCompare(String(a.transactionId)));
@@ -2348,6 +2381,7 @@
                     return po?.noPoCustomer || row.poRef || '-';
                 }))];
                 const itemNames = [...new Set(group.rows.map(row => window.displayItemName(row.barangId, row.nama)))];
+                const warnaList = [...new Set(group.rows.map(row => row.warna || '-'))];
                 const userNames = [...new Set(group.rows.map(row => row.user).filter(Boolean))];
                 const detailRows = group.rows.map((row, detailIndex) => `
                     <tr class="keluar-detail-item border-t border-white/5 hover:bg-white/5">
@@ -2355,6 +2389,7 @@
                         <td class="p-2 font-mono">${esc(row.id)}</td>
                         <td class="p-2 font-mono">${esc(row.barangId)}</td>
                         <td class="p-2 font-medium">${esc(window.displayItemName(row.barangId, row.nama))}</td>
+                        <td class="p-2">${esc(row.warna || '-')}</td>
                         <td class="p-2">${esc(row.jenis || '-')}</td>
                         <td class="p-2">${esc(row.lebar || '-')}</td>
                         <td class="p-2">${esc(row.ukuran || '-')}</td>
@@ -2374,6 +2409,7 @@
                         <td data-label="ID Transaksi / Surat Jalan" class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(group.transactionId)}<span class="block mt-0.5 text-[10px] font-normal opacity-70">SJ: ${esc(window.getKeluarNoSj(group.head))}</span></td>
                         <td data-label="Tanggal" class="py-3 px-3 opacity-80">${esc(group.head.tanggal || '-')}</td>
                         <td data-label="Nama Barang" class="py-3 px-3 text-center" title="${esc(itemNames.join(', '))}"><span class="keluar-jumlah-desktop">${group.rows.length} barang</span><span class="keluar-nama-mobile">${esc(itemNames.join(', '))}</span></td>
+                        <td data-label="Warna" class="py-3 px-2 opacity-80">${esc(warnaList.join(', '))}</td>
                         <td data-label="Total Qty Keluar" class="py-3 px-3 text-right font-mono font-bold text-rose-400">-${totalQty.toLocaleString('id-ID')}</td>
                         <td data-label="Customer / Tujuan" class="py-3 px-3 font-medium">${esc(group.head.tujuan || '-')}</td>
                         <td data-label="No. PO" class="py-3 px-3 font-mono opacity-80">${esc(poRefs.join(', '))}</td>
@@ -2382,22 +2418,22 @@
                         <td data-label="User" class="keluar-user-mobile py-3 px-3 opacity-80">${esc(userNames.join(', ') || group.head.user || '-')}</td>
                     </tr>
                     <tr id="keluar-detail-${token}" data-keluar-group-key="${token}" class="keluar-detail-row ${expanded ? '' : 'hidden'}">
-                        <td colspan="9" class="p-2 bg-black/10">
+                        <td colspan="10" class="p-2 bg-black/10">
                             <div class="rounded-xl border border-white/10 overflow-x-auto">
                                 <table class="w-full text-xs min-w-[900px]">
                                     <thead class="bg-white/5 text-gray-400"><tr>
-                                        <th class="p-2 text-center">No</th><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">ID Barang</th><th class="p-2 text-left">Nama Barang</th><th class="p-2 text-left">Kategori</th><th class="p-2 text-left">Lebar</th><th class="p-2 text-left">Ukuran</th><th class="p-2 text-left">Satuan</th><th class="p-2 text-right">Qty Keluar</th><th class="p-2 text-left">No PO Ref</th><th class="p-2 text-center">Aksi</th>
+                                        <th class="p-2 text-center">No</th><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">ID Barang</th><th class="p-2 text-left">Nama Barang</th><th class="p-2 text-left">Warna</th><th class="p-2 text-left">Kategori</th><th class="p-2 text-left">Lebar</th><th class="p-2 text-left">Ukuran</th><th class="p-2 text-left">Satuan</th><th class="p-2 text-right">Qty Keluar</th><th class="p-2 text-left">No PO Ref</th><th class="p-2 text-center">Aksi</th>
                                     </tr></thead>
                                     <tbody>${detailRows}</tbody>
-                                    <tfoot class="bg-white/5 border-t border-white/10"><tr><td colspan="8" class="p-2 text-right font-semibold">Subtotal Qty</td><td class="p-2 text-right font-mono font-bold text-emerald-300">${totalQty.toLocaleString('id-ID')}</td><td colspan="2"></td></tr></tfoot>
+                                    <tfoot class="bg-white/5 border-t border-white/10"><tr><td colspan="9" class="p-2 text-right font-semibold">Subtotal Qty</td><td class="p-2 text-right font-mono font-bold text-emerald-300">${totalQty.toLocaleString('id-ID')}</td><td colspan="2"></td></tr></tfoot>
                                 </table>
                             </div>
                         </td>
                     </tr>`;
             }).join('');
-            let keluarBodyHtml = renderedKeluarRows || `<tr class="keluar-empty-row"><td colspan="9" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
+            let keluarBodyHtml = renderedKeluarRows || `<tr class="keluar-empty-row"><td colspan="10" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
             if (pageGroups.length) {
-                const fillerRow = () => `<tr class="keluar-filler-row" aria-hidden="true">\n                    <td class="py-3 px-2">&nbsp;</td>\n                    <td class="py-3 px-3 font-mono">&nbsp;<span class="block mt-0.5 text-[10px]">&nbsp;</span></td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                </tr>`;
+                const fillerRow = () => `<tr class="keluar-filler-row" aria-hidden="true">\n                    <td class="py-3 px-2">&nbsp;</td>\n                    <td class="py-3 px-3 font-mono">&nbsp;<span class="block mt-0.5 text-[10px]">&nbsp;</span></td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                    <td class="py-3 px-3">&nbsp;</td>\n                </tr>`;
                 keluarBodyHtml += Array.from({ length: KELUAR_HISTORY_PER_PAGE - pageGroups.length }, fillerRow).join('');
             }
             setTableHtml(tbody, keluarBodyHtml);
@@ -2452,13 +2488,14 @@
             const n = host.querySelectorAll('[data-po-item-row]').length + 1;
             const itemOptions = (window.gudangAppDb.items || []).map(i => `<option value="${i.id}">${i.id} - ${i.nama} (${i.jenis||'-'})</option>`).join('');
             const row = document.createElement('div');
-            row.className = 'grid grid-cols-1 sm:grid-cols-12 gap-2 p-2 rounded-xl border border-white/10 bg-white/5';
+            row.className = 'grid grid-cols-2 gap-2 p-2 rounded-xl border border-white/10 bg-white/5';
             row.setAttribute('data-po-item-row','1');
             row.innerHTML = `
-                <div class="sm:col-span-5"><label class="text-[10px] text-gray-400">Barang</label><select ${n===1?'id="po-barang"':''} data-po-field="barangId" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"><option value="">-- Pilih Barang --</option>${itemOptions}</select></div>
-                <div class="sm:col-span-3"><label class="text-[10px] text-gray-400">Qty PO</label><input ${n===1?'id="po-qty"':''} data-po-field="qty" type="number" min="1" step="1" value="${values.qty ?? 1}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
-                <div class="sm:col-span-3"><label class="text-[10px] text-gray-400">Qty Siap Dikirim</label><input ${n===1?'id="po-siap"':''} data-po-field="siapKirim" type="number" min="0" step="1" value="${values.siapKirim ?? 0}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
-                <div class="sm:col-span-1 flex items-end"><button type="button" onclick="this.closest('[data-po-item-row]').remove(); refreshPoItemRowIds()" class="po-remove-item-btn w-full py-1.5 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Hapus baris">✕</button></div>`;
+                <div class="col-span-2"><label class="text-[10px] text-gray-400">Barang</label><select ${n===1?'id="po-barang"':''} data-po-field="barangId" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"><option value="">-- Pilih Barang --</option>${itemOptions}</select></div>
+                <div><label class="text-[10px] text-gray-400">Qty PO</label><input ${n===1?'id="po-qty"':''} data-po-field="qty" type="number" min="1" step="1" value="${values.qty ?? 1}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
+                <div><label class="text-[10px] text-gray-400">Qty Siap</label><input ${n===1?'id="po-siap"':''} data-po-field="siapKirim" type="number" min="0" step="1" value="${values.siapKirim ?? 0}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
+                <div><label class="text-[10px] text-gray-400">Warna Barang</label><input ${n===1?'id="po-warna"':''} data-po-field="warna" type="text" value="${String(values.warna ?? '').replace(/"/g,'&quot;')}" class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs uppercase" placeholder="MERAH / NAVY"></div>
+                <div class="flex items-end"><button type="button" onclick="this.closest('[data-po-item-row]').remove(); refreshPoItemRowIds()" class="po-remove-item-btn w-full h-10 rounded-lg border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Hapus baris">Hapus</button></div>`;
             host.appendChild(row);
             const select = row.querySelector('[data-po-field="barangId"]'); if (values.barangId) select.value = values.barangId;
             refreshPoItemRowIds();
@@ -2469,13 +2506,15 @@
                 row.querySelector('[data-po-field="barangId"]').id = i===0 ? 'po-barang' : `po-barang-${i+1}`;
                 row.querySelector('[data-po-field="qty"]').id = i===0 ? 'po-qty' : `po-qty-${i+1}`;
                 row.querySelector('[data-po-field="siapKirim"]').id = i===0 ? 'po-siap' : `po-siap-${i+1}`;
+                row.querySelector('[data-po-field="warna"]').id = i===0 ? 'po-warna' : `po-warna-${i+1}`;
             });
         };
         function readPoItemRows() {
             return [...document.querySelectorAll('#po-items-container [data-po-item-row]')].map(row => ({
                 barangId: row.querySelector('[data-po-field="barangId"]')?.value || '',
                 qty: Number(row.querySelector('[data-po-field="qty"]')?.value || 0),
-                siapKirim: Number(row.querySelector('[data-po-field="siapKirim"]')?.value || 0)
+                siapKirim: Number(row.querySelector('[data-po-field="siapKirim"]')?.value || 0),
+                warna: row.querySelector('[data-po-field="warna"]')?.value.trim().toUpperCase() || ''
             }));
         }
         window.savePoItem = async function(e) {
@@ -2497,7 +2536,7 @@
                     if (rows.length !== 1) throw new Error('Mode edit hanya untuk satu detail PO.');
                     const item = window.gudangAppDb.items.find(x=>x.id===rows[0].barangId);
                     if (!item) throw new Error('Barang tidak ditemukan.');
-                    await sendOperation('po.update',{id,record:{noPoCustomer,tanggal,customer,alamat,barangId:rows[0].barangId,nama:item.nama,jenis:item.jenis,lebar:item.lebar||'',ukuran:item.ukuran||'',satuan:item.satuan,qty:rows[0].qty,siapKirim:rows[0].siapKirim}});
+                    await sendOperation('po.update',{id,record:{noPoCustomer,tanggal,customer,alamat,barangId:rows[0].barangId,nama:item.nama,warna:rows[0].warna||item.warna||'',jenis:item.jenis,lebar:item.lebar||'',ukuran:item.ukuran||'',satuan:item.satuan,qty:rows[0].qty,siapKirim:rows[0].siapKirim}});
                 } else {
                     const items = rows.map((r,i)=>({id:i===0?id:`${id}-${String(i+1).padStart(2,'0')}`, ...r}));
                     await sendOperation('po.batchCreate',{id,noPoCustomer,tanggal,customer,alamat,items});
@@ -2561,7 +2600,7 @@
                 groups.get(key).push(r);
             });
             const allGroups = [...groups.entries()].map(([key,rows])=>({key,rows,head:rows[0]}));
-            const filtered = allGroups.filter(g => [g.head.noPoCustomer,g.head.customer,...g.rows.map(r=>r.id),...g.rows.map(r=>r.nama)].some(v=>String(v||'').toLowerCase().includes(q)));
+            const filtered = allGroups.filter(g => [g.head.noPoCustomer,g.head.customer,...g.rows.map(r=>r.id),...g.rows.map(r=>r.nama),...g.rows.map(r=>r.warna)].some(v=>String(v||'').toLowerCase().includes(q)));
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} PO • ${filtered.reduce((n,g)=>n+g.rows.length,0)} detail barang`;
             const renderedPoRows = filtered.map((g,index)=>{
                 const groupToken = encodeURIComponent(g.key).replace(/'/g, '%27');
@@ -2577,10 +2616,10 @@
                     const sent=Number(r.terkirim||0), remain=Math.max(0,Number(r.qty||0)-sent);
                     const ready=getPoReadyQty(r);
                     const lineStatus=sent>=Number(r.qty||0)?'CLOSED':(sent>0?'PARTIAL':'OPEN');
-                    return `<tr class="bg-black/10 border-t border-white/5"><td class="py-2 px-3 font-mono">${r.id}</td><td class="py-2 px-3">${r.barangId} — ${window.displayItemName(r.barangId, r.nama)}</td><td class="py-2 px-3 text-right">${Number(r.qty||0).toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-emerald-300">${ready.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right">${sent.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-amber-300">${remain.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-center">${lineStatus}</td><td class="py-2 px-3 text-right">${isViewer?ready.toLocaleString('id-ID'):`<input type="number" min="0" max="${Math.min(remain,Number((window.gudangAppDb.items||[]).find(x=>x.id===r.barangId)?.stok||0))}" step="1" value="${ready}" id="ready-${r.id}" class="w-20 bg-dark-700 border border-white/15 rounded px-2 py-1 text-right"><button onclick="updatePoReady('${r.id}')" class="ml-1 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Atur</button>`}</td><td class="py-2 px-3 text-center">${!isViewer?`<button onclick="editPoItem('${r.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button><button onclick="deletePoItem('${r.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>`:'-'}</td></tr>`;
+                    return `<tr class="bg-black/10 border-t border-white/5"><td class="py-2 px-3 font-mono">${r.id}</td><td class="py-2 px-3">${r.barangId} — ${window.displayItemName(r.barangId, r.nama)}</td><td class="py-2 px-2 opacity-80">${r.warna || '-'}</td><td class="py-2 px-3 text-right">${Number(r.qty||0).toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-emerald-300">${ready.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right">${sent.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-amber-300">${remain.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-center">${lineStatus}</td><td class="py-2 px-3 text-right">${isViewer?ready.toLocaleString('id-ID'):`<input type="number" min="0" max="${Math.min(remain,Number((window.gudangAppDb.items||[]).find(x=>x.id===r.barangId)?.stok||0))}" step="1" value="${ready}" id="ready-${r.id}" class="w-20 bg-dark-700 border border-white/15 rounded px-2 py-1 text-right"><button onclick="updatePoReady('${r.id}')" class="ml-1 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Atur</button>`}</td><td class="py-2 px-3 text-center">${!isViewer?`<button onclick="editPoItem('${r.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button><button onclick="deletePoItem('${r.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>`:'-'}</td></tr>`;
                 }).join('');
-                return `<tr class="hover:bg-white/5"><td class="py-3 px-2 text-center">${index+1}</td><td class="py-3 px-3 font-mono font-semibold">${g.head.noPoCustomer||g.head.id}</td><td class="py-3 px-3">${g.head.tanggal||'-'}</td><td class="py-3 px-3">${g.head.customer||'-'}</td><td class="py-3 px-3 text-center">${g.rows.length}</td><td class="py-3 px-3 text-right font-mono">${totalQty.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-right font-mono text-emerald-300">${totalSent.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${status==='CLOSED'?'bg-emerald-500/20 text-emerald-300':'bg-sky-500/20 text-sky-300'}">${status}</span></td><td class="py-3 px-3 text-center"><button type="button" onclick="togglePoDetails('${groupToken}', this, ${g.rows.length})" aria-expanded="${detailExpanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${detailExpanded ? 'Tutup' : 'Detail'} (${g.rows.length})</button></td></tr><tr id="po-detail-${groupToken}" data-po-group-key="${groupToken}" class="${detailExpanded?'':'hidden'}"><td colspan="9" class="p-2"><div class="po-detail-alamat mb-2 px-1 text-[11px] text-gray-300"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><span class="opacity-60 font-semibold uppercase tracking-wide mr-1">Alamat Customer:</span><span class="po-detail-alamat-value">${alamatHtml}</span></div>${!isViewer?`<button type="button" onclick="editPoGroupAlamat('${groupToken}', this)" class="po-edit-alamat shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" style="touch-action:manipulation">Ubah Alamat</button>`:''}</div></div><div class="rounded-xl border border-white/10 overflow-x-auto"><table class="w-full text-xs"><thead class="bg-white/5 text-gray-400"><tr><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">Barang</th><th class="p-2 text-right">Qty PO</th><th class="p-2 text-right">Siap</th><th class="p-2 text-right">Terkirim</th><th class="p-2 text-right">Sisa</th><th class="p-2 text-center">Status</th><th class="p-2 text-right">Atur Siap</th><th class="p-2 text-center">Aksi</th></tr></thead><tbody>${details}</tbody></table></div></td></tr>`;
-            }).join('') || `<tr><td colspan="9" class="py-6 text-center opacity-50">Tidak ada PO.</td></tr>`;
+                return `<tr class="hover:bg-white/5"><td class="py-3 px-2 text-center">${index+1}</td><td class="py-3 px-3 font-mono font-semibold">${g.head.noPoCustomer||g.head.id}</td><td class="py-3 px-3">${g.head.tanggal||'-'}</td><td class="py-3 px-3">${g.head.customer||'-'}</td><td class="py-3 px-2 opacity-80">${[...new Set(g.rows.map(r=>r.warna||'-'))].join(', ')}</td><td class="py-3 px-3 text-center">${g.rows.length}</td><td class="py-3 px-3 text-right font-mono">${totalQty.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-right font-mono text-emerald-300">${totalSent.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${status==='CLOSED'?'bg-emerald-500/20 text-emerald-300':'bg-sky-500/20 text-sky-300'}">${status}</span></td><td class="py-3 px-3 text-center"><button type="button" onclick="togglePoDetails('${groupToken}', this, ${g.rows.length})" aria-expanded="${detailExpanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${detailExpanded ? 'Tutup' : 'Detail'} (${g.rows.length})</button></td></tr><tr id="po-detail-${groupToken}" data-po-group-key="${groupToken}" class="${detailExpanded?'':'hidden'}"><td colspan="10" class="p-2"><div class="po-detail-alamat mb-2 px-1 text-[11px] text-gray-300"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><span class="opacity-60 font-semibold uppercase tracking-wide mr-1">Alamat Customer:</span><span class="po-detail-alamat-value">${alamatHtml}</span></div>${!isViewer?`<button type="button" onclick="editPoGroupAlamat('${groupToken}', this)" class="po-edit-alamat shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" style="touch-action:manipulation">Ubah Alamat</button>`:''}</div></div><div class="rounded-xl border border-white/10 overflow-x-auto"><table class="w-full text-xs"><thead class="bg-white/5 text-gray-400"><tr><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">Barang</th><th class="p-2 text-left">Warna</th><th class="p-2 text-right">Qty PO</th><th class="p-2 text-right">Siap</th><th class="p-2 text-right">Terkirim</th><th class="p-2 text-right">Sisa</th><th class="p-2 text-center">Status</th><th class="p-2 text-right">Atur Siap</th><th class="p-2 text-center">Aksi</th></tr></thead><tbody>${details}</tbody></table></div></td></tr>`;
+            }).join('') || `<tr><td colspan="10" class="py-6 text-center opacity-50">Tidak ada PO.</td></tr>`;
             // Polling cloud dapat merender ulang semua tampilan meski isi PO tidak berubah.
             // Jangan menyentuh tbody jika markup identik agar detail terbuka tidak berkedip.
             setTableHtml(tbody, renderedPoRows);
@@ -2746,7 +2785,7 @@
 
             const filtered = (window.gudangAppDb.sampel || []).filter(i => 
                 i.id.toLowerCase().includes(q) || (i.customer && i.customer.toLowerCase().includes(q)) ||
-                i.nama.toLowerCase().includes(q) || (i.keterangan && i.keterangan.toLowerCase().includes(q))
+                i.nama.toLowerCase().includes(q) || String(i.warna||'').toLowerCase().includes(q) || (i.keterangan && i.keterangan.toLowerCase().includes(q))
             );
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Sampel`;
 
@@ -2843,6 +2882,7 @@
             const id = document.getElementById('retur-id').value.trim().toUpperCase();
             const tanggal = document.getElementById('retur-tanggal').value;
             const barangId = document.getElementById('retur-barang').value;
+            const warna = document.getElementById('retur-warna')?.value.trim().toUpperCase() || '';
             const keluarRef = document.getElementById('retur-keluar-ref').value;
             const qty = parseInt(document.getElementById('retur-qty').value, 10) || 0;
             const keterangan = document.getElementById('retur-keterangan').value.trim().toUpperCase();
@@ -2868,14 +2908,14 @@
             }
             if (document.getElementById('retur-edit-mode').value === 'true') {
                 try {
-                    await sendOperation('retur.update', { id, record: { tanggal, barangId, qty, keterangan, keluarRef, poRef: keluar.poRef || '', nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan } });
+                    await sendOperation('retur.update', { id, record: { tanggal, barangId, warna, qty, keterangan, keluarRef, poRef: keluar.poRef || '', nama:item.nama, jenis:item.jenis, lebar:item.lebar||'', ukuran:item.ukuran||'', satuan:item.satuan } });
                     window.refreshAllViews?.(); resetReturForm(); showToast('Retur Barang berhasil diperbarui. Stok dan realisasi PO dikoreksi Worker.');
                 } catch (error) { showToast(`Retur Barang gagal diperbarui: ${error.message}`, 'error'); }
                 return;
             }
             item.stok += qty;
             window.gudangAppDb.retur.unshift({
-                id, tanggal, barangId, nama: item.nama, jenis: item.jenis,
+                id, tanggal, barangId, nama: item.nama, warna: warna || item.warna || '', jenis: item.jenis,
                 lebar: item.lebar || '', ukuran: item.ukuran || '', satuan: item.satuan,
                 qty, keterangan, user: username, keluarRef, poRef: keluar.poRef || ''
             });
@@ -2940,7 +2980,7 @@
             const isViewer = window.gudangAppDb.currentUser?.role === 'viewer';
 
             const filtered = window.gudangAppDb.retur.filter(i => 
-                i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || i.keterangan.toLowerCase().includes(q)
+                i.id.toLowerCase().includes(q) || i.nama.toLowerCase().includes(q) || String(i.warna||'').toLowerCase().includes(q) || i.keterangan.toLowerCase().includes(q)
             );
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Transaksi`;
 
@@ -2951,6 +2991,7 @@
                     <td class="py-3 px-3 opacity-80">${i.tanggal}</td>
                     <td class="py-3 px-3 font-mono opacity-80">${i.barangId}</td>
                     <td class="py-3 px-3 font-medium">${window.displayItemName(i.id, i.nama)}</td>
+                    <td class="py-3 px-2 opacity-80">${i.warna || '-'}</td>
                     <td class="py-3 px-3 opacity-80">${i.jenis}</td>
                     <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
                     <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
@@ -2964,7 +3005,7 @@
                         </td>
                     ` : ''}
                 </tr>
-            `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
+            `).join('') || `<tr><td colspan="${isViewer ? 12 : 13}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
             setTableHtml(tbody, renderedReturRows);
             lucide.createIcons();
         };
@@ -5115,12 +5156,14 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 const token = encodeURIComponent(g.tid).replace(/'/g, '%27');
                 const expanded = window._expandedSjGroupKeys.has(token);
                 const itemNames = [...new Set(g.rows.map(r => window.displayItemName(r.barangId, r.nama)))];
+                const warnaList = [...new Set(g.rows.map(r => r.warna || '-'))];
                 const detailRows = g.rows.map((r, di) => `
                     <tr class="sj-detail-item border-t border-white/5 hover:bg-white/5">
                         <td class="p-2 text-center">${di + 1}</td>
                         <td class="p-2 font-mono">${esc(r.id)}</td>
                         <td class="p-2 font-mono">${esc(r.barangId)}</td>
                         <td class="p-2 font-medium">${esc(window.displayItemName(r.barangId, r.nama))}</td>
+                        <td class="p-2">${esc(r.warna || '-')}</td>
                         <td class="p-2">${esc(r.jenis || '-')}</td>
                         <td class="p-2">${esc(r.lebar || '-')}</td>
                         <td class="p-2">${esc(r.ukuran || '-')}</td>
@@ -5137,6 +5180,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     <td data-label="Alamat" class="py-3 px-3 text-[11px] opacity-70">${g.alamat ? `<span class="sj-alamat-value">${esc(g.alamat).replace(/\r?\n/g, '<br>')}</span>` : '-'}</td>
                     <td data-label="No. PO" class="py-3 px-3 font-mono opacity-80">${esc(g.poNumbers.join(', '))}</td>
                     <td data-label="Nama Barang" class="py-3 px-3 text-center" title="${esc(itemNames.join(', '))}"><span class="sj-jumlah-desktop">${g.rows.length} barang</span><span class="sj-nama-mobile">${esc(itemNames.join(', '))}</span></td>
+                    <td data-label="Warna" class="py-3 px-2 opacity-80">${esc(warnaList.join(', '))}</td>
                     <td data-label="Total Qty" class="py-3 px-3 text-right font-mono font-bold text-rose-400">${g.totalQty.toLocaleString('id-ID')}</td>
                     <td data-label="User" class="py-3 px-3 text-orange-400">${esc(g.user)}</td>
                     <td data-label="Aksi" class="py-3 px-3 text-center"><div class="sj-card-actions flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:280px">
@@ -5146,20 +5190,20 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     </div></td>
                 </tr>
                 <tr id="sj-detail-${token}" data-sj-group-key="${token}" class="sj-detail-row ${expanded ? '' : 'hidden'}">
-                    <td colspan="10" class="p-2 bg-black/10">
+                    <td colspan="11" class="p-2 bg-black/10">
                         <div class="rounded-xl border border-white/10 overflow-x-auto">
-                            <table class="w-full text-xs min-w-[900px]">
+                            <table class="w-full text-xs min-w-[960px]">
                                 <thead class="bg-white/5 text-gray-400"><tr>
-                                    <th class="p-2 text-center">No</th><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">ID Barang</th><th class="p-2 text-left">Nama Barang</th><th class="p-2 text-left">Kategori</th><th class="p-2 text-left">Lebar</th><th class="p-2 text-left">Ukuran</th><th class="p-2 text-left">Satuan</th><th class="p-2 text-right">Qty SJ</th><th class="p-2 text-left">No PO</th>
+                                    <th class="p-2 text-center">No</th><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">ID Barang</th><th class="p-2 text-left">Nama Barang</th><th class="p-2 text-left">Warna</th><th class="p-2 text-left">Kategori</th><th class="p-2 text-left">Lebar</th><th class="p-2 text-left">Ukuran</th><th class="p-2 text-left">Satuan</th><th class="p-2 text-right">Qty SJ</th><th class="p-2 text-left">No PO</th>
                                 </tr></thead>
                                 <tbody>${detailRows}</tbody>
-                                <tfoot class="bg-white/5 border-t border-white/10"><tr><td colspan="8" class="p-2 text-right font-semibold">Subtotal Qty</td><td class="p-2 text-right font-mono font-bold text-emerald-300">${g.totalQty.toLocaleString('id-ID')}</td><td></td></tr></tfoot>
+                                <tfoot class="bg-white/5 border-t border-white/10"><tr><td colspan="9" class="p-2 text-right font-semibold">Subtotal Qty</td><td class="p-2 text-right font-mono font-bold text-emerald-300">${g.totalQty.toLocaleString('id-ID')}</td><td></td></tr></tfoot>
                             </table>
                         </div>
                     </td>
                 </tr>`;
             }).join('');
-            let sjBodyHtml = rowsHtml || `<tr class="sj-empty-row"><td colspan="10" class="py-6 text-center opacity-50">Belum ada Surat Jalan.</td></tr>`;
+            let sjBodyHtml = rowsHtml || `<tr class="sj-empty-row"><td colspan="11" class="py-6 text-center opacity-50">Belum ada Surat Jalan.</td></tr>`;
             // Baris pengisi menjaga tinggi tabel tetap 10 baris, sehingga tombol halaman tidak bergeser
             // saat berpindah dari halaman terakhir (sedikit baris) ke halaman penuh.
             if (pageRows.length) {
@@ -5422,20 +5466,21 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     <td class="c">${i + 1}</td>
                     <td>${escapePrintHtml(r.barangId || '-')}</td>
                     <td>${escapePrintHtml(window.displayItemName(r.barangId, r.nama))}</td>
+                    <td>${escapePrintHtml(r.warna || '-')}</td>
                     <td>${escapePrintHtml(r.jenis || '-')}</td>
                     <td>${escapePrintHtml(r.lebar || '-')}</td>
                     <td>${escapePrintHtml(r.ukuran || '-')}</td>
                     <td class="r">${Number(r.qty || 0).toLocaleString('id-ID')}</td>
                 </tr>`).join('');
             const alamatHtml = escapePrintHtml(ctx.alamat).replace(/\r?\n/g, '<br>');
-            const poLine = 'No. PO: ' + escapePrintHtml(ctx.poNumber);
             const printWindow = window.open('', '_blank');
             if (!printWindow) { showToast('Popup cetak diblokir browser. Izinkan popup lalu coba lagi.', 'error'); return false; }
             printWindow.document.open();
             printWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Surat Jalan ${escapePrintHtml(ctx.noSj)}</title>
                 <style>
-                    /* Layout mengikuti assets/templates/surat-jalan.xlsx */
-                    @page{size:A4 portrait;margin:10mm}
+                    /* Layout mengikuti assets/templates/surat-jalan.xlsx.
+                       Ukuran kertas custom 9.5in (lebar) x 11in (panjang). */
+                    @page{size:9.5in 11in;margin:10mm}
                     *{box-sizing:border-box}
                     body{font-family:Arial,sans-serif;color:#111;margin:0;font-size:10px;line-height:1.25}
                     .head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
@@ -5452,7 +5497,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     .items th,.items td{border:1px solid #333;padding:4px;vertical-align:top;word-break:break-word;overflow-wrap:anywhere}
                     .items th{font-size:9px;text-align:center;font-weight:bold}
                     .c{text-align:center}.r{text-align:right}
-                    .col-no{width:4.6%}.col-id{width:11.6%}.col-name{width:22.6%}.col-type{width:20.9%}.col-w{width:12.5%}.col-size{width:18%}.col-qty{width:9.8%}
+                    .col-no{width:4.2%}.col-id{width:10.5%}.col-name{width:22.5%}.col-warna{width:12%}.col-type{width:17%}.col-w{width:10%}.col-size{width:15%}.col-qty{width:8.8%}
                     .sign{display:flex;justify-content:space-between;gap:18px;margin-top:22px}
                     .sign > div{flex:1;text-align:center;font-size:10px}
                     .sign .blank{display:block;margin-top:28px;white-space:nowrap}
@@ -5468,12 +5513,16 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                         </tr>
                         <tr>
                             <td class="lbl">Tanggal :</td><td class="date">${escapePrintHtml(ctx.tanggal)}</td>
-                            <td></td><td class="to">${alamatHtml}<br>${poLine}</td>
+                            <td></td><td class="to">${alamatHtml}</td>
+                        </tr>
+                        <tr>
+                            <td class="lbl">No. PO:</td><td class="date">${escapePrintHtml(ctx.poNumber)}</td>
+                            <td></td><td></td>
                         </tr>
                     </table>
                     <table class="items">
-                        <colgroup><col class="col-no"><col class="col-id"><col class="col-name"><col class="col-type"><col class="col-w"><col class="col-size"><col class="col-qty"></colgroup>
-                        <thead><tr><th>NO</th><th>ID Barang</th><th>Nama Barang</th><th>Jenis Barang</th><th>Lebar</th><th>Ukuran</th><th>Qty</th></tr></thead>
+                        <colgroup><col class="col-no"><col class="col-id"><col class="col-name"><col class="col-warna"><col class="col-type"><col class="col-w"><col class="col-size"><col class="col-qty"></colgroup>
+                        <thead><tr><th>NO</th><th>ID Barang</th><th>Nama Barang</th><th>Warna</th><th>Jenis Barang</th><th>Lebar</th><th>Ukuran</th><th>Qty</th></tr></thead>
                         <tbody>${itemRows}</tbody>
                     </table>
                     <div class="sign">
@@ -5731,11 +5780,11 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             };
 
             setCell('D6', ctx.noSj);
-            setCell('G6', ctx.customer);
+            setCell('H6', ctx.customer);
             const serial = excelSerialFromIso(ctx.iso);
             if (serial !== null) setCell('D7', serial, true);
-            // G7:H8 sudah merge dan ber-wrapText: baris 1 = alamat customer, baris 2 = No. PO.
-            setCell('G7', [ctx.alamat, 'No. PO: ' + ctx.poNumber].filter(Boolean).join('\n'));
+            // H7:I8 sudah merge dan ber-wrapText: baris 1 = alamat customer, baris 2 = No. PO.
+            setCell('H7', [ctx.alamat, 'No. PO: ' + ctx.poNumber].filter(Boolean).join('\n'));
 
             const SLOTS = 10;
             for (let i = 0; i < SLOTS; i++) {
@@ -5744,10 +5793,11 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 setCell(`B${row}`, item ? i + 1 : '', !!item);
                 setCell(`C${row}`, item ? (item.barangId || '-') : '');
                 setCell(`D${row}`, item ? window.displayItemName(item.barangId, item.nama) : '');
-                setCell(`E${row}`, item ? (item.jenis || '-') : '');
-                setCell(`F${row}`, item ? (item.lebar || '-') : '');
-                setCell(`G${row}`, item ? (item.ukuran || '-') : '');
-                setCell(`H${row}`, item ? Number(item.qty || 0) : '', !!item);
+                setCell(`E${row}`, item ? (item.warna || '-') : '');
+                setCell(`F${row}`, item ? (item.jenis || '-') : '');
+                setCell(`G${row}`, item ? (item.lebar || '-') : '');
+                setCell(`H${row}`, item ? (item.ukuran || '-') : '');
+                setCell(`I${row}`, item ? Number(item.qty || 0) : '', !!item);
             }
             if (ctx.rows.length > SLOTS) showToast(`Template hanya menampung ${SLOTS} barang. ${ctx.rows.length - SLOTS} barang lainnya tidak ikut; gunakan Cetak SJ untuk semua item.`, 'warning');
 
@@ -5801,11 +5851,11 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             aoa[3] = ['No. Surat Jalan', ctx.noSj, '', 'Tanggal', ctx.tanggal];
             aoa[4] = ['Customer / Tujuan', ctx.customer];
             aoa[5] = ['No. PO Customer', ctx.poNumber, '', 'ID Transaksi', ctx.tid];
-            aoa[headerRow] = ['No', 'ID Barang', 'Nama Barang', 'Kategori', 'Lebar', 'Ukuran', 'Satuan', 'Qty'];
+            aoa[headerRow] = ['No', 'ID Barang', 'Nama Barang', 'Warna', 'Kategori', 'Lebar', 'Ukuran', 'Satuan', 'Qty'];
             ctx.rows.forEach((r, i) => {
-                aoa[firstItemRow + i] = [i + 1, r.barangId || '-', window.displayItemName(r.barangId, r.nama), r.jenis || '-', r.lebar || '-', r.ukuran || '-', r.satuan || '-', Number(r.qty || 0)];
+                aoa[firstItemRow + i] = [i + 1, r.barangId || '-', window.displayItemName(r.barangId, r.nama), r.warna || '-', r.jenis || '-', r.lebar || '-', r.ukuran || '-', r.satuan || '-', Number(r.qty || 0)];
             });
-            aoa[totalRow] = ['TOTAL QTY', '', '', '', '', '', '', ctx.totalQty];
+            aoa[totalRow] = ['TOTAL QTY', '', '', '', '', '', '', '', ctx.totalQty];
             aoa[signRow] = ['Dibuat oleh,\n\n(' + String(window.gudangAppDb.currentUser?.name || 'Administrator') + ')', '', '', '', 'Diterima oleh,\n\n(________________________)', '', '', ''];
             aoa[noteRow] = ['Dicetak dari Sistem Manajemen Inventory Gudang pada ' + new Date().toLocaleString('id-ID')];
 
@@ -5820,41 +5870,41 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             };
 
             ws['!merges'] = [
-                { s: { r: 0, c: 0 }, e: { r: 0, c: 7 } },
-                { s: { r: 1, c: 0 }, e: { r: 1, c: 7 } },
+                { s: { r: 0, c: 0 }, e: { r: 0, c: 8 } },
+                { s: { r: 1, c: 0 }, e: { r: 1, c: 8 } },
                 { s: { r: 3, c: 1 }, e: { r: 3, c: 2 } },
-                { s: { r: 3, c: 4 }, e: { r: 3, c: 7 } },
-                { s: { r: 4, c: 1 }, e: { r: 4, c: 7 } },
+                { s: { r: 3, c: 4 }, e: { r: 3, c: 8 } },
+                { s: { r: 4, c: 1 }, e: { r: 4, c: 8 } },
                 { s: { r: 5, c: 1 }, e: { r: 5, c: 2 } },
-                { s: { r: 5, c: 4 }, e: { r: 5, c: 7 } },
-                { s: { r: totalRow, c: 0 }, e: { r: totalRow, c: 6 } },
+                { s: { r: 5, c: 4 }, e: { r: 5, c: 8 } },
+                { s: { r: totalRow, c: 0 }, e: { r: totalRow, c: 7 } },
                 { s: { r: signRow, c: 0 }, e: { r: signRow, c: 3 } },
-                { s: { r: signRow, c: 4 }, e: { r: signRow, c: 7 } },
-                { s: { r: noteRow, c: 0 }, e: { r: noteRow, c: 7 } }
+                { s: { r: signRow, c: 4 }, e: { r: signRow, c: 8 } },
+                { s: { r: noteRow, c: 0 }, e: { r: noteRow, c: 8 } }
             ];
-            ws['!cols'] = [{ wch: 20 }, { wch: 18 }, { wch: 36 }, { wch: 18 }, { wch: 12 }, { wch: 12 }, { wch: 10 }, { wch: 12 }];
+            ws['!cols'] = [{ wch: 5 }, { wch: 14 }, { wch: 28 }, { wch: 14 }, { wch: 18 }, { wch: 10 }, { wch: 12 }, { wch: 10 }, { wch: 10 }];
             ws['!rows'] = [];
             ws['!rows'][0] = { hpt: 28 };
             ws['!rows'][signRow] = { hpt: 70 };
             ws['!printOptions'] = { gridLines: false, headings: false };
             ws['!pageSetup'] = { paperSize: 9, orientation: 'portrait', fitToPage: true, fitToWidth: 1, fitToHeight: 0 };
 
-            styleBlock(0, 0, 0, 7, { font: { bold: true, sz: 16 }, alignment: { horizontal: 'center', vertical: 'center' } });
-            styleBlock(1, 0, 1, 7, { font: { sz: 10, color: { rgb: '555555' } }, alignment: { horizontal: 'center' } });
+            styleBlock(0, 0, 0, 8, { font: { bold: true, sz: 16 }, alignment: { horizontal: 'center', vertical: 'center' } });
+            styleBlock(1, 0, 1, 8, { font: { sz: 10, color: { rgb: '555555' } }, alignment: { horizontal: 'center' } });
             [3, 4, 5].forEach(r => {
-                styleBlock(r, 0, r, 7, { ...border, alignment: { vertical: 'center' } });
+                styleBlock(r, 0, r, 8, { ...border, alignment: { vertical: 'center' } });
                 setStyle(r, 0, fillLabel);
                 if (r !== 4) setStyle(r, 3, fillLabel);
             });
-            styleBlock(headerRow, 0, headerRow, 7, { ...border, ...fillHead });
-            styleBlock(firstItemRow, 0, lastItemRow, 7, border);
+            styleBlock(headerRow, 0, headerRow, 8, { ...border, ...fillHead });
+            styleBlock(firstItemRow, 0, lastItemRow, 8, border);
             for (let r = firstItemRow; r <= lastItemRow; r++) {
                 setStyle(r, 0, center);
-                setStyle(r, 7, right);
+                setStyle(r, 8, right);
             }
-            styleBlock(totalRow, 0, totalRow, 7, { ...border, font: { bold: true }, alignment: { horizontal: 'right', vertical: 'center' } });
-            styleBlock(signRow, 0, signRow, 7, { alignment: { horizontal: 'center', vertical: 'center', wrapText: true } });
-            styleBlock(noteRow, 0, noteRow, 7, { font: { sz: 9, color: { rgb: '666666' } } });
+            styleBlock(totalRow, 0, totalRow, 8, { ...border, font: { bold: true }, alignment: { horizontal: 'right', vertical: 'center' } });
+            styleBlock(signRow, 0, signRow, 8, { alignment: { horizontal: 'center', vertical: 'center', wrapText: true } });
+            styleBlock(noteRow, 0, noteRow, 8, { font: { sz: 9, color: { rgb: '666666' } } });
 
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Surat Jalan');
