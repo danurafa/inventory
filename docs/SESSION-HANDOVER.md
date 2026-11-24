@@ -117,7 +117,12 @@ Kalau GET/POST gagal → tetap jalan pakai cache + toast peringatan (bukan stric
 - Kop cetak hardcoded: **CV. TRIASTINDO JAYA**. CSS cetak ditulis di dalam
   `printWindow.document.write()` (tidak menyentuh stylesheet utama).
 - Excel: baca template asli `assets/templates/surat-jalan.xlsx` via `JSZip`,
-  fallback `xlsx-js-style`, fallback terakhir CSV dengan BOM.
+  fallback `xlsx-js-style`, fallback terakhir CSV dengan BOM. Kalau download otomatis
+  diblokir Safari mobile, muncul tautan manual `#sj-manual-download` di pojok kanan bawah
+  selama 60 detik. Saat klik muncul dulu chip `#sj-excel-progress` ("Menyiapkan Excel SJ…"),
+  lalu JSZip + template di-prefetch **bersamaan** dengan audit/password supaya tidak berurutan.
+  `getSjTemplateBuffer()` **tidak lagi** membuka file picker otomatis
+  (dulu menggantung di Safari setelah `await`).
 - Mapping template: `D6`, `G6`, `D7`, `G7`, `B10:H19` — 10 slot item.
   Lebih dari 10 item → toast peringatan. Template `G7:H8` merged + `wrapText="1"`, tanpa logo gambar.
 - Riwayat: `collectSjHistoryGroups()` → grup per `transactionId`; dipakai `renderSjHistory()`.
@@ -156,8 +161,8 @@ docs/TABEL-PAGINATION-ALAMAT.md
 ```
 
 Cache-buster saat ini:
-- `index.html` → `assets/app.js?v=sj-alamat-fallback-20261124`
-- `index.html` → `assets/styles.css?v=po-alamat-editor-20261124`
+- `index.html` → `assets/app.js?v=excel-sj-fast-20261124`
+- `index.html` → `assets/styles.css?v=excel-sj-fast-20261124`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting:

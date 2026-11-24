@@ -96,6 +96,11 @@ Susunan akhir (label di atas nilai):
 **Tidak ada alamat** di kartu Barang Keluar (sesuai keputusan user). Desktop tetap
 memakai header `Jumlah Jenis Barang` dengan nilai `N barang`.
 
+Pada **form input Barang Keluar**, teks `Stok: N` di sebelah kiri Qty Keluar
+berkedip hijau halus saat stok tersedia (`> 0`) dan abu-abu diam saat stok habis.
+CSS-nya ditaruh paling akhir di `styles.css` karena blok mobile `#tab-keluar`
+mematikan `animation` pada seluruh `.app-card *`.
+
 ### 3.3 Stabilitas scroll
 
 Kartu SJ/Keluar memakai: blur/filter/animasi/transisi dimatikan, background opak,
@@ -175,8 +180,8 @@ index.html
 Cache-buster **saat ini** (di `index.html`):
 
 ```
-assets/styles.css?v=po-alamat-editor-20261124
-assets/app.js?v=sj-alamat-fallback-20261124
+assets/styles.css?v=excel-sj-fast-20261124
+assets/app.js?v=excel-sj-fast-20261124
 ```
 
 Commit terkait:

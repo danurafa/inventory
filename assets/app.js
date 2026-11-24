@@ -654,6 +654,14 @@
                     const meta = document.createElement('div');
                     meta.className = 'text-[10px] text-gray-400';
                     meta.dataset.keluarMeta = '1';
+                    // Pemisah prefix & stok dibuat sebagai node sendiri supaya
+                    // animasi kedip tidak ikut restart saat Cloud Sync refresh.
+                    const metaPrefix = document.createElement('span');
+                    metaPrefix.dataset.keluarMetaPrefix = '1';
+                    const stockSpan = document.createElement('span');
+                    stockSpan.dataset.keluarStock = '1';
+                    stockSpan.className = 'keluar-stock-value';
+                    meta.append(metaPrefix, stockSpan);
                     name.append(title, meta);
 
                     const inputWrap = document.createElement('div');
@@ -681,11 +689,18 @@
 
                 // Perbarui teks dan batas tanpa mengganti node input.
                 const title = card.querySelector('[data-keluar-title]');
-                const meta = card.querySelector('[data-keluar-meta]');
+                const metaPrefix = card.querySelector('[data-keluar-meta-prefix]');
+                const stockSpan = card.querySelector('[data-keluar-stock]');
                 const input = card.querySelector('[data-keluar-qty]');
                 const note = card.querySelector('[data-keluar-note]');
                 if (title) title.textContent = `${window.displayItemName(po.barangId, po.nama || item?.nama || po.barangId)} (${po.barangId})`;
-                if (meta) meta.textContent = `PO: ${Number(po.qty||0).toLocaleString('id-ID')} · Terkirim: ${Number(po.terkirim||0).toLocaleString('id-ID')} · Siap: ${ready.toLocaleString('id-ID')} · Stok: ${stock.toLocaleString('id-ID')}`;
+                if (metaPrefix) metaPrefix.textContent = `PO: ${Number(po.qty||0).toLocaleString('id-ID')} · Terkirim: ${Number(po.terkirim||0).toLocaleString('id-ID')} · Siap: ${ready.toLocaleString('id-ID')} · `;
+                if (stockSpan) {
+                    stockSpan.textContent = `Stok: ${stock.toLocaleString('id-ID')}`;
+                    // Kedip halus hanya saat stok tersedia; abu-abu diam kalau habis.
+                    stockSpan.classList.toggle('keluar-stock-available', stock > 0);
+                    stockSpan.classList.toggle('keluar-stock-empty', stock <= 0);
+                }
                 if (input) {
                     input.max = String(max);
                     input.disabled = max <= 0;
@@ -5510,7 +5525,46 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 totalQty: rows.reduce((sum, r) => sum + Number(r.qty || 0), 0)
             };
         }
-        function downloadFileFromBlob(blob, filename) {
+        // Safari mobile sering memblokir download otomatis karena link.click()
+        // dipanggil setelah beberapa await (user gesture sudah hilang). Tampilkan
+        // tautan manual yang bisa diketuk sendiri selama 1 menit.
+        function hideSjExcelProgress() {
+            document.getElementById('sj-excel-progress')?.remove();
+        }
+        // Muncul sinkron saat tombol diklik, sebelum ada await, supaya pengguna
+        // tidak mengira kliknya tidak bekerja saat audit/library masih dimuat.
+        function showSjExcelProgress() {
+            hideSjExcelProgress();
+            const box = document.createElement('div');
+            box.id = 'sj-excel-progress';
+            box.setAttribute('role', 'status');
+            box.style.cssText = 'position:fixed;right:16px;bottom:16px;z-index:94;max-width:calc(100vw - 32px);padding:12px 14px;border-radius:14px;background:rgba(15,23,42,.97);border:1px solid rgba(148,163,184,.35);box-shadow:0 18px 44px rgba(0,0,0,.40);color:#cbd5e1;font-size:12px;font-weight:600;line-height:1.3;';
+            box.textContent = 'Menyiapkan Excel SJ…';
+            document.body.appendChild(box);
+        }
+        function showManualDownload(url, filename) {
+            hideSjExcelProgress();
+            document.getElementById('sj-manual-download')?.remove();
+            const box = document.createElement('div');
+            box.id = 'sj-manual-download';
+            box.setAttribute('role', 'status');
+            box.style.cssText = 'position:fixed;right:16px;bottom:16px;z-index:95;max-width:calc(100vw - 32px);padding:12px 14px;border-radius:14px;background:rgba(15,23,42,.97);border:1px solid rgba(148,163,184,.35);box-shadow:0 18px 44px rgba(0,0,0,.40);display:flex;align-items:center;gap:10px;font-family:inherit;';
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.textContent = 'Unduh Excel SJ (kalau belum tersimpan)';
+            link.style.cssText = 'color:#7dd3fc;font-size:12px;font-weight:700;text-decoration:none;line-height:1.3;';
+            const close = document.createElement('button');
+            close.type = 'button';
+            close.textContent = '✕';
+            close.setAttribute('aria-label', 'Tutup');
+            close.style.cssText = 'background:transparent;border:0;color:#94a3b8;font-size:14px;line-height:1;cursor:pointer;padding:2px;';
+            close.addEventListener('click', () => box.remove());
+            box.append(link, close);
+            document.body.appendChild(box);
+            setTimeout(() => box.remove(), 60000);
+        }
+        function downloadFileFromBlob(blob, filename, withManualLink) {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
@@ -5518,7 +5572,10 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             document.body.appendChild(link);
             link.click();
             link.remove();
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            // URL tidak langsung dicabut supaya tautan manual masih berfungsi.
+            setTimeout(() => URL.revokeObjectURL(url), withManualLink ? 60000 : 1500);
+            if (withManualLink) showManualDownload(url, filename);
+            return url;
         }
         function downloadSuratJalanCsv(ctx) {
             const lines = [
@@ -5532,7 +5589,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 ['', '', '', '', '', '', 'TOTAL QTY', ctx.totalQty]
             ];
             const csv = '\uFEFF' + lines.map(row => row.map(cell => `"${String(cell ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
-            downloadFileFromBlob(new Blob([csv], { type: 'text/csv;charset=utf-8' }), `Surat-Jalan-${ctx.noSj.replace(/[^A-Za-z0-9-]/g, '_')}.csv`);
+            downloadFileFromBlob(new Blob([csv], { type: 'text/csv;charset=utf-8' }), `Surat-Jalan-${ctx.noSj.replace(/[^A-Za-z0-9-]/g, '_')}.csv`, true);
             showToast('Library Excel tidak tersedia. File CSV sudah diunduh dan bisa dibuka di Excel.', 'warning');
         }
         // Template .xlsx milik pengguna dipakai apa adanya supaya logo, merge, dan format tetap utuh.
@@ -5555,28 +5612,31 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             }
             return sjJszipPromise;
         }
-        function getSjTemplateBuffer() {
+        let sjTemplatePromise = null;
+        // Promise di-cache supaya bisa dimulai bareng audit (lihat handler Excel),
+        // lalu dipakai lagi saat template benar-benar dibutuhkan tanpa fetch kedua.
+        function prefetchSjTemplate() {
             if (window._sjTemplateBuffer) return Promise.resolve(window._sjTemplateBuffer);
-            return fetch(SJ_TEMPLATE_PATH, { cache: 'no-store' })
-                .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.arrayBuffer(); })
-                .then(buf => { window._sjTemplateBuffer = buf; return buf; })
-                .catch(err => new Promise((resolve, reject) => {
-                    const input = document.getElementById('sj-template-file');
-                    if (!input) { reject(err); return; }
-                    const onChange = async () => {
-                        input.removeEventListener('change', onChange);
-                        const file = input.files && input.files[0];
-                        if (!file) { reject(new Error('Template tidak dipilih.')); return; }
-                        try {
-                            window._sjTemplateBuffer = await file.arrayBuffer();
-                            resolve(window._sjTemplateBuffer);
-                        } catch (e) { reject(e); }
-                    };
-                    input.addEventListener('change', onChange);
-                    input.value = '';
-                    input.click();
-                    showToast('Template tidak bisa dibaca otomatis. Pilih file assets/templates/surat-jalan.xlsx.', 'info');
-                }));
+            if (!sjTemplatePromise) {
+                sjTemplatePromise = fetch(SJ_TEMPLATE_PATH, { cache: 'no-store' })
+                    .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.arrayBuffer(); })
+                    .then(buf => { window._sjTemplateBuffer = buf; return buf; })
+                    .catch(err => {
+                        console.warn('Template SJ tidak bisa dibaca otomatis, pakai template bawaan:', err);
+                        setTimeout(() => { sjTemplatePromise = null; }, 30000);
+                        return null;
+                    });
+            }
+            return sjTemplatePromise;
+        }
+        async function getSjTemplateBuffer() {
+            if (window._sjTemplateBuffer) return window._sjTemplateBuffer;
+            const buf = await prefetchSjTemplate();
+            if (buf) return buf;
+            // Dulu di sini ada input.click() otomatis. Di Safari mobile, file picker
+            // yang dipicu setelah await sering diblokir → aksi menggantung.
+            showToast('Template Excel khusus tidak bisa dibaca. Memakai template bawaan.', 'info');
+            throw new Error('Template tidak bisa dibaca.');
         }
         function excelSerialFromIso(iso) {
             const p = String(iso || '').split('-');
@@ -5660,8 +5720,8 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 const zip = await JSZip.loadAsync(buffer);
                 await fillSuratJalanTemplate(zip, ctx);
                 const blob = await zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                downloadFileFromBlob(blob, `Surat-Jalan-${ctx.noSj.replace(/[^A-Za-z0-9-]/g, '_')}.xlsx`);
-                showToast(`Surat Jalan ${ctx.noSj} diisi ke template Excel-mu.`, 'success');
+                downloadFileFromBlob(blob, `Surat-Jalan-${ctx.noSj.replace(/[^A-Za-z0-9-]/g, '_')}.xlsx`, true);
+                showToast(`Surat Jalan ${ctx.noSj} diisi ke template Excel-mu. Kalau file belum tersimpan, ketuk tautan "Unduh Excel SJ" di pojok kanan bawah.`, 'success');
                 return true;
             } catch (error) {
                 console.warn('Template SJ gagal dipakai, beralih ke template bawaan:', error);
@@ -5748,8 +5808,10 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
 
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Surat Jalan');
-            XLSX.writeFile(wb, `Surat-Jalan-${ctx.noSj.replace(/[^A-Za-z0-9-]/g, '_')}.xlsx`);
-            showToast(`Template Excel Surat Jalan ${ctx.noSj} berhasil diunduh.`, 'success');
+            const fileName = `Surat-Jalan-${ctx.noSj.replace(/[^A-Za-z0-9-]/g, '_')}.xlsx`;
+            const output = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+            downloadFileFromBlob(new Blob([output], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), fileName, true);
+            showToast(`Template Excel Surat Jalan ${ctx.noSj} berhasil diunduh. Kalau file belum tersimpan, ketuk tautan "Unduh Excel SJ" di pojok kanan bawah.`, 'success');
             return true;
         }
 
@@ -5759,20 +5821,28 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
         window.downloadSuratJalanExcel = async function(transactionId, source, button) {
             const tid = String(transactionId || '');
             const dariRiwayat = source === 'riwayat' || Boolean(button?.closest?.('#tab-sj'));
+            showSjExcelProgress();
+            // Mulai memuat JSZip & template BERSAMAAN dengan baca audit/password,
+            // bukan berurutan setelahnya. Ini yang bikin tombol manual lebih cepat muncul.
+            Promise.allSettled([loadSjJszip(), prefetchSjTemplate()]);
             await runSjAction(`excel:${tid}`, button, async () => {
-                const { record, synced } = await getSjPrintRecordInfo(tid);
-                let message = '';
-                if (dariRiwayat) {
-                    message = 'Download Excel dari Riwayat Surat Jalan memerlukan password.\nMasukkan password akun Anda untuk melanjutkan:';
-                } else if (Number(record.keluarExcel || 0) >= 1) {
-                    message = 'Excel surat jalan ini sudah pernah diunduh.\nMasukkan password akun Anda untuk mengunduh ulang:';
-                }
-                if (message && !(await requireSjPassword(message))) return;
-                if (await doDownloadSuratJalanExcel(tid)) {
-                    const saved = await markSjAction(tid, dariRiwayat ? 'riwayat' : 'keluar', 'excel');
-                    if (!dariRiwayat && (!synced || !saved)) {
-                        showToast('Riwayat unduh Excel SJ belum tersinkron ke server. Aksi ini dicatat di perangkat ini saja, jadi perangkat lain bisa menganggap file ini belum pernah diunduh.', 'warning');
+                try {
+                    const { record, synced } = await getSjPrintRecordInfo(tid);
+                    let message = '';
+                    if (dariRiwayat) {
+                        message = 'Download Excel dari Riwayat Surat Jalan memerlukan password.\nMasukkan password akun Anda untuk melanjutkan:';
+                    } else if (Number(record.keluarExcel || 0) >= 1) {
+                        message = 'Excel surat jalan ini sudah pernah diunduh.\nMasukkan password akun Anda untuk mengunduh ulang:';
                     }
+                    if (message && !(await requireSjPassword(message))) return;
+                    if (await doDownloadSuratJalanExcel(tid)) {
+                        const saved = await markSjAction(tid, dariRiwayat ? 'riwayat' : 'keluar', 'excel');
+                        if (!dariRiwayat && (!synced || !saved)) {
+                            showToast('Riwayat unduh Excel SJ belum tersinkron ke server. Aksi ini dicatat di perangkat ini saja, jadi perangkat lain bisa menganggap file ini belum pernah diunduh.', 'warning');
+                        }
+                    }
+                } finally {
+                    hideSjExcelProgress();
                 }
             });
         };
