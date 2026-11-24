@@ -165,6 +165,34 @@ dan harus diisi lewat **Ubah Alamat** di PO Customer.
 - `backdrop-filter` / `filter` / transisi pada card + isi tabel dimatikan supaya
   tidak repaint tiap frame (terutama di tema glass).
 
+### 5.1 Pemberitahuan batal edit
+
+- Tombol **Reset** di 6 form (Master, PO, Masuk, Keluar, Sampel, Retur) memakai
+  `requestFormReset(key)`, bukan `resetXxxForm()` langsung.
+- Saat mode edit aktif (`<mode>-edit-mode = 'true'`), label tombol otomatis jadi
+  **Batal** (merah muda) lewat `syncResetButtons()`. Klik **Batal** memunculkan
+  dialog `showConfirm('Batalkan Edit?', ...)` dengan tombol **Ya, Batalkan Edit**;
+  baru setelah dikonfirmasi form di-reset dan muncul toast:
+  `Edit <Form> dibatalkan. Perubahan yang belum disimpan dibuang.`
+- Di luar mode edit, tombol tetap **Reset**, reset langsung tanpa dialog/toast.
+- `syncResetButtons()` dipanggil dari `beginTransactionEdit()` dan dari tiap reset
+  function, jadi label kembali ke **Reset** setelah simpan/batal.
+
+### 5.2 Keterangan Sampel
+
+- Field opsional `#sampel-keterangan` (textarea) dipisah dari `Nama Sampel`.
+- Tersimpan sebagai properti `keterangan` pada tiap record sampel. Worker **tidak
+  perlu diubah**: `sampel.create` memakai `{ ...p.record, id }` dan `sampel.update`
+  memakai `{ ...oldRow, ...incoming }`, jadi field baru ikut tersimpan otomatis.
+- Tampil di kolom **Keterangan** tabel, ikut dicari di `search-sampel` dan global
+  search, ikut di dialog detail sebelum simpan, serta di laporan cetak sampel.
+- Record lama tanpa `keterangan` aman → ditampilkan sebagai `-`.
+- **UI 4 (Black Cyan / `theme-neon`)**: form **Sampel** mengikuti tata letak UI 3 —
+  grid 4 kolom, `align-items:end`, `gap:12px 14px`, wrapper `.grid` (Lebar/Ukuran,
+  Berat/Tebal) cukup `span 2` (bukan baris penuh seperti aturan generik UI 4),
+  tombol min-width 120px. Responsif: 2 kolom ≤999px, 1 kolom ≤640px.
+  Warna tetap palet Black Cyan; tema lain tidak terpengaruh.
+
 ---
 
 ## 6. File & cache
@@ -180,8 +208,8 @@ index.html
 Cache-buster **saat ini** (di `index.html`):
 
 ```
-assets/styles.css?v=excel-sj-fast-20261124
-assets/app.js?v=excel-sj-fast-20261124
+assets/styles.css?v=batal-sampel-20261124
+assets/app.js?v=batal-sampel-20261124
 ```
 
 Commit terkait:

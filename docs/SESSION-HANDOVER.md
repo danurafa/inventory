@@ -33,6 +33,10 @@ Fitur yang sudah selesai:
 - Label footer detail: **Subtotal Qty** (Barang Keluar dan Riwayat SJ).
 - Anti–double-click Lucide + cache render `setTableHtml()` (WeakMap) supaya ikon tidak berkedip.
 - Audit aksi SJ tersimpan di **Worker/Firestore** (lintas device); `localStorage` hanya cache/fallback.
+- Form Sampel punya field **Keterangan** opsional (`sampel-keterangan`), tampil sebagai kolom
+  tabel dan ikut laporan cetak. Worker tidak diubah (create/update memakai spread record).
+  Di UI 4 form Sampel mengikuti tata letak UI 3 (grid 4 kolom, `.grid` span 2, tombol 120px).
+- Tombol **Batal** saat mode edit memakai dialog konfirmasi `showConfirm` sebelum form di-reset.
 
 ---
 
@@ -161,8 +165,8 @@ docs/TABEL-PAGINATION-ALAMAT.md
 ```
 
 Cache-buster saat ini:
-- `index.html` → `assets/app.js?v=excel-sj-fast-20261124`
-- `index.html` → `assets/styles.css?v=excel-sj-fast-20261124`
+- `index.html` → `assets/app.js?v=batal-sampel-20261124`
+- `index.html` → `assets/styles.css?v=batal-sampel-20261124`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting:

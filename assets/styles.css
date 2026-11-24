@@ -15551,4 +15551,56 @@ html body #inventory-main-content #tab-keluar #keluar-items-container
   }
 }
 
+/* V195 — Tombol Reset berubah jadi "Batal" saat mode edit aktif. */
+html body #inventory-main-content button[data-reset-form].reset-form-batal {
+  background:rgba(244,63,94,.12) !important;
+  border-color:rgba(244,63,94,.40) !important;
+  color:#fda4af !important;
+}
+html body #inventory-main-content button[data-reset-form].reset-form-batal:hover {
+  background:rgba(244,63,94,.22) !important;
+}
+
+/* V196 — UI 4 (Black Cyan): form Sampel mengikuti tata letak UI 3 (Soft Neutral).
+   Aturan generik UI 4 membuat wrapper .grid jadi baris penuh, sedangkan UI 3
+   membiarkannya span 2 kolom. Selector di bawah sengaja dipanjangkan supaya
+   menang atas aturan generik UI 4 yang memakai :not(#tab-dashboard) dll. */
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) #form-sampel {
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  align-items:end !important;
+  gap:12px 14px !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) #form-sampel > * + * {
+  margin-top:0 !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) #form-sampel > .grid {
+  grid-column:span 2 !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) #form-sampel > .pt-2 {
+  grid-column:1/-1 !important;
+  display:flex !important;
+  justify-content:flex-end !important;
+  gap:10px !important;
+  margin:0 !important;
+}
+html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) #form-sampel > .pt-2 button {
+  min-width:120px !important;
+}
+@media (max-width:999px) {
+  html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) #form-sampel {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+  html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) #form-sampel > .grid {
+    grid-column:1/-1 !important;
+  }
+}
+@media (max-width:640px) {
+  html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) #form-sampel {
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+  html body.theme-glass.theme-neon #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) #form-sampel > .grid {
+    grid-column:1/-1 !important;
+  }
+}
 

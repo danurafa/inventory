@@ -1852,6 +1852,7 @@
             document.getElementById('form-master').reset();
             window.syncFormDropdownLabels?.('form-master');
             document.getElementById('master-edit-mode').value = 'false';
+            window.syncResetButtons?.();
             document.getElementById('master-id').disabled = false;
             document.getElementById('master-id').value = '';
             document.getElementById('master-form-title').innerHTML = `<i data-lucide="package-plus" class="w-4 h-4 text-orange-400"></i> TAMBAH MASTER BARANG`;
@@ -1912,9 +1913,50 @@
                 if (el) el.value = value ?? '';
             });
             document.getElementById(modeId).value = 'true';
+            window.syncResetButtons?.();
             form.scrollIntoView({ behavior: 'smooth', block: 'center' });
             showToast('Mode edit aktif. Periksa data lalu simpan perubahan.', 'info');
         }
+        // Tombol Reset otomatis berubah label jadi "Batal" saat mode edit aktif,
+        // dan memberi toast supaya user sadar perubahan belum disimpan dibuang.
+        const RESET_FORM_META = {
+            master: { mode:'master-edit-mode', fn:()=>window.resetMasterForm?.(), label:'Master Barang' },
+            po:     { mode:'po-edit-mode',     fn:()=>window.resetPoForm?.(),     label:'PO Customer' },
+            masuk:  { mode:'masuk-edit-mode',  fn:()=>window.resetMasukForm?.(),  label:'Barang Masuk' },
+            keluar: { mode:'keluar-edit-mode', fn:()=>window.resetKeluarForm?.(), label:'Barang Keluar' },
+            sampel: { mode:'sampel-edit-mode', fn:()=>window.resetSampelForm?.(), label:'Sampel' },
+            retur:  { mode:'retur-edit-mode',  fn:()=>window.resetReturForm?.(),  label:'Retur' }
+        };
+        window.syncResetButtons = function() {
+            document.querySelectorAll('button[data-reset-form]').forEach(btn => {
+                const meta = RESET_FORM_META[btn.dataset.resetForm];
+                if (!meta) return;
+                const editing = document.getElementById(meta.mode)?.value === 'true';
+                btn.textContent = editing ? 'Batal' : 'Reset';
+                btn.classList.toggle('reset-form-batal', editing);
+                btn.setAttribute('aria-label', editing ? `Batal edit ${meta.label}` : `Reset form ${meta.label}`);
+            });
+        };
+        window.requestFormReset = function(key) {
+            const meta = RESET_FORM_META[key];
+            if (!meta) return;
+            const editing = document.getElementById(meta.mode)?.value === 'true';
+            if (!editing) {
+                meta.fn();
+                window.syncResetButtons?.();
+                return;
+            }
+            showConfirm(
+                'Batalkan Edit?',
+                `Perubahan pada form ${meta.label} yang belum disimpan akan dibuang dan form kembali kosong.`,
+                () => {
+                    meta.fn();
+                    window.syncResetButtons?.();
+                    showToast(`Edit ${meta.label} dibatalkan. Perubahan yang belum disimpan dibuang.`, 'info');
+                },
+                { confirmLabel: 'Ya, Batalkan Edit' }
+            );
+        };
         window.editPoItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
             const r = window.gudangAppDb.po.find(x => String(x.id) === String(id)); if (!r) return;
@@ -1958,7 +2000,7 @@
         window.editSampelItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
             const r = (window.gudangAppDb.sampel||[]).find(x => String(x.id) === String(id)); if (!r) return;
-            beginTransactionEdit('form-sampel','sampel-edit-mode', {'sampel-id':r.id,'sampel-tanggal':r.tanggal,'sampel-customer':r.customer,'sampel-nama':r.nama,'sampel-kategori':r.kategori,'sampel-lebar':r.lebar,'sampel-ukuran':r.ukuran,'sampel-berat':r.berat,'sampel-tebal':r.tebal});
+            beginTransactionEdit('form-sampel','sampel-edit-mode', {'sampel-id':r.id,'sampel-tanggal':r.tanggal,'sampel-customer':r.customer,'sampel-nama':r.nama,'sampel-keterangan':r.keterangan || '','sampel-kategori':r.kategori,'sampel-lebar':r.lebar,'sampel-ukuran':r.ukuran,'sampel-berat':r.berat,'sampel-tebal':r.tebal});
         };
         window.editReturItem = function(id) {
             if (window.gudangAppDb.currentUser?.role === 'viewer') return;
@@ -2045,6 +2087,7 @@
         window.resetMasukForm = function() {
             document.getElementById('form-masuk').reset();
             document.getElementById('masuk-edit-mode').value = 'false';
+            window.syncResetButtons?.();
             document.getElementById('masuk-id').value = generateMasukSequentialId();
             document.getElementById('masuk-tanggal').valueAsDate = new Date();
 
@@ -2225,6 +2268,7 @@
             document.getElementById('form-keluar').reset();
             window.syncFormDropdownLabels?.('form-keluar');
             document.getElementById('keluar-edit-mode').value = 'false';
+            window.syncResetButtons?.();
             const nextKeluarId = generateKeluarSequentialId();
             document.getElementById('keluar-id').value = nextKeluarId;
             const noSjField = document.getElementById('keluar-no-sj');
@@ -2483,6 +2527,7 @@
         window.resetPoForm = function() {
             document.getElementById('form-po').reset();
             document.getElementById('po-edit-mode').value = 'false';
+            window.syncResetButtons?.();
             document.getElementById('po-id').value = generatePoSequentialId();
             document.getElementById('po-tanggal').valueAsDate = new Date();
             document.getElementById('po-items-container').innerHTML = '';
@@ -2643,6 +2688,7 @@
             const tanggal = document.getElementById('sampel-tanggal').value;
             const customer = document.getElementById('sampel-customer').value.trim().toUpperCase();
             const nama = document.getElementById('sampel-nama').value.trim().toUpperCase();
+            const keterangan = document.getElementById('sampel-keterangan').value.trim().toUpperCase();
             const kategori = document.getElementById('sampel-kategori').value;
             const lebar = document.getElementById('sampel-lebar').value;
             const ukuran = document.getElementById('sampel-ukuran').value;
@@ -2652,7 +2698,7 @@
             if (!window.gudangAppDb.sampel) window.gudangAppDb.sampel = [];
             if (document.getElementById('sampel-edit-mode').value === 'true') {
                 try {
-                    await sendOperation('sampel.update', { id, record: { tanggal, customer, nama, kategori, lebar, ukuran, berat, tebal } });
+                    await sendOperation('sampel.update', { id, record: { tanggal, customer, nama, keterangan, kategori, lebar, ukuran, berat, tebal } });
                     window.refreshAllViews?.(); resetSampelForm(); showToast('Sampel berhasil diperbarui.');
                 } catch (error) { showToast(`Sampel gagal diperbarui: ${error.message}`, 'error'); }
                 return;
@@ -2661,7 +2707,7 @@
                 showToast('ID Sampel sudah digunakan.', 'error');
                 return;
             }
-            window.gudangAppDb.sampel.unshift({ id, tanggal, customer, nama, kategori, lebar, ukuran, berat, tebal });
+            window.gudangAppDb.sampel.unshift({ id, tanggal, customer, nama, keterangan, kategori, lebar, ukuran, berat, tebal });
             const saved = await saveCloudDB();
             if (saved) {
                 resetSampelForm();
@@ -2687,6 +2733,7 @@
             document.getElementById('form-sampel').reset();
             window.syncFormDropdownLabels?.('form-sampel');
             document.getElementById('sampel-edit-mode').value = 'false';
+            window.syncResetButtons?.();
             document.getElementById('sampel-id').value = generateSampelSequentialId();
             document.getElementById('sampel-tanggal').valueAsDate = new Date();
         };
@@ -2698,7 +2745,8 @@
             const isViewer = window.gudangAppDb.currentUser?.role === 'viewer';
 
             const filtered = (window.gudangAppDb.sampel || []).filter(i => 
-                i.id.toLowerCase().includes(q) || (i.customer && i.customer.toLowerCase().includes(q)) || i.nama.toLowerCase().includes(q)
+                i.id.toLowerCase().includes(q) || (i.customer && i.customer.toLowerCase().includes(q)) ||
+                i.nama.toLowerCase().includes(q) || (i.keterangan && i.keterangan.toLowerCase().includes(q))
             );
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Sampel`;
 
@@ -2709,6 +2757,7 @@
                     <td class="py-3 px-3 opacity-80">${i.tanggal || '-'}</td>
                     <td class="py-3 px-3 font-medium">${i.customer || '-'}</td>
                     <td class="py-3 px-3 font-medium">${window.displayItemName(i.id, i.nama)}</td>
+                    <td class="py-3 px-3 opacity-80">${i.keterangan || '-'}</td>
                     <td class="py-3 px-3 opacity-80">${i.kategori}</td>
                     <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
                     <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
@@ -2721,7 +2770,7 @@
                         </td>
                     ` : ''}
                 </tr>
-            `).join('') || `<tr><td colspan="${isViewer ? 10 : 11}" class="py-6 text-center opacity-50">Tidak ada data sampel.</td></tr>`;
+            `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada data sampel.</td></tr>`;
             setTableHtml(tbody, renderedSampelRows);
             lucide.createIcons();
         };
@@ -2875,6 +2924,7 @@
         window.resetReturForm = function() {
             document.getElementById('form-retur').reset();
             document.getElementById('retur-edit-mode').value = 'false';
+            window.syncResetButtons?.();
             document.getElementById('retur-id').value = generateId('RTR');
             document.getElementById('retur-tanggal').valueAsDate = new Date();
             window.updateReturReferenceOptions?.();
@@ -3222,8 +3272,8 @@
             (db.sampel || []).forEach(row => addRecord(
                 'sampel', 'search-sampel', 'Sampel',
                 `${row.id || '-'} · ${row.nama || row.customer || 'Sampel'}`,
-                `${row.tanggal || '-'} · ${row.customer || row.jenis || 'Sampel'} · Qty ${Number(row.qty || 0).toLocaleString('id-ID')}`,
-                [row.id, row.customer, row.nama]
+                `${row.tanggal || '-'} · ${row.customer || row.jenis || 'Sampel'} · ${row.keterangan || 'Tanpa keterangan'}`,
+                [row.id, row.customer, row.nama, row.keterangan]
             ));
             (db.retur || []).forEach(row => addRecord(
                 'retur', 'search-retur', 'Retur Barang',
@@ -3427,7 +3477,7 @@
                 title: 'LAPORAN DATA SAMPEL', dateFilter: true, dateKey: 'tanggal',
                 fields: [
                     ['id','ID Sampel'], ['tanggal','Tanggal'], ['customer','Customer'], ['nama','Nama Sampel / Barang'],
-                    ['kategori','Kategori'], ['lebar','Lebar'], ['ukuran','Ukuran'], ['berat','Berat (gr)'], ['tebal','Tebal']
+                    ['keterangan','Keterangan'], ['kategori','Kategori'], ['lebar','Lebar'], ['ukuran','Ukuran'], ['berat','Berat (gr)'], ['tebal','Tebal']
                 ]
             },
             retur: {
@@ -5870,7 +5920,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 },
                 saveSampelItem: {
                     form: 'form-sampel', label: 'Sampel',
-                    fields: [['sampel-id','ID Sampel'],['sampel-tanggal','Tanggal'],['sampel-customer','Customer'],['sampel-nama','Nama Sampel'],['sampel-kategori','Kategori'],['sampel-lebar','Lebar'],['sampel-ukuran','Ukuran'],['sampel-berat','Berat'],['sampel-tebal','Tebal']]
+                    fields: [['sampel-id','ID Sampel'],['sampel-tanggal','Tanggal'],['sampel-customer','Customer'],['sampel-nama','Nama Sampel'],['sampel-keterangan','Keterangan'],['sampel-kategori','Kategori'],['sampel-lebar','Lebar'],['sampel-ukuran','Ukuran'],['sampel-berat','Berat'],['sampel-tebal','Tebal']]
                 },
                 saveReturItem: {
                     form: 'form-retur', label: 'Retur Barang',
@@ -6046,7 +6096,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 // SAMPEL: satu kartu pemberitahuan untuk detail sampel, tanpa bergantung pada master barang.
                 if (formName === 'saveSampelItem') {
                     const card = makeNoticeCard('DETAIL SAMPEL', document.getElementById('sampel-id')?.value || '-');
-                    [['Customer','sampel-customer'],['Nama Sampel','sampel-nama'],['Kategori','sampel-kategori'],['Lebar','sampel-lebar'],['Ukuran','sampel-ukuran'],['Berat','sampel-berat'],['Tebal','sampel-tebal']]
+                    [['Customer','sampel-customer'],['Nama Sampel','sampel-nama'],['Keterangan','sampel-keterangan'],['Kategori','sampel-kategori'],['Lebar','sampel-lebar'],['Ukuran','sampel-ukuran'],['Berat','sampel-berat'],['Tebal','sampel-tebal']]
                         .forEach(([label,idField]) => addDetailRow(label, document.getElementById(idField)?.value || '-', card));
                     content.appendChild(card);
                     return;
