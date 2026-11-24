@@ -175,8 +175,8 @@ docs/TABEL-PAGINATION-ALAMAT.md
 ```
 
 Cache-buster saat ini:
-- `index.html` → `assets/app.js?v=warna-barang-tanpa-v207-20261124`
-- `index.html` → `assets/styles.css?v=warna-barang-tanpa-v207-20261124`
+- `index.html` → `assets/app.js?v=warna-sync-fix-20261124`
+- `index.html` → `assets/styles.css?v=warna-sync-fix-20261124`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting:
@@ -238,5 +238,6 @@ dan isi Console especially response `/api/sj/audit`.
   Nama Worker harus tetap `inventory-backend-test` karena tidak ada `wrangler.toml` di repo.
 - Popup cetak di Safari iOS kadang diblokir bila dipanggil setelah `await`;
   kalau terjadi, rencana cadangan: pakai `window.print()` di halaman yang sama.
+
 
 

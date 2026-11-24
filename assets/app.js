@@ -276,7 +276,7 @@
             for (const [id,item] of dm) {
                 const old = bm.get(id); if (!old) continue;
                 const patch = {};
-                ['nama','jenis','lebar','ukuran','berat','satuan','min'].forEach(k => {
+                ['nama','warna','jenis','lebar','ukuran','berat','satuan','min'].forEach(k => {
                     if (!same(item[k], old[k])) patch[k] = item[k];
                 });
                 if (Object.keys(patch).length) await sendOperation('master.update', { id, item: patch });
