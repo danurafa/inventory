@@ -14135,6 +14135,45 @@ html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-card::bef
 html body.theme-glass.theme-light.theme-soft #login-modal :is(.login-glass-title,.login-glass-heading) { color:#e0e7e2 !important; }
 html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-title span { color:#9fb9a8 !important; }
 html body.theme-glass.theme-light.theme-soft #login-modal :is(.login-glass-subtitle,.login-glass-footer) { color:#aab7ae !important; }
+/* UI 3 (Soft Neutral): teks status koneksi HTTP (insecure) sengaja dibuat
+   kontras — pill merah + teks terang supaya tidak tenggelam bersama footer. */
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="insecure"],
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="offline"] {
+  color:#fecdd3 !important;
+  background:rgba(244,63,94,.16) !important;
+  border:1px solid rgba(251,113,133,.50) !important;
+  border-radius:999px !important;
+  padding:6px 12px !important;
+  font-size:11px !important;
+  font-weight:800 !important;
+  letter-spacing:.02em !important;
+  box-shadow:0 4px 14px rgba(244,63,94,.20) !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="insecure"] #login-security-status-text,
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="offline"] #login-security-status-text {
+  color:#fff1f2 !important;
+  -webkit-text-fill-color:#fff1f2 !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="insecure"] .login-security-dot,
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status[data-state="offline"] .login-security-dot {
+  background:#fb7185 !important;
+  box-shadow:0 0 10px rgba(251,113,133,.85) !important;
+  width:8px !important;
+  height:8px !important;
+  flex-basis:8px !important;
+}
+/* Teks "Inventory Gudang" dan pemisah ikut diperjelas supaya setara
+   dengan status koneksi (tidak tenggelam di footer gelap UI 3). */
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status > span:last-child {
+  color:#e8efe9 !important;
+  -webkit-text-fill-color:#e8efe9 !important;
+  font-weight:700 !important;
+}
+html body.theme-glass.theme-light.theme-soft #login-modal #login-security-status > span[aria-hidden="true"] {
+  color:#c7d5ca !important;
+  -webkit-text-fill-color:#c7d5ca !important;
+  font-weight:700 !important;
+}
 html body.theme-glass.theme-light.theme-soft #login-modal .login-glass-mark {
   color:#d0ded4 !important;background:linear-gradient(145deg,rgba(112,147,123,.34),rgba(58,81,66,.42)) !important;
   border-color:rgba(157,183,164,.38) !important;box-shadow:0 8px 24px rgba(0,0,0,.22),inset 0 1px rgba(225,240,229,.12) !important;
