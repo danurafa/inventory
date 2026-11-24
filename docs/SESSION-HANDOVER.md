@@ -150,14 +150,10 @@ Kalau GET/POST gagal → tetap jalan pakai cache + toast peringatan (bukan stric
 Catatan UI 3 (Soft Neutral): ada override CSS lama yang mengubah badge sky → sage dan
 rose → merah kecoklatan di layar ≤767px. Fungsi tetap aman; yang berbeda cuma warna.
 
-**V207 — badge aksi mengikuti tema:** di Master Barang, PO Customer, Barang Masuk,
-Barang Keluar, dan Retur, warna tombol aksi tabel sekarang memakai variabel
-`--tbl-act-*` per tema: Classic biru, Crystal biru terang, Soft Neutral sage,
-Black Cyan cyan. Empat golongan tetap bermakna — `sky` = Edit/Excel SJ,
-`rose` = Hapus, `orange` = Atur/Cetak SJ/Ubah Alamat, `white` = Detail/Tutup.
-Hanya warna yang diganti; bentuk pill, ukuran, dan layout tetap. Sampel & User
-belum terkena aturan ini.
-Belum ada keputusan final apakah mau dipaksa seragam dengan UI 1/2.
+**V207 sudah dibatalkan.** Warna badge aksi tabel kembali memakai warna asli
+markup (sky/rose/orange/white). Variabel `--tbl-act-*` dan override tema V207
+sudah dihapus dari `assets/styles.css` karena berasal dari salah tafsir
+"Warna Barang".
 
 ---
 
@@ -179,8 +175,8 @@ docs/TABEL-PAGINATION-ALAMAT.md
 ```
 
 Cache-buster saat ini:
-- `index.html` → `assets/app.js?v=warna-barang-fix-20261124`
-- `index.html` → `assets/styles.css?v=warna-barang-fix-20261124`
+- `index.html` → `assets/app.js?v=warna-barang-tanpa-v207-20261124`
+- `index.html` → `assets/styles.css?v=warna-barang-tanpa-v207-20261124`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting:
@@ -242,4 +238,5 @@ dan isi Console especially response `/api/sj/audit`.
   Nama Worker harus tetap `inventory-backend-test` karena tidak ada `wrangler.toml` di repo.
 - Popup cetak di Safari iOS kadang diblokir bila dipanggil setelah `await`;
   kalau terjadi, rencana cadangan: pakai `window.print()` di halaman yang sama.
+
 
