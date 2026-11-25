@@ -1,7 +1,7 @@
 # Catatan Serah Terima Sesi — Inventory Surat Jalan
 
 Dokumen ini dibuat supaya sesi baru di PC 2 bisa langsung lanjut tanpa membaca
-percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-25 (HEAD `60598d0`, working tree bersih).
+percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-26 (HEAD `535f4de`, working tree bersih).
 
 Untuk detail pekerjaan UI terbaru (kartu mobile, pagination 10 baris, alamat PO,
 toast, scroll horizontal), baca juga `docs/TABEL-PAGINATION-ALAMAT.md`.
@@ -318,6 +318,8 @@ Cache-buster saat ini:
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting (terbaru di atas):
+- `535f4de` — hasil Pencarian Umum rata kiri + hover tanpa pop (UI 1/2)
+- `d18bc95` — parity layout mobile UI 2/3/4, tombol PO UI 4, gradient UI 2 satu sumber
 - `60598d0` — badge akrilik berwarna UI 1/2, logo CV, perbaikan duplicate Detail Keluar
 - `b25c652` — logo tanpa teks, placeholder redup, hover sidebar UI 2, jam mono, toast akrilik
 - `5e9770d` — animasi grafik garis dashboard dengan guard anti-render ulang
