@@ -4410,7 +4410,7 @@ input,button,select,textarea{font:inherit}
         body.theme-crystal .appearance-card-action{color:#2767a8;border-color:rgba(112,153,199,.2)}
         body.theme-crystal .appearance-close{color:#456887;border-color:rgba(112,153,199,.25);background:#f4f8fd}
         body.theme-crystal .appearance-dialog-footer{background:#e4effb;color:#567797}
-        @media(max-width:600px){.appearance-overlay{padding:12px}.appearance-dialog{padding:18px;border-radius:19px}.appearance-options{grid-template-columns:1fr;gap:10px}.appearance-preview{height:112px}.appearance-dialog-header h2{font-size:20px}}
+        @media(max-width:600px){.appearance-overlay{padding:12px}.appearance-dialog{padding:18px;border-radius:19px}.appearance-options{grid-template-columns:1fr;gap:10px}.appearance-preview{height:auto;aspect-ratio:16/9;min-height:150px}.appearance-dialog-header h2{font-size:20px}}
 
         /* =========================================================
            MULTI UI DESIGN LAYER — CLASSIC GLASS / LIQUID GLASS / SOFT NEUTRAL
@@ -5853,8 +5853,9 @@ input,button,select,textarea{font:inherit}
         padding: 17px !important;
     }
 
-    /* Dialogs remain usable on short phone screens. */
-    [role="dialog"],
+    /* Dialogs remain usable on short phone screens. Exclude the appearance
+       overlay, which must always cover the full viewport. */
+    [role="dialog"]:not(.appearance-overlay),
     .modal-content,
     .appearance-dialog {
         max-width: calc(100vw - 20px) !important;
@@ -5863,6 +5864,20 @@ input,button,select,textarea{font:inherit}
         overflow-y: auto !important;
         box-sizing: border-box !important;
     }
+}
+
+/* Appearance panel: always cover the full viewport and freeze the page behind it. */
+#appearance-panel.appearance-overlay {
+    max-width: none !important;
+    max-height: none !important;
+}
+body:has(#appearance-panel:not(.hidden)) #inventory-main-content,
+body:has(#appearance-panel:not(.hidden)) #inventory-sidebar,
+body:has(#appearance-panel:not(.hidden)) #inventory-sidebar nav {
+    overflow: hidden !important;
+}
+#appearance-panel .appearance-dialog {
+    overscroll-behavior: contain;
 }
 
 /* Crystal's compact horizontal navigation on phones. */
@@ -12827,8 +12842,8 @@ html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card
   width:100% !important;
   min-width:0 !important;
   min-height:0 !important;
-  height:auto !important;
-  aspect-ratio:760 / 160 !important;
+  height:clamp(170px,17vw,245px) !important;
+  aspect-ratio:auto !important;
 }
 html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-trend-chart svg {
   display:block !important;
@@ -12863,11 +12878,12 @@ html body.theme-glass.theme-light.theme-soft #movement-trend-card svg circle[fil
 }
 @media (max-width:700px) {
   html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-trend-chart {
-    aspect-ratio:760 / 190 !important;
+    height:clamp(155px,44vw,215px) !important;
+    aspect-ratio:auto !important;
   }
   html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-axis-value,
   html body.theme-glass.theme-light.theme-soft #tab-dashboard #movement-trend-card .movement-axis-date {
-    font-size:20px !important;
+    font-size:13px !important;
   }
 }
 
@@ -17119,4 +17135,34 @@ html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c)
   border-color:rgba(255,255,255,.38) !important;
   background:rgba(255,255,255,.06) !important;
   background-image:none !important;
+}
+
+/* V223: grafik Tren Inflow/Outflow lebih fleksibel — tinggi mengikuti
+   layar/kartu (bukan rasio kaku), label tetap 1:1 karena viewBox dihitung
+   dari ukuran kotak aslinya oleh drawMovementTrend(). */
+html body #tab-dashboard #movement-trend-card .movement-trend-chart {
+  height:clamp(170px, 17vw, 245px) !important;
+  min-height:0 !important;
+  max-height:none !important;
+  aspect-ratio:auto !important;
+}
+html body #tab-dashboard #movement-trend-card .movement-trend-chart svg {
+  display:block;
+  width:100% !important;
+  height:100% !important;
+  max-height:none !important;
+}
+html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-axis-value,
+html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-axis-date {
+  font-size:10px !important;
+  font-weight:600;
+}
+@media (max-width:767px) {
+  html body #tab-dashboard #movement-trend-card .movement-trend-chart {
+    height:clamp(155px, 44vw, 215px) !important;
+  }
+  html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-axis-value,
+  html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-axis-date {
+    font-size:9px !important;
+  }
 }

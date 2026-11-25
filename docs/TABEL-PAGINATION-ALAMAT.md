@@ -277,8 +277,8 @@ index.html
 Cache-buster **saat ini** (di `index.html`):
 
 ```
-assets/styles.css?v=search-hover-flat-20261126
-assets/app.js?v=keluar-detail-fix-20261125
+assets/styles.css?v=chart-flex-soft-height-20261126
+assets/app.js?v=flexible-movement-chart-20261126
 ```
 
 Commit terkait (terbaru di atas):

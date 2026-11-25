@@ -3279,6 +3279,8 @@
         // Combined Inflow / Outflow trend. Uses transaction quantities grouped by date.
         let movementTrendRange = 7;
         let lastMovementSignature = '';
+        let movementChartObserver = null;
+        let movementChartResizeRaf = 0;
         function parseMovementDate(value) {
             if (!value) return null;
             if (value instanceof Date && !isNaN(value)) return new Date(value.getFullYear(), value.getMonth(), value.getDate());
@@ -3326,8 +3328,12 @@
             // tema tidak berubah. renderDashboard() dipanggil tiap Cloud Sync (~7 detik);
             // tanpa penjaga ini garis selalu "digambar ulang" walaupun datanya sama.
             const softTheme = document.body.classList.contains('theme-soft');
-            const softMobile = softTheme && window.matchMedia('(max-width: 700px)').matches;
-            const signature = JSON.stringify([days, softTheme, softMobile, rows.map(r=>[r.label,r.in,r.out])]);
+            // V223: chart mengikuti ukuran kotak aslinya (bukan rasio kaku),
+            // supaya tinggi fleksibel tanpa membuat sumbu/label gepeng.
+            const hostRect = host.getBoundingClientRect();
+            const W = Math.max(300, Math.round(hostRect.width || 760));
+            const H = Math.max(130, Math.round(hostRect.height || 170));
+            const signature = JSON.stringify([days, softTheme, W, H, rows.map(r=>[r.label,r.in,r.out])]);
             if (host.querySelector('svg') && signature === lastMovementSignature) {
                 document.querySelectorAll('.movement-range-btn').forEach(btn=>btn.classList.toggle('is-active',Number(btn.dataset.range)===movementTrendRange));
                 return;
@@ -3337,14 +3343,14 @@
             document.getElementById('movement-total-in').textContent=fmt(totalIn);
             document.getElementById('movement-total-out').textContent=fmt(totalOut);
             document.getElementById('movement-total-net').textContent=(totalIn-totalOut>0?'+':'')+fmt(totalIn-totalOut);
-            // V89: reserve a little more room on the right so the final date label is never clipped.
-            const W=760,H=softTheme?(softMobile?190:160):112,L=softTheme?54:42,R=28,T=softTheme?12:7,B=softMobile?34:(softTheme?30:22),plotW=W-L-R,plotH=H-T-B;
+            const compact = W < 520;
+            const L=compact?46:52, R=compact?22:26, T=10, B=compact?28:26;
+            const plotW=Math.max(40, W-L-R), plotH=Math.max(40, H-T-B);
             const max=Math.max(1,...rows.flatMap(r=>[r.in,r.out]));
             const y=v=>T+plotH-(v/max)*plotH;
             const x=i=>L+(rows.length<=1?plotW/2:i*plotW/(rows.length-1));
-            const points=key=>rows.map((r,i)=>`${x(i).toFixed(1)},${y(r[key]).toFixed(1)}`).join(' ');
-            const grid=[0,.25,.5,.75,1].map(f=>{const yy=T+plotH-f*plotH;return `<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" class="movement-grid-line"/><text x="${L-8}" y="${yy+3}" text-anchor="end" class="movement-axis-value">${fmt(max*f)}</text>`;}).join('');
-            const labelStep=Math.max(1,Math.ceil(rows.length/7));
+            const grid=[0,.25,.5,.75,1].map(f=>{const yy=T+plotH-f*plotH;return `<line x1="${L}" y1="${yy.toFixed(1)}" x2="${W-R}" y2="${yy.toFixed(1)}" class="movement-grid-line"/><text x="${L-8}" y="${(yy+3).toFixed(1)}" text-anchor="end" class="movement-axis-value">${fmt(max*f)}</text>`;}).join('');
+            const labelStep=Math.max(1,Math.ceil(rows.length/(compact?4:7)));
             const labels=rows.map((r,i)=>{
                 if(i%labelStep!==0 && i!==rows.length-1) return '';
                 const anchor=i===rows.length-1?'end':(i===0?'start':'middle');
@@ -3360,9 +3366,38 @@
                 <circle cx="${x(i)}" cy="${Math.min(y(r.in),y(r.out))}" r="9" fill="transparent" pointer-events="all">
                   <title>${r.label}\nInflow: ${fmt(r.in)}\nOutflow: ${fmt(r.out)}</title>
                 </circle>`).join('');
-            const areaPath=key=>`M ${x(0)} ${T+plotH} L ${rows.map((r,i)=>`${x(i).toFixed(1)} ${y(r[key]).toFixed(1)}`).join(' L ')} L ${x(rows.length-1)} ${T+plotH} Z`;
-            host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Tren inflow ${fmt(totalIn)} dan outflow ${fmt(totalOut)}" preserveAspectRatio="${softTheme?'xMidYMid meet':'none'}"><defs><linearGradient id="movementInFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#2eb5f4" stop-opacity=".34"/><stop offset="100%" stop-color="#2eb5f4" stop-opacity=".015"/></linearGradient><linearGradient id="movementOutFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#f05d91" stop-opacity=".28"/><stop offset="100%" stop-color="#f05d91" stop-opacity=".012"/></linearGradient></defs><g>${grid}</g><path class="movement-area" d="${areaPath('in')}" fill="url(#movementInFill)"/><path class="movement-area movement-area-out" d="${areaPath('out')}" fill="url(#movementOutFill)"/><polyline class="movement-line movement-line-in" pathLength="1" points="${points('in')}" fill="none" stroke="#2eb5f4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><polyline class="movement-line movement-line-out" pathLength="1" points="${points('out')}" fill="none" stroke="#f05d91" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${pointsWithTips}${labels}</svg>`;
+            const chartPoint=(r,i,key)=>[x(i), y(r[key])];
+            // Kurva halus (Catmull-Rom -> cubic bezier) supaya garis tidak kaku,
+            // tapi kontrol vertikalnya dijepit agar tidak keluar area plot.
+            const smoothLine=pts=>{
+                if(!pts.length) return '';
+                const clampY=v=>Math.min(T+plotH, Math.max(T, v));
+                let d=`M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+                for(let i=0;i<pts.length-1;i++){
+                    const p0=pts[i-1]||pts[i], p1=pts[i], p2=pts[i+1], p3=pts[i+2]||p2;
+                    const c1x=p1[0]+(p2[0]-p0[0])/6, c1y=clampY(p1[1]+(p2[1]-p0[1])/6);
+                    const c2x=p2[0]-(p3[0]-p1[0])/6, c2y=clampY(p2[1]-(p3[1]-p1[1])/6);
+                    d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+                }
+                return d;
+            };
+            const linePath=key=>smoothLine(rows.map((r,i)=>chartPoint(r,i,key)));
+            const areaPath=key=>{
+                const pts=rows.map((r,i)=>chartPoint(r,i,key));
+                if(!pts.length) return '';
+                return `${smoothLine(pts)} L ${pts[pts.length-1][0].toFixed(1)} ${(T+plotH).toFixed(1)} L ${pts[0][0].toFixed(1)} ${(T+plotH).toFixed(1)} Z`;
+            };
+            host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Tren inflow ${fmt(totalIn)} dan outflow ${fmt(totalOut)}" preserveAspectRatio="none"><defs><linearGradient id="movementInFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#2eb5f4" stop-opacity=".34"/><stop offset="100%" stop-color="#2eb5f4" stop-opacity=".015"/></linearGradient><linearGradient id="movementOutFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#f05d91" stop-opacity=".28"/><stop offset="100%" stop-color="#f05d91" stop-opacity=".012"/></linearGradient></defs><g>${grid}</g><path class="movement-area" d="${areaPath('in')}" fill="url(#movementInFill)"/><path class="movement-area movement-area-out" d="${areaPath('out')}" fill="url(#movementOutFill)"/><path class="movement-line movement-line-in" pathLength="1" d="${linePath('in')}" fill="none" stroke="#2eb5f4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path class="movement-line movement-line-out" pathLength="1" d="${linePath('out')}" fill="none" stroke="#f05d91" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${pointsWithTips}${labels}</svg>`;
             document.querySelectorAll('.movement-range-btn').forEach(btn=>btn.classList.toggle('is-active',Number(btn.dataset.range)===movementTrendRange));
+            // V223: kalau ukuran kartu berubah (resize/orientasi), gambar ulang
+            // dengan viewBox baru supaya label & titik tetap proporsional.
+            if(!movementChartObserver && window.ResizeObserver){
+                movementChartObserver=new ResizeObserver(()=>{
+                    if(movementChartResizeRaf) return;
+                    movementChartResizeRaf=requestAnimationFrame(()=>{movementChartResizeRaf=0;drawMovementTrend();});
+                });
+                movementChartObserver.observe(host);
+            }
         }
 
         let movementActiveSlide = 0;

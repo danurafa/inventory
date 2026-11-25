@@ -1,7 +1,7 @@
 # Catatan Serah Terima Sesi — Inventory Surat Jalan
 
 Dokumen ini dibuat supaya sesi baru di PC 2 bisa langsung lanjut tanpa membaca
-percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-26 (HEAD `535f4de`, working tree bersih).
+percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-26 (HEAD `7fed984`, perubahan popup tema mobile + grafik flex/smooth belum di-commit).
 
 Untuk detail pekerjaan UI terbaru (kartu mobile, pagination 10 baris, alamat PO,
 toast, scroll horizontal), baca juga `docs/TABEL-PAGINATION-ALAMAT.md`.
@@ -158,6 +158,32 @@ Fitur yang sudah selesai:
   (UI 1 latar `rgba(37,99,235,.14)` + border `rgba(96,165,250,.40)`; UI 2 latar
   `rgba(255,255,255,.06)` + border `rgba(255,255,255,.38)`), jadi tidak ada pop.
   Efek tekan (`:active`) tetap.
+- **Preview tema mobile Chrome (≤600px)**: panel Tampilan Aplikasi turun jadi 1 kolom
+  (±354px) tapi `.appearance-preview` tetap `height:112px`, jadi rasionya 3.1:1
+  (gepeng) sementara desktop 2.07:1 — preview kelihatan kecil. Sekarang preview
+  mobile memakai `height:auto;aspect-ratio:16/9;min-height:150px` (≈354×199 di
+  viewport 500), jadi proporsional. Desktop 601–767px dan ≥768px tidak berubah.
+- **Popup tema: overlay penuh + scroll terkunci (≤767px)**: rule mobile
+  `[role="dialog"]{max-width:calc(100vw - 20px);max-height:88dvh}` ikut kena
+  `#appearance-panel` (punya `role="dialog"`), jadi overlay mengecil jadi 480×708
+  dari viewport 500×805 — sisa 20px kanan + 97px bawah tidak terdim dan bisa
+  discroll. Selector diubah ke `[role="dialog"]:not(.appearance-overlay)` dan
+  overlay diberi `max-width/max-height:none`. Scroll halaman juga dikunci lewat
+  `body:has(#appearance-panel:not(.hidden))` → `#inventory-main-content` +
+  `#inventory-sidebar` (`overflow:hidden`), karena `body.style.overflow` saja
+  tidak mematikan scroller utama. Dialog tetap scroll internal
+  (`overscroll-behavior:contain`).
+- **Grafik Tren Inflow/Outflow — lebih fleksibel (V223)**: tinggi chart
+  (`.movement-trend-chart`) pindah dari rasio kaku `aspect-ratio:1100/190` ke
+  `height:clamp(170px,17vw,245px)` (desktop) / `clamp(155px,44vw,215px)` (≤767px),
+  jadi tinggi mengikuti layar/kartu (penyempitan widget tetap real). Di JS,
+  `drawMovementTrend()` ganti `polyline`/`points` → `path` dengan kurva halus
+  (Catmull-Rom → cubic bezier) supaya garis tidak kaku, dan viewBox/padding diukur
+  dari `host.getBoundingClientRect()` + CSS (T=10, B=26, L=52 desktop / 46-28 mobile)
+  agar teks sumbu tetap 1:1. `labelStep` dikurangi (<520px), tombol range 30/90/365
+  sendiri, gradient area & titik tetap bertahan. Hasil terlihat di headless:
+  chart 628x215 (1280) / 435x215 (500), `path` dengan segmen `C`, grad)},
+  animasi `movementLineDraw`/`movementAreaFade` tetap jalan di sisi tujuannya.
 - **Animasi active state sidebar**: tombol yang baru aktif pop halus (`scale 1.035`, fade,
   `translate -1px`) via `sidebarActivePop` 0.42s. Memakai `scale`/`translate` individual supaya
   tidak bentrok dengan `transform:none !important` di UI 2/4; mati saat `prefers-reduced-motion`.
@@ -313,8 +339,8 @@ docs/TABEL-PAGINATION-ALAMAT.md
 ```
 
 Cache-buster saat ini:
-- `index.html` → `assets/app.js?v=keluar-detail-fix-20261125`
-- `index.html` → `assets/styles.css?v=search-hover-flat-20261126`
+- `index.html` → `assets/app.js?v=flexible-movement-chart-20261126`
+- `index.html` → `assets/styles.css?v=chart-flex-soft-height-20261126`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting (terbaru di atas):
