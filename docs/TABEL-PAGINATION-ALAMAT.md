@@ -206,8 +206,16 @@ juga tepat di tengah tombol (flex center).
   panel Info jadi `grid-column:1/-1`.
 - **Dropdown custom**: UI 2 memakai kaca gelap + tipografi 12.5px/600. Panel opsi
   "Pilih Barang" di Barang Masuk mengikuti lebar trigger agar tidak melebar ke kanan.
-- **Toast biasa** (di luar `toast-welcome`) memakai animasi spring enter/exit + icon pop +
-  teks bertahap + glow progress; otomatis mati saat `prefers-reduced-motion`.
+- **Toast biasa** (di luar `toast-welcome`) memakai animasi bounce halus tapi jelas
+  enter/exit + icon pop + teks bertahap + glow progress; otomatis mati saat `prefers-reduced-motion`.
+  Badge ikon memakai akrilik transparan (blur + highlight kaca), warna status tetap
+  memakai `--toast-tone`.
+- Placeholder seluruh input/textarea dibuat lebih redup agar tidak mendominasi form,
+  tapi teksnya masih terbaca di 4 tema.
+- Sidebar UI 2: menu aktif memakai tampilan hover state (kaca tipis, bukan gradient biru)
+  dan hover-nya diberi bayangan lembut.
+- Jam header: JetBrains Mono 700 + tabular-nums, tanggal tetap Inter.
+- Logo header: `assets/Logo/LOGO CV-NO TEXT.png` di badge putih (object-fit contain).
 - **Grafik garis Dashboard** (Inflow/Outflow): garis digambar dari kiri ke kanan,
   area fade-in, titik pop bertahap; mati otomatis kalau `prefers-reduced-motion`.
   SVG cuma digambar ulang kalau data/rentang/tema berubah (signature guard), jadi tidak
@@ -245,8 +253,8 @@ index.html
 Cache-buster **saat ini** (di `index.html`):
 
 ```
-assets/styles.css?v=grafik-animasi-stabil-20261125
-assets/app.js?v=grafik-animasi-stabil-20261125
+assets/styles.css?v=logo-no-text-20261125
+assets/app.js?v=logo-no-text-20261125
 ```
 
 Commit terkait (terbaru di atas):

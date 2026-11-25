@@ -65,8 +65,10 @@ Fitur yang sudah selesai:
   belum disimpan, muncul konfirmasi dulu — "Mode Edit Aktif" / "Form Belum Disimpan", tombol
   **Ya, Lanjutkan**. Flag perubahan dilacak via event `input`/`change` dan dibersihkan
   `clearUnsavedFormFlag()` saat reset/simpan/edit.
-- Toast biasa (kecuali `toast-welcome`) memakai animasi spring: drop + ikon pop + teks bertahap
-  + progress glow; otomatis dimatikan kalau `prefers-reduced-motion`.
+- Toast biasa (kecuali `toast-welcome`) memakai animasi **bounce halus tapi jelas**: drop + ikon
+  pop + teks bertahap + progress glow; otomatis dimatikan kalau `prefers-reduced-motion`. Badge ikon toast
+  memakai tampilan **akrilik transparan** (blur + highlight kaca), warna status tetap
+  mengikuti `--toast-tone` (hijau/merah/kuning/biru).
 - **Animasi grafik garis Dashboard**: polyline Inflow/Outflow "digambar" dari kiri ke kanan
   (`pathLength="1"` + `stroke-dashoffset`), area fade-in, titik muncul bertahap; ikut mati
   saat `prefers-reduced-motion`. Hanya CSS di `styles.css`, print CSS di `app.js` tidak diubah.
@@ -74,8 +76,19 @@ Fitur yang sudah selesai:
   (rentang + tema + nilai baris) supaya Cloud Sync 7 detik tidak menggambar ulang SVG identik.
 - Dropdown custom UI 2 (Crystal) jadi kaca gelap, tipografi dirapikan. Khusus "Pilih Barang"
   di Barang Masuk, panel dropdown mengikuti lebar trigger (tidak melebar ke kanan).
+- **Sidebar UI 2**: tombol aktif (`.active` / `.theme-accent-bg` / `[aria-current]`) sekarang
+  memakai **hover state** — background kaca tipis `rgba(255,255,255,.12)`, border lembut,
+  highlight inset — bukan gradient biru solid. Warna teks tetap terang. UI 1/3/4 tidak berubah.
+  Hover/normal juga diberi **drop shadow lembut** `0 6px 18px rgba(8,24,48,.28)`.
 - Placeholder input form diganti kalimat instruksi singkat (mis. "Ketik ID barang (SKU)...",
-  "Isi warna barang..."), bukan contoh nilai lama.
+  "Isi warna barang..."), bukan contoh nilai lama. Warna placeholder sengaja dibuat lebih
+  redup (`rgba(148,163,184,.38)`) di semua tema, tapi tetap terbaca.
+- Jam header memakai **JetBrains Mono** 700 + `tabular-nums` (font ditambahkan di `<link>`
+  Google Fonts `index.html`); tanggal tetap Inter. Fallback `ui-monospace, SFMono-Regular, Menlo`.
+- Logo header "G" diganti **file gambar asli** `assets/Logo/LOGO CV-NO TEXT.png` (762×652,
+  transparan, tanpa tulisan perusahaan) di dalam badge putih tema-netral; `object-fit:contain`
+  + animasi masuk halus. Versi dengan teks (`LOGO CV.png`) tetap disimpan untuk cetak/kebutuhan lain.
+  File belum ter-track — wajib `git add` saat commit.
 
 ---
 
@@ -217,8 +230,8 @@ docs/TABEL-PAGINATION-ALAMAT.md
 ```
 
 Cache-buster saat ini:
-- `index.html` → `assets/app.js?v=grafik-animasi-stabil-20261125`
-- `index.html` → `assets/styles.css?v=grafik-animasi-stabil-20261125`
+- `index.html` → `assets/app.js?v=logo-no-text-20261125`
+- `index.html` → `assets/styles.css?v=logo-no-text-20261125`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting (terbaru di atas):

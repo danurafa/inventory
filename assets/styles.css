@@ -8357,9 +8357,10 @@ body.theme-glass.theme-crystal .modal-content {
   gap:3px !important; min-width:0 !important;
 }
 #inventory-top-header #live-clock [data-clock-time] {
-  display:block !important; font-family:ui-monospace,SFMono-Regular,Menlo,monospace !important;
-  font-size:13px !important; font-weight:800 !important; letter-spacing:.025em !important;
+  display:block !important; font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace !important;
+  font-size:13px !important; font-weight:700 !important; letter-spacing:.02em !important;
   line-height:1.1 !important; white-space:nowrap !important;
+  font-variant-numeric:tabular-nums !important;
 }
 #inventory-top-header #live-clock [data-clock-date] {
   display:block !important; font-family:Inter,system-ui,sans-serif !important;
@@ -16258,13 +16259,13 @@ html body.theme-glass.theme-neon #inventory-main-content #tab-master:not(#tab-da
 /* V207 — Toast biasa: spring drop + ikon pop + teks bertahap + glow progress.
    Kartu sambutan (.toast-welcome) sengaja dikecualikan karena punya animasi sendiri. */
 html body #toast-container > .inventory-toast:not(.toast-welcome) {
-  animation:toastSpringEnter .62s cubic-bezier(.2,.8,.25,1.12) both !important;
+  animation:toastSpringEnter .66s cubic-bezier(.2,.82,.24,1) both !important;
 }
 html body #toast-container > .inventory-toast.toast-leaving:not(.toast-welcome) {
-  animation:toastSpringExit .22s ease-in forwards !important;
+  animation:toastSpringExit .28s cubic-bezier(.4,0,.7,.3) forwards !important;
 }
 html body #toast-container > .inventory-toast:not(.toast-welcome) > .inventory-toast-icon {
-  animation:toastSpringIcon .58s .06s cubic-bezier(.2,.9,.3,1.28) both !important;
+  animation:toastSpringIcon .6s .04s cubic-bezier(.22,.8,.24,1) both !important;
 }
 html body #toast-container > .inventory-toast:not(.toast-welcome) .inventory-toast-title {
   animation:toastSpringText .34s .12s ease-out both !important;
@@ -16276,21 +16277,20 @@ html body #toast-container > .inventory-toast:not(.toast-welcome) > .inventory-t
   animation:toastSpringProgress var(--toast-duration,3600ms) linear forwards !important;
 }
 @keyframes toastSpringEnter {
-  0%   { opacity:0; transform:translate3d(0,-30px,0) scale(.90); filter:blur(4px); }
-  42%  { opacity:1; transform:translate3d(0,11px,0) scale3d(1.04,1.06,1); filter:blur(0); }
-  60%  { transform:translate3d(0,-8px,0) scale3d(.985,.975,1); }
-  76%  { transform:translate3d(0,5px,0) scale3d(1.02,1.03,1); }
-  90%  { transform:translate3d(0,-2px,0) scale(.996); }
+  0%   { opacity:0; transform:translate3d(0,-24px,0) scale(.94); filter:blur(3px); }
+  48%  { opacity:1; transform:translate3d(0,8px,0) scale(1.035); filter:blur(0); }
+  68%  { transform:translate3d(0,-4px,0) scale(.992); }
+  84%  { transform:translate3d(0,2px,0) scale(1.008); }
   100% { opacity:1; transform:translate3d(0,0,0) scale(1); filter:blur(0); }
 }
 @keyframes toastSpringExit {
-  to { opacity:0; transform:translate3d(0,-10px,0) scale(.98); filter:blur(2px); }
+  to { opacity:0; transform:translate3d(0,-8px,0) scale(.985); filter:blur(2px); }
 }
 @keyframes toastSpringIcon {
-  0%   { opacity:0; transform:scale(.4) rotate(-18deg); }
-  50%  { opacity:1; transform:scale(1.28) rotate(6deg); }
-  70%  { transform:scale(.90) rotate(-2deg); }
-  86%  { transform:scale(1.07) rotate(1deg); }
+  0%   { opacity:0; transform:scale(.45) rotate(-12deg); }
+  52%  { opacity:1; transform:scale(1.22) rotate(5deg); }
+  72%  { transform:scale(.94) rotate(-2deg); }
+  88%  { transform:scale(1.06) rotate(1deg); }
   100% { opacity:1; transform:scale(1) rotate(0); }
 }
 @keyframes toastSpringText {
@@ -16363,4 +16363,126 @@ html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-do
     opacity:1 !important;
     transform:none !important;
   }
+}
+/* Toast badge (ikon) — tampilan akrilik transparan: kaca tipis dengan blur,
+   highlight dalam, dan tepian lembut. Warna status tetap memakai --toast-tone
+   pada ikon/progress; hanya "badge"-nya yang dibuat bening. */
+html body #toast-container > .inventory-toast > .inventory-toast-icon {
+  background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.04) 55%,rgba(var(--toast-tone),.12)) !important;
+  border:1px solid rgba(226,240,255,.42) !important;
+  -webkit-backdrop-filter:blur(12px) saturate(155%) !important;
+  backdrop-filter:blur(12px) saturate(155%) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.50),inset 0 -1px 0 rgba(var(--toast-tone),.18),0 4px 14px rgba(2,8,23,.18),0 0 14px rgba(var(--toast-tone),.14) !important;
+  color:rgb(var(--toast-tone)) !important;
+}
+html body.theme-glass.theme-light #toast-container > .inventory-toast > .inventory-toast-icon {
+  background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(255,255,255,.30) 55%,rgba(var(--toast-tone),.10)) !important;
+  border-color:rgba(53,88,128,.34) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(var(--toast-tone),.16),0 4px 14px rgba(28,51,79,.16),0 0 12px rgba(var(--toast-tone),.12) !important;
+}
+html body #toast-container > .inventory-toast:not(.toast-welcome) > .inventory-toast-icon {
+  -webkit-backdrop-filter:blur(12px) saturate(155%) !important;
+  backdrop-filter:blur(12px) saturate(155%) !important;
+}
+/* Placeholder dibuat lebih redup (glass-like), tapi tetap terbaca.
+   Selector sengaja sangat spesifik untuk mengalahkan aturan warna placeholder
+   per tema yang memakai !important (Classic/Crystal/Soft/Neon + login + SJ). */
+html[lang] body[class]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g):not(#lg2h):not(#lg2i):not(#lg2j) :is(input,textarea):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g):not(#lg2h):not(#lg2i):not(#lg2j)::placeholder {
+  color:rgba(148,163,184,.38) !important;
+  -webkit-text-fill-color:rgba(148,163,184,.38) !important;
+  opacity:1 !important;
+}
+/* UI 2 (Crystal) — tombol sidebar aktif memakai tampilan hover state:
+   background kaca tipis seperti saat kursor lewat, bukan gradient biru solid.
+   Berlaku untuk .active, .theme-accent-bg, dan [aria-current="page"]. */
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g):not(#lg2h) #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g):not(#lg2h) #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]):hover {
+  background:rgba(255,255,255,.12) !important;
+  border-color:rgba(255,255,255,.28) !important;
+  border-width:1px !important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.40) !important;
+  color:var(--lg-ink-2) !important;
+  text-shadow:none !important;
+}
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g):not(#lg2h) #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]) > :is(span,i,svg) {
+  color:var(--lg-ink-2) !important;
+  stroke:var(--lg-ink-2) !important;
+  -webkit-text-fill-color:var(--lg-ink-2) !important;
+}
+/* UI 2 (Crystal) — hover state sidebar diberi bayangan lembut (drop shadow)
+   duplikat dari aturan aktif di atas supaya period paradox tak hilang. */
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g):not(#lg2h) #inventory-sidebar .sidebar-btn:hover,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g):not(#lg2h) #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g):not(#lg2h) #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]):hover {
+  box-shadow:0 6px 18px rgba(8,24,48,.28),inset 1px 1px 0 rgba(255,255,255,.45),inset 0 0 10px rgba(255,255,255,.10) !important;
+}
+/* Logo header: teks "CV. TRIASTINDO JAYA" menggantikan huruf "G".
+   Tetap memakai palet aksen tema; di HP disingkat jadi "CV. TJ" supaya header muat. */
+html body #inventory-top-header #header-brand-group .header-brand-logo {
+  width:auto !important; height:40px !important; padding:0 12px !important;
+  border-radius:12px !important;
+  background:linear-gradient(135deg,#fb923c,#ea580c) !important;
+  border:1px solid rgba(255,255,255,.35) !important;
+  box-shadow:0 10px 28px rgba(234,88,12,.34),inset 0 1px 0 rgba(255,255,255,.42) !important;
+  color:#fff !important; -webkit-text-fill-color:#fff !important;
+  text-shadow:0 1px 2px rgba(0,0,0,.22) !important;
+  filter:none !important;
+}
+html body #inventory-top-header #header-brand-group .header-brand-logo .brand-logo-text {
+  font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace !important;
+  font-size:10px !important; font-weight:700 !important; letter-spacing:.06em !important;
+  line-height:1 !important; white-space:nowrap !important;
+  color:#fff !important; -webkit-text-fill-color:#fff !important;
+}
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #header-brand-group .header-brand-logo {
+  background:linear-gradient(135deg,#3d9bff,#0a62d6) !important;
+  border-color:rgba(255,255,255,.55) !important;
+  box-shadow:0 10px 26px rgba(10,109,224,.42),inset 1px 1px 0 rgba(255,255,255,.55) !important;
+}
+html body.theme-glass.theme-light.theme-soft #header-brand-group .header-brand-logo {
+  background:#526b5e !important;
+  background-image:none !important;
+  border-color:#71877a !important;
+  box-shadow:0 4px 12px rgba(0,0,0,.24) !important;
+}
+html body.theme-glass.theme-dark.theme-neon #header-brand-group .header-brand-logo {
+  background:linear-gradient(135deg,#06b6d4,#0e7490) !important;
+  border-color:rgba(103,232,249,.45) !important;
+  box-shadow:0 10px 26px rgba(6,182,212,.30),inset 0 1px 0 rgba(255,255,255,.35) !important;
+}
+@media (max-width:767px) {
+  html body #inventory-top-header #header-brand-group .header-brand-logo { padding:0 8px !important; height:34px !important; }
+  html body #inventory-top-header #header-brand-group .header-brand-logo .brand-logo-text {
+    font-size:0 !important;
+  }
+  html body #inventory-top-header #header-brand-group .header-brand-logo .brand-logo-text::after {
+    content:"CV. TJ" !important; font-size:10px !important; letter-spacing:.04em !important;
+  }
+}
+/* Logo header memakai file gambar asli (assets/Logo/LOGO CV.png).
+   Badge dibuat putih bersih supaya logo tidak bertabrakan dengan palet tema. */
+html body #inventory-top-header #header-brand-group .header-brand-logo {
+  background:#ffffff !important;
+  background-image:none !important;
+  border-color:rgba(255,255,255,.75) !important;
+  box-shadow:0 10px 26px rgba(2,8,23,.28),inset 0 1px 0 rgba(255,255,255,.95) !important;
+  padding:3px !important;
+  overflow:hidden !important;
+}
+html body #inventory-top-header #header-brand-group .header-brand-logo .brand-logo-img {
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  filter:none !important;
+}
+@keyframes brandLogoSpan {
+  from { transform:translate3d(0,-16px,0) scale(.94); filter:blur(3px); }
+  to   { transform:translate3d(0,0,0) scale(1); filter:blur(0); }
+}
+html body #inventory-top-header #header-brand-group .header-brand-logo .brand-logo-img {
+  animation:brandLogoSpan .5s cubic-bezier(.2,.8,.25,1) both !important;
+}
+@media (prefers-reduced-motion:reduce) {
+  html body #inventory-top-header #header-brand-group .header-brand-logo .brand-logo-img { animation:none !important; }
 }
