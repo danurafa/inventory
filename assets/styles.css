@@ -16486,3 +16486,249 @@ html body #inventory-top-header #header-brand-group .header-brand-logo .brand-lo
 @media (prefers-reduced-motion:reduce) {
   html body #inventory-top-header #header-brand-group .header-brand-logo .brand-logo-img { animation:none !important; }
 }
+/* Animasi perpindahan active state sidebar: tombol yang baru aktif pop halus.
+   Memakai individual transform properties (scale/translate) supaya tidak
+   bertabrakan dengan aturan `transform:none !important` di UI 2/UI 4. */
+@keyframes sidebarActivePop {
+  0%   { opacity:.55; scale:.96; translate:0 2px; }
+  55%  { opacity:1; scale:1.035; translate:0 -1px; }
+  100% { opacity:1; scale:1; translate:0 0; }
+}
+html body #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]) {
+  animation:sidebarActivePop .42s cubic-bezier(.2,.8,.25,1) both !important;
+}
+@media (prefers-reduced-motion:reduce) {
+  html body #inventory-sidebar :is(.sidebar-btn.active,.sidebar-btn.theme-accent-bg,.sidebar-btn[aria-current="page"]) {
+    animation:none !important;
+  }
+}
+/* UI 1 & UI 2 — tombol "Hapus" di baris Tambah Barang (PO) jadi badge pill
+   rose yang terpusat di bawah field Warna. UI 3 / UI 4 tidak berubah. */
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn {
+  all:unset !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  box-sizing:border-box !important;
+  width:auto !important;
+  min-width:96px !important;
+  height:32px !important;
+  min-height:32px !important;
+  margin:0 auto !important;
+  padding:0 12px !important;
+  border:1px solid rgba(251,113,133,.46) !important;
+  border-radius:999px !important;
+  background:linear-gradient(135deg,rgba(244,63,94,.24),rgba(225,29,72,.12)) !important;
+  background-image:linear-gradient(135deg,rgba(244,63,94,.24),rgba(225,29,72,.12)) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 3px 10px rgba(244,63,94,.18) !important;
+  color:#fda4af !important;
+  -webkit-text-fill-color:#fda4af !important;
+  text-shadow:none !important;
+  font-family:inherit !important;
+  font-size:10px !important;
+  font-weight:800 !important;
+  letter-spacing:.06em !important;
+  text-transform:uppercase !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+  cursor:pointer !important;
+  transition:background .15s ease,border-color .15s ease,color .15s ease !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn::before,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn::before {
+  content:"✕";
+  font-size:10px;
+  font-weight:800;
+  line-height:1;
+  margin-right:6px;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn:hover,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] .po-remove-item-btn:hover {
+  background:linear-gradient(135deg,rgba(244,63,94,.36),rgba(225,29,72,.20)) !important;
+  border-color:rgba(251,113,133,.72) !important;
+  color:#ffe4e6 !important;
+  -webkit-text-fill-color:#ffe4e6 !important;
+}
+/* UI 1 & UI 2 — wrapper tombol Hapus di baris Tambah Barang dipusatkan
+   (horizontal + vertikal) di dalam sel grid terakhir. */
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] > div.flex.items-end:last-child,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] > div.flex.items-end:last-child {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  place-self:center !important;
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] > div.flex.items-end:last-child .po-remove-item-btn,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] > div.flex.items-end:last-child .po-remove-item-btn {
+  margin:0 !important;
+  align-self:center !important;
+}
+/* UI 1 & UI 2 — susunan baris Tambah Barang:
+   baris 1: Pilih Barang | Qty PO
+   baris 2: Qty Siap     | Warna Barang
+   baris 3: badge Hapus (di tengah) */
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row],
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] {
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] > :nth-child(1),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] > :nth-child(1) {
+  grid-column:1 !important; grid-row:1 !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] > :nth-child(2),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] > :nth-child(2) {
+  grid-column:2 !important; grid-row:1 !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] > :nth-child(3),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] > :nth-child(3) {
+  grid-column:1 !important; grid-row:2 !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] > :nth-child(4),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] > :nth-child(4) {
+  grid-column:2 !important; grid-row:2 !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] > :nth-child(5),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #po-items-container [data-po-item-row] > :nth-child(5) {
+  grid-column:1 / -1 !important;
+  grid-row:3 !important;
+  justify-self:center !important;
+  align-self:center !important;
+  width:100% !important;
+}
+/* UI 1 & UI 2 — semua tombol di area konten (tabel/form/dashboard) memakai
+   badge pill akrilik: gradient tipis sesuai warna status, border lembut,
+   highlight inset + bayangan, dan pop halus saat hover.
+   Tombol utama (.theme-accent-bg) sengaja dikecualikan tetap solid. */
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(.theme-accent-bg),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(.theme-accent-bg) {
+  --btn-badge-tone:148,163,184;
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border:1px solid rgba(var(--btn-badge-tone),.46) !important;
+  border-radius:999px !important;
+  background:linear-gradient(135deg,rgba(var(--btn-badge-tone),.24),rgba(var(--btn-badge-tone),.10)) !important;
+  background-image:linear-gradient(135deg,rgba(var(--btn-badge-tone),.24),rgba(var(--btn-badge-tone),.10)) !important;
+  color:rgb(var(--btn-badge-tone)) !important;
+  -webkit-text-fill-color:rgb(var(--btn-badge-tone)) !important;
+  text-shadow:none !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 3px 10px rgba(var(--btn-badge-tone),.16) !important;
+  transition:background .15s ease,border-color .15s ease,color .15s ease,scale .15s ease !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[class*="bg-sky-500"]:not(.theme-accent-bg),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[class*="bg-sky-500"]:not(.theme-accent-bg) { --btn-badge-tone:56,189,248; }
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[class*="bg-rose-500"]:not(.theme-accent-bg),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[class*="bg-rose-500"]:not(.theme-accent-bg) { --btn-badge-tone:251,113,133; }
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[class*="bg-orange-500"]:not(.theme-accent-bg),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[class*="bg-orange-500"]:not(.theme-accent-bg) { --btn-badge-tone:251,146,60; }
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[class*="bg-emerald-500"]:not(.theme-accent-bg),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[class*="bg-emerald-500"]:not(.theme-accent-bg) { --btn-badge-tone:52,211,153; }
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[class*="bg-amber-500"]:not(.theme-accent-bg),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[class*="bg-amber-500"]:not(.theme-accent-bg) { --btn-badge-tone:251,191,36; }
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(.theme-accent-bg):hover,
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(.theme-accent-bg):hover {
+  background:linear-gradient(135deg,rgba(var(--btn-badge-tone),.38),rgba(var(--btn-badge-tone),.18)) !important;
+  border-color:rgba(var(--btn-badge-tone),.78) !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  scale:1.03 !important;
+}
+@media (prefers-reduced-motion:reduce) {
+  html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(.theme-accent-bg),
+  html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(.theme-accent-bg) {
+    transition:none !important;
+  }
+  html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(.theme-accent-bg):hover,
+  html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(.theme-accent-bg):hover {
+    scale:none !important;
+  }
+}
+/* UI 1 (Classic) — uji warna badge akrilik yang LEBIH jelas mengikuti
+   "perintah" tombol. UI 2 sengaja belum diubah (coba UI 1 dulu). */
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(.theme-accent-bg) {
+  --btn-badge-tone:148,163,184;
+  background:linear-gradient(135deg,rgba(var(--btn-badge-tone),.34),rgba(var(--btn-badge-tone),.16)) !important;
+  background-image:linear-gradient(135deg,rgba(var(--btn-badge-tone),.34),rgba(var(--btn-badge-tone),.16)) !important;
+  border-color:rgba(var(--btn-badge-tone),.58) !important;
+  color:rgb(var(--btn-badge-tone)) !important;
+  -webkit-text-fill-color:rgb(var(--btn-badge-tone)) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 4px 14px rgba(var(--btn-badge-tone),.24) !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(.theme-accent-bg):hover {
+  background:linear-gradient(135deg,rgba(var(--btn-badge-tone),.46),rgba(var(--btn-badge-tone),.24)) !important;
+  background-image:linear-gradient(135deg,rgba(var(--btn-badge-tone),.46),rgba(var(--btn-badge-tone),.24)) !important;
+  border-color:rgba(var(--btn-badge-tone),.85) !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+}
+/* UI 1 — warna badge untuk Reset / Print / pagination (uji coba).
+   Base badge tetap dipakai; hanya --btn-badge-tone yang diganti. */
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-reset-form]:not(.reset-form-batal) {
+  --btn-badge-tone:251,191,36 !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[onclick^="print"] {
+  --btn-badge-tone:52,211,153 !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content :is(#keluar-prev,#keluar-next,#sj-prev,#sj-next,.generic-page-prev,.generic-page-next) {
+  --btn-badge-tone:56,189,248 !important;
+}
+/* Jaga-jaga: tombol Batal saat mode edit tetap merah, tidak tertimpa badge abu. */
+html[lang] body[class]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g):not(#lg2h):not(#lg2i):not(#lg2j) #inventory-main-content button[data-reset-form].reset-form-batal {
+  background:linear-gradient(135deg,#e11d48,#be123c) !important;
+  background-image:linear-gradient(135deg,#e11d48,#be123c) !important;
+  border-color:#fb7185 !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  box-shadow:0 4px 14px rgba(225,29,72,.35) !important;
+}
+/* UI 1 — tombol Reset di Riwayat Surat Jalan (resetSjFilter) ikut amber. */
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[onclick="resetSjFilter()"] {
+  --btn-badge-tone:251,191,36 !important;
+}
+/* UI 2 (Crystal) — samakan warna badge perintah tombol dengan UI 1. */
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(.theme-accent-bg) {
+  --btn-badge-tone:148,163,184;
+  background:linear-gradient(135deg,rgba(var(--btn-badge-tone),.34),rgba(var(--btn-badge-tone),.16)) !important;
+  background-image:linear-gradient(135deg,rgba(var(--btn-badge-tone),.34),rgba(var(--btn-badge-tone),.16)) !important;
+  border-color:rgba(var(--btn-badge-tone),.58) !important;
+  color:rgb(var(--btn-badge-tone)) !important;
+  -webkit-text-fill-color:rgb(var(--btn-badge-tone)) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 4px 14px rgba(var(--btn-badge-tone),.24) !important;
+}
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(.theme-accent-bg):hover {
+  background:linear-gradient(135deg,rgba(var(--btn-badge-tone),.46),rgba(var(--btn-badge-tone),.24)) !important;
+  background-image:linear-gradient(135deg,rgba(var(--btn-badge-tone),.46),rgba(var(--btn-badge-tone),.24)) !important;
+  border-color:rgba(var(--btn-badge-tone),.85) !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+}
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-reset-form]:not(.reset-form-batal),
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[onclick="resetSjFilter()"] {
+  --btn-badge-tone:251,191,36 !important;
+}
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[onclick^="print"] {
+  --btn-badge-tone:52,211,153 !important;
+}
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content :is(#keluar-prev,#keluar-next,#sj-prev,#sj-next,.generic-page-prev,.generic-page-next) {
+  --btn-badge-tone:56,189,248 !important;
+}
+/* UI 1 & UI 2 — perbaiki duplikat tombol Detail di Barang Keluar.
+   Aturan badge global memaksa display:inline-flex pada semua tombol, sehingga
+   tombol ".keluar-detail-mobile" ikut muncul di desktop. Sembunyikan lagi
+   di desktop; di mobile cukup satu tombol Detail (kolom ke-9 tetap hidden). */
+@media (min-width:768px) {
+  html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content #keluar-table-body .keluar-detail-mobile,
+  html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content #keluar-table-body .keluar-detail-mobile {
+    display:none !important;
+  }
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[hidden],
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[hidden] {
+  display:none !important;
+}

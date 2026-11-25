@@ -80,6 +80,27 @@ Fitur yang sudah selesai:
   memakai **hover state** — background kaca tipis `rgba(255,255,255,.12)`, border lembut,
   highlight inset — bukan gradient biru solid. Warna teks tetap terang. UI 1/3/4 tidak berubah.
   Hover/normal juga diberi **drop shadow lembut** `0 6px 18px rgba(8,24,48,.28)`.
+- **UI 1 & UI 2 — baris Tambah Barang (PO)**: disusun 3 baris rapi —
+  baris 1 **Pilih Barang | Qty PO**, baris 2 **Qty Siap | Warna Barang**,
+  baris 3 **badge Hapus** (`✕`, rose) di tengah. UI 3/4 tidak berubah.
+- **UI 1 & UI 2 — semua tombol di area konten** (tabel/form/dashboard) memakai badge pill
+  akrilik dengan gradient tipis sesuai warna status (sky/rose/orange/emerald/amber/abu),
+  border lembut, highlight inset + bayangan, dan **pop halus `scale 1.03` saat hover**.
+  Alpha `.34/.16`, border `.58`, glow `.24` (sama di UI 1 & UI 2). Reset → amber,
+  Print → emerald, Sebelumnya/Berikutnya → sky, Batal saat edit tetap merah solid.
+  Tombol utama `.theme-accent-bg` (Simpan/MASUK SISTEM/Ya, Lanjutkan) sengaja tetap solid
+  supaya hierarki aksi terjaga. **Sidebar, header, dan modal tidak terpengaruh.**
+  UI 3/UI 4 tidak berubah.
+- **UI 1 & UI 2 — Barang Keluar**: tombol **Detail** cuma satu. Aturan badge global yang
+  memaksa `display:inline-flex` membuat `.keluar-detail-mobile` ikut muncul di desktop;
+  sekarang disembunyikan lagi di desktop (≥768px). Di mobile kolom ke-9 tetap hidden,
+  jadi yang tampil cuma tombol Detail di kartu. Tombol dengan atribut `hidden` juga
+  dipaksa `display:none` supaya tidak ikut kena badge.
+- **Animasi active state sidebar**: tombol yang baru aktif pop halus (`scale 1.035`, fade,
+  `translate -1px`) via `sidebarActivePop` 0.42s. Memakai `scale`/`translate` individual supaya
+  tidak bentrok dengan `transform:none !important` di UI 2/4; mati saat `prefers-reduced-motion`.
+- **UI 1 & UI 2 — tombol Hapus tabel**: jadi badge pill rose dengan ikon `✕`, tinggi 24px,
+  min-width 62px, dan **dipusatkan** di cell aksi. UI 3/UI 4 tidak berubah.
 - Placeholder input form diganti kalimat instruksi singkat (mis. "Ketik ID barang (SKU)...",
   "Isi warna barang..."), bukan contoh nilai lama. Warna placeholder sengaja dibuat lebih
   redup (`rgba(148,163,184,.38)`) di semua tema, tapi tetap terbaca.
@@ -230,8 +251,8 @@ docs/TABEL-PAGINATION-ALAMAT.md
 ```
 
 Cache-buster saat ini:
-- `index.html` → `assets/app.js?v=logo-no-text-20261125`
-- `index.html` → `assets/styles.css?v=logo-no-text-20261125`
+- `index.html` → `assets/app.js?v=keluar-detail-fix-20261125`
+- `index.html` → `assets/styles.css?v=keluar-detail-fix-20261125`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting (terbaru di atas):

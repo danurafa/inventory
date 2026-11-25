@@ -214,6 +214,12 @@ juga tepat di tengah tombol (flex center).
   tapi teksnya masih terbaca di 4 tema.
 - Sidebar UI 2: menu aktif memakai tampilan hover state (kaca tipis, bukan gradient biru)
   dan hover-nya diberi bayangan lembut.
+- Sidebar: tombol yang baru aktif pop halus (animasi `sidebarActivePop`, mati saat reduced motion).
+- UI 1 & UI 2: baris Tambah Barang (PO) rapi — Barang|Qty PO, Qty Siap|Warna, Hapus badge di tengah baris 3.
+- UI 1 & UI 2: semua tombol di area konten jadi badge pill akrilik (warna per status, hover pop).
+  Reset (form + Riwayat SJ)=amber, Print=emerald, Sebelumnya/Berikutnya=sky, Batal tetap merah.
+  Tombol utama/sidebar/header/modal tetap solid. UI 3/4 tidak berubah.
+- UI 1 & UI 2: Barang Keluar cuma 1 tombol Detail (mobile badge disembunyikan di desktop).
 - Jam header: JetBrains Mono 700 + tabular-nums, tanggal tetap Inter.
 - Logo header: `assets/Logo/LOGO CV-NO TEXT.png` di badge putih (object-fit contain).
 - **Grafik garis Dashboard** (Inflow/Outflow): garis digambar dari kiri ke kanan,
@@ -253,8 +259,8 @@ index.html
 Cache-buster **saat ini** (di `index.html`):
 
 ```
-assets/styles.css?v=logo-no-text-20261125
-assets/app.js?v=logo-no-text-20261125
+assets/styles.css?v=keluar-detail-fix-20261125
+assets/app.js?v=keluar-detail-fix-20261125
 ```
 
 Commit terkait (terbaru di atas):
