@@ -277,7 +277,7 @@ index.html
 Cache-buster **saat ini** (di `index.html`):
 
 ```
-assets/styles.css?v=ui2-gradient-unify-20261126
+assets/styles.css?v=search-hover-flat-20261126
 assets/app.js?v=keluar-detail-fix-20261125
 ```
 

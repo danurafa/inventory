@@ -17082,3 +17082,41 @@ html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):no
    dan sidebar. Sekarang main dibiarkan transparan seperti aslinya, jadi header,
    sidebar, dan content memakai gradient body yang sama persis. Tidak ada aturan
    baru di sini — hanya catatan supaya percobaan itu tidak diulang. */
+
+/* V219 — hasil Pencarian Umum rata kiri, bukan di tengah (UI 1 & UI 2).
+   Rule badge akrilik (V209) memasang `justify-content:center` pada SEMUA button
+   di #inventory-main-content, jadi baris hasil pencarian (judul + keterangan +
+   badge kategori) ikut ke tengah. Di sini baris hasil dikembalikan seperti UI 3/4:
+   teks di kiri, badge kategori menempel di kanan. Hanya penempatan yang diubah;
+   warna, border, dan efek tekan badge tetap milik tema. */
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content #tab-dashboard .dashboard-search-result {
+  justify-content:space-between !important;
+  text-align:left !important;
+}
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content #tab-dashboard .dashboard-search-result-copy {
+  justify-items:start !important;
+  text-align:left !important;
+  flex:1 1 auto !important;
+}
+
+/* V220 — hover baris hasil Pencarian Umum tidak lagi "timbul" (UI 1 & UI 2).
+   Rule hover badge akrilik memperbesar baris (scale 1.03), mengganti teks jadi
+   putih, dan menebalkan border — makanya terlihat pop/timbul. Sekarang hover
+   hanya memberi highlight tipis seperti UI 3/4: latar sedikit terang, border
+   lembut, teks tetap warna aslinya. Efek tekan (active) tidak diubah. */
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content #tab-dashboard .dashboard-search-result:is(:hover,:focus-visible) {
+  scale:1 !important;
+  color:#dbeafe !important;
+  -webkit-text-fill-color:currentColor !important;
+  border-color:rgba(96,165,250,.40) !important;
+  background:rgba(37,99,235,.14) !important;
+  background-image:none !important;
+}
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content #tab-dashboard .dashboard-search-result:is(:hover,:focus-visible) {
+  scale:1 !important;
+  color:var(--lg-ink) !important;
+  -webkit-text-fill-color:currentColor !important;
+  border-color:rgba(255,255,255,.38) !important;
+  background:rgba(255,255,255,.06) !important;
+  background-image:none !important;
+}

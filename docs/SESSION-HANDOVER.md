@@ -147,6 +147,17 @@ Fitur yang sudah selesai:
   aslinya) dan main transparan, jadi header + sidebar + content memakai gradient
   yang sama persis. Tidak ada aturan CSS baru untuk UI 2 di desktop; mobile juga
   tidak disentuh.
+- **Pencarian Umum — hasil rata kiri (UI 1 & UI 2)**: rule badge akrilik
+  memasang `justify-content:center` pada semua `button` di area konten, sehingga
+  baris hasil pencarian tampil di tengah. Sekarang `.dashboard-search-result`
+  dipaksa `space-between`: judul + keterangan di kiri, badge kategori di kanan
+  (sama seperti UI 3/4). Desktop dan mobile; warna/border/efek tekan tidak berubah.
+- **Pencarian Umum — hover tidak lagi "timbul" (UI 1 & UI 2)**: hover badge
+  akrilik memperbesar baris (`scale 1.03`), memutihkan teks, dan menebalkan border.
+  Untuk baris hasil pencarian, hover sekarang `scale:1` dengan highlight tipis
+  (UI 1 latar `rgba(37,99,235,.14)` + border `rgba(96,165,250,.40)`; UI 2 latar
+  `rgba(255,255,255,.06)` + border `rgba(255,255,255,.38)`), jadi tidak ada pop.
+  Efek tekan (`:active`) tetap.
 - **Animasi active state sidebar**: tombol yang baru aktif pop halus (`scale 1.035`, fade,
   `translate -1px`) via `sidebarActivePop` 0.42s. Memakai `scale`/`translate` individual supaya
   tidak bentrok dengan `transform:none !important` di UI 2/4; mati saat `prefers-reduced-motion`.
@@ -303,7 +314,7 @@ docs/TABEL-PAGINATION-ALAMAT.md
 
 Cache-buster saat ini:
 - `index.html` → `assets/app.js?v=keluar-detail-fix-20261125`
-- `index.html` → `assets/styles.css?v=ui2-gradient-unify-20261126`
+- `index.html` → `assets/styles.css?v=search-hover-flat-20261126`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting (terbaru di atas):
