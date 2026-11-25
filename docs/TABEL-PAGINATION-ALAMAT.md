@@ -277,7 +277,7 @@ index.html
 Cache-buster **saat ini** (di `index.html`):
 
 ```
-assets/styles.css?v=chart-flex-soft-height-20261126
+assets/styles.css?v=chart-flex-soft-scroll-20261126
 assets/app.js?v=flexible-movement-chart-20261126
 ```
 

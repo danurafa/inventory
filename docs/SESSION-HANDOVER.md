@@ -340,7 +340,7 @@ docs/TABEL-PAGINATION-ALAMAT.md
 
 Cache-buster saat ini:
 - `index.html` → `assets/app.js?v=flexible-movement-chart-20261126`
-- `index.html` → `assets/styles.css?v=chart-flex-soft-height-20261126`
+- `index.html` → `assets/styles.css?v=chart-flex-soft-scroll-20261126`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting (terbaru di atas):

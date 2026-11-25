@@ -16948,6 +16948,20 @@ html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not
   filter:none !important;
 }
 
+/* V224 — UI 1 (Classic Glass): ringankan scroll. Attachment background
+   di-set ke scroll (bukan fixed) dan dua orb dekoratif ::before/::after
+   dimatikan, mengikuti perlakuan UI 3/4. Warna gradient, layout, dan
+   tombol tidak diubah. */
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content {
+  background-attachment:scroll !important;
+}
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content::before,
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content::after {
+  display:none !important;
+  content:none !important;
+  filter:none !important;
+}
+
 /* V215 — UI 3 (Soft Sage): tombol Reset & Print ikut palet tema.
    Reset memakai clay lembut yang sudah dipakai tombol reset UI 3, Print memakai
    sage. Mode Batal (reset-form-batal) tetap merah; tombol lain tidak diubah. */
