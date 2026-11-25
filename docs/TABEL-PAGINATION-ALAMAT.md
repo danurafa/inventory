@@ -1,6 +1,6 @@
 ﻿# Dokumentasi Tabel, Pagination, dan Alamat PO
 
-Dibuat: 2026-11-24 · Diperbarui: 2026-11-25 · Commit terakhir: `6106ea4` · Remote: `origin/main`
+Dibuat: 2026-11-24 · Diperbarui: 2026-11-25 · Commit terakhir: `60598d0` · Remote: `origin/main`
 
 Dokumen ini merangkum pekerjaan UI yang paling sering diubah belakangan ini:
 kartu mobile, pagination, scroll horizontal tabel, dan alamat customer di PO.
@@ -266,6 +266,9 @@ assets/app.js?v=keluar-detail-fix-20261125
 Commit terkait (terbaru di atas):
 
 ```
+60598d0  badge akrilik UI 1/2, logo CV, perbaikan duplicate Detail Keluar
+b25c652  logo tanpa teks, placeholder redup, hover sidebar UI 2, jam mono, toast akrilik
+5e9770d  animasi grafik garis dashboard dengan guard anti-render ulang
 6106ea4  guard pindah menu saat form ada perubahan belum disimpan
 308e017  rapikan dropdown, form, placeholder, animasi toast; Warna Masuk read-only
 c29afd5  status koneksi login UI 3 ikut terang (HTTPS/checking)
@@ -320,6 +323,6 @@ Path kerja yang benar: `D:\PROJECT INVENTORY\inventory`.
 - Frontend otomatis via GitHub Pages (HTTPS). Karena itu status koneksi di login UI 3
   memakai state `secure` ("Koneksi HTTPS aktif"), sudah ikut dibuat kontras.
 - Worker sudah diperbarui dengan whitelist `warna` (commit `0651f22` / `afed647`).
-- Perubahan `308e017` & `6106ea4` hanya frontend (`app.js`, `styles.css`, `index.html`) — Worker tidak diubah.
+- Perubahan `308e017`–`60598d0` hanya frontend (`app.js`, `styles.css`, `index.html`, aset logo) — Worker tidak diubah.
 - `boot.js` belum diganti (`APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`); cache-buster
   memakai `?v=` di `index.html`, jadi perubahan tetap terlihat setelah hard refresh.

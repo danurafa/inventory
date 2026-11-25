@@ -1,7 +1,7 @@
 ﻿# Catatan Serah Terima Sesi — Inventory Surat Jalan
 
 Dokumen ini dibuat supaya sesi baru di PC 2 bisa langsung lanjut tanpa membaca
-percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-25 (HEAD `6106ea4`, working tree bersih).
+percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-25 (HEAD `60598d0`, working tree bersih).
 
 Untuk detail pekerjaan UI terbaru (kartu mobile, pagination 10 baris, alamat PO,
 toast, scroll horizontal), baca juga `docs/TABEL-PAGINATION-ALAMAT.md`.
@@ -109,7 +109,7 @@ Fitur yang sudah selesai:
 - Logo header "G" diganti **file gambar asli** `assets/Logo/LOGO CV-NO TEXT.png` (762×652,
   transparan, tanpa tulisan perusahaan) di dalam badge putih tema-netral; `object-fit:contain`
   + animasi masuk halus. Versi dengan teks (`LOGO CV.png`) tetap disimpan untuk cetak/kebutuhan lain.
-  File belum ter-track — wajib `git add` saat commit.
+  Kedua file sudah ter-track di git sejak commit `b25c652`.
 
 ---
 
@@ -256,6 +256,9 @@ Cache-buster saat ini:
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting (terbaru di atas):
+- `60598d0` — badge akrilik berwarna UI 1/2, logo CV, perbaikan duplicate Detail Keluar
+- `b25c652` — logo tanpa teks, placeholder redup, hover sidebar UI 2, jam mono, toast akrilik
+- `5e9770d` — animasi grafik garis dashboard dengan guard anti-render ulang
 - `6106ea4` — guard pindah menu saat form memiliki perubahan belum disimpan
 - `308e017` — rapikan dropdown, form, placeholder, animasi toast; Warna Masuk jadi read-only
 - `c29afd5` — status koneksi login UI 3 ikut terang (HTTPS/checking)
