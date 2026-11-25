@@ -3278,6 +3278,7 @@
 
         // Combined Inflow / Outflow trend. Uses transaction quantities grouped by date.
         let movementTrendRange = 7;
+        let lastMovementSignature = '';
         function parseMovementDate(value) {
             if (!value) return null;
             if (value instanceof Date && !isNaN(value)) return new Date(value.getFullYear(), value.getMonth(), value.getDate());
@@ -3320,12 +3321,23 @@
             }
             const totalIn=rows.reduce((a,r)=>a+r.in,0), totalOut=rows.reduce((a,r)=>a+r.out,0);
             const fmt=n=>Math.round(n).toLocaleString('id-ID');
+
+            // Jangan render ulang SVG (dan mengulang animasi) kalau data + rentang +
+            // tema tidak berubah. renderDashboard() dipanggil tiap Cloud Sync (~7 detik);
+            // tanpa penjaga ini garis selalu "digambar ulang" walaupun datanya sama.
+            const softTheme = document.body.classList.contains('theme-soft');
+            const softMobile = softTheme && window.matchMedia('(max-width: 700px)').matches;
+            const signature = JSON.stringify([days, softTheme, softMobile, rows.map(r=>[r.label,r.in,r.out])]);
+            if (host.querySelector('svg') && signature === lastMovementSignature) {
+                document.querySelectorAll('.movement-range-btn').forEach(btn=>btn.classList.toggle('is-active',Number(btn.dataset.range)===movementTrendRange));
+                return;
+            }
+            lastMovementSignature = signature;
+
             document.getElementById('movement-total-in').textContent=fmt(totalIn);
             document.getElementById('movement-total-out').textContent=fmt(totalOut);
             document.getElementById('movement-total-net').textContent=(totalIn-totalOut>0?'+':'')+fmt(totalIn-totalOut);
             // V89: reserve a little more room on the right so the final date label is never clipped.
-            const softTheme = document.body.classList.contains('theme-soft');
-            const softMobile = softTheme && window.matchMedia('(max-width: 700px)').matches;
             const W=760,H=softTheme?(softMobile?190:160):112,L=softTheme?54:42,R=28,T=softTheme?12:7,B=softMobile?34:(softTheme?30:22),plotW=W-L-R,plotH=H-T-B;
             const max=Math.max(1,...rows.flatMap(r=>[r.in,r.out]));
             const y=v=>T+plotH-(v/max)*plotH;
@@ -3339,17 +3351,17 @@
                 return `<text x="${x(i)}" y="${H-8}" text-anchor="${anchor}" class="movement-axis-date">${r.label}</text>`;
             }).join('');
             const pointsWithTips=rows.map((r,i)=>`
-                <circle cx="${x(i)}" cy="${y(r.in)}" r="3" fill="#56a9ed">
+                <circle class="movement-dot" cx="${x(i)}" cy="${y(r.in)}" r="3" fill="#56a9ed">
                   <title>${r.label} • Inflow: ${fmt(r.in)}</title>
                 </circle>
-                <circle cx="${x(i)}" cy="${y(r.out)}" r="3" fill="#e5a15d">
+                <circle class="movement-dot" cx="${x(i)}" cy="${y(r.out)}" r="3" fill="#e5a15d">
                   <title>${r.label} • Outflow: ${fmt(r.out)}</title>
                 </circle>
                 <circle cx="${x(i)}" cy="${Math.min(y(r.in),y(r.out))}" r="9" fill="transparent" pointer-events="all">
                   <title>${r.label}\nInflow: ${fmt(r.in)}\nOutflow: ${fmt(r.out)}</title>
                 </circle>`).join('');
             const areaPath=key=>`M ${x(0)} ${T+plotH} L ${rows.map((r,i)=>`${x(i).toFixed(1)} ${y(r[key]).toFixed(1)}`).join(' L ')} L ${x(rows.length-1)} ${T+plotH} Z`;
-            host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Tren inflow ${fmt(totalIn)} dan outflow ${fmt(totalOut)}" preserveAspectRatio="${softTheme?'xMidYMid meet':'none'}"><defs><linearGradient id="movementInFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#2eb5f4" stop-opacity=".34"/><stop offset="100%" stop-color="#2eb5f4" stop-opacity=".015"/></linearGradient><linearGradient id="movementOutFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#f05d91" stop-opacity=".28"/><stop offset="100%" stop-color="#f05d91" stop-opacity=".012"/></linearGradient></defs><g>${grid}</g><path d="${areaPath('in')}" fill="url(#movementInFill)"/><path d="${areaPath('out')}" fill="url(#movementOutFill)"/><polyline points="${points('in')}" fill="none" stroke="#2eb5f4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${points('out')}" fill="none" stroke="#f05d91" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${pointsWithTips}${labels}</svg>`;
+            host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Tren inflow ${fmt(totalIn)} dan outflow ${fmt(totalOut)}" preserveAspectRatio="${softTheme?'xMidYMid meet':'none'}"><defs><linearGradient id="movementInFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#2eb5f4" stop-opacity=".34"/><stop offset="100%" stop-color="#2eb5f4" stop-opacity=".015"/></linearGradient><linearGradient id="movementOutFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#f05d91" stop-opacity=".28"/><stop offset="100%" stop-color="#f05d91" stop-opacity=".012"/></linearGradient></defs><g>${grid}</g><path class="movement-area" d="${areaPath('in')}" fill="url(#movementInFill)"/><path class="movement-area movement-area-out" d="${areaPath('out')}" fill="url(#movementOutFill)"/><polyline class="movement-line movement-line-in" pathLength="1" points="${points('in')}" fill="none" stroke="#2eb5f4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><polyline class="movement-line movement-line-out" pathLength="1" points="${points('out')}" fill="none" stroke="#f05d91" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${pointsWithTips}${labels}</svg>`;
             document.querySelectorAll('.movement-range-btn').forEach(btn=>btn.classList.toggle('is-active',Number(btn.dataset.range)===movementTrendRange));
         }
 

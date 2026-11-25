@@ -16310,3 +16310,57 @@ html body #toast-container > .inventory-toast:not(.toast-welcome) > .inventory-t
   html body #toast-container > .inventory-toast:not(.toast-welcome) .inventory-toast-message,
   html body #toast-container > .inventory-toast:not(.toast-welcome) > .inventory-toast-progress { animation:none !important; }
 }
+/* Animasi grafik garis Dashboard (Inflow/Outflow). Garis "digambar" dari kiri
+   ke kanan, area mengikuti, titik muncul bertahap. Hanya berlaku di SVG yang
+   dirender drawMovementTrend(); tidak menyentuh tabel/print css di app.js. */
+@keyframes movementLineDraw {
+  from { stroke-dashoffset:1; }
+  to   { stroke-dashoffset:0; }
+}
+@keyframes movementAreaFade {
+  from { opacity:0; }
+  to   { opacity:1; }
+}
+@keyframes movementDotPop {
+  0%   { opacity:0; transform:scale(.25); }
+  70%  { opacity:1; transform:scale(1.25); }
+  100% { opacity:1; transform:scale(1); }
+}
+html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-line {
+  stroke-dasharray:1;
+  stroke-dashoffset:1;
+  animation:movementLineDraw .85s cubic-bezier(.35,.8,.3,1) forwards;
+}
+html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-line-out {
+  animation-delay:.16s;
+}
+html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-area {
+  animation:movementAreaFade .9s .2s ease-out both;
+}
+html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-area-out {
+  animation-delay:.32s;
+}
+html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-dot {
+  transform-box:fill-box;
+  transform-origin:center;
+  animation:movementDotPop .4s .85s ease-out both;
+}
+html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-dot:nth-of-type(2n) {
+  animation-delay:.95s;
+}
+@media (prefers-reduced-motion:reduce) {
+  html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-line,
+  html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-area,
+  html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-dot {
+    animation:none !important;
+  }
+  html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-line {
+    stroke-dasharray:none !important;
+    stroke-dashoffset:0 !important;
+  }
+  html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-area,
+  html body #tab-dashboard #movement-trend-card .movement-trend-chart .movement-dot {
+    opacity:1 !important;
+    transform:none !important;
+  }
+}

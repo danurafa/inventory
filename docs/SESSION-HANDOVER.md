@@ -1,7 +1,7 @@
 ﻿# Catatan Serah Terima Sesi — Inventory Surat Jalan
 
 Dokumen ini dibuat supaya sesi baru di PC 2 bisa langsung lanjut tanpa membaca
-percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-24 (HEAD `c29afd5`, working tree bersih).
+percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-25 (HEAD `6106ea4`, working tree bersih).
 
 Untuk detail pekerjaan UI terbaru (kartu mobile, pagination 10 baris, alamat PO,
 toast, scroll horizontal), baca juga `docs/TABEL-PAGINATION-ALAMAT.md`.
@@ -38,16 +38,18 @@ Fitur yang sudah selesai:
 - Form Sampel punya field **Keterangan** opsional (`sampel-keterangan`), tampil sebagai kolom
   tabel dan ikut laporan cetak. Worker tidak diubah (create/update memakai spread record).
   Di UI 4 form Sampel mengikuti tata letak UI 3 (grid 4 kolom, `.grid` span 2, tombol 120px).
-- Kategori di panel info Barang Masuk jadi pill (hijau di UI 3, cyan di UI 4), elipsis + tooltip `title`.
+- Kategori di panel info Barang Masuk sekarang **teks biasa** (bukan pill lagi sejak `308e017`),
+  tetap punya tooltip `title` berisi teks lengkap dari `updateMasukItemInfo()`.
 - Form Barang Masuk UI 3 & UI 4 desktop: baris `Info / Jumlah Masuk / Divisi` dalam grid 3 kolom.
 - Tombol **Batal** saat mode edit memakai dialog konfirmasi `showConfirm` sebelum form di-reset.
   Label tombol Reset → **Batal** langsung muncul di semua form (Master, PO, Masuk, Keluar, Sampel, Retur)
   lewat `syncResetButtons()`; tombol Batal memakai background **merah solid** di semua 4 UI.
 - **Warna Barang** (input teks bebas, otomatis uppercase) tersedia di Master Barang, PO Customer
-  (per baris), Barang Masuk, Barang Keluar (per kartu), Retur. Kolom **Warna** tampil di tabel
-  Master/PO/Masuk/Keluar/Retur/SJ (summary + detail), ikut filter pencarian, serta ikut
-  **Cetak SJ** dan **Excel SJ**. Worker menyimpan `warna` lewat whitelist `master.create` /
-  `master.update`; `syncLocalChanges()` juga mengirim `warna` saat update Master.
+  (per baris), Barang Keluar (per kartu), dan Retur. Di **Barang Masuk warna sekarang read-only**
+  dari Master (`#info-masuk-warna`), bukan input yang bisa ditimpa manual (perubahan commit `308e017`).
+  Kolom **Warna** tampil di tabel Master/PO/Masuk/Keluar/Retur/SJ (summary + detail), ikut filter
+  pencarian, serta ikut **Cetak SJ** dan **Excel SJ**. Worker menyimpan `warna` lewat whitelist
+  `master.create` / `master.update`; `syncLocalChanges()` juga mengirim `warna` saat update Master.
 - Template Excel SJ `assets/templates/surat-jalan.xlsx` sudah dipakai: header **Warna**, data
   kolom **B–I** (No, ID Barang, Nama Barang, Warna, Jenis Barang, Lebar, Ukuran, Qty), alamat
   di-merge `H7:I8`. Mapping JS: `D6`, `H6`, `D7`, `H7`, `B10:I19` (10 slot).
@@ -59,6 +61,21 @@ Fitur yang sudah selesai:
 - Status koneksi di modal login UI 3 (Soft Neutral) dibuat kontras untuk semua state:
   `secure` (hijau), `checking` (biru), `insecure`/`offline` (merah), termasuk teks
   "Inventory Gudang". GitHub Pages memakai HTTPS → state yang tampil biasanya `secure`.
+- **Guard pindah menu** (`switchTab`): kalau form sedang mode edit **atau** sudah ada perubahan
+  belum disimpan, muncul konfirmasi dulu — "Mode Edit Aktif" / "Form Belum Disimpan", tombol
+  **Ya, Lanjutkan**. Flag perubahan dilacak via event `input`/`change` dan dibersihkan
+  `clearUnsavedFormFlag()` saat reset/simpan/edit.
+- Toast biasa (kecuali `toast-welcome`) memakai animasi spring: drop + ikon pop + teks bertahap
+  + progress glow; otomatis dimatikan kalau `prefers-reduced-motion`.
+- **Animasi grafik garis Dashboard**: polyline Inflow/Outflow "digambar" dari kiri ke kanan
+  (`pathLength="1"` + `stroke-dashoffset`), area fade-in, titik muncul bertahap; ikut mati
+  saat `prefers-reduced-motion`. Hanya CSS di `styles.css`, print CSS di `app.js` tidak diubah.
+  Animasi **hanya jalan sekali per perubahan data**: `drawMovementTrend()` punya signature
+  (rentang + tema + nilai baris) supaya Cloud Sync 7 detik tidak menggambar ulang SVG identik.
+- Dropdown custom UI 2 (Crystal) jadi kaca gelap, tipografi dirapikan. Khusus "Pilih Barang"
+  di Barang Masuk, panel dropdown mengikuti lebar trigger (tidak melebar ke kanan).
+- Placeholder input form diganti kalimat instruksi singkat (mis. "Ketik ID barang (SKU)...",
+  "Isi warna barang..."), bukan contoh nilai lama.
 
 ---
 
@@ -200,11 +217,13 @@ docs/TABEL-PAGINATION-ALAMAT.md
 ```
 
 Cache-buster saat ini:
-- `index.html` → `assets/app.js?v=ui3-login-status-all-20261124`
-- `index.html` → `assets/styles.css?v=ui3-login-status-all-20261124`
+- `index.html` → `assets/app.js?v=grafik-animasi-stabil-20261125`
+- `index.html` → `assets/styles.css?v=grafik-animasi-stabil-20261125`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting (terbaru di atas):
+- `6106ea4` — guard pindah menu saat form memiliki perubahan belum disimpan
+- `308e017` — rapikan dropdown, form, placeholder, animasi toast; Warna Masuk jadi read-only
 - `c29afd5` — status koneksi login UI 3 ikut terang (HTTPS/checking)
 - `0e8c786` — status HTTP + teks "Inventory Gudang" diperjelas di UI 3
 - `1814b36` — dropdown terisi saat klik Edit + mitigasi delay sinkron 7 detik

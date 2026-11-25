@@ -1,6 +1,6 @@
 ﻿# Dokumentasi Tabel, Pagination, dan Alamat PO
 
-Dibuat: 2026-11-24 · Commit terakhir: `e5f888c` · Remote: `origin/main`
+Dibuat: 2026-11-24 · Diperbarui: 2026-11-25 · Commit terakhir: `6106ea4` · Remote: `origin/main`
 
 Dokumen ini merangkum pekerjaan UI yang paling sering diubah belakangan ini:
 kartu mobile, pagination, scroll horizontal tabel, dan alamat customer di PO.
@@ -175,7 +175,7 @@ juga tepat di tengah tombol (flex center).
 - Tombol **Reset** di 6 form (Master, PO, Masuk, Keluar, Sampel, Retur) memakai
   `requestFormReset(key)`, bukan `resetXxxForm()` langsung.
 - Saat mode edit aktif (`<mode>-edit-mode = 'true'`), label tombol otomatis jadi
-  **Batal** (merah muda) lewat `syncResetButtons()`. Klik **Batal** memunculkan
+  **Batal** (merah solid di semua 4 UI) lewat `syncResetButtons()`. Klik **Batal** memunculkan
   dialog `showConfirm('Batalkan Edit?', ...)` dengan tombol **Ya, Batalkan Edit**;
   baru setelah dikonfirmasi form di-reset dan muncul toast:
   `Edit <Form> dibatalkan. Perubahan yang belum disimpan dibuang.`
@@ -197,14 +197,21 @@ juga tepat di tengah tombol (flex center).
   Berat/Tebal) cukup `span 2` (bukan baris penuh seperti aturan generik UI 4),
   tombol min-width 120px. Responsif: 2 kolom ≤999px, 1 kolom ≤640px.
   Warna tetap palet Black Cyan; tema lain tidak terpengaruh.
-- **UI 3 & UI 4 — form Barang Masuk**: nilai Kategori di panel info
-  (`#info-masuk-jenis`) berupa pill (hijau soft di UI 3, cyan di UI 4), dipotong
-  elipsis satu baris, dengan tooltip `title` berisi teks lengkap dari
-  `updateMasukItemInfo()`. Di desktop (≥1000px) form pakai grid 3 kolom:
-  baris 1 `ID / Tanggal / Barang`, baris 2 `Info (Kategori|Satuan) / Jumlah Masuk /
-  Divisi`, baris 3 tombol penuh. Warna tetap mengikuti tema masing-masing.
-  Selector UI 4 sengaja dipanjangkan lewat `#masuk-form-card` untuk mengalahkan
-  aturan generik `form[id^="form-"] > .grid` yang memaksa panel Info jadi `grid-column:1/-1`.
+- **UI 3 & UI 4 — form Barang Masuk**: Kategori sekarang **teks biasa** (bukan pill lagi
+  sejak `308e017`), tetap ada tooltip `title` berisi teks lengkap. Warna **read-only** dari
+  Master lewat `#info-masuk-warna`, bukan input yang bisa ditimpa. Di desktop (≥1000px) form
+  pakai grid 3 kolom: baris 1 `ID / Tanggal / Barang`, baris 2 `Info (Kategori|Warna|Satuan) /
+  Jumlah Masuk / Divisi`, baris 3 tombol penuh. Selector UI 4 sengaja dipanjangkan lewat
+  `#masuk-form-card` untuk mengalahkan aturan generik `form[id^="form-"] > .grid` yang memaksa
+  panel Info jadi `grid-column:1/-1`.
+- **Dropdown custom**: UI 2 memakai kaca gelap + tipografi 12.5px/600. Panel opsi
+  "Pilih Barang" di Barang Masuk mengikuti lebar trigger agar tidak melebar ke kanan.
+- **Toast biasa** (di luar `toast-welcome`) memakai animasi spring enter/exit + icon pop +
+  teks bertahap + glow progress; otomatis mati saat `prefers-reduced-motion`.
+- **Grafik garis Dashboard** (Inflow/Outflow): garis digambar dari kiri ke kanan,
+  area fade-in, titik pop bertahap; mati otomatis kalau `prefers-reduced-motion`.
+  SVG cuma digambar ulang kalau data/rentang/tema berubah (signature guard), jadi tidak
+  berkedip tiap Cloud Sync 7 detik.
 
 ### 5.3 Guard pindah menu saat form belum disimpan
 
@@ -238,13 +245,15 @@ index.html
 Cache-buster **saat ini** (di `index.html`):
 
 ```
-assets/styles.css?v=ui3-login-status-all-20261124
-assets/app.js?v=ui3-login-status-all-20261124
+assets/styles.css?v=grafik-animasi-stabil-20261125
+assets/app.js?v=grafik-animasi-stabil-20261125
 ```
 
 Commit terkait (terbaru di atas):
 
 ```
+6106ea4  guard pindah menu saat form ada perubahan belum disimpan
+308e017  rapikan dropdown, form, placeholder, animasi toast; Warna Masuk read-only
 c29afd5  status koneksi login UI 3 ikut terang (HTTPS/checking)
 0e8c786  status HTTP + Inventory Gudang diperjelas di UI 3
 1814b36  dropdown Edit terisi + mitigasi delay 7 detik
@@ -284,6 +293,9 @@ Path kerja yang benar: `D:\PROJECT INVENTORY\inventory`.
     menampilkan nilai lama.
 11. Cek pop-up konfirmasi simpan → baris **Warna** ikut tampil.
 12. Login di UI 3 → status koneksi (HTTPS/checking/HTTP/offline) dan "Inventory Gudang" jelas terbaca.
+13. Isi form lalu pindah menu tanpa simpan → muncul konfirmasi "Form Belum Disimpan" / "Mode Edit Aktif";
+    **Batal** tetap di menu, **Ya, Lanjutkan** berpindah.
+14. Barang Masuk → Warna tampil read-only dari Master, Kategori teks biasa (bukan pill).
 
 ---
 
@@ -294,3 +306,6 @@ Path kerja yang benar: `D:\PROJECT INVENTORY\inventory`.
 - Frontend otomatis via GitHub Pages (HTTPS). Karena itu status koneksi di login UI 3
   memakai state `secure` ("Koneksi HTTPS aktif"), sudah ikut dibuat kontras.
 - Worker sudah diperbarui dengan whitelist `warna` (commit `0651f22` / `afed647`).
+- Perubahan `308e017` & `6106ea4` hanya frontend (`app.js`, `styles.css`, `index.html`) — Worker tidak diubah.
+- `boot.js` belum diganti (`APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`); cache-buster
+  memakai `?v=` di `index.html`, jadi perubahan tetap terlihat setelah hard refresh.
