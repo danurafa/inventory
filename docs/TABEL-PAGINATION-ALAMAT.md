@@ -1,4 +1,4 @@
-﻿# Dokumentasi Tabel, Pagination, dan Alamat PO
+# Dokumentasi Tabel, Pagination, dan Alamat PO
 
 Dibuat: 2026-11-24 · Diperbarui: 2026-11-25 · Commit terakhir: `60598d0` · Remote: `origin/main`
 
@@ -158,6 +158,16 @@ jarak bawah 24px (20px di mobile) dari tabel, gap 14px 16px antar input, dan tom
 Reset disamakan tinggi 34px supaya nggak mepet / desak tabel. Teks **Reset**
 juga tepat di tengah tombol (flex center).
 
+### 4.5 Tombol Tambah Barang di UI 4 mobile
+
+- Ukuran tombol `addPoItemRow()` **disamakan dengan UI 1–3** (font/padding bawaan,
+  ±150×38px); tidak ada lagi override font 11px khusus UI 4.
+- Baris `Daftar Barang dalam PO *` + tombol boleh `flex-wrap`; label `min-width:0`
+  dan tombol `white-space:nowrap`, jadi tidak bertumpuk pada layar sempit.
+- Di dalam baris barang, UI 3/4 kini memakai susunan dua kolom yang sama dengan
+  UI 1/2 pada ≤767px (baris 1: Barang | Qty PO, baris 2: Qty Siap | Warna,
+  baris 3: Hapus). Layout saja; warna, font, dan handler tidak berubah.
+
 ---
 
 ## 5. Scroll horizontal tabel
@@ -169,6 +179,14 @@ juga tepat di tengah tombol (flex center).
   `backface-visibility:hidden`, `contain:paint`, `overscroll-behavior-x:contain`.
 - `backdrop-filter` / `filter` / transisi pada card + isi tabel dimatikan supaya
   tidak repaint tiap frame (terutama di tema glass).
+- **UI 3 (`theme-soft`)**: tombol **Reset** di form (termasuk filter SJ) memakai clay
+  `#c49a94` / `#332624` dan tombol **Print** memakai sage `#9cb7a3` / `#2c392f`.
+  Keduanya mengikuti palet UI 3; `Batal` tetap merah dan efek tekan V208 tetap aktif.
+- **UI 4 (`theme-neon`)**: kanvas `#inventory-main-content` ikut di-flat
+  (`background:#07090d`, `background-image:none`, `background-attachment:scroll`) dan
+  pseudo-orb `::before/::after` dimatikan seperti UI 3. Ini menghilangkan repaint
+  gradient besar + blur tiap scroll. Tema lain, palet cyan, grid Data Explorer, dan
+  handler tidak berubah.
 
 ### 5.1 Pemberitahuan batal edit
 
@@ -259,7 +277,7 @@ index.html
 Cache-buster **saat ini** (di `index.html`):
 
 ```
-assets/styles.css?v=detail-single-ui34-20261125
+assets/styles.css?v=ui2-gradient-unify-20261126
 assets/app.js?v=keluar-detail-fix-20261125
 ```
 

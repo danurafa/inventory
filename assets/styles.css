@@ -13227,22 +13227,31 @@ html body.theme-glass.theme-light.theme-soft #toast-container .inventory-toast-c
     padding:9px 8px !important;
     vertical-align:middle !important;
   }
-  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(8),
-  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(9) {
+  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(9),
+  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(10) {
     white-space:nowrap !important;
   }
-  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(8) input {
-    width:76px !important;
+  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(9) {
+    width:150px !important;
+    min-width:150px !important;
+  }
+  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(10) {
+    width:132px !important;
+    min-width:132px !important;
+  }
+  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(9) input {
+    width:64px !important;
+    min-width:64px !important;
     min-height:36px !important;
     box-sizing:border-box !important;
-    margin-right:5px !important;
+    margin-right:4px !important;
   }
-  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(8) button,
-  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(9) button {
-    min-width:58px !important;
+  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(9) button,
+  html body.theme-glass #tab-po tr[id^="po-detail-"] tbody td:nth-child(10) button {
+    min-width:46px !important;
     min-height:36px !important;
-    margin:2px !important;
-    padding:7px 9px !important;
+    margin:1px !important;
+    padding:7px 7px !important;
     border-radius:9px !important;
     font-size:11px !important;
     line-height:1 !important;
@@ -16871,6 +16880,33 @@ html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.t
   }
 }
 
+/* V213 — state Tutup (panel detail sedang terbuka) dibedakan dari Detail:
+   badge akrilik MERAH supaya jelas kalau klik berikutnya akan menutup. */
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[onclick^="toggleKeluarDetails"],[onclick^="togglePoDetails"],[onclick^="toggleSjDetails"])[aria-expanded="true"]:not(:disabled):not([hidden]) {
+  --btn-badge-tone:251,113,133 !important;
+  border-color:rgba(253,164,175,.78) !important;
+  background-color:rgba(48,12,24,.64) !important;
+  background-image:linear-gradient(135deg,rgba(251,113,133,.52),rgba(225,29,72,.24)) !important;
+  color:#ffe4e6 !important;
+  -webkit-text-fill-color:#ffe4e6 !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 0 14px rgba(255,255,255,.14),0 8px 22px rgba(225,29,72,.30) !important;
+}
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[onclick^="toggleKeluarDetails"],[onclick^="togglePoDetails"],[onclick^="toggleSjDetails"])[aria-expanded="true"]:not(:disabled):not([hidden]):hover {
+  border-color:rgba(255,205,213,.92) !important;
+  background-image:linear-gradient(135deg,rgba(251,113,133,.66),rgba(225,29,72,.34)) !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 16px rgba(255,255,255,.20),0 10px 26px rgba(225,29,72,.40) !important;
+}
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[onclick^="toggleKeluarDetails"],[onclick^="togglePoDetails"],[onclick^="toggleSjDetails"])[aria-expanded="true"]:not(:disabled):not([hidden]):active {
+  background-color:rgba(40,8,20,.76) !important;
+  background-image:linear-gradient(135deg,rgba(251,113,133,.72),rgba(190,18,60,.38)) !important;
+  border-color:rgba(255,228,230,.95) !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  box-shadow:inset 0 3px 9px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.22),0 2px 6px rgba(225,29,72,.28) !important;
+}
+
 /* V211 — Barang Keluar: pastikan tombol Detail cuma satu di semua UI.
    Aturan badge/akrilik bisa memaksa .keluar-detail-mobile muncul di desktop;
    di desktop tombol asli di kolom "Detail Barang" sudah cukup. Mobile tidak
@@ -16880,3 +16916,169 @@ html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.t
     display:none !important;
   }
 }
+
+/* V214 — UI 4 (Black Cyan): ringankan scroll. Kanvas scroll di-flat dan dua
+   orb dekoratif ::before/::after dimatikan, mengikuti perlakuan UI 3.
+   Palet cyan, grid Data Explorer, dan semua handler tidak diubah. */
+html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content {
+  background:#07090d !important;
+  background-image:none !important;
+  background-attachment:scroll !important;
+}
+html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content::before,
+html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content::after {
+  display:none !important;
+  content:none !important;
+  filter:none !important;
+}
+
+/* V215 — UI 3 (Soft Sage): tombol Reset & Print ikut palet tema.
+   Reset memakai clay lembut yang sudah dipakai tombol reset UI 3, Print memakai
+   sage. Mode Batal (reset-form-batal) tetap merah; tombol lain tidak diubah. */
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content :is(button[data-reset-form]:not(.reset-form-batal),button[onclick="resetSjFilter()"]):not(:disabled):not([hidden]) {
+  --btn-badge-tone:196,154,148 !important;
+  color:#c49a94 !important;
+  -webkit-text-fill-color:#c49a94 !important;
+  background:#332624 !important;
+  background-color:#332624 !important;
+  background-image:linear-gradient(135deg,#3c2d2a,#2b211f) !important;
+  border:1px solid #6b4f49 !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 6px 18px rgba(0,0,0,.22) !important;
+}
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content :is(button[data-reset-form]:not(.reset-form-batal),button[onclick="resetSjFilter()"]):not(:disabled):not([hidden]):hover {
+  color:#e3c2bd !important;
+  -webkit-text-fill-color:#e3c2bd !important;
+  background:#493530 !important;
+  background-color:#493530 !important;
+  background-image:linear-gradient(135deg,#573f39,#382a27) !important;
+  border-color:#a37a73 !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 8px 22px rgba(0,0,0,.26) !important;
+}
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[onclick^="print"]:not(:disabled):not([hidden]) {
+  --btn-badge-tone:156,183,163 !important;
+  color:#9cb7a3 !important;
+  -webkit-text-fill-color:#9cb7a3 !important;
+  background:#2c392f !important;
+  background-color:#2c392f !important;
+  background-image:linear-gradient(135deg,#35483d,#263129) !important;
+  border:1px solid #5f7b69 !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 6px 18px rgba(0,0,0,.22) !important;
+}
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[onclick^="print"]:not(:disabled):not([hidden]):hover {
+  color:#e4efe8 !important;
+  -webkit-text-fill-color:#e4efe8 !important;
+  background:#3d5446 !important;
+  background-color:#3d5446 !important;
+  background-image:linear-gradient(135deg,#46614f,#314036) !important;
+  border-color:#91ad9a !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 8px 22px rgba(0,0,0,.26) !important;
+}
+
+/* V216 — UI 4 (Black Cyan): tombol "Tambah Barang" di PO tidak bertumpuk di mobile.
+   Ukuran tombol sengaja TIDAK diubah supaya sama dengan UI 1–3. Yang diatur hanya
+   baris label + tombol: boleh wrap, label boleh menyempit, teks tombol nowrap. */
+@media (max-width:767px) {
+  html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content #tab-po form[id^="form-"] > .space-y-2 > .flex.items-center.justify-between {
+    flex-wrap:wrap !important;
+    gap:6px 8px !important;
+    align-items:center !important;
+  }
+  html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content #tab-po form[id^="form-"] > .space-y-2 > .flex.items-center.justify-between > label {
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    line-height:1.35 !important;
+    overflow-wrap:anywhere !important;
+  }
+  html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content #tab-po form[id^="form-"] > .space-y-2 > .flex.items-center.justify-between > button[onclick="addPoItemRow()"] {
+    flex:0 0 auto !important;
+    max-width:100% !important;
+    white-space:nowrap !important;
+  }
+}
+
+/* V217 — Mobile layout parity: UI 2/3/4 mengikuti struktur layout mobile UI 1.
+   Hanya layout (padding, gap, susunan form/baris PO). Warna, font, radius, dan
+   semua handler tetap milik tema masing-masing.
+   Padding main memakai dua tingkat yang sama dengan UI 1:
+   641–767px = 14px 11px, ≤640px = 16px 12px (lihat override di akhir blok). */
+@media (max-width:767px) {
+  html body.theme-glass:is(.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content {
+    padding:14px 11px !important;
+  }
+  html body.theme-glass:is(.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) > .grid:first-child {
+    gap:12px !important;
+  }
+  html body.theme-glass:is(.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) > .grid:first-child > .app-card {
+    padding:14px !important;
+  }
+  html body.theme-glass:is(.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) :is(#form-master,#form-po,#form-masuk,#form-keluar,#form-sampel,#form-retur,#form-user) {
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:16px !important;
+  }
+  html body.theme-glass:is(.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) :is(#form-master,#form-po,#form-masuk,#form-keluar,#form-sampel,#form-retur,#form-user) > * {
+    width:100% !important;
+    min-width:0 !important;
+    margin-top:0 !important;
+    margin-bottom:0 !important;
+    grid-column:auto !important;
+    grid-row:auto !important;
+  }
+  html body.theme-glass:is(.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) :is(#form-master,#form-po,#form-masuk,#form-keluar,#form-sampel,#form-retur,#form-user) > .pt-2 {
+    display:flex !important;
+    justify-content:flex-start !important;
+    gap:8px !important;
+    width:100% !important;
+  }
+  html body.theme-glass:is(.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) :is(#form-master,#form-po,#form-masuk,#form-keluar,#form-sampel,#form-retur,#form-user) > .pt-2 button {
+    min-width:0 !important;
+    width:auto !important;
+  }
+  html body.theme-glass:is(.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) :is(#form-master,#form-po,#form-masuk,#form-keluar,#form-sampel,#form-retur,#form-user) > .pt-2 button[type="submit"] {
+    flex:1 1 auto !important;
+  }
+  html body.theme-glass:is(.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content [id^="tab-"]:not(#tab-dashboard):not(#tab-backup) :is(#form-master,#form-po,#form-masuk,#form-keluar,#form-sampel,#form-retur,#form-user) > .pt-2 button[type="button"] {
+    flex:0 0 auto !important;
+  }
+  html body.theme-glass:is(.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content #po-items-container [data-po-item-row] {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+  html body.theme-glass:is(.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content #po-items-container [data-po-item-row] > :nth-child(1) {
+    grid-column:1 !important;
+    grid-row:1 !important;
+  }
+  html body.theme-glass:is(.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content #po-items-container [data-po-item-row] > :nth-child(2) {
+    grid-column:2 !important;
+    grid-row:1 !important;
+  }
+  html body.theme-glass:is(.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content #po-items-container [data-po-item-row] > :nth-child(3) {
+    grid-column:1 !important;
+    grid-row:2 !important;
+  }
+  html body.theme-glass:is(.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content #po-items-container [data-po-item-row] > :nth-child(4) {
+    grid-column:2 !important;
+    grid-row:2 !important;
+  }
+  html body.theme-glass:is(.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content #po-items-container [data-po-item-row] > :nth-child(5) {
+    grid-column:1 / -1 !important;
+    grid-row:3 !important;
+    justify-self:center !important;
+    align-self:center !important;
+    width:100% !important;
+  }
+}
+
+/* V217b — UI 1 memakai padding main 16px 12px di layar ≤640px; samakan UI 2/3/4. */
+@media (max-width:640px) {
+  html body.theme-glass:is(.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f):not(#lg2g) #inventory-main-content {
+    padding:16px 12px !important;
+  }
+}
+
+/* V218 — UI 2 (Crystal) desktop: gradient tetap satu sumber, yaitu body.
+   Percobaan memberi #inventory-main-content gradient sendiri (meniru resep V214
+   UI 4) dibatalkan: hasilnya area content jadi beda warna dengan strip header/nav
+   dan sidebar. Sekarang main dibiarkan transparan seperti aslinya, jadi header,
+   sidebar, dan content memakai gradient body yang sama persis. Tidak ada aturan
+   baru di sini — hanya catatan supaya percobaan itu tidak diulang. */

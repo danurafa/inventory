@@ -1,4 +1,4 @@
-﻿# Catatan Serah Terima Sesi — Inventory Surat Jalan
+# Catatan Serah Terima Sesi — Inventory Surat Jalan
 
 Dokumen ini dibuat supaya sesi baru di PC 2 bisa langsung lanjut tanpa membaca
 percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-25 (HEAD `60598d0`, working tree bersih).
@@ -108,12 +108,45 @@ Fitur yang sudah selesai:
   tidak sama dengan abu / sky / rose / orange / emerald / amber / biru Simpan. Gradient
   ungu tembus + blur 14px + border `rgba(196,181,253,.70)` + highlight inset. Saat state
   dibuka teks jadi **Tutup** dengan warna sama. Hover makin terang, ditekan makin gelap +
-  shadow inset (efek V208 tetap jalan). Hanya tombol toggle detail yang kena.
+  shadow inset (efek V208 tetap jalan). Hanya tombol toggle detail yang kena. Saat panel terbuka (`aria-expanded="true"`),
+  teks jadi **Tutup** dan warnanya berubah jadi **badge akrilik merah** (`rgb(251,113,133)`)
+  supaya tidak bingung dengan tombol **Detail** ungu. Hover/active merah juga.
+- **Mobile (≤767px) — PO Customer (sub detail)**: kolom input **Atur Siap** dan **Aksi**
+  sudah dikoreksi selectors-nya (sebelum ini one-column off: menarget `nth-child(8)/(9)`,
+  padahal input ada di `9` dan tombol Edit/Hapus di `10`). Kolom 9 dibuat 150px, kolom 10
+  132px; input 64px + tombol `Atur`/`Edit`/`Hapus` 46px dengan `margin:1px` → tidak saling
+  menimpa saat tabel di-scroll horizontal. Tidak ada perubahan di `app.js`.
 - **Semua UI (1–4) — Barang Keluar**: tombol **Detail** cuma satu. Aturan badge/akrilik
   yang memaksa `display:inline-flex` membuat `.keluar-detail-mobile` ikut muncul di
   desktop (terutama UI 3/UI 4); sekarang disembunyikan lagi di desktop (≥768px) untuk
   semua tema. Di mobile kolom ke-9 tetap hidden, jadi yang tampil cuma tombol Detail
   di kartu. Tombol dengan atribut `hidden` juga dipaksa `display:none`.
+- **UI 4 (Black Cyan) — scroll lebih ringan**: kanvas `#inventory-main-content` di-flat
+  (`#07090d`, `background-image:none`, `background-attachment:scroll`) dan dua orb
+  dekoratif `::before/::after` dimatikan, mengikuti perlakuan UI 3. `backdrop-filter`
+  sudah `none` di ke-4 tema, jadi bukan penyebab berat. Palet cyan, grid Data Explorer,
+  pagination, dan semua handler tidak berubah; hanya CSS.
+- **UI 3 (Soft Sage) — tombol Reset & Print**: form `Reset` (termasuk `resetSjFilter()`)
+  sekarang pakai clay `#c49a94` di atas `#332624` (border `#6b4f49`), sedangkan `Print`
+  pakai sage `#9cb7a3` di atas `#2c392f` (border `#5f7b69`). Hover masing-masing makin
+  terang, efek tekan V208 tetap jalan. `Batal` saat mode edit tetap merah; sidebar,
+  modal print, dan UI lain tidak berubah.
+- **UI 4 (Black Cyan) — tombol Tambah Barang (PO) mobile**: ukuran tombol
+  disamakan dengan UI 1–3 (font/padding bawaan, ±150×38px). Yang diatur hanya
+  baris label + tombol: boleh `wrap`, label boleh menyempit, teks tombol `nowrap`
+  — jadi tidak bertumpuk di layar ≤767px tanpa mengubah ukuran tombol.
+- **Mobile layout parity UI 2/3/4 = UI 1 (≤767px, layout saja)**: padding main
+  dua tingkat (14px 11px di 641–767px, 16px 12px di ≤640px), gap `.grid` 12px,
+  padding `.app-card` 14px, form CRUD jadi satu kolom dengan jarak 16px, dan baris
+  PO memakai susunan 2 kolom seperti UI 1. Warna, font, radius, dan handler tetap
+  milik masing-masing tema.
+- **UI 2 (Crystal) desktop — gradient disatukan**: sempat dicoba memasang gradient
+  sendiri di `#inventory-main-content` (meniru resep V214 UI 4), tapi hasilnya area
+  content jadi beda warna dengan strip header/nav dan sidebar. Percobaan itu
+  dibatalkan: sekarang gradient hanya ada di `body` (5 radial + 1 linear, seperti
+  aslinya) dan main transparan, jadi header + sidebar + content memakai gradient
+  yang sama persis. Tidak ada aturan CSS baru untuk UI 2 di desktop; mobile juga
+  tidak disentuh.
 - **Animasi active state sidebar**: tombol yang baru aktif pop halus (`scale 1.035`, fade,
   `translate -1px`) via `sidebarActivePop` 0.42s. Memakai `scale`/`translate` individual supaya
   tidak bentrok dengan `transform:none !important` di UI 2/4; mati saat `prefers-reduced-motion`.
@@ -270,7 +303,7 @@ docs/TABEL-PAGINATION-ALAMAT.md
 
 Cache-buster saat ini:
 - `index.html` → `assets/app.js?v=keluar-detail-fix-20261125`
-- `index.html` → `assets/styles.css?v=detail-single-ui34-20261125`
+- `index.html` → `assets/styles.css?v=ui2-gradient-unify-20261126`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting (terbaru di atas):
