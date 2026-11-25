@@ -16732,3 +16732,151 @@ html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):
 html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[hidden] {
   display:none !important;
 }
+
+/* V208 — efek tombol ditekan lebih jelas di UI 1–4.
+   Aturan lama UI 2 mematikan transform/filter saat active; blok ini sengaja
+   mengalahkannya supaya feedback tekan tetap terlihat. */
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) button:not(:disabled):not([hidden]):active {
+  scale:.95 !important;
+  transform:translateY(2px) !important;
+  transition-duration:.08s !important;
+}
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(:disabled):not([hidden]):active {
+  transform:translateY(2px) !important;
+  filter:brightness(.92) saturate(1.1) !important;
+  box-shadow:inset 0 3px 9px rgba(0,0,0,.42),0 1px 3px rgba(0,0,0,.22) !important;
+}
+/* Badge pill UI 1 & UI 2: warna makin pekat mengikuti --btn-badge-tone. */
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(.theme-accent-bg):not(:disabled):not([hidden]):active {
+  background:linear-gradient(135deg,rgba(var(--btn-badge-tone,148,163,184),.54),rgba(var(--btn-badge-tone,148,163,184),.28)) !important;
+  background-image:linear-gradient(135deg,rgba(var(--btn-badge-tone,148,163,184),.54),rgba(var(--btn-badge-tone,148,163,184),.28)) !important;
+  border-color:rgba(var(--btn-badge-tone,148,163,184),.95) !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  box-shadow:inset 0 3px 9px rgba(0,0,0,.46),0 1px 3px rgba(var(--btn-badge-tone,148,163,184),.28) !important;
+}
+/* Badge pill UI 3 & UI 4: palet asli tetap dipakai, hanya border + inset shadow. */
+html body.theme-glass:is(.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(.theme-accent-bg):not(:disabled):not([hidden]):active {
+  border-color:currentColor !important;
+  box-shadow:inset 0 3px 9px rgba(0,0,0,.44),0 1px 3px rgba(0,0,0,.20) !important;
+}
+/* Tombol utama: tetap solid, tapi turun & gelap mengikuti aksen tiap tema. */
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button.theme-accent-bg:not(:disabled):not([hidden]):active {
+  background-image:linear-gradient(135deg,rgba(56,189,248,.58),rgba(29,78,216,.30)) !important;
+  background-color:rgba(8,18,38,.74) !important;
+  border-color:rgba(125,211,252,.90) !important;
+}
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button.theme-accent-bg:not(:disabled):not([hidden]):active {
+  background-image:linear-gradient(135deg,rgba(56,189,248,.62),rgba(29,78,216,.30)) !important;
+  background-color:rgba(10,24,48,.72) !important;
+  border-color:rgba(125,211,252,.92) !important;
+}
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button.theme-accent-bg:not(:disabled):not([hidden]):active {
+  background-image:linear-gradient(135deg,#3f574a,#34473d) !important;
+  border-color:#6f8b7a !important;
+}
+html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button.theme-accent-bg:not(:disabled):not([hidden]):active {
+  background-image:linear-gradient(135deg,#149fac,#0d7b89) !important;
+  border-color:rgba(102,239,247,.75) !important;
+}
+/* Sidebar: transform sengaja dinetralisir; pakai scale + highlight inset. */
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) :is(#inventory-sidebar,#inventory-top-header nav) .sidebar-btn:not(:disabled):active {
+  transform:none !important;
+  filter:brightness(.94) !important;
+  box-shadow:inset 3px 0 currentColor,inset 0 2px 8px rgba(0,0,0,.38) !important;
+  scale:.975 !important;
+}
+@media (prefers-reduced-motion:reduce) {
+  html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) button:not(:disabled):not([hidden]):active,
+  html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:not(:disabled):not([hidden]):active,
+  html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) :is(#inventory-sidebar,#inventory-top-header nav) .sidebar-btn:not(:disabled):active {
+    scale:none !important;
+    transform:none !important;
+    transition:none !important;
+  }
+}
+
+/* V209 — UI 1 & UI 2: tombol Simpan di form jadi badge akrilik biru.
+   Hanya submit button di #inventory-main-content; login, modal, dan sidebar tetap solid. */
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content form button[type="submit"].theme-accent-bg:not(:disabled):not([hidden]),
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content form button[type="submit"].theme-accent-bg:not(:disabled):not([hidden]) * {
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  text-shadow:none !important;
+}
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content form button[type="submit"].theme-accent-bg:not(:disabled):not([hidden]) {
+  background-image:linear-gradient(135deg,rgba(56,189,248,.42),rgba(37,99,235,.16)) !important;
+  background-color:rgba(10,22,44,.62) !important;
+  border:1px solid rgba(125,211,252,.62) !important;
+  border-radius:999px !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 0 14px rgba(255,255,255,.14),0 8px 22px rgba(37,99,235,.26) !important;
+  -webkit-backdrop-filter:blur(14px) saturate(150%) !important;
+  backdrop-filter:blur(14px) saturate(150%) !important;
+}
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content form button[type="submit"].theme-accent-bg:not(:disabled):hover {
+  background-image:linear-gradient(135deg,rgba(56,189,248,.56),rgba(37,99,235,.24)) !important;
+  border-color:rgba(125,211,252,.85) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 16px rgba(255,255,255,.18),0 10px 26px rgba(37,99,235,.34) !important;
+}
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content form button[type="submit"].theme-accent-bg:not(:disabled):active {
+  background-image:linear-gradient(135deg,rgba(56,189,248,.62),rgba(29,78,216,.30)) !important;
+  background-color:rgba(8,18,38,.74) !important;
+  border-color:rgba(125,211,252,.92) !important;
+  box-shadow:inset 0 3px 9px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.22),0 2px 6px rgba(37,99,235,.24) !important;
+}
+@media (prefers-reduced-motion:reduce) {
+  html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content form button[type="submit"].theme-accent-bg:not(:disabled):not([hidden]) {
+    -webkit-backdrop-filter:none !important;
+    backdrop-filter:none !important;
+  }
+}
+
+/* V210 — tombol "Detail"/"Tutup" (Keluar, PO Customer, Riwayat SJ) jadi badge
+   akrilik UNGU. Warna ini sengaja dipilih karena belum dipakai badge lain
+   (abu / sky / rose / orange / emerald / amber / biru Simpan). */
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[onclick^="toggleKeluarDetails"],[onclick^="togglePoDetails"],[onclick^="toggleSjDetails"]):not(:disabled):not([hidden]) {
+  --btn-badge-tone:167,139,250 !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border:1px solid rgba(196,181,253,.70) !important;
+  border-radius:999px !important;
+  background-color:rgba(24,16,48,.62) !important;
+  background-image:linear-gradient(135deg,rgba(167,139,250,.46),rgba(139,92,246,.20)) !important;
+  color:#f3e8ff !important;
+  -webkit-text-fill-color:#f3e8ff !important;
+  text-shadow:none !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.40),inset 0 0 14px rgba(255,255,255,.14),0 8px 22px rgba(139,92,246,.30) !important;
+  -webkit-backdrop-filter:blur(14px) saturate(150%) !important;
+  backdrop-filter:blur(14px) saturate(150%) !important;
+}
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[onclick^="toggleKeluarDetails"],[onclick^="togglePoDetails"],[onclick^="toggleSjDetails"]):not(:disabled):not([hidden]):hover {
+  border-color:rgba(221,214,254,.90) !important;
+  background-image:linear-gradient(135deg,rgba(167,139,250,.60),rgba(139,92,246,.30)) !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 16px rgba(255,255,255,.20),0 10px 26px rgba(139,92,246,.40) !important;
+}
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[onclick^="toggleKeluarDetails"],[onclick^="togglePoDetails"],[onclick^="toggleSjDetails"]):not(:disabled):not([hidden]):active {
+  background-color:rgba(18,10,40,.74) !important;
+  background-image:linear-gradient(135deg,rgba(167,139,250,.66),rgba(109,40,217,.34)) !important;
+  border-color:rgba(233,213,255,.95) !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  box-shadow:inset 0 3px 9px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.22),0 2px 6px rgba(139,92,246,.28) !important;
+}
+@media (prefers-reduced-motion:reduce) {
+  html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[onclick^="toggleKeluarDetails"],[onclick^="togglePoDetails"],[onclick^="toggleSjDetails"]):not(:disabled):not([hidden]) {
+    -webkit-backdrop-filter:none !important;
+    backdrop-filter:none !important;
+  }
+}
+
+/* V211 — Barang Keluar: pastikan tombol Detail cuma satu di semua UI.
+   Aturan badge/akrilik bisa memaksa .keluar-detail-mobile muncul di desktop;
+   di desktop tombol asli di kolom "Detail Barang" sudah cukup. Mobile tidak
+   terpengaruh (aturan khusus kartu tetap menampilkan tombol di kolom aksi). */
+@media (min-width:768px) {
+  html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content #keluar-table-body .keluar-detail-mobile {
+    display:none !important;
+  }
+}

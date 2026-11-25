@@ -88,14 +88,32 @@ Fitur yang sudah selesai:
   border lembut, highlight inset + bayangan, dan **pop halus `scale 1.03` saat hover**.
   Alpha `.34/.16`, border `.58`, glow `.24` (sama di UI 1 & UI 2). Reset → amber,
   Print → emerald, Sebelumnya/Berikutnya → sky, Batal saat edit tetap merah solid.
-  Tombol utama `.theme-accent-bg` (Simpan/MASUK SISTEM/Ya, Lanjutkan) sengaja tetap solid
-  supaya hierarki aksi terjaga. **Sidebar, header, dan modal tidak terpengaruh.**
+  Tombol utama `.theme-accent-bg` (MASUK SISTEM/Ya, Lanjutkan) sengaja tetap solid
+  supaya hierarki aksi terjaga — kecuali **Simpan di UI 1 & UI 2** yang sudah jadi
+  akrilik (lihat bullet berikutnya). **Sidebar, header, dan modal tidak terpengaruh.**
   UI 3/UI 4 tidak berubah.
-- **UI 1 & UI 2 — Barang Keluar**: tombol **Detail** cuma satu. Aturan badge global yang
-  memaksa `display:inline-flex` membuat `.keluar-detail-mobile` ikut muncul di desktop;
-  sekarang disembunyikan lagi di desktop (≥768px). Di mobile kolom ke-9 tetap hidden,
-  jadi yang tampil cuma tombol Detail di kartu. Tombol dengan atribut `hidden` juga
-  dipaksa `display:none` supaya tidak ikut kena badge.
+- **Semua UI (1–4)** — efek tombol ditekan lebih jelas: `scale .95`, turun 2px,
+  filter sedikit gelap, border terang, dan shadow inset. UI 1/2 badge memakai
+  gradient pekat sesuai `--btn-badge-tone`; UI 3/4 mempertahankan palet asli.
+  Tombol utama gelap mengikuti aksen tema; sidebar `scale .975` + highlight inset.
+  Mati otomatis untuk `prefers-reduced-motion`.
+- **UI 1 (Classic) & UI 2 (Crystal) — tombol Simpan**: submit button di form
+  (`#inventory-main-content form button[type="submit"].theme-accent-bg`) memakai
+  **badge akrilik biru** — gradient sky/blue tembus, blur 14px, border
+  `rgba(125,211,252,.62)`, teks putih, highlight inset + glow. Hover/active ikut
+  akrilik (active makin gelap + shadow tekan). Login (`MASUK SISTEM`), modal
+  (`Ya, Simpan` / `Ya, Lanjutkan`), sidebar, dan UI 3/4 tetap solid.
+- **Semua UI (1–4) — tombol Detail/Tutup** di Barang Keluar, PO Customer, dan Riwayat SJ:
+  **badge akrilik ungu** (violet `rgb(167,139,250)`) — sengaja pakai warna baru supaya
+  tidak sama dengan abu / sky / rose / orange / emerald / amber / biru Simpan. Gradient
+  ungu tembus + blur 14px + border `rgba(196,181,253,.70)` + highlight inset. Saat state
+  dibuka teks jadi **Tutup** dengan warna sama. Hover makin terang, ditekan makin gelap +
+  shadow inset (efek V208 tetap jalan). Hanya tombol toggle detail yang kena.
+- **Semua UI (1–4) — Barang Keluar**: tombol **Detail** cuma satu. Aturan badge/akrilik
+  yang memaksa `display:inline-flex` membuat `.keluar-detail-mobile` ikut muncul di
+  desktop (terutama UI 3/UI 4); sekarang disembunyikan lagi di desktop (≥768px) untuk
+  semua tema. Di mobile kolom ke-9 tetap hidden, jadi yang tampil cuma tombol Detail
+  di kartu. Tombol dengan atribut `hidden` juga dipaksa `display:none`.
 - **Animasi active state sidebar**: tombol yang baru aktif pop halus (`scale 1.035`, fade,
   `translate -1px`) via `sidebarActivePop` 0.42s. Memakai `scale`/`translate` individual supaya
   tidak bentrok dengan `transform:none !important` di UI 2/4; mati saat `prefers-reduced-motion`.
@@ -252,7 +270,7 @@ docs/TABEL-PAGINATION-ALAMAT.md
 
 Cache-buster saat ini:
 - `index.html` → `assets/app.js?v=keluar-detail-fix-20261125`
-- `index.html` → `assets/styles.css?v=keluar-detail-fix-20261125`
+- `index.html` → `assets/styles.css?v=detail-single-ui34-20261125`
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting (terbaru di atas):

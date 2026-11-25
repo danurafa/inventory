@@ -259,7 +259,7 @@ index.html
 Cache-buster **saat ini** (di `index.html`):
 
 ```
-assets/styles.css?v=keluar-detail-fix-20261125
+assets/styles.css?v=detail-single-ui34-20261125
 assets/app.js?v=keluar-detail-fix-20261125
 ```
 
