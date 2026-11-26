@@ -1,7 +1,7 @@
 ﻿# Catatan Serah Terima Sesi — Inventory Surat Jalan
 
 Dokumen ini dibuat supaya sesi baru di PC 2 bisa langsung lanjut tanpa membaca
-percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-26 (HEAD `0ad146d`, cache disinkronkan ke index.html).
+percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-26 (HEAD `68d6321`, cache disinkronkan ke index.html).
 
 Untuk detail pekerjaan UI terbaru (kartu mobile, pagination 10 baris, alamat PO,
 toast, scroll horizontal), baca juga `docs/TABEL-PAGINATION-ALAMAT.md`.
@@ -351,6 +351,7 @@ Cache-buster saat ini:
 - Marker HEAD di docs = commit aplikasi terakhir yang sudah dicatat; commit `docs:` (termasuk commit sinkron ini) tidak dihitung guard.
 
 Commit penting (terbaru di atas):
+- `68d6321` — feat: badge alamat customer di detail riwayat PO
 - `0ad146d` — feat: indikator loading tombol login
 - `ee9250e` — fix: guard HEAD lewati baris hash doc
 - `5fcfbf7` — fix: guard sinkron abaikan commit docs sendiri

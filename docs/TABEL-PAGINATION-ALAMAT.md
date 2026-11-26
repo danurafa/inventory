@@ -275,7 +275,7 @@ index.html
 ```
 
 Cache-buster **saat ini** (di `index.html`):
-HEAD `0ad146d`
+HEAD `68d6321`
 Commit aplikasi terakhir; commit `docs:` (termasuk commit sinkron) tidak dihitung guard.
 
 ```
@@ -286,6 +286,7 @@ assets/app.js?v=po-alamat-badge-20261126
 Commit terkait (terbaru di atas):
 
 ```
+68d6321  feat: badge alamat customer di detail riwayat PO
 0ad146d  feat: indikator loading tombol login
 ee9250e  fix: guard HEAD lewati baris hash doc
 5fcfbf7  fix: guard sinkron abaikan commit docs sendiri
