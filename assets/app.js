@@ -1253,7 +1253,7 @@
             window.updateHeaderGreeting?.();
             const role = user.role;
             const renderKey = JSON.stringify([user.id || user.username || '', user.name || '', role || '']);
-            if (banner.dataset.renderedUserKey === renderKey && banner.querySelector('button[onclick="logoutUser()"]')) return;
+            if (banner.dataset.renderedUserKey === renderKey && banner.querySelector('[data-action="logout-user"]')) return;
             const badgeClass = role === 'admin' ? 'role-badge-admin' : (role === 'staff' ? 'role-badge-staff' : 'role-badge-viewer');
             const mobileRoleBadge = document.getElementById('v167-mobile-role-badge');
             if (mobileRoleBadge) {
@@ -1274,7 +1274,7 @@
                         <span class="px-1.5 py-0.2 rounded text-[9px] font-extrabold uppercase ${badgeClass}">${safeRole}</span>
                     </div>
                 </div>
-                <button onclick="logoutUser()" class="p-1.5 rounded-lg bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 transition-colors ml-1" title="Logout">
+                <button data-action="logout-user" class="p-1.5 rounded-lg bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 transition-colors ml-1" title="Logout">
                     <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
                 </button>
             `;
@@ -2047,8 +2047,8 @@
                         <td class="py-3 px-3 text-right font-mono opacity-70">${Number(i.min||0).toLocaleString('id-ID')}</td>
                         ${!isViewer ? `
                             <td class="py-3 px-3 text-center flex items-center justify-center gap-1.5">
-                                <button onclick="editMasterItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
-                                <button onclick="deleteMasterItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
+                                <button data-action="edit-master" data-id="${safeIdAttr}" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                                <button data-action="delete-master" data-id="${safeIdAttr}" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                             </td>
                         ` : ''}
                     </tr>
@@ -2337,8 +2337,8 @@
                     <td class="py-3 px-3 font-medium">${esc(i.supplier)}</td>
                     ${!isViewer ? `
                         <td class="py-3 px-3 text-center">
-                            <button onclick="editMasukItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
-                            <button onclick="deleteMasukItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
+                            <button data-action="edit-masuk" data-id="${safeIdAttr}" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                            <button data-action="delete-masuk" data-id="${safeIdAttr}" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                         </td>
                     ` : ''}
                 </tr>`;
@@ -2571,8 +2571,8 @@
                         <td class="p-2 text-right font-mono font-bold text-rose-400">-${Number(row.qty || 0).toLocaleString('id-ID')}</td>
                         <td class="p-2 font-mono">${escLocal((window.gudangAppDb.po || []).find(p => String(p.id) === String(row.poRef))?.noPoCustomer || row.poRef || '-')}</td>
                         <td class="p-2 text-center">${!isViewer ? `
-                            <button onclick="editKeluarItem('${escLocal(row.id).replace(/'/g, '&#39;')}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
-                            <button onclick="deleteKeluarItem('${escLocal(row.id).replace(/'/g, '&#39;')}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
+                            <button data-action="edit-keluar" data-id="${escLocal(row.id)}" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                            <button data-action="delete-keluar" data-id="${escLocal(row.id)}" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                         ` : '-'}</td>
                     </tr>
                 `).join('');
@@ -2587,8 +2587,8 @@
                         <td data-label="Total Qty Keluar" class="py-3 px-3 text-right font-mono font-bold text-rose-400">-${totalQty.toLocaleString('id-ID')}</td>
                         <td data-label="Customer / Tujuan" class="py-3 px-3 font-medium">${escLocal(group.head.tujuan || '-')}</td>
                         <td data-label="No. PO" class="py-3 px-3 font-mono opacity-80">${escLocal(poRefs.join(', '))}</td>
-                        <td data-label="Detail Barang" class="py-3 px-3 text-center"><button type="button" onclick="toggleKeluarDetails('${token}', this, ${group.rows.length})" data-keluar-detail-toggle="${token}" aria-expanded="${expanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button></td>
-                        <td data-label="Aksi" class="py-3 px-3 text-center"><div class="keluar-actions flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:190px"><button type="button" onclick="toggleKeluarDetails('${token}', this, ${group.rows.length})" data-keluar-detail-toggle="${token}" aria-expanded="${expanded ? 'true' : 'false'}" class="keluar-detail-mobile shrink-0 px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button><button onclick="printSuratJalan('${escLocal(group.transactionId).replace(/'/g, '&#39;')}', 'keluar', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan sesuai template Excel"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button><button onclick="downloadSuratJalanExcel('${escLocal(group.transactionId).replace(/'/g, '&#39;')}', 'keluar', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download template Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button></div></td>
+                        <td data-label="Detail Barang" class="py-3 px-3 text-center"><button type="button" data-action="toggle-keluar-details" data-token="${token}" data-count="${group.rows.length}" data-keluar-detail-toggle="${token}" aria-expanded="${expanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button></td>
+                        <td data-label="Aksi" class="py-3 px-3 text-center"><div class="keluar-actions flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:190px"><button type="button" data-action="toggle-keluar-details" data-token="${token}" data-count="${group.rows.length}" data-keluar-detail-toggle="${token}" aria-expanded="${expanded ? 'true' : 'false'}" class="keluar-detail-mobile shrink-0 px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button><button data-action="print-sj" data-tid="${escLocal(group.transactionId)}" data-source="keluar" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan sesuai template Excel"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button><button data-action="download-sj-excel" data-tid="${escLocal(group.transactionId)}" data-source="keluar" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download template Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button></div></td>
                         <td data-label="User" class="keluar-user-mobile py-3 px-3 opacity-80">${escLocal(userNames.join(', ') || group.head.user || '-')}</td>
                     </tr>
                     <tr id="keluar-detail-${token}" data-keluar-group-key="${token}" class="keluar-detail-row ${expanded ? '' : 'hidden'}">
@@ -2669,7 +2669,7 @@
                 <div><label class="text-[10px] text-gray-400">Qty PO</label><input ${n===1?'id="po-qty"':''} data-po-field="qty" type="number" min="1" step="1" value="${esc(values.qty ?? 1)}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
                 <div><label class="text-[10px] text-gray-400">Qty Siap</label><input ${n===1?'id="po-siap"':''} data-po-field="siapKirim" type="number" min="0" step="1" value="${esc(values.siapKirim ?? 0)}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
                 <div><label class="text-[10px] text-gray-400">Warna Barang</label><input ${n===1?'id="po-warna"':''} data-po-field="warna" type="text" value="${esc(String(values.warna ?? ''))}" class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs uppercase" placeholder="Isi warna barang..."></div>
-                <div class="flex items-end"><button type="button" onclick="this.closest('[data-po-item-row]').remove(); refreshPoItemRowIds()" class="po-remove-item-btn w-full h-10 rounded-lg border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Hapus baris">Hapus</button></div>`;
+                <div class="flex items-end"><button type="button" data-action="remove-po-item-row" class="po-remove-item-btn w-full h-10 rounded-lg border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Hapus baris">Hapus</button></div>`;
             host.appendChild(row);
             const select = row.querySelector('[data-po-field="barangId"]'); if (values.barangId) select.value = values.barangId;
             refreshPoItemRowIds();
@@ -2794,9 +2794,9 @@
                     const safeRid = esc(String(r.id));
                     const safeRidAttr = safeRid.replace(/'/g, '&#39;');
                     const safeReadyId = 'ready-' + String(r.id).replace(/[^a-zA-Z0-9_-]/g, '_');
-                    return `<tr class="bg-black/10 border-t border-white/5"><td class="py-2 px-3 font-mono">${safeRid}</td><td class="py-2 px-3">${esc(r.barangId)} — ${esc(window.displayItemName(r.barangId, r.nama))}</td><td class="py-2 px-2 opacity-80">${esc(r.warna || '-')}</td><td class="py-2 px-3 text-right">${Number(r.qty||0).toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-emerald-300">${ready.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right">${sent.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-amber-300">${remain.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-center">${esc(lineStatus)}</td><td class="py-2 px-3 text-right">${isViewer?ready.toLocaleString('id-ID'):`<input type="number" min="0" max="${Math.min(remain,Number((window.gudangAppDb.items||[]).find(x=>x.id===r.barangId)?.stok||0))}" step="1" value="${ready}" id="${esc(safeReadyId)}" data-ready-id="${safeRidAttr}" class="w-20 bg-dark-700 border border-white/15 rounded px-2 py-1 text-right"><button onclick="updatePoReady('${safeRidAttr}')" class="ml-1 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Atur</button>`}</td><td class="py-2 px-3 text-center">${!isViewer?`<button onclick="editPoItem('${safeRidAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button><button onclick="deletePoItem('${safeRidAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>`:'-'}</td></tr>`;
+                    return `<tr class="bg-black/10 border-t border-white/5"><td class="py-2 px-3 font-mono">${safeRid}</td><td class="py-2 px-3">${esc(r.barangId)} — ${esc(window.displayItemName(r.barangId, r.nama))}</td><td class="py-2 px-2 opacity-80">${esc(r.warna || '-')}</td><td class="py-2 px-3 text-right">${Number(r.qty||0).toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-emerald-300">${ready.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right">${sent.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-amber-300">${remain.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-center">${esc(lineStatus)}</td><td class="py-2 px-3 text-right">${isViewer?ready.toLocaleString('id-ID'):`<input type="number" min="0" max="${Math.min(remain,Number((window.gudangAppDb.items||[]).find(x=>x.id===r.barangId)?.stok||0))}" step="1" value="${ready}" id="${esc(safeReadyId)}" data-ready-id="${safeRidAttr}" class="w-20 bg-dark-700 border border-white/15 rounded px-2 py-1 text-right"><button data-action="update-po-ready" data-id="${safeRidAttr}" class="ml-1 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Atur</button>`}</td><td class="py-2 px-3 text-center">${!isViewer?`<button data-action="edit-po-item" data-id="${safeRidAttr}" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button><button data-action="delete-po-item" data-id="${safeRidAttr}" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>`:'-'}</td></tr>`;
                 }).join('');
-                return `<tr class="hover:bg-white/5"><td class="py-3 px-2 text-center">${index+1}</td><td class="py-3 px-3 font-mono font-semibold">${esc(g.head.noPoCustomer||g.head.id)}</td><td class="py-3 px-3">${esc(g.head.tanggal||'-')}</td><td class="py-3 px-3">${esc(g.head.customer||'-')}</td><td class="py-3 px-2 opacity-80">${esc([...new Set(g.rows.map(r=>r.warna||'-'))].join(', '))}</td><td class="py-3 px-3 text-center">${g.rows.length}</td><td class="py-3 px-3 text-right font-mono">${totalQty.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-right font-mono text-emerald-300">${totalSent.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${status==='CLOSED'?'bg-emerald-500/20 text-emerald-300':'bg-sky-500/20 text-sky-300'}">${esc(status)}</span></td><td class="py-3 px-3 text-center"><button type="button" onclick="togglePoDetails('${groupToken}', this, ${g.rows.length})" aria-expanded="${detailExpanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${detailExpanded ? 'Tutup' : 'Detail'} (${g.rows.length})</button></td></tr><tr id="po-detail-${groupToken}" data-po-group-key="${groupToken}" class="${detailExpanded?'':'hidden'}"><td colspan="10" class="p-2"><div class="po-detail-alamat mb-2 px-1 text-[11px] text-gray-300"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><span class="opacity-60 font-semibold uppercase tracking-wide mr-1">Alamat Customer:</span><span class="po-detail-alamat-value">${alamatHtml}</span></div>${!isViewer?`<button type="button" onclick="editPoGroupAlamat('${groupToken}', this)" class="po-edit-alamat shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" style="touch-action:manipulation">Ubah Alamat</button>`:''}</div></div><div class="rounded-xl border border-white/10 overflow-x-auto"><table class="w-full text-xs"><thead class="bg-white/5 text-gray-400"><tr><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">Barang</th><th class="p-2 text-left">Warna</th><th class="p-2 text-right">Qty PO</th><th class="p-2 text-right">Siap</th><th class="p-2 text-right">Terkirim</th><th class="p-2 text-right">Sisa</th><th class="p-2 text-center">Status</th><th class="p-2 text-right">Atur Siap</th><th class="p-2 text-center">Aksi</th></tr></thead><tbody>${details}</tbody></table></div></td></tr>`;
+                return `<tr class="hover:bg-white/5"><td class="py-3 px-2 text-center">${index+1}</td><td class="py-3 px-3 font-mono font-semibold">${esc(g.head.noPoCustomer||g.head.id)}</td><td class="py-3 px-3">${esc(g.head.tanggal||'-')}</td><td class="py-3 px-3">${esc(g.head.customer||'-')}</td><td class="py-3 px-2 opacity-80">${esc([...new Set(g.rows.map(r=>r.warna||'-'))].join(', '))}</td><td class="py-3 px-3 text-center">${g.rows.length}</td><td class="py-3 px-3 text-right font-mono">${totalQty.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-right font-mono text-emerald-300">${totalSent.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${status==='CLOSED'?'bg-emerald-500/20 text-emerald-300':'bg-sky-500/20 text-sky-300'}">${esc(status)}</span></td><td class="py-3 px-3 text-center"><button type="button" data-action="toggle-po-details" data-token="${groupToken}" data-count="${g.rows.length}" aria-expanded="${detailExpanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${detailExpanded ? 'Tutup' : 'Detail'} (${g.rows.length})</button></td></tr><tr id="po-detail-${groupToken}" data-po-group-key="${groupToken}" class="${detailExpanded?'':'hidden'}"><td colspan="10" class="p-2"><div class="po-detail-alamat mb-2 px-1 text-[11px] text-gray-300"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><span class="opacity-60 font-semibold uppercase tracking-wide mr-1">Alamat Customer:</span><span class="po-detail-alamat-value">${alamatHtml}</span></div>${!isViewer?`<button type="button" data-action="edit-po-group-alamat" data-token="${groupToken}" class="po-edit-alamat shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" style="touch-action:manipulation">Ubah Alamat</button>`:''}</div></div><div class="rounded-xl border border-white/10 overflow-x-auto"><table class="w-full text-xs"><thead class="bg-white/5 text-gray-400"><tr><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">Barang</th><th class="p-2 text-left">Warna</th><th class="p-2 text-right">Qty PO</th><th class="p-2 text-right">Siap</th><th class="p-2 text-right">Terkirim</th><th class="p-2 text-right">Sisa</th><th class="p-2 text-center">Status</th><th class="p-2 text-right">Atur Siap</th><th class="p-2 text-center">Aksi</th></tr></thead><tbody>${details}</tbody></table></div></td></tr>`;
             }).join('') || `<tr><td colspan="10" class="py-6 text-center opacity-50">Tidak ada PO.</td></tr>`;
             // Polling cloud dapat merender ulang semua tampilan meski isi PO tidak berubah.
             // Jangan menyentuh tbody jika markup identik agar detail terbuka tidak berkedip.
@@ -2989,8 +2989,8 @@
                     <td class="py-3 px-3 text-center opacity-80 font-mono">${esc(i.tebal || '-')}</td>
                     ${!isViewer ? `
                         <td class="py-3 px-3 text-center">
-                            <button onclick="editSampelItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
-                            <button onclick="deleteSampelItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
+                            <button data-action="edit-sampel" data-id="${safeIdAttr}" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                            <button data-action="delete-sampel" data-id="${safeIdAttr}" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                         </td>
                     ` : ''}
                 </tr>`;
@@ -3188,8 +3188,8 @@
                     <td class="py-3 px-3 font-medium">${esc(i.keterangan)}</td>
                     ${!isViewer ? `
                         <td class="py-3 px-3 text-center">
-                            <button onclick="editReturItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
-                            <button onclick="deleteReturItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
+                            <button data-action="edit-retur" data-id="${safeIdAttr}" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                            <button data-action="delete-retur" data-id="${safeIdAttr}" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                         </td>
                     ` : ''}
                 </tr>`;
@@ -3296,8 +3296,8 @@
                         <td class="py-3 px-3 text-center">
                             ${canManageTarget ? `
                                 <div class="flex items-center justify-center gap-2">
-                                    <button onclick="resetUserPassword('${safeUsernameAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Reset Password</button>
-                                    ${!isCurrent ? `<button onclick="deleteUser('${safeUsernameAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>` : ''}
+                                    <button data-action="reset-user-password" data-username="${safeUsernameAttr}" class="px-2 py-1 rounded-full border border-white/10 bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Reset Password</button>
+                                    ${!isCurrent ? `<button data-action="delete-user" data-username="${safeUsernameAttr}" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>` : ''}
                                 </div>
                             ` : ''}
                         </td>
@@ -5430,9 +5430,9 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     <td data-label="Total Qty" class="py-3 px-3 text-right font-mono font-bold text-rose-400">${g.totalQty.toLocaleString('id-ID')}</td>
                     <td data-label="User" class="py-3 px-3 text-orange-400">${escLocal(g.user)}</td>
                     <td data-label="Aksi" class="py-3 px-3 text-center"><div class="sj-card-actions flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:280px">
-                        <button type="button" onclick="toggleSjDetails('${token}', this, ${g.rows.length})" aria-expanded="${expanded ? 'true' : 'false'}" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Lihat detail barang">${expanded ? 'Tutup' : 'Detail'} (${g.rows.length})</button>
-                        <button type="button" onclick="printSuratJalan('${escLocal(g.tid).replace(/'/g, '&#39;')}', 'riwayat', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button>
-                        <button type="button" onclick="downloadSuratJalanExcel('${escLocal(g.tid).replace(/'/g, '&#39;')}', 'riwayat', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button>
+                        <button type="button" data-action="toggle-sj-details" data-token="${token}" data-count="${g.rows.length}" aria-expanded="${expanded ? 'true' : 'false'}" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Lihat detail barang">${expanded ? 'Tutup' : 'Detail'} (${g.rows.length})</button>
+                        <button type="button" data-action="print-sj" data-tid="${escLocal(g.tid)}" data-source="riwayat" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button>
+                        <button type="button" data-action="download-sj-excel" data-tid="${escLocal(g.tid)}" data-source="riwayat" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button>
                     </div></td>
                 </tr>
                 <tr id="sj-detail-${token}" data-sj-group-key="${token}" class="sj-detail-row ${expanded ? '' : 'hidden'}">
@@ -6508,7 +6508,97 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             subtree: true
         });
 
+        function initStaticActionBindings() {
+            if (window.__inventoryStaticBindings) return;
+            window.__inventoryStaticBindings = true;
+            const actionMap = {
+                'export-csv': () => window.exportCSVData?.(),
+                'close-sidebar': () => window.closeInventorySidebar?.(),
+                'toggle-sidebar': () => window.toggleInventorySidebar?.(),
+                'open-appearance': () => window.openAppearancePanel?.(),
+                'close-appearance': () => window.closeAppearancePanel?.(),
+                'close-appearance-backdrop': (el, e) => { if (e.target === el) window.closeAppearancePanel?.(); },
+                'select-theme': (el) => window.selectAccountUiTheme?.(el.dataset.theme),
+                'toggle-theme-mode': () => window.toggleThemeMode?.(),
+                'reset-data': () => window.resetData?.(),
+                'clear-dashboard-search': () => window.clearDashboardSearch?.(),
+                'auto-logout-now': () => window.autoLogoutNow?.(),
+                'keep-session-alive': () => window.keepSessionAlive?.(),
+                'logout-user': () => window.logoutUser?.(),
+                'request-form-reset': (el) => window.requestFormReset?.(el.dataset.form),
+                'add-po-item-row': () => window.addPoItemRow?.(),
+                'print-master-table': () => window.printMasterTable?.(),
+                'print-po-table': () => window.printPoTable?.(),
+                'print-masuk-table': () => window.printMasukTable?.(),
+                'print-keluar-table': () => window.printKeluarTable?.(),
+                'print-sampel-table': () => window.printSampelTable?.(),
+                'print-retur-table': () => window.printReturTable?.(),
+                'reset-sj-filter': () => window.resetSjFilter?.(),
+                'keluar-change-page': (el) => window.keluarChangePage?.(Number(el.dataset.dir || 0), el),
+                'sj-change-page': (el) => window.sjChangePage?.(Number(el.dataset.dir || 0), el),
+                'download-inventory-backup': () => window.downloadInventoryBackup?.(),
+                'restore-inventory-backup': () => window.restoreInventoryBackup?.(),
+                'switch-tab': (el) => window.switchTab?.(el.dataset.tab),
+            };
+            document.addEventListener('click', (e) => {
+                const actionEl = e.target.closest('[data-action]');
+                if (!actionEl) return;
+                const action = actionEl.dataset.action;
+                const fn = actionMap[action];
+                if (fn) { fn(actionEl, e); return; }
+                if (action === 'edit-master') return window.editMasterItem?.(actionEl.dataset.id);
+                if (action === 'delete-master') return window.deleteMasterItem?.(actionEl.dataset.id);
+                if (action === 'edit-masuk') return window.editMasukItem?.(actionEl.dataset.id);
+                if (action === 'delete-masuk') return window.deleteMasukItem?.(actionEl.dataset.id);
+                if (action === 'edit-keluar') return window.editKeluarItem?.(actionEl.dataset.id);
+                if (action === 'delete-keluar') return window.deleteKeluarItem?.(actionEl.dataset.id);
+                if (action === 'edit-sampel') return window.editSampelItem?.(actionEl.dataset.id);
+                if (action === 'delete-sampel') return window.deleteSampelItem?.(actionEl.dataset.id);
+                if (action === 'edit-retur') return window.editReturItem?.(actionEl.dataset.id);
+                if (action === 'delete-retur') return window.deleteReturItem?.(actionEl.dataset.id);
+                if (action === 'reset-user-password') return window.resetUserPassword?.(actionEl.dataset.username);
+                if (action === 'delete-user') return window.deleteUser?.(actionEl.dataset.username);
+                if (action === 'toggle-keluar-details') return window.toggleKeluarDetails?.(actionEl.dataset.token, actionEl, Number(actionEl.dataset.count || 0));
+                if (action === 'toggle-po-details') return window.togglePoDetails?.(actionEl.dataset.token, actionEl, Number(actionEl.dataset.count || 0));
+                if (action === 'toggle-sj-details') return window.toggleSjDetails?.(actionEl.dataset.token, actionEl, Number(actionEl.dataset.count || 0));
+                if (action === 'print-sj') return window.printSuratJalan?.(actionEl.dataset.tid, actionEl.dataset.source, actionEl);
+                if (action === 'download-sj-excel') return window.downloadSuratJalanExcel?.(actionEl.dataset.tid, actionEl.dataset.source, actionEl);
+                if (action === 'remove-po-item-row') { actionEl.closest('[data-po-item-row]')?.remove(); window.refreshPoItemRowIds?.(); return; }
+                if (action === 'update-po-ready') return window.updatePoReady?.(actionEl.dataset.id);
+                if (action === 'edit-po-item') return window.editPoItem?.(actionEl.dataset.id);
+                if (action === 'delete-po-item') return window.deletePoItem?.(actionEl.dataset.id);
+                if (action === 'edit-po-group-alamat') return window.editPoGroupAlamat?.(actionEl.dataset.token, actionEl);
+            });
+            document.addEventListener('submit', (e) => {
+                const form = e.target.closest('form[data-onsubmit]');
+                if (!form) return;
+                e.preventDefault();
+                const fnName = (form.dataset.onsubmit || '').split('(')[0].trim();
+                const fn = window[fnName];
+                if (typeof fn === 'function') fn(e);
+            });
+            ['input', 'change'].forEach((type) => {
+                document.addEventListener(type, (e) => {
+                    const el = e.target.closest(`[data-on${type}]`);
+                    if (!el) return;
+                    const expr = el.getAttribute(`data-on${type}`) || '';
+                    if (expr === 'previewRestoreFile(this)') return window.previewRestoreFile?.(el);
+                    const m = expr.match(/^([a-zA-Z0-9_$]+)\((.*)\)$/);
+                    if (!m) return;
+                    const fn = window[m[1]];
+                    if (typeof fn !== 'function') return;
+                    const arg = m[2].trim();
+                    if (!arg) return fn(e);
+                    const lit = arg.match(/^'([^']*)'$/) || arg.match(/^"([^"]*)"$/);
+                    if (lit) return fn(lit[1], e);
+                    if (arg === 'event' || arg === 'this') return fn(e);
+                    fn(e);
+                });
+            });
+        }
+
         window.addEventListener('load', () => {
+            initStaticActionBindings();
             applyTheme('glass', localStorage.getItem('gudang_inventory_theme_mode') || 'dark');
             document.getElementById('masuk-id').value = generateMasukSequentialId();
             document.getElementById('masuk-tanggal').valueAsDate = new Date();
@@ -6542,7 +6632,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             // The same button and original toggle function are retained.
             function placeToggleForViewport() {
                 if (isMobile()) {
-                    const logoutButton = userBanner && userBanner.querySelector('button[onclick="logoutUser()"]');
+                    const logoutButton = userBanner && userbanner.querySelector('[data-action="logout-user"]');
                     if (userBanner) userBanner.insertBefore(button, logoutButton || null);
                     else document.body.appendChild(button);
                     button.classList.add('sidebar-mobile-floating-toggle');

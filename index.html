@@ -91,7 +91,7 @@
             </div>
             <div id="current-user-banner" class="flex items-center gap-2.5 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl">
             </div>
-            <button id="header-export-csv" type="button" onclick="exportCSVData()" title="Download data CSV" aria-label="Download data CSV" class="px-4 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center gap-2 shadow-lg shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-95">
+            <button id="header-export-csv" type="button" data-action="export-csv" title="Download data CSV" aria-label="Download data CSV" class="px-4 py-2 rounded-xl theme-accent-bg text-white text-xs font-semibold inline-flex items-center gap-2 shadow-lg shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-95">
                 <i data-lucide="download" class="w-3.5 h-3.5"></i>
                 <span>Export CSV</span>
             </button>
@@ -109,9 +109,9 @@
     <div id="inventory-app-layout" class="flex-1 flex overflow-hidden">
         
         <!-- SIDEBAR NAVIGATION -->
-        <div id="sidebar-mobile-backdrop" onclick="closeInventorySidebar()" aria-hidden="true"></div>
+        <div id="sidebar-mobile-backdrop" data-action="close-sidebar" aria-hidden="true"></div>
         <aside id="inventory-sidebar" class="w-64 border-r border-white/5 bg-dark-800/40 backdrop-blur-sm flex flex-col justify-between shrink-0 select-none">
-            <button type="button" id="sidebar-toggle" onclick="toggleInventorySidebar()"
+            <button type="button" id="sidebar-toggle" data-action="toggle-sidebar"
                 class="sidebar-toggle-btn sidebar-mid-toggle w-9 h-9 rounded-xl border border-blue-400/25 bg-blue-500/10 text-blue-300 inline-flex items-center justify-center transition-all"
                 aria-label="Kecilkan atau buka menu" aria-expanded="true" title="Kecilkan menu">
                 <svg class="sidebar-toggle-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -122,46 +122,46 @@
 
             <nav class="p-4 space-y-1.5">
                 <div class="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Menu Utama</div>
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard Realtime" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20">
+                <button data-action="switch-tab" data-tab="dashboard" id="nav-dashboard" title="Dashboard Realtime" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group theme-accent-bg text-white shadow-lg shadow-orange-500/20">
                     <i data-lucide="layout-dashboard" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Dashboard Realtime</span>
                 </button>
-                <button onclick="switchTab('master')" id="nav-master" title="Master Data Barang" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                <button data-action="switch-tab" data-tab="master" id="nav-master" title="Master Data Barang" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                     <i data-lucide="package" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Master Data Barang</span>
                 </button>
-                <button onclick="switchTab('po')" id="nav-po" title="PO Masuk (Customer)" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                <button data-action="switch-tab" data-tab="po" id="nav-po" title="PO Masuk (Customer)" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                     <i data-lucide="file-text" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>PO Masuk (Customer)</span>
                 </button>
-                <button onclick="switchTab('masuk')" id="nav-masuk" title="Barang Masuk" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                <button data-action="switch-tab" data-tab="masuk" id="nav-masuk" title="Barang Masuk" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                     <i data-lucide="plus-circle" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Barang Masuk</span>
                 </button>
-                <button onclick="switchTab('keluar')" id="nav-keluar" title="Barang Keluar" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                <button data-action="switch-tab" data-tab="keluar" id="nav-keluar" title="Barang Keluar" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                     <i data-lucide="minus-circle" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Barang Keluar</span>
                 </button>
-                <button onclick="switchTab('sj')" id="nav-sj" title="Riwayat Surat Jalan" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                <button data-action="switch-tab" data-tab="sj" id="nav-sj" title="Riwayat Surat Jalan" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                     <i data-lucide="file-text" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Riwayat Surat Jalan</span>
                 </button>
-                <button onclick="switchTab('sampel')" id="nav-sampel" title="Sampel" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                <button data-action="switch-tab" data-tab="sampel" id="nav-sampel" title="Sampel" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                     <i data-lucide="box" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Sampel</span>
                 </button>
-                <button onclick="switchTab('retur')" id="nav-retur" title="Retur Barang" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                <button data-action="switch-tab" data-tab="retur" id="nav-retur" title="Retur Barang" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                     <i data-lucide="rotate-ccw" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                     <span>Retur Barang</span>
                 </button>
                 <div id="nav-users-wrapper" class="pt-2">
-                    <button onclick="switchTab('users')" id="nav-users" title="Manajemen User" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                    <button data-action="switch-tab" data-tab="users" id="nav-users" title="Manajemen User" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                         <i data-lucide="users" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                         <span>Manajemen User</span>
                     </button>
                 </div>
                 <div id="nav-backup-wrapper" class="pt-2">
-                    <button onclick="switchTab('backup')" id="nav-backup" title="Backup & Restore" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
+                    <button data-action="switch-tab" data-tab="backup" id="nav-backup" title="Backup & Restore" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left group text-gray-400 hover:bg-white/5 hover:text-gray-200">
                         <i data-lucide="database-backup" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                         <span>Backup & Restore</span>
                     </button>
@@ -169,22 +169,22 @@
             </nav>
 
             <div class="p-3 border-t border-white/5 space-y-3 bg-dark-900/60">
-                <button type="button" id="open-appearance-btn" onclick="openAppearancePanel()" class="appearance-open-btn" aria-label="Pilih tampilan aplikasi" aria-haspopup="dialog" aria-controls="appearance-panel">
+                <button type="button" id="open-appearance-btn" data-action="open-appearance" class="appearance-open-btn" aria-label="Pilih tampilan aplikasi" aria-haspopup="dialog" aria-controls="appearance-panel">
                     <i data-lucide="palette" class="w-4 h-4"></i>
                     <span><strong>Tampilan Aplikasi</strong><small id="appearance-current-label">Classic Glass</small></span>
                     <i data-lucide="sliders-horizontal" class="appearance-open-arrow w-4 h-4"></i>
                 </button>
                 <div class="hidden" id="theme-picker" aria-hidden="true">
-                    <button type="button" id="theme-classic-btn" onclick="selectAccountUiTheme('classic')" aria-pressed="false"></button>
-                    <button type="button" id="theme-crystal-btn" onclick="selectAccountUiTheme('crystal')" aria-pressed="false"></button>
-                    <button type="button" id="theme-soft-btn" onclick="selectAccountUiTheme('soft')" aria-pressed="false"></button>
-                    <button type="button" id="theme-neon-btn" onclick="selectAccountUiTheme('neon')" aria-pressed="false"></button>
+                    <button type="button" id="theme-classic-btn" data-action="select-theme" data-theme="classic" aria-pressed="false"></button>
+                    <button type="button" id="theme-crystal-btn" data-action="select-theme" data-theme="crystal" aria-pressed="false"></button>
+                    <button type="button" id="theme-soft-btn" data-action="select-theme" data-theme="soft" aria-pressed="false"></button>
+                    <button type="button" id="theme-neon-btn" data-action="select-theme" data-theme="neon" aria-pressed="false"></button>
                 </div>
-                <button type="button" id="theme-mode-toggle" onclick="toggleThemeMode()" class="hidden" aria-hidden="true" tabindex="-1">
+                <button type="button" id="theme-mode-toggle" data-action="toggle-theme-mode" class="hidden" aria-hidden="true" tabindex="-1">
                     <span id="theme-mode-label">Mode Terang</span>
                 </button>
                 <div id="reset-btn-wrapper">
-                    <button onclick="resetData()" title="Reset Data Gudang" aria-label="Reset Data Gudang" class="w-full py-2 px-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold hover:bg-rose-500/20 transition-all flex items-center justify-center gap-2">
+                    <button data-action="reset-data" title="Reset Data Gudang" aria-label="Reset Data Gudang" class="w-full py-2 px-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold hover:bg-rose-500/20 transition-all flex items-center justify-center gap-2">
                         <i data-lucide="database" class="w-3.5 h-3.5"></i>
                         <span>Reset Data Gudang</span>
                     </button>
@@ -193,7 +193,7 @@
         </aside>
 
         <!-- APPEARANCE PANEL: dibuka saat pengguna menekan tombol Tampilan Aplikasi -->
-        <div id="appearance-panel" class="appearance-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="appearance-title" onclick="if(event.target===this)closeAppearancePanel()">
+        <div id="appearance-panel" class="appearance-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="appearance-title" data-action="close-appearance-backdrop">
             <section class="appearance-dialog">
                 <header class="appearance-dialog-header v129-appearance-header">
                     <div class="v129-appearance-heading">
@@ -203,28 +203,28 @@
                             <p>Pilih desain ruang kerja yang paling nyaman digunakan.</p>
                         </div>
                     </div>
-                    <button type="button" class="appearance-close" onclick="closeAppearancePanel()" aria-label="Tutup"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <button type="button" class="appearance-close" data-action="close-appearance" aria-label="Tutup"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </header>
                 <div class="appearance-options">
-                    <button type="button" id="theme-classic-card" class="appearance-theme-card" onclick="selectAccountUiTheme('classic')">
+                    <button type="button" id="theme-classic-card" class="appearance-theme-card" data-action="select-theme" data-theme="classic">
                         <span class="appearance-card-top"><span class="appearance-theme-name">Classic Glass</span><span class="appearance-selected-mark"><i data-lucide="check" class="w-3.5 h-3.5"></i> AKTIF</span></span>
                         <span class="appearance-preview classic-large-preview"><span class="preview-sidebar"><i></i><i></i><i></i><i></i></span><span class="preview-workspace"><i></i><i></i><i></i><i></i></span></span>
                         <span class="appearance-card-description">Sidebar vertikal · Dashboard klasik · Nuansa dark glass</span>
                         <span class="appearance-card-action">Gunakan Classic Glass <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
                     </button>
-                    <button type="button" id="theme-crystal-card" class="appearance-theme-card" onclick="selectAccountUiTheme('crystal')">
+                    <button type="button" id="theme-crystal-card" class="appearance-theme-card" data-action="select-theme" data-theme="crystal">
                         <span class="appearance-card-top"><span class="appearance-theme-name">Liquid Glass</span><span class="appearance-selected-mark"><i data-lucide="check" class="w-3.5 h-3.5"></i> AKTIF</span></span>
                         <span class="appearance-preview crystal-large-preview"><span class="preview-topbar"><i></i><i></i><i></i><i></i></span><span class="preview-crystal-workspace"><i></i><i></i><i></i></span></span>
                         <span class="appearance-card-description">UI 2 · Liquid Glass transparan · Refleksi lembut dan efek kaca berlapis</span>
                         <span class="appearance-card-action">Gunakan Liquid Glass <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
                     </button>
-                    <button type="button" id="theme-soft-card" class="appearance-theme-card" onclick="selectAccountUiTheme('soft')">
+                    <button type="button" id="theme-soft-card" class="appearance-theme-card" data-action="select-theme" data-theme="soft">
                         <span class="appearance-card-top"><span class="appearance-theme-name">Soft Neutral · UI 3</span><span class="appearance-selected-mark"><i data-lucide="check" class="w-3.5 h-3.5"></i> AKTIF</span></span>
                         <span class="appearance-preview soft-large-preview"><span class="preview-soft-rail"><i></i><i></i><i></i><i></i></span><span class="preview-soft-workspace"><i></i><i></i><i></i><i></i></span></span>
                         <span class="appearance-card-description">Palet gelap redup · navigasi ikon · form di atas tabel</span>
                         <span class="appearance-card-action">Gunakan Soft Neutral <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
                     </button>
-                    <button type="button" id="theme-neon-card" class="appearance-theme-card" onclick="selectAccountUiTheme('neon')">
+                    <button type="button" id="theme-neon-card" class="appearance-theme-card" data-action="select-theme" data-theme="neon">
                         <span class="appearance-card-top"><span class="appearance-theme-name">Black Cyan · UI 4</span><span class="appearance-selected-mark"><i data-lucide="check" class="w-3.5 h-3.5"></i> AKTIF</span></span>
                         <span class="appearance-preview neon-large-preview"><span class="preview-neon-rail"><i></i><i></i><i></i><i></i></span><span class="preview-neon-workspace"><i></i><i></i><i></i><i></i></span></span>
                         <span class="appearance-card-description">Latar hitam · panel glass transparan · aksen cyan</span>
@@ -282,8 +282,8 @@
                     </div>
                     <label class="dashboard-search-field">
                         <i data-lucide="search" class="w-5 h-5" aria-hidden="true"></i>
-                        <input id="dashboard-global-search" type="search" autocomplete="off" oninput="runDashboardSearch()" placeholder="Cari ID, nama barang, customer, PO, atau transaksi..." aria-label="Cari semua data inventory">
-                        <button type="button" id="dashboard-search-clear" onclick="clearDashboardSearch()" aria-label="Hapus pencarian" hidden><i data-lucide="x" class="w-4 h-4"></i></button>
+                        <input id="dashboard-global-search" type="search" autocomplete="off" data-oninput="runDashboardSearch()" placeholder="Cari ID, nama barang, customer, PO, atau transaksi..." aria-label="Cari semua data inventory">
+                        <button type="button" id="dashboard-search-clear" data-action="clear-dashboard-search" aria-label="Hapus pencarian" hidden><i data-lucide="x" class="w-4 h-4"></i></button>
                     </label>
                     <div id="dashboard-search-results" class="dashboard-search-results" aria-live="polite" hidden></div>
                 </section>
@@ -297,7 +297,7 @@
                     <span class="rounded-full border border-blue-400/20 bg-blue-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-300">Live Overview</span>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                    <div onclick="switchTab('master')" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Master Barang">
+                    <div data-action="switch-tab" data-tab="master" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Master Barang">
                         <div class="absolute -right-7 -top-7 h-24 w-24 rounded-full bg-blue-500/10 blur-2xl transition-all group-hover:bg-blue-400/20"></div>
                         <div class="relative flex items-start justify-between">
                             <div><div class="text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-400">Total SKU</div><div id="stat-sku" class="mt-3 text-3xl font-black font-mono tracking-tight text-white">0</div><div class="mt-1 text-[11px] text-slate-400">Jenis barang terdaftar</div></div>
@@ -305,7 +305,7 @@
                         </div>
                         <div class="relative mt-4 h-1 overflow-hidden rounded-full bg-white/5"><div class="h-full w-2/3 rounded-full bg-gradient-to-r from-blue-500 to-cyan-300"></div></div>
                     </div>
-                    <div onclick="switchTab('master')" id="card-stok-fisik" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Master Barang">
+                    <div data-action="switch-tab" data-tab="master" id="card-stok-fisik" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Master Barang">
                         <div class="absolute -right-7 -top-7 h-24 w-24 rounded-full bg-cyan-500/10 blur-2xl"></div>
                         <div class="relative flex items-start justify-between">
                             <div><div class="text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-400">Stok Fisik</div><div id="stat-stok" class="mt-3 text-3xl font-black font-mono tracking-tight text-white">0</div><div class="mt-1 text-[11px] text-slate-400">Akumulasi unit gudang</div></div>
@@ -313,28 +313,28 @@
                         </div>
                         <div class="relative mt-4 h-1 overflow-hidden rounded-full bg-white/5"><div class="h-full w-3/4 rounded-full bg-gradient-to-r from-cyan-500 to-sky-300"></div></div>
                     </div>
-                    <div onclick="switchTab('masuk')" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Barang Masuk">
+                    <div data-action="switch-tab" data-tab="masuk" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Barang Masuk">
                         <div class="relative flex items-start justify-between">
                             <div><div class="text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-400">Total Masuk</div><div id="stat-masuk" class="mt-3 text-3xl font-black font-mono tracking-tight text-emerald-300">0</div><div class="mt-1 text-[11px] text-slate-400">Unit barang masuk</div></div>
                             <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-500/10 text-emerald-300"><i data-lucide="arrow-down-left" class="h-5 w-5"></i></div>
                         </div>
                         <div class="mt-4 h-1 overflow-hidden rounded-full bg-white/5"><div class="h-full w-2/3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-300"></div></div>
                     </div>
-                    <div onclick="switchTab('keluar')" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Barang Keluar">
+                    <div data-action="switch-tab" data-tab="keluar" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Barang Keluar">
                         <div class="relative flex items-start justify-between">
                             <div><div class="text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-400">Total Keluar</div><div id="stat-keluar" class="mt-3 text-3xl font-black font-mono tracking-tight text-rose-300">0</div><div class="mt-1 text-[11px] text-slate-400">Unit barang keluar</div></div>
                             <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-rose-300/20 bg-rose-500/10 text-rose-300"><i data-lucide="arrow-up-right" class="h-5 w-5"></i></div>
                         </div>
                         <div class="mt-4 h-1 overflow-hidden rounded-full bg-white/5"><div class="h-full w-1/2 rounded-full bg-gradient-to-r from-rose-500 to-pink-300"></div></div>
                     </div>
-                    <div onclick="switchTab('po')" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat PO Customer">
+                    <div data-action="switch-tab" data-tab="po" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat PO Customer">
                         <div class="relative flex items-start justify-between">
                             <div><div class="text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-400">PO Aktif</div><div id="stat-po" class="mt-3 text-3xl font-black font-mono tracking-tight text-sky-300">0</div><div class="mt-1 text-[11px] text-slate-400">PO belum selesai</div></div>
                             <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-sky-300/20 bg-sky-500/10 text-sky-300"><i data-lucide="file-text" class="h-5 w-5"></i></div>
                         </div>
                         <div class="mt-4 h-1 overflow-hidden rounded-full bg-white/5"><div class="h-full w-3/5 rounded-full bg-gradient-to-r from-sky-500 to-cyan-300"></div></div>
                     </div>
-                    <div onclick="switchTab('retur')" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Retur Barang">
+                    <div data-action="switch-tab" data-tab="retur" class="dashboard-glow-card group relative cursor-pointer overflow-hidden rounded-3xl p-5" title="Klik untuk lihat Retur Barang">
                         <div class="relative flex items-start justify-between">
                             <div><div class="text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-400">Total Retur</div><div id="stat-retur" class="mt-3 text-3xl font-black font-mono tracking-tight text-amber-300">0</div><div class="mt-1 text-[11px] text-slate-400">Transaksi retur</div></div>
                             <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-amber-300/20 bg-amber-500/10 text-amber-300"><i data-lucide="rotate-ccw" class="h-5 w-5"></i></div>
@@ -440,7 +440,7 @@
                         <h3 id="master-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="package-plus" class="w-4 h-4 text-orange-400"></i> TAMBAH MASTER BARANG
                         </h3>
-                        <form id="form-master" onsubmit="saveMasterItem(event)" class="space-y-4" autocomplete="off">
+                        <form id="form-master" data-onsubmit="saveMasterItem(event)" class="space-y-4" autocomplete="off">
                             <input type="hidden" id="master-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Barang (SKU) *</label>
@@ -541,7 +541,7 @@
                                     <i data-lucide="save" class="w-3.5 h-3.5"></i>
                                     <span>Simpan</span>
                                 </button>
-                                <button type="button" data-reset-form="master" onclick="requestFormReset('master')" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
+                                <button type="button" data-reset-form="master" data-action="request-form-reset" data-form="master" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
                                     Reset
                                 </button>
                             </div>
@@ -556,9 +556,9 @@
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-master" oninput="queueTableRender('master')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Nama / Kategori..." autocomplete="off">
+                                    <input type="text" id="search-master" data-oninput="queueTableRender('master')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Nama / Kategori..." autocomplete="off">
                                 </div>
-                                <button onclick="printMasterTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
+                                <button data-action="print-master-table" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
                                     <span>Print</span>
                                 </button>
@@ -597,7 +597,7 @@
                         <h3 id="po-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="file-plus" class="w-4 h-4 text-orange-400"></i> INPUT PO CUSTOMER
                         </h3>
-                        <form id="form-po" onsubmit="savePoItem(event)" class="space-y-4" autocomplete="off">
+                        <form id="form-po" data-onsubmit="savePoItem(event)" class="space-y-4" autocomplete="off">
                             <input type="hidden" id="po-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Sistem PO * (Auto)</label>
@@ -622,7 +622,7 @@
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between gap-2">
                                     <label class="text-xs font-semibold">Daftar Barang dalam PO *</label>
-                                    <button type="button" onclick="addPoItemRow()" class="px-3 py-1.5 rounded-lg bg-sky-500/15 border border-sky-400/20 text-sky-300 text-[11px] font-semibold"><i data-lucide="plus" class="w-3 h-3 inline"></i> Tambah Barang</button>
+                                    <button type="button" data-action="add-po-item-row" class="px-3 py-1.5 rounded-lg bg-sky-500/15 border border-sky-400/20 text-sky-300 text-[11px] font-semibold"><i data-lucide="plus" class="w-3 h-3 inline"></i> Tambah Barang</button>
                                 </div>
                                 <div id="po-items-container" class="space-y-2"></div>
                                 <p class="text-[10px] text-gray-400">Atur Qty PO dan Qty Siap Dikirim untuk setiap barang. Qty siap tidak menambah stok.</p>
@@ -632,7 +632,7 @@
                                     <i data-lucide="save" class="w-3.5 h-3.5"></i>
                                     <span>Simpan</span>
                                 </button>
-                                <button type="button" data-reset-form="po" onclick="requestFormReset('po')" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
+                                <button type="button" data-reset-form="po" data-action="request-form-reset" data-form="po" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
                                     Reset
                                 </button>
                             </div>
@@ -647,9 +647,9 @@
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-po" oninput="queueTableRender('po')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari No PO / Customer / Barang..." autocomplete="off">
+                                    <input type="text" id="search-po" data-oninput="queueTableRender('po')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari No PO / Customer / Barang..." autocomplete="off">
                                 </div>
-                                <button onclick="printPoTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
+                                <button data-action="print-po-table" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
                                     <span>Print</span>
                                 </button>
@@ -686,7 +686,7 @@
                         <h3 id="masuk-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="plus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG MASUK
                         </h3>
-                        <form id="form-masuk" onsubmit="saveMasukItem(event)" class="space-y-4" autocomplete="off">
+                        <form id="form-masuk" data-onsubmit="saveMasukItem(event)" class="space-y-4" autocomplete="off">
                             <input type="hidden" id="masuk-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Transaksi *</label>
@@ -698,7 +698,7 @@
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Pilih Barang *</label>
-                                <select id="masuk-barang" onchange="updateMasukItemInfo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
+                                <select id="masuk-barang" data-onchange="updateMasukItemInfo()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="">-- Pilih Barang —</option>
                                 </select>
                             </div>
@@ -723,7 +723,7 @@
                                     <i data-lucide="save" class="w-3.5 h-3.5"></i>
                                     <span>Simpan</span>
                                 </button>
-                                <button type="button" data-reset-form="masuk" onclick="requestFormReset('masuk')" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
+                                <button type="button" data-reset-form="masuk" data-action="request-form-reset" data-form="masuk" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
                                     Reset
                                 </button>
                             </div>
@@ -738,9 +738,9 @@
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-masuk" oninput="queueTableRender('masuk')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Sumber..." autocomplete="off">
+                                    <input type="text" id="search-masuk" data-oninput="queueTableRender('masuk')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Sumber..." autocomplete="off">
                                 </div>
-                                <button onclick="printMasukTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
+                                <button data-action="print-masuk-table" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
                                     <span>Print</span>
                                 </button>
@@ -780,7 +780,7 @@
                         <h3 id="keluar-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="minus-square" class="w-4 h-4 text-orange-400"></i> INPUT BARANG KELUAR
                         </h3>
-                        <form id="form-keluar" onsubmit="saveKeluarItem(event)" class="space-y-4" autocomplete="off">
+                        <form id="form-keluar" data-onsubmit="saveKeluarItem(event)" class="space-y-4" autocomplete="off">
                             <input type="hidden" id="keluar-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Transaksi *</label>
@@ -796,7 +796,7 @@
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Pilih Nomor PO Customer *</label>
-                                <select id="keluar-po-group" onchange="populatePoItemOptions()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
+                                <select id="keluar-po-group" data-onchange="populatePoItemOptions()" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="">-- Pilih Nomor PO —</option>
                                 </select>
                             </div>
@@ -826,7 +826,7 @@
                                     <i data-lucide="save" class="w-3.5 h-3.5"></i>
                                     <span>Simpan</span>
                                 </button>
-                                <button type="button" data-reset-form="keluar" onclick="requestFormReset('keluar')" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
+                                <button type="button" data-reset-form="keluar" data-action="request-form-reset" data-form="keluar" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
                                     Reset
                                 </button>
                             </div>
@@ -841,9 +841,9 @@
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-keluar" oninput="queueTableRender('keluar')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / No. SJ / Barang / Customer..." autocomplete="off">
+                                    <input type="text" id="search-keluar" data-oninput="queueTableRender('keluar')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / No. SJ / Barang / Customer..." autocomplete="off">
                                 </div>
-                                <button onclick="printKeluarTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
+                                <button data-action="print-keluar-table" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
                                     <span>Print</span>
                                 </button>
@@ -873,9 +873,9 @@
                         <div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-3 border-t border-white/10">
                             <p id="keluar-page-info" class="text-[11px] text-gray-400">Menampilkan 0 dari 0 Transaksi</p>
                             <div class="flex items-center gap-2">
-                                <button type="button" onclick="keluarChangePage(-1, this)" id="keluar-prev" aria-disabled="true" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Sebelumnya</button>
+                                <button type="button" data-action="keluar-change-page" data-dir="-1" id="keluar-prev" aria-disabled="true" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Sebelumnya</button>
                                 <span id="keluar-page-indicator" class="text-[11px] font-semibold text-gray-300">Halaman 1 dari 1</span>
-                                <button type="button" onclick="keluarChangePage(1, this)" id="keluar-next" aria-disabled="false" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Berikutnya</button>
+                                <button type="button" data-action="keluar-change-page" data-dir="1" id="keluar-next" aria-disabled="false" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Berikutnya</button>
                             </div>
                         </div>
                     </div>
@@ -897,22 +897,22 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 mb-4">
                         <div class="lg:col-span-4">
                             <label class="text-[10px] block mb-1 text-gray-400">Cari No. SJ / ID / Customer / Barang</label>
-                            <input type="text" id="sj-search" oninput="queueTableRender('sj')" placeholder="Cari surat jalan..." class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
+                            <input type="text" id="sj-search" data-oninput="queueTableRender('sj')" placeholder="Cari surat jalan..." class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                         </div>
                         <div class="lg:col-span-2">
                             <label class="text-[10px] block mb-1 text-gray-400">Dari Tanggal</label>
-                            <input type="date" id="sj-dari" onchange="queueTableRender('sj')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
+                            <input type="date" id="sj-dari" data-onchange="queueTableRender('sj')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                         </div>
                         <div class="lg:col-span-2">
                             <label class="text-[10px] block mb-1 text-gray-400">Sampai Tanggal</label>
-                            <input type="date" id="sj-sampai" onchange="queueTableRender('sj')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
+                            <input type="date" id="sj-sampai" data-onchange="queueTableRender('sj')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                         </div>
                         <div class="lg:col-span-3">
                             <label class="text-[10px] block mb-1 text-gray-400">Customer / Tujuan</label>
-                            <select id="sj-customer" onchange="queueTableRender('sj')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off"><option value="">Semua customer</option></select>
+                            <select id="sj-customer" data-onchange="queueTableRender('sj')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off"><option value="">Semua customer</option></select>
                         </div>
                         <div class="lg:col-span-1 flex items-end mb-2">
-                            <button type="button" onclick="resetSjFilter()" class="w-full px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Reset</button>
+                            <button type="button" data-action="reset-sj-filter" class="w-full px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Reset</button>
                         </div>
                     </div>
                     <div class="fluid-table-container overflow-x-auto">
@@ -938,9 +938,9 @@
                     <div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-3 border-t border-white/10">
                         <p id="sj-page-info" class="text-[11px] text-gray-400">Menampilkan 0 dari 0 Surat Jalan</p>
                         <div class="flex items-center gap-2">
-                            <button type="button" onclick="sjChangePage(-1, this)" id="sj-prev" aria-disabled="true" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Sebelumnya</button>
+                            <button type="button" data-action="sj-change-page" data-dir="-1" id="sj-prev" aria-disabled="true" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Sebelumnya</button>
                             <span id="sj-page-indicator" class="text-[11px] font-semibold text-gray-300">Halaman 1 dari 1</span>
-                            <button type="button" onclick="sjChangePage(1, this)" id="sj-next" aria-disabled="false" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Berikutnya</button>
+                            <button type="button" data-action="sj-change-page" data-dir="1" id="sj-next" aria-disabled="false" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-gray-200 text-xs font-semibold">Berikutnya</button>
                         </div>
                     </div>
                 </div>
@@ -953,7 +953,7 @@
                         <h3 id="sampel-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="box" class="w-4 h-4 text-orange-400"></i> INPUT DATA SAMPEL
                         </h3>
-                        <form id="form-sampel" onsubmit="saveSampelItem(event)" class="space-y-4" autocomplete="off">
+                        <form id="form-sampel" data-onsubmit="saveSampelItem(event)" class="space-y-4" autocomplete="off">
                             <input type="hidden" id="sampel-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Sampel (Auto) *</label>
@@ -1043,7 +1043,7 @@
                                     <i data-lucide="save" class="w-3.5 h-3.5"></i>
                                     <span>Simpan</span>
                                 </button>
-                                <button type="button" data-reset-form="sampel" onclick="requestFormReset('sampel')" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
+                                <button type="button" data-reset-form="sampel" data-action="request-form-reset" data-form="sampel" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
                                     Reset
                                 </button>
                             </div>
@@ -1058,9 +1058,9 @@
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-sampel" oninput="queueTableRender('sampel')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Customer / Nama / Keterangan..." autocomplete="off">
+                                    <input type="text" id="search-sampel" data-oninput="queueTableRender('sampel')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Customer / Nama / Keterangan..." autocomplete="off">
                                 </div>
-                                <button onclick="printSampelTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
+                                <button data-action="print-sampel-table" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
                                     <span>Print</span>
                                 </button>
@@ -1099,7 +1099,7 @@
                         <h3 id="retur-form-title" class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="rotate-ccw" class="w-4 h-4 text-orange-400"></i> INPUT RETUR BARANG
                         </h3>
-                        <form id="form-retur" onsubmit="saveReturItem(event)" class="space-y-4" autocomplete="off">
+                        <form id="form-retur" data-onsubmit="saveReturItem(event)" class="space-y-4" autocomplete="off">
                             <input type="hidden" id="retur-edit-mode" value="false" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">ID Retur *</label>
@@ -1121,7 +1121,7 @@
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Referensi Barang Keluar *</label>
-                                <select id="retur-keluar-ref" required onchange="updateReturReferenceInfo()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
+                                <select id="retur-keluar-ref" required data-onchange="updateReturReferenceInfo()" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" autocomplete="off">
                                     <option value="">-- Pilih transaksi keluar asal --</option>
                                 </select>
                                 <p id="retur-reference-info" class="text-[11px] text-gray-400 mt-1">Pilih barang terlebih dahulu untuk melihat transaksi keluar yang bisa diretur.</p>
@@ -1139,7 +1139,7 @@
                                     <i data-lucide="save" class="w-3.5 h-3.5"></i>
                                     <span>Simpan</span>
                                 </button>
-                                <button type="button" data-reset-form="retur" onclick="requestFormReset('retur')" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
+                                <button type="button" data-reset-form="retur" data-action="request-form-reset" data-form="retur" class="px-3 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold hover:bg-white/20">
                                     Reset
                                 </button>
                             </div>
@@ -1154,9 +1154,9 @@
                             </div>
                             <div class="flex items-center gap-2.5 w-full md:w-auto">
                                 <div class="w-full md:w-64">
-                                    <input type="text" id="search-retur" oninput="queueTableRender('retur')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Alasan..." autocomplete="off">
+                                    <input type="text" id="search-retur" data-oninput="queueTableRender('retur')" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2 text-xs theme-focus" placeholder="Cari ID / Barang / Alasan..." autocomplete="off">
                                 </div>
-                                <button onclick="printReturTable()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
+                                <button data-action="print-retur-table" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all shrink-0">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i><span>Print</span>
                                 </button>
                             </div>
@@ -1195,7 +1195,7 @@
                         <h3 class="font-bold text-xs tracking-wider uppercase mb-5 flex items-center gap-2 text-gray-100">
                             <i data-lucide="user-plus" class="w-4 h-4 text-orange-400"></i> TAMBAH USER SISTEM
                         </h3>
-                        <form id="form-user" onsubmit="saveNewUser(event)" class="space-y-4" autocomplete="off">
+                        <form id="form-user" data-onsubmit="saveNewUser(event)" class="space-y-4" autocomplete="off">
                             <div>
                                 <label class="text-xs block mb-1">Username *</label>
                                 <input type="text" id="new-user-username" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Ketik username..." autocomplete="off">
@@ -1289,17 +1289,17 @@
                             <div class="bg-white/5 rounded-xl p-3"><div class="text-gray-400">Barang Keluar</div><div id="backup-count-keluar" class="text-xl font-bold text-white">0</div></div>
                             <div class="bg-white/5 rounded-xl p-3"><div class="text-gray-400">PO Customer</div><div id="backup-count-po" class="text-xl font-bold text-white">0</div></div>
                         </div>
-                        <button onclick="downloadInventoryBackup()" class="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold flex items-center justify-center gap-2"><i data-lucide="file-down" class="w-4 h-4"></i> DOWNLOAD BACKUP JSON</button>
+                        <button data-action="download-inventory-backup" class="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold flex items-center justify-center gap-2"><i data-lucide="file-down" class="w-4 h-4"></i> DOWNLOAD BACKUP JSON</button>
                     </div>
 
                     <div class="app-card p-6 rounded-2xl space-y-4">
                         <div class="flex items-center gap-2 text-amber-400"><i data-lucide="upload" class="w-5 h-5"></i><h3 class="font-bold text-sm text-gray-100">RESTORE DATA</h3></div>
                         <p class="text-xs text-gray-400">Pulihkan data dari file JSON backup. Proses ini akan mengganti data cloud saat ini.</p>
                         <label class="block text-xs text-gray-300 font-semibold">Pilih file backup (.json)</label>
-                        <input id="restore-json-file" type="file" accept=".json,application/json" class="w-full text-xs text-gray-300 file:mr-3 file:px-3 file:py-2 file:rounded-lg file:border-0 file:bg-white/10 file:text-white hover:file:bg-white/20" onchange="previewRestoreFile(this)" autocomplete="off">
+                        <input id="restore-json-file" type="file" accept=".json,application/json" class="w-full text-xs text-gray-300 file:mr-3 file:px-3 file:py-2 file:rounded-lg file:border-0 file:bg-white/10 file:text-white hover:file:bg-white/20" data-onchange="previewRestoreFile(this)" autocomplete="off">
                         <div id="restore-file-info" class="hidden bg-white/5 rounded-xl p-3 text-xs text-gray-300"></div>
                         <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3 text-xs text-rose-300">Restore menimpa data aktif. Aplikasi akan mengunduh backup kondisi saat ini terlebih dahulu sebelum memulihkan file pilihan.</div>
-                        <button id="restore-json-btn" onclick="restoreInventoryBackup()" disabled class="w-full py-3 rounded-xl bg-rose-600/40 text-white/50 text-xs font-bold flex items-center justify-center gap-2 cursor-not-allowed"><i data-lucide="database-backup" class="w-4 h-4"></i> RESTORE DATABASE</button>
+                        <button id="restore-json-btn" data-action="restore-inventory-backup" disabled class="w-full py-3 rounded-xl bg-rose-600/40 text-white/50 text-xs font-bold flex items-center justify-center gap-2 cursor-not-allowed"><i data-lucide="database-backup" class="w-4 h-4"></i> RESTORE DATABASE</button>
                     </div>
                 </div>
                 <div class="app-card p-5 rounded-2xl text-xs text-gray-400 space-y-2">
@@ -1322,7 +1322,7 @@
                 <p class="login-glass-subtitle text-xs">Sistem Manajemen Inventory Gudang</p>
             </div>
             <div class="login-glass-section-label">LOGIN</div>
-            <form id="form-login" autocomplete="off" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+            <form id="form-login" autocomplete="off" data-onsubmit="handleLoginSubmit(event)" class="space-y-4">
                 <div class="login-glass-field">
                     <i data-lucide="user-round" class="login-glass-field-icon"></i>
                     <input type="text" id="login-username" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required placeholder="Username">
@@ -1365,10 +1365,10 @@
                 Pilih <strong>Tetap Login</strong> untuk melanjutkan sesi.
             </p>
             <div class="flex gap-2">
-                <button type="button" onclick="autoLogoutNow()" class="flex-1 py-2.5 rounded-xl border border-white/15 text-gray-300 text-xs font-bold hover:bg-white/5 transition-colors">
+                <button type="button" data-action="auto-logout-now" class="flex-1 py-2.5 rounded-xl border border-white/15 text-gray-300 text-xs font-bold hover:bg-white/5 transition-colors">
                     Logout Sekarang
                 </button>
-                <button type="button" onclick="keepSessionAlive()" class="flex-1 py-2.5 rounded-xl theme-accent-bg text-white text-xs font-bold shadow-lg transition-all">
+                <button type="button" data-action="keep-session-alive" class="flex-1 py-2.5 rounded-xl theme-accent-bg text-white text-xs font-bold shadow-lg transition-all">
                     Tetap Login
                 </button>
             </div>
@@ -1414,7 +1414,7 @@
         <div class="app-card max-w-sm w-full p-6 rounded-2xl shadow-2xl border border-white/10 space-y-4">
             <h4 id="sj-password-title" class="font-bold text-sm text-gray-100 uppercase tracking-wide">Verifikasi Password</h4>
             <p id="sj-password-message" class="text-xs text-gray-300 leading-relaxed"></p>
-            <form id="sj-password-form" onsubmit="return false;" class="m-0">
+            <form id="sj-password-form" data-onsubmit="return false;" class="m-0">
                 <input id="sj-password-input" name="sj-verify-password" type="password" autocomplete="current-password" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm theme-focus" placeholder="Masukkan password akun">
             </form>
             <div id="sj-password-error" class="hidden text-[11px] text-rose-300"></div>
@@ -1534,6 +1534,6 @@
 
 
 
-    <script src="assets/app.js?v=phase3-sj-audit-normalize-fix-20261126"></script>
+    <script src="assets/app.js?v=phase3-csp-prep-delegation-20261126"></script>
 </body>
 </html>
