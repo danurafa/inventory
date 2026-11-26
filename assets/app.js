@@ -153,7 +153,7 @@
                 const shortLabels = {
                     active: 'Online',
                     saving: 'Simpan',
-                    connecting: 'Konek…',
+                    connecting: 'Connecting',
                     offline: 'Offline',
                     error: 'Error'
                 };

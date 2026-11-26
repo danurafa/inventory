@@ -14885,9 +14885,9 @@ html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .sof
     display: inline-flex !important;
     align-items: center !important;
     align-self: center !important;
-    flex: 0 0 auto !important;
+    flex: 0 1 auto !important;
     width: auto !important;
-    max-width: 46% !important;
+    max-width: 40% !important;
     min-width: 0 !important;
     padding: 2px 6px !important;
     overflow: hidden !important;
@@ -14901,10 +14901,10 @@ html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .sof
     align-items: center !important;
     justify-content: center !important;
     gap: 4px !important;
-    flex: 0 1 auto !important;
+    flex: 0 0 auto !important;
     width: auto !important;
     min-width: 0 !important;
-    max-width: 100% !important;
+    max-width: 62% !important;
     padding: 2px 6px !important;
     border-radius: 999px !important;
     background: rgba(8, 18, 26, .78) !important;
