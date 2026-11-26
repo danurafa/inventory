@@ -151,7 +151,7 @@
             const mobileBadge = document.getElementById('cloud-sync-status-mobile');
             if (mobileBadge) {
                 const shortLabels = {
-                    active: 'Sync',
+                    active: 'Online',
                     saving: 'Simpan',
                     connecting: 'Konek…',
                     offline: 'Offline',
