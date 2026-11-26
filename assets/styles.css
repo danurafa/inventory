@@ -15319,10 +15319,12 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     -webkit-box-orient:vertical !important;
     overflow:hidden !important;
   }
-  /* Baris 3: Alamat penuh, dibatasi 2 baris. */
+  /* Baris 3: Alamat kiri, Warna kanan (sejajar). */
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(5) {
-    grid-column:1 / -1 !important;
+    grid-column:1 !important;
     grid-row:3 !important;
+    text-align:left !important;
+    min-width:0 !important;
   }
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(5) .sj-alamat-value {
     display:-webkit-box !important;
@@ -15330,20 +15332,9 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     -webkit-box-orient:vertical !important;
     overflow:hidden !important;
   }
-  /* Baris 4: No. PO di kiri, Warna di kanan. */
-  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(6) {
-    grid-column:1 !important;
-    grid-row:4 !important;
-    text-align:left !important;
-    min-width:0 !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-    white-space:nowrap !important;
-    padding-right:6px !important;
-  }
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(8) {
     grid-column:2 !important;
-    grid-row:4 !important;
+    grid-row:3 !important;
     text-align:right !important;
     min-width:0 !important;
     max-width:100% !important;
@@ -15363,16 +15354,38 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     overflow:visible !important;
     text-overflow:clip !important;
   }
-  /* Baris 5: Total Qty di kiri, User di kanan. */
-  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(9) {
+  /* Baris 4: No. PO kiri, User kanan (sejajar). */
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(6) {
     grid-column:1 !important;
-    grid-row:5 !important;
+    grid-row:4 !important;
     text-align:left !important;
+    min-width:0 !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+    padding-right:6px !important;
+  }
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(10) {
+    grid-column:2 !important;
+    grid-row:4 !important;
+    justify-self:end !important;
+    text-align:right !important;
+    min-width:0 !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+    max-width:100% !important;
+  }
+  /* Baris 5: Total Qty di kanan, di atas tombol aksi. */
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(9) {
+    grid-column:1 / -1 !important;
+    grid-row:5 !important;
+    text-align:right !important;
+    justify-self:end !important;
     min-width:0 !important;
     max-width:100% !important;
     overflow:hidden !important;
     align-self:start !important;
-    padding-right:6px !important;
     white-space:nowrap !important;
     text-overflow:ellipsis !important;
   }
@@ -15386,17 +15399,6 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     white-space:normal !important;
     overflow:visible !important;
     text-overflow:clip !important;
-  }
-  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(10) {
-    grid-column:2 !important;
-    grid-row:5 !important;
-    justify-self:end !important;
-    text-align:right !important;
-    min-width:0 !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-    white-space:nowrap !important;
-    max-width:100% !important;
   }
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(11) {
     grid-column:1 / -1 !important;
