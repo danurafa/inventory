@@ -15335,11 +15335,21 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     grid-column:1 !important;
     grid-row:4 !important;
     text-align:left !important;
+    min-width:0 !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+    padding-right:6px !important;
   }
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(8) {
     grid-column:2 !important;
     grid-row:4 !important;
     text-align:right !important;
+    min-width:0 !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+    max-width:100% !important;
   }
   /* Baris 5: Total Qty di kiri, User di kanan. */
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(9) {
