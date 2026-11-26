@@ -14872,18 +14872,30 @@ html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .sof
 
 @media screen and (max-width: 767px) {
   html body #v184-mobile-status-row {
+    display: flex !important;
     flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 4px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
   }
   html body #v167-mobile-role-badge {
     align-self: center !important;
     flex: 0 0 auto !important;
+    max-width: 42% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
   html body #cloud-sync-status-mobile {
     display: inline-flex !important;
     align-items: center !important;
     gap: 4px !important;
-    flex: 0 0 auto !important;
-    max-width: max-content !important;
+    flex: 1 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
     padding: 2px 6px !important;
     border-radius: 999px !important;
     background: rgba(8, 18, 26, .78) !important;
@@ -14891,10 +14903,15 @@ html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .sof
     box-shadow: 0 2px 8px rgba(0, 0, 0, .18) !important;
     color: #34d399 !important;
     white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
     font-size: 9px !important;
     font-weight: 850 !important;
     line-height: 1.2 !important;
     letter-spacing: .01em !important;
+  }
+  html body #cloud-sync-status-mobile > span:first-child {
+    flex: 0 0 auto !important;
   }
   html body #cloud-sync-status-mobile:has(.bg-sky-400) { color: #38bdf8 !important; }
   html body #cloud-sync-status-mobile:has(.bg-amber-400) { color: #fbbf24 !important; }
@@ -14905,6 +14922,9 @@ html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .sof
     font-size: 8px !important;
     padding: 1px 4px !important;
     gap: 3px !important;
+  }
+  html body #v167-mobile-role-badge {
+    max-width: 38% !important;
   }
 }
 
