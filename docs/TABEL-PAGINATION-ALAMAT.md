@@ -275,7 +275,7 @@ index.html
 ```
 
 Cache-buster **saat ini** (di `index.html`):
-HEAD `e5d7edc`
+HEAD `daf478c`
 Commit aplikasi terakhir; commit `docs:` (termasuk commit sinkron) tidak dihitung guard.
 
 ```
@@ -286,6 +286,7 @@ assets/app.js?v=cloud-retry2-20261126
 Commit terkait (terbaru di atas):
 
 ```
+daf478c  fix: retry latar belakang saat cloud connecting
 e5d7edc  fix: tahan sesi saat setup/status 5xx
 68d6321  feat: badge alamat customer di detail riwayat PO
 0ad146d  feat: indikator loading tombol login
