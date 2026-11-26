@@ -275,15 +275,41 @@ index.html
 ```
 
 Cache-buster **saat ini** (di `index.html`):
+HEAD `6b793b6`
 
 ```
-assets/styles.css?v=chart-flex-soft-scroll-20261126
-assets/app.js?v=flexible-movement-chart-20261126
+assets/styles.css?v=sj-totalqty-center-20261126
+assets/app.js?v=keluar-edit-focus2-20261126
 ```
 
 Commit terkait (terbaru di atas):
 
 ```
+6b793b6  fix: Total Qty kartu SJ mobile di-center di atas tombol aksi
+feefc40  fix: susun ulang layout kartu Riwayat SJ mobile
+a7687b3  fix: hapus override SJ yang paksa Total Qty tumpang tindih
+de87631  fix: cegah tumpang tindih Warna dan Total Qty kartu SJ mobile
+7cf7521  fix: cegah tumpang tindih Total Qty dengan Warna di kartu SJ mobile
+f38591e  fix: overlap label Total Qty di kartu Riwayat SJ + fokus edit Keluar
+3c033df  fix: fokus langsung ke form saat edit Barang Keluar
+45b0995  fix: bentuk tombol Detail kartu Barang Keluar UI3 disamakan
+8cc6434  fix: label badge cloud sync mobile jadi Connecting
+52e7aea  fix: label badge cloud sync mobile jadi Online
+b04e33c  fix: badge cloud sync mobile ringkas
+d3b9836  fix: fokus ke form saat edit Master Barang
+cd247ad  fix: selaraskan selector CSS header dengan data-action
+48e1acc  fix: badge role/sync mobile via specificity override
+ac8597d  fix: badge role/sync mobile aman untuk semua UI
+74d09d7  fix: rapikan badge role/sync header mobile
+3f2b015  fix: typo sidebar + retry rate limit login
+24ac130  fix: typo userBanner di sidebar toggle mobile
+7677f78  refactor: fase 3 prep CSP via event delegation
+a91e007  chore: hapus CSP report-only meta yang tidak didukung browser
+a796108  fix: normalisasi audit SJ setelah print/excel
+30c22bc  chore: fase 3 hardening CSP report-only dan SRI CDN
+22aedcc  fix: fase 2 worker hardening + guard SJ viewer
+d0af67e  fix: hardening fase 1 audit + perbaiki blank page PO render
+26919ee  docs: sinkronkan handover ke HEAD e3a0559 dan cache-buster aktif
 e3a0559  UI 1 scroll ringan (attachment scroll + orb off)
 4302fb3  grafik flex smooth + font UI3 mobile proporsional, overlay tema penuh
 535f4de  Pencarian Umum rata kiri + hover tanpa pop (UI 1/2)
