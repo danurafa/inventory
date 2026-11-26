@@ -1193,18 +1193,40 @@
             performLogout('auto');
         };
 
+        function revokeWorkerSession(token) {
+            if (!token) return;
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 3000);
+            fetch(`${WORKER_BASE_URL}/api/logout`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                signal: controller.signal,
+                keepalive: true
+            }).then(() => {}, error => {
+                console.warn('[Logout] Revoke sesi Worker gagal:', error.message);
+            }).finally(() => clearTimeout(timer));
+        }
+
         async function performLogout(reason = 'manual') {
             if (autoLogoutInProgress) return;
             autoLogoutInProgress = true;
             document.body.classList.remove('inventory-authenticated');
             stopAutoLogoutTimer();
-            try { if (workerToken) await workerRequest('/api/logout', { method: 'POST' }); } catch (_) {}
+            if (cloudInitRetryTimer) {
+                clearTimeout(cloudInitRetryTimer);
+                cloudInitRetryTimer = null;
+            }
+            const tokenToRevoke = workerToken;
             workerToken = '';
             localStorage.removeItem('gudang_pro_worker_token');
             localStorage.removeItem('gudang_pro_session');
             window.activeUserSession = null;
             window.gudangAppDb.currentUser = null;
             cloudReady = false;
+            revokeWorkerSession(tokenToRevoke);
             const userInp = document.getElementById('login-username');
             const passInp = document.getElementById('login-password');
             if (userInp) userInp.value = '';
