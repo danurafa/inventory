@@ -5571,7 +5571,7 @@ input,button,select,textarea{font:inherit}
         /* Tombol sekunder */
         body.theme-glass #confirm-cancel-btn,
         body.theme-glass #detail-save-back,
-        body.theme-glass #auto-logout-modal button[onclick="autoLogoutNow()"] {
+        body.theme-glass #auto-logout-modal button[data-action="auto-logout-now"] {
             background: rgba(255, 255, 255, .10) !important;
             border: 1px solid rgba(255, 255, 255, .26) !important;
             color: #f1f7ff !important;
@@ -5580,7 +5580,7 @@ input,button,select,textarea{font:inherit}
         /* Tombol utama: putih di atas biru tua (kontras >= 5:1) */
         body.theme-glass #confirm-ok-btn,
         body.theme-glass #detail-save-yes,
-        body.theme-glass #auto-logout-modal button[onclick="keepSessionAlive()"] {
+        body.theme-glass #auto-logout-modal button[data-action="keep-session-alive"] {
             background: linear-gradient(135deg, #1d5fd1, #0a6aa3) !important;
             border: 1px solid rgba(255, 255, 255, .28) !important;
             color: #ffffff !important;
@@ -5645,7 +5645,7 @@ input,button,select,textarea{font:inherit}
         }
         body.theme-glass.theme-crystal #confirm-cancel-btn,
         body.theme-glass.theme-crystal #detail-save-back,
-        body.theme-glass.theme-crystal #auto-logout-modal button[onclick="autoLogoutNow()"] {
+        body.theme-glass.theme-crystal #auto-logout-modal button[data-action="auto-logout-now"] {
             background: #e2edf9 !important;
             border: 1px solid #a9c1db !important;
             color: #17304d !important;
@@ -7861,8 +7861,8 @@ body.theme-glass.theme-crystal .inventory-item-select-option[aria-selected="true
     display:none !important;
   }
   html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle,
-  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"],
-  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"],
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[data-action="logout-user"] {
     display:inline-flex !important;
     position:static !important;
     grid-row:1 !important;
@@ -7882,10 +7882,10 @@ body.theme-glass.theme-crystal .inventory-item-select-option[aria-selected="true
     box-shadow:none !important;
   }
   html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle { grid-column:1 !important; }
-  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] { grid-column:2 !important; font-size:0 !important; }
-  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[onclick="logoutUser()"] { grid-column:3 !important; }
-  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] span { display:none !important; }
-  html body.theme-glass.theme-light.theme-soft #inventory-top-header :is(#sidebar-toggle, button[onclick="exportCSVData()"], button[onclick="logoutUser()"]):is(svg,i) {
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] { grid-column:2 !important; font-size:0 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[data-action="logout-user"] { grid-column:3 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] span { display:none !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header :is(#sidebar-toggle, button[data-action="export-csv"], button[data-action="logout-user"]):is(svg,i) {
     color:#c2cec7 !important;
     stroke:#c2cec7 !important;
   }
@@ -9626,7 +9626,7 @@ html body #inventory-sidebar nav {
     background: transparent !important;
     box-shadow: none !important;
   }
-  html body.theme-crystal #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+  html body.theme-crystal #inventory-top-header #current-user-banner button[data-action="logout-user"] {
     display: inline-flex !important;
     order: 1 !important;
     width: 34px !important;
@@ -9644,7 +9644,7 @@ html body #inventory-sidebar nav {
   }
 
   /* CSV is the third icon in the same continuous badge. */
-  html body.theme-crystal #inventory-top-header > div:last-child > button[onclick="exportCSVData()"] {
+  html body.theme-crystal #inventory-top-header > div:last-child > button[data-action="export-csv"] {
     display: inline-flex !important;
     order: 2 !important;
     width: 38px !important;
@@ -9663,14 +9663,14 @@ html body #inventory-sidebar nav {
     box-shadow: inset 0 1px 0 rgba(255,255,255,.30), 0 3px 10px rgba(20,55,95,.12) !important;
     color: #244765 !important;
   }
-  html body.theme-crystal #inventory-top-header > div:last-child > button[onclick="exportCSVData()"] i,
-  html body.theme-crystal #inventory-top-header > div:last-child > button[onclick="exportCSVData()"] svg {
+  html body.theme-crystal #inventory-top-header > div:last-child > button[data-action="export-csv"] i,
+  html body.theme-crystal #inventory-top-header > div:last-child > button[data-action="export-csv"] svg {
     display: inline-block !important;
     width: 17px !important;
     height: 17px !important;
     margin: 0 !important;
   }
-  html body.theme-crystal #inventory-top-header > div:last-child > button[onclick="exportCSVData()"] span {
+  html body.theme-crystal #inventory-top-header > div:last-child > button[data-action="export-csv"] span {
     display: none !important;
   }
 
@@ -9775,7 +9775,7 @@ html body #inventory-sidebar nav {
     display: none !important;
   }
   html body.theme-crystal #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle,
-  html body.theme-crystal #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+  html body.theme-crystal #inventory-top-header #current-user-banner button[data-action="logout-user"] {
     display: inline-flex !important;
     position: static !important;
     flex: 0 0 34px !important;
@@ -9794,7 +9794,7 @@ html body #inventory-sidebar nav {
     transform: none !important;
   }
 
-  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] {
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] {
     display: inline-flex !important;
     position: static !important;
     flex: 0 0 34px !important;
@@ -9813,14 +9813,14 @@ html body #inventory-sidebar nav {
     color: #244765 !important;
     font-size: 0 !important;
   }
-  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] i,
-  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] svg {
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] i,
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] svg {
     display: inline-block !important;
     width: 18px !important;
     height: 18px !important;
     margin: 0 !important;
   }
-  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] span {
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] span {
     display: none !important;
   }
 }
@@ -9896,12 +9896,12 @@ html body #inventory-sidebar nav {
     grid-row: 1 !important;
     order: 1 !important;
   }
-  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] {
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] {
     grid-column: 2 !important;
     grid-row: 1 !important;
     order: 2 !important;
   }
-  html body.theme-crystal #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+  html body.theme-crystal #inventory-top-header #current-user-banner button[data-action="logout-user"] {
     grid-column: 3 !important;
     grid-row: 1 !important;
     order: 3 !important;
@@ -9914,8 +9914,8 @@ html body #inventory-sidebar nav {
     grid-template-columns: 32px 32px 32px !important;
   }
   html body.theme-crystal #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle,
-  html body.theme-crystal #inventory-top-header #current-user-banner button[onclick="logoutUser()"],
-  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] {
+  html body.theme-crystal #inventory-top-header #current-user-banner button[data-action="logout-user"],
+  html body.theme-crystal #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] {
     width: 32px !important;
     min-width: 32px !important;
     flex-basis: 32px !important;
@@ -10119,7 +10119,7 @@ html body #inventory-sidebar nav {
     stroke: #c9eaff !important;
     opacity: 1 !important;
   }
-  html body.theme-glass.theme-dark.theme-classic #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] {
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] {
     display: inline-flex !important;
     position: static !important;
     grid-column: 2 !important;
@@ -10141,11 +10141,11 @@ html body #inventory-sidebar nav {
     box-shadow: none !important;
     font-size: 0 !important;
   }
-  html body.theme-glass.theme-dark.theme-classic #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] span {
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] span {
     display: none !important;
   }
-  html body.theme-glass.theme-dark.theme-classic #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] svg,
-  html body.theme-glass.theme-dark.theme-classic #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] i {
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] svg,
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] i {
     display: inline-block !important;
     width: 18px !important;
     height: 18px !important;
@@ -10153,7 +10153,7 @@ html body #inventory-sidebar nav {
     color: #c9eaff !important;
     stroke: #c9eaff !important;
   }
-  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #current-user-banner button[data-action="logout-user"] {
     display: inline-flex !important;
     position: static !important;
     grid-column: 3 !important;
@@ -10174,8 +10174,8 @@ html body #inventory-sidebar nav {
     background: transparent !important;
     box-shadow: none !important;
   }
-  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #current-user-banner button[onclick="logoutUser()"] svg,
-  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #current-user-banner button[onclick="logoutUser()"] i {
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #current-user-banner button[data-action="logout-user"] svg,
+  html body.theme-glass.theme-dark.theme-classic #inventory-top-header #current-user-banner button[data-action="logout-user"] i {
     color: #c9eaff !important;
     stroke: #c9eaff !important;
     opacity: 1 !important;
@@ -10921,7 +10921,7 @@ html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-
   box-shadow:0 4px 12px rgba(0,0,0,.20) !important;
 }
 
-html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content button[onclick^="print"] {
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content button[data-action^="print"] {
   background:linear-gradient(155deg,rgba(255,255,255,.26),rgba(255,255,255,.08)) !important;
   border:1px solid rgba(255,255,255,.40) !important;
   border-radius:999px !important;
@@ -10929,13 +10929,13 @@ html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-
   color:#f4f8ff !important;
   -webkit-text-fill-color:#f4f8ff !important;
 }
-html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content button[onclick^="print"] > svg,
-html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content button[onclick^="print"] > i {
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content button[data-action^="print"] > svg,
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content button[data-action^="print"] > i {
   color:#bfe2ff !important;
   stroke:#bfe2ff !important;
   filter:drop-shadow(0 0 5px rgba(100,190,255,.55));
 }
-html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content button[onclick^="print"]:hover {
+html body.theme-glass.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c) #inventory-main-content button[data-action^="print"]:hover {
   background:linear-gradient(155deg,rgba(255,255,255,.36),rgba(115,183,255,.16)) !important;
   border-color:rgba(191,226,255,.68) !important;
   box-shadow:inset 1px 1px 0 rgba(255,255,255,.55),0 10px 24px rgba(34,126,220,.28) !important;
@@ -12070,15 +12070,15 @@ html body.theme-glass.theme-light.theme-soft #dashboard-hero .bg-blue-400 {
   background:#718a79 !important;
   box-shadow:none !important;
 }
-html body.theme-glass.theme-light.theme-soft #inventory-top-header button[onclick="exportCSVData()"] {
+html body.theme-glass.theme-light.theme-soft #inventory-top-header button[data-action="export-csv"] {
   color:#cbd5cf !important;
   -webkit-text-fill-color:#cbd5cf !important;
   background:#2b3630 !important;
   border:1px solid #43534a !important;
   box-shadow:none !important;
 }
-html body.theme-glass.theme-light.theme-soft #inventory-top-header button[onclick="exportCSVData()"] i,
-html body.theme-glass.theme-light.theme-soft #inventory-top-header button[onclick="exportCSVData()"] svg {
+html body.theme-glass.theme-light.theme-soft #inventory-top-header button[data-action="export-csv"] i,
+html body.theme-glass.theme-light.theme-soft #inventory-top-header button[data-action="export-csv"] svg {
   color:#aab8b0 !important;
   stroke:#aab8b0 !important;
 }
@@ -12546,7 +12546,7 @@ html body.theme-glass.theme-light.theme-soft #tab-backup #backup-restore-warning
   background:#302c22 !important;
   border-color:#4c4533 !important;
 }
-html body.theme-glass.theme-light.theme-soft #tab-backup button[onclick="downloadInventoryBackup()"] {
+html body.theme-glass.theme-light.theme-soft #tab-backup button[data-action="download-inventory-backup"] {
   color:#dce5df !important;
   background:#526b5e !important;
 }
@@ -13009,20 +13009,20 @@ html body.theme-glass.theme-light.theme-soft #movement-trend-card svg circle[fil
   html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner { display:contents !important; }
   html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner > div:first-child { display:none !important; }
   html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle,
-  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"],
-  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"],
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[data-action="logout-user"] {
     display:inline-flex !important; position:static !important; grid-row:1 !important; flex:0 0 34px !important;
     width:34px !important; min-width:34px !important; height:32px !important; min-height:32px !important;
     margin:0 !important; padding:6px !important; align-items:center !important; justify-content:center !important;
     border:0 !important; border-radius:9px !important; color:#c2cec7 !important; background:transparent !important; box-shadow:none !important;
   }
   html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle { grid-column:1 !important; }
-  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] { grid-column:2 !important; font-size:0 !important; }
-  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[onclick="logoutUser()"] { grid-column:3 !important; }
-  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] span { display:none !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] { grid-column:2 !important; font-size:0 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[data-action="logout-user"] { grid-column:3 !important; }
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] span { display:none !important; }
   html body.theme-glass.theme-light.theme-soft #inventory-top-header #sidebar-toggle svg,
-  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] :is(svg,i),
-  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[onclick="logoutUser()"] :is(svg,i) {
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] :is(svg,i),
+  html body.theme-glass.theme-light.theme-soft #inventory-top-header #current-user-banner button[data-action="logout-user"] :is(svg,i) {
     color:#c2cec7 !important; stroke:#c2cec7 !important;
   }
 }
@@ -13629,8 +13629,8 @@ html body.theme-glass.theme-neon .appearance-theme-card.active { border-color:#3
   html body.theme-glass.theme-neon #inventory-top-header #current-user-banner { display:contents !important; }
   html body.theme-glass.theme-neon #inventory-top-header #current-user-banner > div:first-child { display:none !important; }
   html body.theme-glass.theme-neon #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle,
-  html body.theme-glass.theme-neon #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"],
-  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+  html body.theme-glass.theme-neon #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"],
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[data-action="logout-user"] {
     display:inline-flex !important;
     position:static !important;
     width:34px !important;
@@ -13647,9 +13647,9 @@ html body.theme-glass.theme-neon .appearance-theme-card.active { border-color:#3
     box-shadow:none !important;
   }
   html body.theme-glass.theme-neon #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle { grid-column:1 !important; }
-  html body.theme-glass.theme-neon #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] { grid-column:2 !important; font-size:0 !important; }
-  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[onclick="logoutUser()"] { grid-column:3 !important; }
-  html body.theme-glass.theme-neon #inventory-top-header > div.flex.items-center.gap-4 > button[onclick="exportCSVData()"] span { display:none !important; }
+  html body.theme-glass.theme-neon #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] { grid-column:2 !important; font-size:0 !important; }
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[data-action="logout-user"] { grid-column:3 !important; }
+  html body.theme-glass.theme-neon #inventory-top-header > div.flex.items-center.gap-4 > button[data-action="export-csv"] span { display:none !important; }
 }
 @media screen and (max-width:380px) {
   html body.theme-glass.theme-neon #inventory-top-header #v156-mobile-greeting { right:154px !important; }
@@ -13692,12 +13692,12 @@ html body.theme-glass.theme-neon :is(#detail-save-content,#confirm-details,#auto
   background:rgba(2,8,12,.36) !important;
   border-color:rgba(111,157,167,.17) !important;
 }
-html body.theme-glass.theme-neon :is(#detail-save-back,#confirm-cancel-btn,#auto-logout-modal button[onclick="autoLogoutNow()"],#print-cancel) {
+html body.theme-glass.theme-neon :is(#detail-save-back,#confirm-cancel-btn,#auto-logout-modal button[data-action="auto-logout-now"],#print-cancel) {
   color:#d3e0e4 !important;
   background:rgba(116,145,155,.12) !important;
   border:1px solid rgba(132,170,180,.22) !important;
 }
-html body.theme-glass.theme-neon :is(#detail-save-yes,#confirm-ok-btn,#auto-logout-modal button[onclick="keepSessionAlive()"],#print-continue) {
+html body.theme-glass.theme-neon :is(#detail-save-yes,#confirm-ok-btn,#auto-logout-modal button[data-action="keep-session-alive"],#print-continue) {
   color:#061216 !important;
   background:linear-gradient(135deg,#48e3ed,#16aebe) !important;
   border:1px solid rgba(102,239,247,.55) !important;
@@ -14617,7 +14617,7 @@ html body.theme-glass.theme-neon #inventory-app-layout.sidebar-collapsed #invent
   }
   html body.theme-glass.theme-neon #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle,
   html body.theme-glass.theme-neon #inventory-top-header #header-export-csv,
-  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[data-action="logout-user"] {
     display:inline-flex !important;position:static !important;grid-row:1 !important;flex:0 0 34px !important;
     width:34px !important;min-width:34px !important;height:32px !important;min-height:32px !important;
     margin:0 !important;padding:6px !important;align-items:center !important;justify-content:center !important;
@@ -14628,9 +14628,9 @@ html body.theme-glass.theme-neon #inventory-app-layout.sidebar-collapsed #invent
   html body.theme-glass.theme-neon #inventory-top-header #header-export-csv {
     grid-column:2 !important;visibility:visible !important;opacity:1 !important;font-size:0 !important;
   }
-  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[onclick="logoutUser()"] { grid-column:3 !important; }
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[data-action="logout-user"] { grid-column:3 !important; }
   html body.theme-glass.theme-neon #inventory-top-header #header-export-csv > span { display:none !important; }
-  html body.theme-glass.theme-neon #inventory-top-header :is(#sidebar-toggle,#header-export-csv,button[onclick="logoutUser()"]):is(svg,i),
+  html body.theme-glass.theme-neon #inventory-top-header :is(#sidebar-toggle,#header-export-csv,button[data-action="logout-user"]):is(svg,i),
   html body.theme-glass.theme-neon #inventory-top-header #header-export-csv > :is(svg,i) {
     color:#9eeaf0 !important;stroke:#9eeaf0 !important;
   }
@@ -14643,7 +14643,7 @@ html body.theme-glass.theme-neon #inventory-app-layout.sidebar-collapsed #invent
   }
   html body.theme-glass.theme-neon #inventory-top-header #current-user-banner #sidebar-toggle.sidebar-mobile-floating-toggle,
   html body.theme-glass.theme-neon #inventory-top-header #header-export-csv,
-  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[onclick="logoutUser()"] {
+  html body.theme-glass.theme-neon #inventory-top-header #current-user-banner button[data-action="logout-user"] {
     flex-basis:32px !important;width:32px !important;min-width:32px !important;
   }
 }
@@ -16726,7 +16726,7 @@ html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):
 html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-reset-form]:not(.reset-form-batal) {
   --btn-badge-tone:251,191,36 !important;
 }
-html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[onclick^="print"] {
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-action^="print"] {
   --btn-badge-tone:52,211,153 !important;
 }
 html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content :is(#keluar-prev,#keluar-next,#sj-prev,#sj-next,.generic-page-prev,.generic-page-next) {
@@ -16742,7 +16742,7 @@ html[lang] body[class]:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):no
   box-shadow:0 4px 14px rgba(225,29,72,.35) !important;
 }
 /* UI 1 — tombol Reset di Riwayat Surat Jalan (resetSjFilter) ikut amber. */
-html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[onclick="resetSjFilter()"] {
+html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-action="reset-sj-filter"] {
   --btn-badge-tone:251,191,36 !important;
 }
 /* UI 2 (Crystal) — samakan warna badge perintah tombol dengan UI 1. */
@@ -16763,10 +16763,10 @@ html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c)
   -webkit-text-fill-color:#ffffff !important;
 }
 html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-reset-form]:not(.reset-form-batal),
-html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[onclick="resetSjFilter()"] {
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-action="reset-sj-filter"] {
   --btn-badge-tone:251,191,36 !important;
 }
-html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[onclick^="print"] {
+html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-action^="print"] {
   --btn-badge-tone:52,211,153 !important;
 }
 html body.theme-glass.theme-light.theme-crystal:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content :is(#keluar-prev,#keluar-next,#sj-prev,#sj-next,.generic-page-prev,.generic-page-next) {
@@ -16888,7 +16888,7 @@ html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal):n
 /* V210 — tombol "Detail"/"Tutup" (Keluar, PO Customer, Riwayat SJ) jadi badge
    akrilik UNGU. Warna ini sengaja dipilih karena belum dipakai badge lain
    (abu / sky / rose / orange / emerald / amber / biru Simpan). */
-html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[onclick^="toggleKeluarDetails"],[onclick^="togglePoDetails"],[onclick^="toggleSjDetails"]):not(:disabled):not([hidden]) {
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[data-action="toggle-keluar-details"],[data-action="toggle-po-details"],[data-action="toggle-sj-details"]):not(:disabled):not([hidden]) {
   --btn-badge-tone:167,139,250 !important;
   align-items:center !important;
   justify-content:center !important;
@@ -16903,14 +16903,14 @@ html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.t
   -webkit-backdrop-filter:blur(14px) saturate(150%) !important;
   backdrop-filter:blur(14px) saturate(150%) !important;
 }
-html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[onclick^="toggleKeluarDetails"],[onclick^="togglePoDetails"],[onclick^="toggleSjDetails"]):not(:disabled):not([hidden]):hover {
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[data-action="toggle-keluar-details"],[data-action="toggle-po-details"],[data-action="toggle-sj-details"]):not(:disabled):not([hidden]):hover {
   border-color:rgba(221,214,254,.90) !important;
   background-image:linear-gradient(135deg,rgba(167,139,250,.60),rgba(139,92,246,.30)) !important;
   color:#ffffff !important;
   -webkit-text-fill-color:#ffffff !important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 16px rgba(255,255,255,.20),0 10px 26px rgba(139,92,246,.40) !important;
 }
-html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[onclick^="toggleKeluarDetails"],[onclick^="togglePoDetails"],[onclick^="toggleSjDetails"]):not(:disabled):not([hidden]):active {
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[data-action="toggle-keluar-details"],[data-action="toggle-po-details"],[data-action="toggle-sj-details"]):not(:disabled):not([hidden]):active {
   background-color:rgba(18,10,40,.74) !important;
   background-image:linear-gradient(135deg,rgba(167,139,250,.66),rgba(109,40,217,.34)) !important;
   border-color:rgba(233,213,255,.95) !important;
@@ -16919,7 +16919,7 @@ html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.t
   box-shadow:inset 0 3px 9px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.22),0 2px 6px rgba(139,92,246,.28) !important;
 }
 @media (prefers-reduced-motion:reduce) {
-  html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[onclick^="toggleKeluarDetails"],[onclick^="togglePoDetails"],[onclick^="toggleSjDetails"]):not(:disabled):not([hidden]) {
+  html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[data-action="toggle-keluar-details"],[data-action="toggle-po-details"],[data-action="toggle-sj-details"]):not(:disabled):not([hidden]) {
     -webkit-backdrop-filter:none !important;
     backdrop-filter:none !important;
   }
@@ -16927,7 +16927,7 @@ html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.t
 
 /* V213 — state Tutup (panel detail sedang terbuka) dibedakan dari Detail:
    badge akrilik MERAH supaya jelas kalau klik berikutnya akan menutup. */
-html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[onclick^="toggleKeluarDetails"],[onclick^="togglePoDetails"],[onclick^="toggleSjDetails"])[aria-expanded="true"]:not(:disabled):not([hidden]) {
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[data-action="toggle-keluar-details"],[data-action="toggle-po-details"],[data-action="toggle-sj-details"])[aria-expanded="true"]:not(:disabled):not([hidden]) {
   --btn-badge-tone:251,113,133 !important;
   border-color:rgba(253,164,175,.78) !important;
   background-color:rgba(48,12,24,.64) !important;
@@ -16936,14 +16936,14 @@ html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.t
   -webkit-text-fill-color:#ffe4e6 !important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 0 14px rgba(255,255,255,.14),0 8px 22px rgba(225,29,72,.30) !important;
 }
-html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[onclick^="toggleKeluarDetails"],[onclick^="togglePoDetails"],[onclick^="toggleSjDetails"])[aria-expanded="true"]:not(:disabled):not([hidden]):hover {
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[data-action="toggle-keluar-details"],[data-action="toggle-po-details"],[data-action="toggle-sj-details"])[aria-expanded="true"]:not(:disabled):not([hidden]):hover {
   border-color:rgba(255,205,213,.92) !important;
   background-image:linear-gradient(135deg,rgba(251,113,133,.66),rgba(225,29,72,.34)) !important;
   color:#ffffff !important;
   -webkit-text-fill-color:#ffffff !important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 16px rgba(255,255,255,.20),0 10px 26px rgba(225,29,72,.40) !important;
 }
-html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[onclick^="toggleKeluarDetails"],[onclick^="togglePoDetails"],[onclick^="toggleSjDetails"])[aria-expanded="true"]:not(:disabled):not([hidden]):active {
+html body.theme-glass:is(.theme-dark.theme-classic,.theme-light.theme-crystal,.theme-light.theme-soft,.theme-dark.theme-neon):not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button:is([data-keluar-detail-toggle],[data-action="toggle-keluar-details"],[data-action="toggle-po-details"],[data-action="toggle-sj-details"])[aria-expanded="true"]:not(:disabled):not([hidden]):active {
   background-color:rgba(40,8,20,.76) !important;
   background-image:linear-gradient(135deg,rgba(251,113,133,.72),rgba(190,18,60,.38)) !important;
   border-color:rgba(255,228,230,.95) !important;
@@ -16994,7 +16994,7 @@ html body.theme-glass.theme-dark.theme-classic:not(#lg2a):not(#lg2b):not(#lg2c):
 /* V215 — UI 3 (Soft Sage): tombol Reset & Print ikut palet tema.
    Reset memakai clay lembut yang sudah dipakai tombol reset UI 3, Print memakai
    sage. Mode Batal (reset-form-batal) tetap merah; tombol lain tidak diubah. */
-html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content :is(button[data-reset-form]:not(.reset-form-batal),button[onclick="resetSjFilter()"]):not(:disabled):not([hidden]) {
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content :is(button[data-reset-form]:not(.reset-form-batal),button[data-action="reset-sj-filter"]):not(:disabled):not([hidden]) {
   --btn-badge-tone:196,154,148 !important;
   color:#c49a94 !important;
   -webkit-text-fill-color:#c49a94 !important;
@@ -17004,7 +17004,7 @@ html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):no
   border:1px solid #6b4f49 !important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 6px 18px rgba(0,0,0,.22) !important;
 }
-html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content :is(button[data-reset-form]:not(.reset-form-batal),button[onclick="resetSjFilter()"]):not(:disabled):not([hidden]):hover {
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content :is(button[data-reset-form]:not(.reset-form-batal),button[data-action="reset-sj-filter"]):not(:disabled):not([hidden]):hover {
   color:#e3c2bd !important;
   -webkit-text-fill-color:#e3c2bd !important;
   background:#493530 !important;
@@ -17013,7 +17013,7 @@ html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):no
   border-color:#a37a73 !important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 8px 22px rgba(0,0,0,.26) !important;
 }
-html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[onclick^="print"]:not(:disabled):not([hidden]) {
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-action^="print"]:not(:disabled):not([hidden]) {
   --btn-badge-tone:156,183,163 !important;
   color:#9cb7a3 !important;
   -webkit-text-fill-color:#9cb7a3 !important;
@@ -17023,7 +17023,7 @@ html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):no
   border:1px solid #5f7b69 !important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 6px 18px rgba(0,0,0,.22) !important;
 }
-html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[onclick^="print"]:not(:disabled):not([hidden]):hover {
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content button[data-action^="print"]:not(:disabled):not([hidden]):hover {
   color:#e4efe8 !important;
   -webkit-text-fill-color:#e4efe8 !important;
   background:#3d5446 !important;
@@ -17048,7 +17048,7 @@ html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):no
     line-height:1.35 !important;
     overflow-wrap:anywhere !important;
   }
-  html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content #tab-po form[id^="form-"] > .space-y-2 > .flex.items-center.justify-between > button[onclick="addPoItemRow()"] {
+  html body.theme-glass.theme-dark.theme-neon:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content #tab-po form[id^="form-"] > .space-y-2 > .flex.items-center.justify-between > button[data-action="add-po-item-row"] {
     flex:0 0 auto !important;
     max-width:100% !important;
     white-space:nowrap !important;
