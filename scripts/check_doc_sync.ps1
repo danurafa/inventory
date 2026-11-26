@@ -47,22 +47,15 @@ $head = ''
 $expectedHead = ''
 try {
     $head = (& git -C $root rev-parse --short HEAD 2>$null).Trim()
-    $hasParent = [bool](& git -C $root rev-parse --verify --quiet HEAD~1 2>$null)
-    $touchedDocs = $false
-    $changed = @(& git -C $root diff-tree --no-commit-id --name-only -r HEAD 2>$null)
-    foreach ($file in $changed) {
-        if ($file -match '^docs/') {
-            $touchedDocs = $true
-            break
-        }
-    }
+    $subject = (& git -C $root log -1 --format='%s' HEAD 2>$null).Trim()
 
-    # Commit yang menyentuh docs tidak bisa menuliskan hash dirinya sendiri.
-    # Marker di docs selalu menunjuk commit aplikasi terakhir sebelum commit itu.
-    if ($hasParent -and $touchedDocs) {
-        $expectedHead = Get-ExpectedHead 'HEAD~1'
-    } else {
+    # Commit "docs:" hanya sinkronisasi: marker boleh menunjuk commit aplikasi
+    # terakhir sebelum rangkaian commit docs itu. Commit aplikasi harus dicatat
+    # di docs dengan hash-nya sendiri lewat commit docs berikutnya.
+    if ($subject -match '^docs: ') {
         $expectedHead = Get-ExpectedHead 'HEAD'
+    } else {
+        $expectedHead = $head
     }
 } catch {
     $head = ''

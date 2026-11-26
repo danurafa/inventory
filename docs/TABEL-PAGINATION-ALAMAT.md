@@ -275,7 +275,7 @@ index.html
 ```
 
 Cache-buster **saat ini** (di `index.html`):
-HEAD `6b793b6`
+HEAD `ee9250e`
 Commit aplikasi terakhir; commit `docs:` (termasuk commit sinkron) tidak dihitung guard.
 
 ```
@@ -286,6 +286,9 @@ assets/app.js?v=keluar-edit-focus2-20261126
 Commit terkait (terbaru di atas):
 
 ```
+ee9250e  fix: guard HEAD lewati baris hash doc
+5fcfbf7  fix: guard sinkron abaikan commit docs sendiri
+5b587ac  docs: sinkronkan handover ke HEAD 6b793b6 + guard sinkron doc
 6b793b6  fix: Total Qty kartu SJ mobile di-center di atas tombol aksi
 feefc40  fix: susun ulang layout kartu Riwayat SJ mobile
 a7687b3  fix: hapus override SJ yang paksa Total Qty tumpang tindih
