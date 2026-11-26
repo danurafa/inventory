@@ -35,6 +35,20 @@
             return true;
         }
 
+        // Escape HTML untuk semua data user/DB yang dirender ke innerHTML.
+        // Gunakan ini sebelum interpolasi string template; jangan untuk string yang memang HTML terpercaya.
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[ch]));
+        }
+        window.escapeHtml = escapeHtml;
+        const esc = escapeHtml;
+
         // Normalisasi KHUSUS TAMPILAN: jika nama lama sudah diawali ID barang,
         // hilangkan awalan ID tersebut agar tidak tampil dua kali. Data database tidak diubah.
         window.displayItemName = function(barangId, nama) {
@@ -592,8 +606,8 @@
                 const sel = document.getElementById(id);
                 if (!sel) return;
                 const currentVal = sel.value;
-                sel.innerHTML = '<option value="">-- Pilih Barang --</option>' + 
-                    window.gudangAppDb.items.map(i => `<option value="${i.id}">${i.id} - ${i.nama} (${i.jenis})</option>`).join('');
+                sel.innerHTML = '<option value="">-- Pilih Barang --</option>' +
+                    window.gudangAppDb.items.map(i => `<option value="${esc(i.id)}">${esc(i.id)} - ${esc(i.nama)} (${esc(i.jenis)})</option>`).join('');
                 if (currentVal) sel.value = currentVal;
             });
         };
@@ -611,7 +625,7 @@
                 if (!sel) continue;
                 const hasOptions = [...sel.options].some(o => values.includes(o.value));
                 if (!hasOptions) {
-                    sel.innerHTML = '<option value="">-- Pilih --</option>' + values.map(v => `<option value="${v}">${v}</option>`).join('');
+                    sel.innerHTML = '<option value="">-- Pilih --</option>' + values.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
                 }
             }
         };
@@ -650,7 +664,7 @@
                 ? (window.gudangAppDb.keluar||[]).find(x=>String(x.id)===String(editId)) : null;
             const editPo=editRow ? (window.gudangAppDb.po||[]).find(p=>String(p.id)===String(editRow.poRef)) : null;
             (window.gudangAppDb.po||[]).filter(p=>Number(p.qty||0)>Number(p.terkirim||0) || (editPo && String(p.id)===String(editPo.id))).forEach(p=>{const key=`${String(p.customer||'').toUpperCase()}|${String(p.noPoCustomer||p.id).toUpperCase()}`; if(!groups.has(key)) groups.set(key,{key,label:`${p.noPoCustomer||p.id} — ${p.customer||''}`});});
-            groupSel.innerHTML='<option value="">-- Pilih Nomor PO --</option>'+[...groups.values()].map(g=>`<option value="${g.key}">${g.label}</option>`).join('');
+            groupSel.innerHTML='<option value="">-- Pilih Nomor PO --</option>'+[...groups.values()].map(g=>`<option value="${esc(g.key)}">${esc(g.label)}</option>`).join('');
             if(current && groups.has(current)) groupSel.value=current;
             populatePoItemOptions();
         };
@@ -693,12 +707,12 @@
             const legacyItemSelect = document.getElementById('keluar-barang');
             if (legacyPoSelect) {
                 const current = legacyPoSelect.value;
-                legacyPoSelect.innerHTML = '<option value="">-</option>' + rows.map(po => `<option value="${po.id}">${po.nama||po.barangId}</option>`).join('');
+                legacyPoSelect.innerHTML = '<option value="">-</option>' + rows.map(po => `<option value="${esc(po.id)}">${esc(po.nama||po.barangId)}</option>`).join('');
                 if (rows.some(po => String(po.id) === String(current))) legacyPoSelect.value = current;
             }
             if (legacyItemSelect) {
                 const current = legacyItemSelect.value;
-                legacyItemSelect.innerHTML = '<option value="">-</option>' + rows.map(po => `<option value="${po.barangId}">${po.barangId}</option>`).join('');
+                legacyItemSelect.innerHTML = '<option value="">-</option>' + rows.map(po => `<option value="${esc(po.barangId)}">${esc(po.barangId)}</option>`).join('');
                 if (rows.some(po => String(po.barangId) === String(current))) legacyItemSelect.value = current;
             }
 
@@ -1248,14 +1262,16 @@
                 mobileRoleBadge.dataset.role = String(role || '').toLowerCase();
             }
             
+            const safeName = esc(window.gudangAppDb.currentUser.name);
+            const safeRole = esc(role);
             banner.innerHTML = `
                 <div class="flex items-center gap-2">
                     <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center font-bold text-xs">
                         <i data-lucide="user" class="w-3.5 h-3.5"></i>
                     </div>
                     <div class="text-left leading-tight hidden sm:block">
-                        <div class="font-bold text-xs text-gray-200">${window.gudangAppDb.currentUser.name}</div>
-                        <span class="px-1.5 py-0.2 rounded text-[9px] font-extrabold uppercase ${badgeClass}">${role}</span>
+                        <div class="font-bold text-xs text-gray-200">${safeName}</div>
+                        <span class="px-1.5 py-0.2 rounded text-[9px] font-extrabold uppercase ${badgeClass}">${safeRole}</span>
                     </div>
                 </div>
                 <button onclick="logoutUser()" class="p-1.5 rounded-lg bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 transition-colors ml-1" title="Logout">
@@ -1963,7 +1979,7 @@
             document.getElementById('master-satuan').value = item.satuan || 'PCS';
             document.getElementById('master-min').value = item.min || 50;
             document.getElementById('master-stok').value = item.stok || 0;
-            document.getElementById('master-form-title').innerHTML = `<i data-lucide="edit" class="w-4 h-4 text-orange-400"></i> EDIT MASTER BARANG (${id})`;
+            document.getElementById('master-form-title').innerHTML = `<i data-lucide="edit" class="w-4 h-4 text-orange-400"></i> EDIT MASTER BARANG (${esc(id)})`;
             window.syncResetButtons?.();
             lucide.createIcons();
         };
@@ -2014,23 +2030,25 @@
                         ? 'blink-low-stock-red text-rose-400 font-bold'
                         : 'blink-low-stock-orange text-amber-400 font-bold')
                     : '';
+                const safeId = esc(i.id);
+                const safeIdAttr = esc(String(i.id)).replace(/'/g, '&#39;');
                 return `
                     <tr class="hover:bg-white/5">
                         <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
-                        <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.transactionId || i.groupId || i.id}</td>
-                        <td class="py-3 px-3 font-medium">${window.displayItemName(i.id, i.nama)}</td>
-                        <td class="py-3 px-2 opacity-80">${i.warna || '-'}</td>
-                        <td class="py-3 px-3 opacity-80">${i.jenis}</td>
-                        <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
-                        <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
-                        <td class="py-3 px-2 opacity-80 font-mono">${i.berat || 0} gr</td>
-                        <td class="py-3 px-2 opacity-80">${i.satuan}</td>
-                        <td class="py-3 px-3 text-right font-mono ${blinkClass}">${i.stok.toLocaleString('id-ID')}</td>
-                        <td class="py-3 px-3 text-right font-mono opacity-70">${i.min.toLocaleString('id-ID')}</td>
+                        <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(i.transactionId || i.groupId || i.id)}</td>
+                        <td class="py-3 px-3 font-medium">${esc(window.displayItemName(i.id, i.nama))}</td>
+                        <td class="py-3 px-2 opacity-80">${esc(i.warna || '-')}</td>
+                        <td class="py-3 px-3 opacity-80">${esc(i.jenis)}</td>
+                        <td class="py-3 px-2 opacity-80">${esc(i.lebar || '-')}</td>
+                        <td class="py-3 px-2 opacity-80">${esc(i.ukuran || '-')}</td>
+                        <td class="py-3 px-2 opacity-80 font-mono">${esc(i.berat || 0)} gr</td>
+                        <td class="py-3 px-2 opacity-80">${esc(i.satuan)}</td>
+                        <td class="py-3 px-3 text-right font-mono ${blinkClass}">${Number(i.stok||0).toLocaleString('id-ID')}</td>
+                        <td class="py-3 px-3 text-right font-mono opacity-70">${Number(i.min||0).toLocaleString('id-ID')}</td>
                         ${!isViewer ? `
                             <td class="py-3 px-3 text-center flex items-center justify-center gap-1.5">
-                                <button onclick="editMasterItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
-                                <button onclick="deleteMasterItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
+                                <button onclick="editMasterItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                                <button onclick="deleteMasterItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                             </td>
                         ` : ''}
                     </tr>
@@ -2301,28 +2319,30 @@
             );
             if (badgeTotal) badgeTotal.textContent = `${new Set(filtered.map(i => String(i.transactionId||i.groupId||i.id))).size} Surat Jalan · ${filtered.length} Detail Barang`;
 
-            const renderedMasukRows = filtered.map((i, index) => `
+            const renderedMasukRows = filtered.map((i, index) => {
+                const safeIdAttr = esc(String(i.id)).replace(/'/g, '&#39;');
+                return `
                 <tr class="hover:bg-white/5">
                     <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
-                    <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
-                    <td class="py-3 px-3 opacity-80">${i.tanggal}</td>
-                    <td class="py-3 px-3 font-mono opacity-80">${i.barangId}</td>
-                    <td class="py-3 px-3 font-medium">${window.displayItemName(i.id, i.nama)}</td>
-                    <td class="py-3 px-2 opacity-80">${i.warna || '-'}</td>
-                    <td class="py-3 px-3 opacity-80">${i.jenis}</td>
-                    <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
-                    <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
-                    <td class="py-3 px-2 opacity-80">${i.satuan}</td>
-                    <td class="py-3 px-3 text-right font-mono font-bold text-emerald-400">+${i.qty.toLocaleString('id-ID')}</td>
-                    <td class="py-3 px-3 font-medium">${i.supplier}</td>
+                    <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(i.id)}</td>
+                    <td class="py-3 px-3 opacity-80">${esc(i.tanggal)}</td>
+                    <td class="py-3 px-3 font-mono opacity-80">${esc(i.barangId)}</td>
+                    <td class="py-3 px-3 font-medium">${esc(window.displayItemName(i.id, i.nama))}</td>
+                    <td class="py-3 px-2 opacity-80">${esc(i.warna || '-')}</td>
+                    <td class="py-3 px-3 opacity-80">${esc(i.jenis)}</td>
+                    <td class="py-3 px-2 opacity-80">${esc(i.lebar || '-')}</td>
+                    <td class="py-3 px-2 opacity-80">${esc(i.ukuran || '-')}</td>
+                    <td class="py-3 px-2 opacity-80">${esc(i.satuan)}</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-emerald-400">+${Number(i.qty||0).toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-3 font-medium">${esc(i.supplier)}</td>
                     ${!isViewer ? `
                         <td class="py-3 px-3 text-center">
-                            <button onclick="editMasukItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
-                            <button onclick="deleteMasukItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
+                            <button onclick="editMasukItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                            <button onclick="deleteMasukItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                         </td>
                     ` : ''}
-                </tr>
-            `).join('') || `<tr><td colspan="${isViewer ? 12 : 13}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
+                </tr>`;
+            }).join('') || `<tr><td colspan="${isViewer ? 12 : 13}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
             setTableHtml(tbody, renderedMasukRows);
             lucide.createIcons();
         };
@@ -2524,9 +2544,7 @@
             const totalDetails = groups.reduce((sum, group) => sum + group.rows.length, 0);
             if (badgeTotal) badgeTotal.textContent = `${groups.length} Transaksi / Surat Jalan • ${totalDetails} detail barang`;
 
-            const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
-                '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
-            }[ch]));
+            const escLocal = escapeHtml;
 
             const renderedKeluarRows = pageGroups.map((group, index) => {
                 const token = encodeURIComponent(group.transactionId).replace(/'/g, '%27');
@@ -2542,19 +2560,19 @@
                 const detailRows = group.rows.map((row, detailIndex) => `
                     <tr class="keluar-detail-item border-t border-white/5 hover:bg-white/5">
                         <td class="p-2 text-center">${detailIndex + 1}</td>
-                        <td class="p-2 font-mono">${esc(row.id)}</td>
-                        <td class="p-2 font-mono">${esc(row.barangId)}</td>
-                        <td class="p-2 font-medium">${esc(window.displayItemName(row.barangId, row.nama))}</td>
-                        <td class="p-2">${esc(row.warna || '-')}</td>
-                        <td class="p-2">${esc(row.jenis || '-')}</td>
-                        <td class="p-2">${esc(row.lebar || '-')}</td>
-                        <td class="p-2">${esc(row.ukuran || '-')}</td>
-                        <td class="p-2">${esc(row.satuan || '-')}</td>
+                        <td class="p-2 font-mono">${escLocal(row.id)}</td>
+                        <td class="p-2 font-mono">${escLocal(row.barangId)}</td>
+                        <td class="p-2 font-medium">${escLocal(window.displayItemName(row.barangId, row.nama))}</td>
+                        <td class="p-2">${escLocal(row.warna || '-')}</td>
+                        <td class="p-2">${escLocal(row.jenis || '-')}</td>
+                        <td class="p-2">${escLocal(row.lebar || '-')}</td>
+                        <td class="p-2">${escLocal(row.ukuran || '-')}</td>
+                        <td class="p-2">${escLocal(row.satuan || '-')}</td>
                         <td class="p-2 text-right font-mono font-bold text-rose-400">-${Number(row.qty || 0).toLocaleString('id-ID')}</td>
-                        <td class="p-2 font-mono">${esc((window.gudangAppDb.po || []).find(p => String(p.id) === String(row.poRef))?.noPoCustomer || row.poRef || '-')}</td>
+                        <td class="p-2 font-mono">${escLocal((window.gudangAppDb.po || []).find(p => String(p.id) === String(row.poRef))?.noPoCustomer || row.poRef || '-')}</td>
                         <td class="p-2 text-center">${!isViewer ? `
-                            <button onclick="editKeluarItem('${esc(row.id)}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
-                            <button onclick="deleteKeluarItem('${esc(row.id)}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
+                            <button onclick="editKeluarItem('${escLocal(row.id).replace(/'/g, '&#39;')}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                            <button onclick="deleteKeluarItem('${escLocal(row.id).replace(/'/g, '&#39;')}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                         ` : '-'}</td>
                     </tr>
                 `).join('');
@@ -2562,16 +2580,16 @@
                 return `
                     <tr class="keluar-card-row hover:bg-white/5 border-b border-white/5">
                         <td data-label="No" class="py-3 px-2 text-center opacity-70 font-mono">${startIndex + index + 1}</td>
-                        <td data-label="ID Transaksi / Surat Jalan" class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(group.transactionId)}<span class="block mt-0.5 text-[10px] font-normal opacity-70">SJ: ${esc(window.getKeluarNoSj(group.head))}</span></td>
-                        <td data-label="Tanggal" class="py-3 px-3 opacity-80">${esc(group.head.tanggal || '-')}</td>
-                        <td data-label="Nama Barang" class="py-3 px-3 text-center" title="${esc(itemNames.join(', '))}"><span class="keluar-jumlah-desktop">${group.rows.length} barang</span><span class="keluar-nama-mobile">${esc(itemNames.join(', '))}</span></td>
-                        <td data-label="Warna" class="py-3 px-2 opacity-80">${esc(warnaList.join(', '))}</td>
+                        <td data-label="ID Transaksi / Surat Jalan" class="py-3 px-3 font-mono font-semibold theme-accent-text">${escLocal(group.transactionId)}<span class="block mt-0.5 text-[10px] font-normal opacity-70">SJ: ${escLocal(window.getKeluarNoSj(group.head))}</span></td>
+                        <td data-label="Tanggal" class="py-3 px-3 opacity-80">${escLocal(group.head.tanggal || '-')}</td>
+                        <td data-label="Nama Barang" class="py-3 px-3 text-center" title="${escLocal(itemNames.join(', '))}"><span class="keluar-jumlah-desktop">${group.rows.length} barang</span><span class="keluar-nama-mobile">${escLocal(itemNames.join(', '))}</span></td>
+                        <td data-label="Warna" class="py-3 px-2 opacity-80">${escLocal(warnaList.join(', '))}</td>
                         <td data-label="Total Qty Keluar" class="py-3 px-3 text-right font-mono font-bold text-rose-400">-${totalQty.toLocaleString('id-ID')}</td>
-                        <td data-label="Customer / Tujuan" class="py-3 px-3 font-medium">${esc(group.head.tujuan || '-')}</td>
-                        <td data-label="No. PO" class="py-3 px-3 font-mono opacity-80">${esc(poRefs.join(', '))}</td>
+                        <td data-label="Customer / Tujuan" class="py-3 px-3 font-medium">${escLocal(group.head.tujuan || '-')}</td>
+                        <td data-label="No. PO" class="py-3 px-3 font-mono opacity-80">${escLocal(poRefs.join(', '))}</td>
                         <td data-label="Detail Barang" class="py-3 px-3 text-center"><button type="button" onclick="toggleKeluarDetails('${token}', this, ${group.rows.length})" data-keluar-detail-toggle="${token}" aria-expanded="${expanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button></td>
-                        <td data-label="Aksi" class="py-3 px-3 text-center"><div class="keluar-actions flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:190px"><button type="button" onclick="toggleKeluarDetails('${token}', this, ${group.rows.length})" data-keluar-detail-toggle="${token}" aria-expanded="${expanded ? 'true' : 'false'}" class="keluar-detail-mobile shrink-0 px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button><button onclick="printSuratJalan('${esc(group.transactionId)}', 'keluar', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan sesuai template Excel"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button><button onclick="downloadSuratJalanExcel('${esc(group.transactionId)}', 'keluar', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download template Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button></div></td>
-                        <td data-label="User" class="keluar-user-mobile py-3 px-3 opacity-80">${esc(userNames.join(', ') || group.head.user || '-')}</td>
+                        <td data-label="Aksi" class="py-3 px-3 text-center"><div class="keluar-actions flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:190px"><button type="button" onclick="toggleKeluarDetails('${token}', this, ${group.rows.length})" data-keluar-detail-toggle="${token}" aria-expanded="${expanded ? 'true' : 'false'}" class="keluar-detail-mobile shrink-0 px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${expanded ? 'Tutup' : 'Detail'} (${group.rows.length})</button><button onclick="printSuratJalan('${escLocal(group.transactionId).replace(/'/g, '&#39;')}', 'keluar', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan sesuai template Excel"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button><button onclick="downloadSuratJalanExcel('${escLocal(group.transactionId).replace(/'/g, '&#39;')}', 'keluar', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download template Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button></div></td>
+                        <td data-label="User" class="keluar-user-mobile py-3 px-3 opacity-80">${escLocal(userNames.join(', ') || group.head.user || '-')}</td>
                     </tr>
                     <tr id="keluar-detail-${token}" data-keluar-group-key="${token}" class="keluar-detail-row ${expanded ? '' : 'hidden'}">
                         <td colspan="10" class="p-2 bg-black/10">
@@ -2642,15 +2660,15 @@
             const host = document.getElementById('po-items-container');
             if (!host) return;
             const n = host.querySelectorAll('[data-po-item-row]').length + 1;
-            const itemOptions = (window.gudangAppDb.items || []).map(i => `<option value="${i.id}">${i.id} - ${i.nama} (${i.jenis||'-'})</option>`).join('');
+            const itemOptions = (window.gudangAppDb.items || []).map(i => `<option value="${esc(i.id)}">${esc(i.id)} - ${esc(i.nama)} (${esc(i.jenis||'-')})</option>`).join('');
             const row = document.createElement('div');
             row.className = 'grid grid-cols-2 gap-2 p-2 rounded-xl border border-white/10 bg-white/5';
             row.setAttribute('data-po-item-row','1');
             row.innerHTML = `
                 <div class="col-span-2"><label class="text-[10px] text-gray-400">Barang</label><select ${n===1?'id="po-barang"':''} data-po-field="barangId" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"><option value="">-- Pilih Barang --</option>${itemOptions}</select></div>
-                <div><label class="text-[10px] text-gray-400">Qty PO</label><input ${n===1?'id="po-qty"':''} data-po-field="qty" type="number" min="1" step="1" value="${values.qty ?? 1}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
-                <div><label class="text-[10px] text-gray-400">Qty Siap</label><input ${n===1?'id="po-siap"':''} data-po-field="siapKirim" type="number" min="0" step="1" value="${values.siapKirim ?? 0}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
-                <div><label class="text-[10px] text-gray-400">Warna Barang</label><input ${n===1?'id="po-warna"':''} data-po-field="warna" type="text" value="${String(values.warna ?? '').replace(/"/g,'&quot;')}" class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs uppercase" placeholder="Isi warna barang..."></div>
+                <div><label class="text-[10px] text-gray-400">Qty PO</label><input ${n===1?'id="po-qty"':''} data-po-field="qty" type="number" min="1" step="1" value="${esc(values.qty ?? 1)}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
+                <div><label class="text-[10px] text-gray-400">Qty Siap</label><input ${n===1?'id="po-siap"':''} data-po-field="siapKirim" type="number" min="0" step="1" value="${esc(values.siapKirim ?? 0)}" required class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs"></div>
+                <div><label class="text-[10px] text-gray-400">Warna Barang</label><input ${n===1?'id="po-warna"':''} data-po-field="warna" type="text" value="${esc(String(values.warna ?? ''))}" class="w-full bg-dark-700 border border-white/15 rounded-lg px-2 py-2 text-xs uppercase" placeholder="Isi warna barang..."></div>
                 <div class="flex items-end"><button type="button" onclick="this.closest('[data-po-item-row]').remove(); refreshPoItemRowIds()" class="po-remove-item-btn w-full h-10 rounded-lg border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Hapus baris">Hapus</button></div>`;
             host.appendChild(row);
             const select = row.querySelector('[data-po-field="barangId"]'); if (values.barangId) select.value = values.barangId;
@@ -2773,9 +2791,12 @@
                     const sent=Number(r.terkirim||0), remain=Math.max(0,Number(r.qty||0)-sent);
                     const ready=getPoReadyQty(r);
                     const lineStatus=sent>=Number(r.qty||0)?'CLOSED':(sent>0?'PARTIAL':'OPEN');
-                    return `<tr class="bg-black/10 border-t border-white/5"><td class="py-2 px-3 font-mono">${r.id}</td><td class="py-2 px-3">${r.barangId} — ${window.displayItemName(r.barangId, r.nama)}</td><td class="py-2 px-2 opacity-80">${r.warna || '-'}</td><td class="py-2 px-3 text-right">${Number(r.qty||0).toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-emerald-300">${ready.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right">${sent.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-amber-300">${remain.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-center">${lineStatus}</td><td class="py-2 px-3 text-right">${isViewer?ready.toLocaleString('id-ID'):`<input type="number" min="0" max="${Math.min(remain,Number((window.gudangAppDb.items||[]).find(x=>x.id===r.barangId)?.stok||0))}" step="1" value="${ready}" id="ready-${r.id}" class="w-20 bg-dark-700 border border-white/15 rounded px-2 py-1 text-right"><button onclick="updatePoReady('${r.id}')" class="ml-1 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Atur</button>`}</td><td class="py-2 px-3 text-center">${!isViewer?`<button onclick="editPoItem('${r.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button><button onclick="deletePoItem('${r.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>`:'-'}</td></tr>`;
+                    const safeRid = esc(String(r.id));
+                    const safeRidAttr = safeRid.replace(/'/g, '&#39;');
+                    const safeReadyId = 'ready-' + String(r.id).replace(/[^a-zA-Z0-9_-]/g, '_');
+                    return `<tr class="bg-black/10 border-t border-white/5"><td class="py-2 px-3 font-mono">${safeRid}</td><td class="py-2 px-3">${esc(r.barangId)} — ${esc(window.displayItemName(r.barangId, r.nama))}</td><td class="py-2 px-2 opacity-80">${esc(r.warna || '-')}</td><td class="py-2 px-3 text-right">${Number(r.qty||0).toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-emerald-300">${ready.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right">${sent.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right text-amber-300">${remain.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-center">${esc(lineStatus)}</td><td class="py-2 px-3 text-right">${isViewer?ready.toLocaleString('id-ID'):`<input type="number" min="0" max="${Math.min(remain,Number((window.gudangAppDb.items||[]).find(x=>x.id===r.barangId)?.stok||0))}" step="1" value="${ready}" id="${esc(safeReadyId)}" data-ready-id="${safeRidAttr}" class="w-20 bg-dark-700 border border-white/15 rounded px-2 py-1 text-right"><button onclick="updatePoReady('${safeRidAttr}')" class="ml-1 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Atur</button>`}</td><td class="py-2 px-3 text-center">${!isViewer?`<button onclick="editPoItem('${safeRidAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button><button onclick="deletePoItem('${safeRidAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>`:'-'}</td></tr>`;
                 }).join('');
-                return `<tr class="hover:bg-white/5"><td class="py-3 px-2 text-center">${index+1}</td><td class="py-3 px-3 font-mono font-semibold">${g.head.noPoCustomer||g.head.id}</td><td class="py-3 px-3">${g.head.tanggal||'-'}</td><td class="py-3 px-3">${g.head.customer||'-'}</td><td class="py-3 px-2 opacity-80">${[...new Set(g.rows.map(r=>r.warna||'-'))].join(', ')}</td><td class="py-3 px-3 text-center">${g.rows.length}</td><td class="py-3 px-3 text-right font-mono">${totalQty.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-right font-mono text-emerald-300">${totalSent.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${status==='CLOSED'?'bg-emerald-500/20 text-emerald-300':'bg-sky-500/20 text-sky-300'}">${status}</span></td><td class="py-3 px-3 text-center"><button type="button" onclick="togglePoDetails('${groupToken}', this, ${g.rows.length})" aria-expanded="${detailExpanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${detailExpanded ? 'Tutup' : 'Detail'} (${g.rows.length})</button></td></tr><tr id="po-detail-${groupToken}" data-po-group-key="${groupToken}" class="${detailExpanded?'':'hidden'}"><td colspan="10" class="p-2"><div class="po-detail-alamat mb-2 px-1 text-[11px] text-gray-300"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><span class="opacity-60 font-semibold uppercase tracking-wide mr-1">Alamat Customer:</span><span class="po-detail-alamat-value">${alamatHtml}</span></div>${!isViewer?`<button type="button" onclick="editPoGroupAlamat('${groupToken}', this)" class="po-edit-alamat shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" style="touch-action:manipulation">Ubah Alamat</button>`:''}</div></div><div class="rounded-xl border border-white/10 overflow-x-auto"><table class="w-full text-xs"><thead class="bg-white/5 text-gray-400"><tr><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">Barang</th><th class="p-2 text-left">Warna</th><th class="p-2 text-right">Qty PO</th><th class="p-2 text-right">Siap</th><th class="p-2 text-right">Terkirim</th><th class="p-2 text-right">Sisa</th><th class="p-2 text-center">Status</th><th class="p-2 text-right">Atur Siap</th><th class="p-2 text-center">Aksi</th></tr></thead><tbody>${details}</tbody></table></div></td></tr>`;
+                return `<tr class="hover:bg-white/5"><td class="py-3 px-2 text-center">${index+1}</td><td class="py-3 px-3 font-mono font-semibold">${esc(g.head.noPoCustomer||g.head.id)}</td><td class="py-3 px-3">${esc(g.head.tanggal||'-')}</td><td class="py-3 px-3">${esc(g.head.customer||'-')}</td><td class="py-3 px-2 opacity-80">${esc([...new Set(g.rows.map(r=>r.warna||'-'))].join(', '))}</td><td class="py-3 px-3 text-center">${g.rows.length}</td><td class="py-3 px-3 text-right font-mono">${totalQty.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-right font-mono text-emerald-300">${totalSent.toLocaleString('id-ID')}</td><td class="py-3 px-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${status==='CLOSED'?'bg-emerald-500/20 text-emerald-300':'bg-sky-500/20 text-sky-300'}">${esc(status)}</span></td><td class="py-3 px-3 text-center"><button type="button" onclick="togglePoDetails('${groupToken}', this, ${g.rows.length})" aria-expanded="${detailExpanded ? 'true' : 'false'}" class="px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">${detailExpanded ? 'Tutup' : 'Detail'} (${g.rows.length})</button></td></tr><tr id="po-detail-${groupToken}" data-po-group-key="${groupToken}" class="${detailExpanded?'':'hidden'}"><td colspan="10" class="p-2"><div class="po-detail-alamat mb-2 px-1 text-[11px] text-gray-300"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><span class="opacity-60 font-semibold uppercase tracking-wide mr-1">Alamat Customer:</span><span class="po-detail-alamat-value">${alamatHtml}</span></div>${!isViewer?`<button type="button" onclick="editPoGroupAlamat('${groupToken}', this)" class="po-edit-alamat shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" style="touch-action:manipulation">Ubah Alamat</button>`:''}</div></div><div class="rounded-xl border border-white/10 overflow-x-auto"><table class="w-full text-xs"><thead class="bg-white/5 text-gray-400"><tr><th class="p-2 text-left">ID Detail</th><th class="p-2 text-left">Barang</th><th class="p-2 text-left">Warna</th><th class="p-2 text-right">Qty PO</th><th class="p-2 text-right">Siap</th><th class="p-2 text-right">Terkirim</th><th class="p-2 text-right">Sisa</th><th class="p-2 text-center">Status</th><th class="p-2 text-right">Atur Siap</th><th class="p-2 text-center">Aksi</th></tr></thead><tbody>${details}</tbody></table></div></td></tr>`;
             }).join('') || `<tr><td colspan="10" class="py-6 text-center opacity-50">Tidak ada PO.</td></tr>`;
             // Polling cloud dapat merender ulang semua tampilan meski isi PO tidak berubah.
             // Jangan menyentuh tbody jika markup identik agar detail terbuka tidak berkedip.
@@ -2801,6 +2822,7 @@
             }
         };
         window.editPoGroupAlamat = function(groupToken, button) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') { showToast('Viewer hanya dapat melihat data.', 'error'); return; }
             const row = document.getElementById(`po-detail-${groupToken}`);
             const host = row?.querySelector('.po-detail-alamat');
             if (!host) return;
@@ -2839,6 +2861,7 @@
             if (btn) btn.textContent = 'Ubah Alamat';
         };
         window.savePoGroupAlamat = async function(groupToken) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') { showToast('Viewer hanya dapat melihat data.', 'error'); return; }
             const host = document.getElementById(`po-detail-${groupToken}`)?.querySelector('.po-detail-alamat');
             const editor = host?.querySelector('.po-alamat-editor');
             if (!editor) return;
@@ -2869,7 +2892,9 @@
             }
         };
         window.updatePoReady = async function(id) {
-            const input=document.getElementById(`ready-${id}`); if(!input) return;
+            if (window.gudangAppDb.currentUser?.role === 'viewer') { showToast('Viewer hanya dapat melihat data.', 'error'); return; }
+            const input=document.getElementById(`ready-${id}`) || document.querySelector(`[data-ready-id="${CSS.escape(String(id))}"]`);
+            if(!input) return;
             const siapKirim=Number(input.value);
             try { await sendOperation('po.ready.update',{id,siapKirim}); refreshAllViews(); showToast('Qty Siap Dikirim berhasil diperbarui.'); }
             catch(e){ showToast(`Gagal mengatur Qty Siap: ${e.message}`,'error'); }
@@ -2947,27 +2972,29 @@
             );
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Sampel`;
 
-            const renderedSampelRows = filtered.map((i, index) => `
+            const renderedSampelRows = filtered.map((i, index) => {
+                const safeIdAttr = esc(String(i.id)).replace(/'/g, '&#39;');
+                return `
                 <tr class="hover:bg-white/5">
                     <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
-                    <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
-                    <td class="py-3 px-3 opacity-80">${i.tanggal || '-'}</td>
-                    <td class="py-3 px-3 font-medium">${i.customer || '-'}</td>
-                    <td class="py-3 px-3 font-medium">${window.displayItemName(i.id, i.nama)}</td>
-                    <td class="py-3 px-3 opacity-80">${i.keterangan || '-'}</td>
-                    <td class="py-3 px-3 opacity-80">${i.kategori}</td>
-                    <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
-                    <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
-                    <td class="py-3 px-3 text-right opacity-80 font-mono">${i.berat || 0} gr</td>
-                    <td class="py-3 px-3 text-center opacity-80 font-mono">${i.tebal || '-'}</td>
+                    <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(i.id)}</td>
+                    <td class="py-3 px-3 opacity-80">${esc(i.tanggal || '-')}</td>
+                    <td class="py-3 px-3 font-medium">${esc(i.customer || '-')}</td>
+                    <td class="py-3 px-3 font-medium">${esc(window.displayItemName(i.id, i.nama))}</td>
+                    <td class="py-3 px-3 opacity-80">${esc(i.keterangan || '-')}</td>
+                    <td class="py-3 px-3 opacity-80">${esc(i.kategori)}</td>
+                    <td class="py-3 px-2 opacity-80">${esc(i.lebar || '-')}</td>
+                    <td class="py-3 px-2 opacity-80">${esc(i.ukuran || '-')}</td>
+                    <td class="py-3 px-3 text-right opacity-80 font-mono">${esc(i.berat || 0)} gr</td>
+                    <td class="py-3 px-3 text-center opacity-80 font-mono">${esc(i.tebal || '-')}</td>
                     ${!isViewer ? `
                         <td class="py-3 px-3 text-center">
-                            <button onclick="editSampelItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
-                            <button onclick="deleteSampelItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
+                            <button onclick="editSampelItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                            <button onclick="deleteSampelItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                         </td>
                     ` : ''}
-                </tr>
-            `).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada data sampel.</td></tr>`;
+                </tr>`;
+            }).join('') || `<tr><td colspan="${isViewer ? 11 : 12}" class="py-6 text-center opacity-50">Tidak ada data sampel.</td></tr>`;
             setTableHtml(tbody, renderedSampelRows);
             lucide.createIcons();
         };
@@ -3000,7 +3027,7 @@
                     const po = (window.gudangAppDb.po || []).find(p => String(p.id) === String(k.poRef));
                     const label = `${k.id} | ${k.tanggal || '-'} | Qty ${k.qty} | Sisa dapat diretur ${remaining}` +
                         (po ? ` | PO ${po.noPoCustomer || po.id}` : ' | Tanpa PO');
-                    return `<option value="${String(k.id).replace(/"/g, '&quot;')}">${label}</option>`;
+                    return `<option value="${esc(k.id)}">${esc(label)}</option>`;
                 }).join('');
             if (rows.some(k => String(k.id) === previous)) select.value = previous;
             if (info) {
@@ -3143,28 +3170,30 @@
             );
             if (badgeTotal) badgeTotal.textContent = `${filtered.length} Transaksi`;
 
-            const renderedReturRows = filtered.map((i, index) => `
+            const renderedReturRows = filtered.map((i, index) => {
+                const safeIdAttr = esc(String(i.id)).replace(/'/g, '&#39;');
+                return `
                 <tr class="hover:bg-white/5">
                     <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
-                    <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${i.id}</td>
-                    <td class="py-3 px-3 opacity-80">${i.tanggal}</td>
-                    <td class="py-3 px-3 font-mono opacity-80">${i.barangId}</td>
-                    <td class="py-3 px-3 font-medium">${window.displayItemName(i.id, i.nama)}</td>
-                    <td class="py-3 px-2 opacity-80">${i.warna || '-'}</td>
-                    <td class="py-3 px-3 opacity-80">${i.jenis}</td>
-                    <td class="py-3 px-2 opacity-80">${i.lebar || '-'}</td>
-                    <td class="py-3 px-2 opacity-80">${i.ukuran || '-'}</td>
-                    <td class="py-3 px-2 opacity-80">${i.satuan}</td>
-                    <td class="py-3 px-3 text-right font-mono font-bold text-amber-400">${i.qty.toLocaleString('id-ID')}</td>
-                    <td class="py-3 px-3 font-medium">${i.keterangan}</td>
+                    <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(i.id)}</td>
+                    <td class="py-3 px-3 opacity-80">${esc(i.tanggal)}</td>
+                    <td class="py-3 px-3 font-mono opacity-80">${esc(i.barangId)}</td>
+                    <td class="py-3 px-3 font-medium">${esc(window.displayItemName(i.id, i.nama))}</td>
+                    <td class="py-3 px-2 opacity-80">${esc(i.warna || '-')}</td>
+                    <td class="py-3 px-3 opacity-80">${esc(i.jenis)}</td>
+                    <td class="py-3 px-2 opacity-80">${esc(i.lebar || '-')}</td>
+                    <td class="py-3 px-2 opacity-80">${esc(i.ukuran || '-')}</td>
+                    <td class="py-3 px-2 opacity-80">${esc(i.satuan)}</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-amber-400">${Number(i.qty||0).toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-3 font-medium">${esc(i.keterangan)}</td>
                     ${!isViewer ? `
                         <td class="py-3 px-3 text-center">
-                            <button onclick="editReturItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
-                            <button onclick="deleteReturItem('${i.id}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
+                            <button onclick="editReturItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                            <button onclick="deleteReturItem('${safeIdAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                         </td>
                     ` : ''}
-                </tr>
-            `).join('') || `<tr><td colspan="${isViewer ? 12 : 13}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
+                </tr>`;
+            }).join('') || `<tr><td colspan="${isViewer ? 12 : 13}" class="py-6 text-center opacity-50">Tidak ada riwayat.</td></tr>`;
             setTableHtml(tbody, renderedReturRows);
             lucide.createIcons();
         };
@@ -3252,19 +3281,23 @@
             const renderedUserRows = window.gudangAppDb.users.map((u, index) => {
                 const isCurrent = window.gudangAppDb.currentUser?.username === u.username;
                 const badgeClass = ['admin','superadmin'].includes(u.role) ? 'role-badge-admin' : (u.role === 'staff' ? 'role-badge-staff' : 'role-badge-viewer');
+                const safeUsernameAttr = esc(String(u.username)).replace(/'/g, '&#39;');
+                const canManageTarget = (window.gudangAppDb.currentUser?.role === 'superadmin' || (window.gudangAppDb.currentUser?.role === 'admin' && ['staff','viewer'].includes(u.role))) && u.username !== 'superadmin';
+                const statusText = String(u.status || 'ACTIVE').toUpperCase() === 'DISABLED' ? '● Nonaktif' : '● Aktif';
+                const statusClass = String(u.status || 'ACTIVE').toUpperCase() === 'DISABLED' ? 'text-rose-400 font-semibold' : 'text-emerald-400 font-semibold';
                 return `
                     <tr class="hover:bg-white/5">
                         <td class="py-3 px-2 text-center opacity-70 font-mono">${index + 1}</td>
-                        <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${u.username} ${isCurrent ? '<span class="text-[9px] bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded ml-1">Aktif</span>' : ''}</td>
-                        <td class="py-3 px-3 font-medium">${u.name}</td>
+                        <td class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(u.username)} ${isCurrent ? '<span class="text-[9px] bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded ml-1">Aktif</span>' : ''}</td>
+                        <td class="py-3 px-3 font-medium">${esc(u.name)}</td>
                         <td class="py-3 px-3 font-mono text-gray-300 bg-white/5 px-2 py-1 rounded">Tersimpan aman di backend</td>
-                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${badgeClass}">${u.role}</span></td>
-                        <td class="py-3 px-3 text-emerald-400 font-semibold">● Aktif</td>
+                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${badgeClass}">${esc(u.role)}</span></td>
+                        <td class="py-3 px-3 ${statusClass}">${esc(statusText)}</td>
                         <td class="py-3 px-3 text-center">
-                            ${(window.gudangAppDb.currentUser?.role === 'superadmin' || (window.gudangAppDb.currentUser?.role === 'admin' && ['staff','viewer'].includes(u.role))) && u.username !== 'superadmin' ? `
+                            ${canManageTarget ? `
                                 <div class="flex items-center justify-center gap-2">
-                                    <button onclick="resetUserPassword('${u.username}')" class="px-2 py-1 rounded-full border border-white/10 bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Reset Password</button>
-                                    ${u.username !== window.gudangAppDb.currentUser?.username ? `<button onclick="deleteUser('${u.username}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>` : ''}
+                                    <button onclick="resetUserPassword('${safeUsernameAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Reset Password</button>
+                                    ${!isCurrent ? `<button onclick="deleteUser('${safeUsernameAttr}')" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>` : ''}
                                 </div>
                             ` : ''}
                         </td>
@@ -3426,7 +3459,8 @@
                     const item = items.find(x => String(x.id) === id);
                     const name = item?.id || item?.kode || id;
                     const pct = Math.max(2, qty/max*100);
-                    return `<div class="movement-topsku-row" title="${String(item?.nama || name).replace(/["&<>]/g,c=>({'"':'&quot;','&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}: ${fmt(qty)} unit"><span class="movement-topsku-name">${String(name).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</span><div class="movement-topsku-track"><div class="movement-topsku-fill ${colorClass}" style="width:${pct}%"></div></div><strong class="movement-topsku-value">${fmt(qty)}</strong></div>`;
+                    const safeTitle = esc(`${item?.nama || name}: ${fmt(qty)} unit`);
+                    return `<div class="movement-topsku-row" title="${safeTitle}"><span class="movement-topsku-name">${esc(name)}</span><div class="movement-topsku-track"><div class="movement-topsku-fill ${colorClass}" style="width:${pct}%"></div></div><strong class="movement-topsku-value">${fmt(qty)}</strong></div>`;
                 }).join('');
             };
             render(db.masuk || [], 'movement-top-in', 'in', 'Belum ada data masuk pada periode ini.');
@@ -3618,13 +3652,13 @@
                             <div class="flex items-center gap-3">
                                 <i data-lucide="alert-triangle" class="w-4 h-4 ${textClass}"></i>
                                 <div>
-                                    <span class="font-bold text-gray-100">${i.id} - ${window.displayItemName(i.id, i.nama)}</span>
-                                    <span class="text-[10px] text-gray-400 block">Kategori: ${i.jenis} | Lebar: ${i.lebar || '-'}</span>
+                                    <span class="font-bold text-gray-100">${esc(i.id)} - ${esc(window.displayItemName(i.id, i.nama))}</span>
+                                    <span class="text-[10px] text-gray-400 block">Kategori: ${esc(i.jenis)} | Lebar: ${esc(i.lebar || '-')}</span>
                                 </div>
                             </div>
                             <div class="text-right font-mono">
-                                <span class="${textClass} font-bold">Stok: ${i.stok}</span>
-                                <span class="text-[10px] text-gray-400 block">Min: ${i.min}</span>
+                                <span class="${textClass} font-bold">Stok: ${Number(i.stok||0).toLocaleString('id-ID')}</span>
+                                <span class="text-[10px] text-gray-400 block">Min: ${Number(i.min||0).toLocaleString('id-ID')}</span>
                             </div>
                         </div>
                     `;
@@ -3644,13 +3678,13 @@
                 const badgeColor = l.type === 'MASUK' ? 'bg-emerald-500/20 text-emerald-300' : (l.type === 'KELUAR' ? 'bg-rose-500/20 text-rose-300' : 'bg-amber-500/20 text-amber-300');
                 return `
                     <tr class="hover:bg-white/5">
-                        <td class="py-3 px-3 opacity-80 font-mono">${l.time}</td>
-                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded font-bold text-[10px] ${badgeColor}">${l.type}</span></td>
-                        <td class="py-3 px-3 font-mono theme-accent-text">${l.id}</td>
-                        <td class="py-3 px-3 font-medium">${l.name}</td>
-                        <td class="py-3 px-3 text-right font-mono font-bold">${l.qty}</td>
-                        <td class="py-3 px-3 opacity-80">${l.partner}</td>
-                        <td class="py-3 px-3 font-semibold text-orange-400">${l.user}</td>
+                        <td class="py-3 px-3 opacity-80 font-mono">${esc(l.time)}</td>
+                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded font-bold text-[10px] ${badgeColor}">${esc(l.type)}</span></td>
+                        <td class="py-3 px-3 font-mono theme-accent-text">${esc(l.id)}</td>
+                        <td class="py-3 px-3 font-medium">${esc(l.name)}</td>
+                        <td class="py-3 px-3 text-right font-mono font-bold">${esc(l.qty)}</td>
+                        <td class="py-3 px-3 opacity-80">${esc(l.partner)}</td>
+                        <td class="py-3 px-3 font-semibold text-orange-400">${esc(l.user)}</td>
                     </tr>
                 `;
             }).join('') || '<tr><td colspan="7" class="py-6 text-center opacity-50">Belum ada aktivitas transaksi.</td></tr>';
@@ -3659,10 +3693,15 @@
             lucide.createIcons();
         };
 
+        function csvSafeCell(value) {
+            let text = String(value ?? '');
+            if (/^[=+\-@\t\r]/.test(text)) text = "'" + text;
+            return `"${text.replace(/"/g, '""')}"`;
+        }
         window.exportCSVData = function() {
             let csvContent = "data:text/csv;charset=utf-8,ID,Nama,Jenis,Lebar,Ukuran,Berat,Satuan,Stok,Min\n";
             window.gudangAppDb.items.forEach(i => {
-                csvContent += `"${i.id}","${window.displayItemName(i.id, i.nama)}","${i.jenis}","${i.lebar || ''}","${i.ukuran || ''}",${i.berat || 0},"${i.satuan}",${i.stok},${i.min}\n`;
+                csvContent += [i.id, window.displayItemName(i.id, i.nama), i.jenis, i.lebar || '', i.ukuran || '', i.berat || 0, i.satuan, i.stok, i.min].map(csvSafeCell).join(',') + "\n";
             });
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
@@ -3755,7 +3794,7 @@
             overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:16px;';
             overlay.innerHTML = `
                 <div style="width:min(440px,100%);background:#172033;color:#f8fafc;border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.45);font-family:Arial,sans-serif">
-                    <div style="font-size:17px;font-weight:700;margin-bottom:6px">${config.title}</div>
+                    <div style="font-size:17px;font-weight:700;margin-bottom:6px">${esc(config.title)}</div>
                     <div style="font-size:12px;color:#cbd5e1;margin-bottom:18px">Pilih data yang ingin dicetak.</div>
                     <label style="display:flex;gap:9px;align-items:center;padding:10px;border:1px solid rgba(255,255,255,.15);border-radius:10px;margin-bottom:9px;cursor:pointer">
                         <input type="radio" name="print-mode" value="all" checked> <span>Semua Data</span>
@@ -5300,7 +5339,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             if (signature === sjCustomerSignature) return;
             sjCustomerSignature = signature;
             const current = select.value;
-            select.innerHTML = '<option value="">Semua customer</option>' + names.map(n => `<option value="${escapePrintHtml(n)}">${escapePrintHtml(n)}</option>`).join('');
+            select.innerHTML = '<option value="">Semua customer</option>' + names.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
             if (names.includes(current)) select.value = current;
         }
         window.resetSjFilter = function() {
@@ -5357,7 +5396,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             if (sjHistoryPage > totalPages) sjHistoryPage = totalPages;
             const startIndex = (sjHistoryPage - 1) * SJ_HISTORY_PER_PAGE;
             const pageRows = filtered.slice(startIndex, startIndex + SJ_HISTORY_PER_PAGE);
-            const esc = v => String(v ?? '').replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]));
+            const escLocal = escapeHtml;
             const poNoOf = r => (window.gudangAppDb.po || []).find(p => String(p.id) === String(r.poRef))?.noPoCustomer || r.poRef || '-';
             const rowsHtml = pageRows.map((g, i) => {
                 const token = encodeURIComponent(g.tid).replace(/'/g, '%27');
@@ -5367,33 +5406,33 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 const detailRows = g.rows.map((r, di) => `
                     <tr class="sj-detail-item border-t border-white/5 hover:bg-white/5">
                         <td class="p-2 text-center">${di + 1}</td>
-                        <td class="p-2 font-mono">${esc(r.id)}</td>
-                        <td class="p-2 font-mono">${esc(r.barangId)}</td>
-                        <td class="p-2 font-medium">${esc(window.displayItemName(r.barangId, r.nama))}</td>
-                        <td class="p-2">${esc(r.warna || '-')}</td>
-                        <td class="p-2">${esc(r.jenis || '-')}</td>
-                        <td class="p-2">${esc(r.lebar || '-')}</td>
-                        <td class="p-2">${esc(r.ukuran || '-')}</td>
-                        <td class="p-2">${esc(r.satuan || '-')}</td>
+                        <td class="p-2 font-mono">${escLocal(r.id)}</td>
+                        <td class="p-2 font-mono">${escLocal(r.barangId)}</td>
+                        <td class="p-2 font-medium">${escLocal(window.displayItemName(r.barangId, r.nama))}</td>
+                        <td class="p-2">${escLocal(r.warna || '-')}</td>
+                        <td class="p-2">${escLocal(r.jenis || '-')}</td>
+                        <td class="p-2">${escLocal(r.lebar || '-')}</td>
+                        <td class="p-2">${escLocal(r.ukuran || '-')}</td>
+                        <td class="p-2">${escLocal(r.satuan || '-')}</td>
                         <td class="p-2 text-right font-mono font-bold text-rose-400">${Number(r.qty || 0).toLocaleString('id-ID')}</td>
-                        <td class="p-2 font-mono">${esc(poNoOf(r))}</td>
+                        <td class="p-2 font-mono">${escLocal(poNoOf(r))}</td>
                     </tr>`).join('');
                 return `
                 <tr class="sj-card-row hover:bg-white/5">
                     <td data-label="No" class="py-3 px-2 text-center opacity-70 font-mono">${startIndex + i + 1}</td>
-                    <td data-label="No. Surat Jalan" class="py-3 px-3 font-mono font-semibold theme-accent-text">${esc(g.noSj)}<span class="block mt-0.5 text-[10px] font-normal opacity-70">${esc(g.tid)}</span></td>
-                    <td data-label="Tanggal" class="py-3 px-3 opacity-80">${esc(g.tanggal || '-')}</td>
-                    <td data-label="Customer" class="py-3 px-3 font-medium">${esc(g.customer)}</td>
-                    <td data-label="Alamat" class="py-3 px-3 text-[11px] opacity-70">${g.alamat ? `<span class="sj-alamat-value">${esc(g.alamat).replace(/\r?\n/g, '<br>')}</span>` : '-'}</td>
-                    <td data-label="No. PO" class="py-3 px-3 font-mono opacity-80">${esc(g.poNumbers.join(', '))}</td>
-                    <td data-label="Nama Barang" class="py-3 px-3 text-center" title="${esc(itemNames.join(', '))}"><span class="sj-jumlah-desktop">${g.rows.length} barang</span><span class="sj-nama-mobile">${esc(itemNames.join(', '))}</span></td>
-                    <td data-label="Warna" class="py-3 px-2 opacity-80">${esc(warnaList.join(', '))}</td>
+                    <td data-label="No. Surat Jalan" class="py-3 px-3 font-mono font-semibold theme-accent-text">${escLocal(g.noSj)}<span class="block mt-0.5 text-[10px] font-normal opacity-70">${escLocal(g.tid)}</span></td>
+                    <td data-label="Tanggal" class="py-3 px-3 opacity-80">${escLocal(g.tanggal || '-')}</td>
+                    <td data-label="Customer" class="py-3 px-3 font-medium">${escLocal(g.customer)}</td>
+                    <td data-label="Alamat" class="py-3 px-3 text-[11px] opacity-70">${g.alamat ? `<span class="sj-alamat-value">${escLocal(g.alamat).replace(/\r?\n/g, '<br>')}</span>` : '-'}</td>
+                    <td data-label="No. PO" class="py-3 px-3 font-mono opacity-80">${escLocal(g.poNumbers.join(', '))}</td>
+                    <td data-label="Nama Barang" class="py-3 px-3 text-center" title="${escLocal(itemNames.join(', '))}"><span class="sj-jumlah-desktop">${g.rows.length} barang</span><span class="sj-nama-mobile">${escLocal(itemNames.join(', '))}</span></td>
+                    <td data-label="Warna" class="py-3 px-2 opacity-80">${escLocal(warnaList.join(', '))}</td>
                     <td data-label="Total Qty" class="py-3 px-3 text-right font-mono font-bold text-rose-400">${g.totalQty.toLocaleString('id-ID')}</td>
-                    <td data-label="User" class="py-3 px-3 text-orange-400">${esc(g.user)}</td>
+                    <td data-label="User" class="py-3 px-3 text-orange-400">${escLocal(g.user)}</td>
                     <td data-label="Aksi" class="py-3 px-3 text-center"><div class="sj-card-actions flex items-center justify-center gap-1 whitespace-nowrap" style="min-width:280px">
                         <button type="button" onclick="toggleSjDetails('${token}', this, ${g.rows.length})" aria-expanded="${expanded ? 'true' : 'false'}" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-white/10 text-gray-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Lihat detail barang">${expanded ? 'Tutup' : 'Detail'} (${g.rows.length})</button>
-                        <button type="button" onclick="printSuratJalan('${esc(g.tid)}', 'riwayat', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button>
-                        <button type="button" onclick="downloadSuratJalanExcel('${esc(g.tid)}', 'riwayat', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button>
+                        <button type="button" onclick="printSuratJalan('${escLocal(g.tid).replace(/'/g, '&#39;')}', 'riwayat', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Cetak Surat Jalan"><i data-lucide="file-text" class="w-3 h-3"></i> Cetak SJ</button>
+                        <button type="button" onclick="downloadSuratJalanExcel('${escLocal(g.tid).replace(/'/g, '&#39;')}', 'riwayat', this)" class="shrink-0 px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1" title="Download Excel Surat Jalan"><i data-lucide="file-spreadsheet" class="w-3 h-3"></i> Excel SJ</button>
                     </div></td>
                 </tr>
                 <tr id="sj-detail-${token}" data-sj-group-key="${token}" class="sj-detail-row ${expanded ? '' : 'hidden'}">
@@ -5542,45 +5581,27 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
         }
         async function markSjAction(tid, source, action) {
             const key = String(tid);
-            const field = `${source === 'riwayat' ? 'riwayat' : 'keluar'}${action === 'excel' ? 'Excel' : 'Print'}`;
-            const before = await getSjPrintRecord(key);
-            const next = {
-                ...before,
-                [field]: before[field] + 1,
-                count: before.count + 1,
-                updatedAt: Date.now(),
-                tid: key
-            };
-            cacheSjAudit(key, next);
             const eventId = `sj-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-            let synced = false;
             try {
                 const result = await workerRequest('/api/sj/audit', {
                     method: 'POST',
-                    body: JSON.stringify({ tid: key, source, action, eventId, counts: next })
+                    body: JSON.stringify({ tid: key, source, action, eventId })
                 });
-                if (result?.audit) cacheSjAudit(key, mergeSjAudit(next, result.audit));
-                synced = true;
+                if (result?.audit) cacheSjAudit(key, normalizeSjAuditCounts(result.audit));
+                return true;
             } catch (e) {
-                console.warn('Gagal menyimpan histori SJ ke Worker, tersimpan di cache lokal:', e);
+                console.warn('Gagal menyimpan histori SJ ke Worker:', e);
+                return false;
             }
-            return synced;
         }
         async function verifySjPassword(password) {
-            const username = window.gudangAppDb.currentUser?.username || window.activeUserSession?.username;
-            if (!username || !password) return false;
+            if (!password) return false;
             try {
-                const response = await fetch('https://inventory-backend-test.danurafa.workers.dev/api/login', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
+                const result = await workerRequest('/api/auth/verify-password', {
+                    method: 'POST',
+                    body: JSON.stringify({ password })
                 });
-                if (!response.ok) return false;
-                const result = await response.json().catch(() => ({}));
-                if (result?.token) {
-                    workerToken = result.token;
-                    localStorage.setItem(WORKER_TOKEN_KEY, workerToken);
-                }
-                return Boolean(result?.user || result?.token);
+                return Boolean(result?.ok);
             } catch (e) { return false; }
         }
         // Dialog internal dipakai karena prompt() native bisa diblokir Safari mobile
@@ -5630,9 +5651,8 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             document.addEventListener('keydown', e => {
                 if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeSjPasswordModal(false);
             });
-            if (input) input.addEventListener('keydown', e => {
-                if (e.key === 'Enter') { e.preventDefault(); if (okBtn) okBtn.click(); }
-            });
+            const form = document.getElementById('sj-password-form');
+            if (form) form.addEventListener('submit', e => { e.preventDefault(); if (okBtn) okBtn.click(); });
             if (okBtn) okBtn.addEventListener('click', async () => {
                 const pass = (input?.value || '').trim();
                 if (!pass) { showSjPasswordError('Password tidak boleh kosong.'); return; }

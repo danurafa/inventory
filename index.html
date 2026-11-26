@@ -1203,7 +1203,7 @@
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Password *</label>
-                                <input type="text" id="new-user-pass" required class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Ketik password..." autocomplete="off">
+                                <input type="password" id="new-user-pass" required minlength="10" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3 py-2 text-xs theme-focus" placeholder="Minimal 10 karakter..." autocomplete="new-password">
                             </div>
                             <div>
                                 <label class="text-xs block mb-1">Hak Akses (Role) *</label>
@@ -1322,11 +1322,11 @@
             <form id="form-login" autocomplete="off" onsubmit="handleLoginSubmit(event)" class="space-y-4">
                 <div class="login-glass-field">
                     <i data-lucide="user-round" class="login-glass-field-icon"></i>
-                    <input type="text" id="login-username" name="inventory-login-user" autocomplete="off" autocapitalize="none" spellcheck="false" required placeholder="Username">
+                    <input type="text" id="login-username" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required placeholder="Username">
                 </div>
                 <div class="login-glass-field">
                     <i data-lucide="lock-keyhole" class="login-glass-field-icon"></i>
-                    <input type="password" id="login-password" name="inventory-login-pass" autocomplete="off" required placeholder="Password">
+                    <input type="password" id="login-password" name="password" autocomplete="current-password" required placeholder="Password">
                 </div>
                 <div class="pt-2">
                     <button type="submit" class="login-glass-submit w-full py-3 rounded-xl theme-accent-bg text-white text-xs font-bold uppercase tracking-wider transition-all">MASUK SISTEM</button>
@@ -1411,7 +1411,9 @@
         <div class="app-card max-w-sm w-full p-6 rounded-2xl shadow-2xl border border-white/10 space-y-4">
             <h4 id="sj-password-title" class="font-bold text-sm text-gray-100 uppercase tracking-wide">Verifikasi Password</h4>
             <p id="sj-password-message" class="text-xs text-gray-300 leading-relaxed"></p>
-            <input id="sj-password-input" type="password" autocomplete="current-password" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm theme-focus" placeholder="Masukkan password akun">
+            <form id="sj-password-form" onsubmit="return false;" class="m-0">
+                <input id="sj-password-input" name="sj-verify-password" type="password" autocomplete="current-password" class="w-full bg-dark-700/80 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm theme-focus" placeholder="Masukkan password akun">
+            </form>
             <div id="sj-password-error" class="hidden text-[11px] text-rose-300"></div>
             <div class="flex justify-end gap-2.5 pt-1">
                 <button type="button" id="sj-password-cancel" class="px-4 py-2 rounded-xl bg-white/10 border border-white/15 text-gray-200 text-xs font-semibold">Batal</button>
@@ -1529,6 +1531,6 @@
 
 
 
-    <script src="assets/app.js?v=flexible-movement-chart-20261126"></script>
+    <script src="assets/app.js?v=phase1-final-audit-fix-po-sjform-20261126"></script>
 </body>
 </html>

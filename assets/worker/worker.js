@@ -17,9 +17,12 @@ const MIGRATION_MARKER_PATH = "artifacts/gudang-pro-cloud-system/private/auth_mi
 const SJ_AUDIT_COLLECTION = "artifacts/gudang-pro-cloud-system/private/sj_audit/records";
 const SJ_AUDIT_FIELDS = ["keluarPrint", "keluarExcel", "riwayatPrint", "riwayatExcel"];
 
-const SESSION_TTL_SECONDS = 60 * 60 * 12;
-const PBKDF2_ITERATIONS = 10000;
+const SESSION_TTL_SECONDS = 60 * 60 * 2;
+const PBKDF2_ITERATIONS = 100000;
+const LEGACY_PBKDF2_ITERATIONS = 10000;
 const MAX_BODY_BYTES = 2 * 1024 * 1024;
+const LOGIN_RATE_LIMIT_WINDOW_SECONDS = 15 * 60;
+const LOGIN_RATE_LIMIT_MAX_ATTEMPTS = 10;
 
 const encoder = new TextEncoder();
 let cachedGoogleToken = null;
@@ -534,6 +537,7 @@ function applyInventoryOperation(data, actor, type, payload) {
     const noPoCustomer = cleanString(p.noPoCustomer, 100).toUpperCase();
     const tanggal = cleanString(p.tanggal, 20);
     const customer = cleanString(p.customer, 120).toUpperCase();
+    const alamat = cleanString(p.alamat, 300);
     const rows = Array.isArray(p.items) ? p.items : [];
     if (!noPoCustomer || !tanggal || !customer || rows.length < 1)
       throw new Error("Nomor PO, tanggal, customer, dan minimal satu barang wajib diisi.");
@@ -544,6 +548,7 @@ function applyInventoryOperation(data, actor, type, payload) {
       const barangId = cleanString(r.barangId, 64).toUpperCase();
       const qty = validQty(r.qty);
       const siapKirim = Number(r.siapKirim ?? 0);
+      const warna = cleanString(r.warna ?? itemById(data, barangId)?.warna ?? "", 80).toUpperCase();
       if (!validateRowId(rowId) || findById(data.po, rowId) || seenIds.has(rowId))
         throw new Error(`ID detail PO baris ${index + 1} tidak valid atau sudah digunakan.`);
       if (!qty) throw new Error(`Qty PO baris ${index + 1} harus bilangan bulat lebih dari nol.`);
@@ -554,7 +559,7 @@ function applyInventoryOperation(data, actor, type, payload) {
       if (!item) throw new Error(`Barang ${barangId} tidak ditemukan di Master Barang.`);
       if (siapKirim > Number(item.stok||0)) throw new Error(`Qty siap dikirim ${barangId} melebihi stok tersedia (${Number(item.stok||0)}).`);
       seenIds.add(rowId); seenItems.add(barangId);
-      return { id:rowId, noPoCustomer, tanggal, customer, barangId, nama:item.nama, jenis:item.jenis, lebar:item.lebar||"", ukuran:item.ukuran||"", satuan:item.satuan, qty, siapKirim, terkirim:0, status:"OPEN" };
+      return { id:rowId, noPoCustomer, tanggal, customer, alamat, barangId, nama:item.nama, warna, jenis:item.jenis, lebar:item.lebar||"", ukuran:item.ukuran||"", satuan:item.satuan, qty, siapKirim, terkirim:0, status:"OPEN" };
     });
     data.po.unshift(...prepared);
     return;
@@ -581,6 +586,7 @@ function applyInventoryOperation(data, actor, type, payload) {
     const transactionId = id;
     const tanggal = cleanString(p.tanggal, 20);
     const tujuan = cleanString(p.tujuan, 120).toUpperCase();
+    const noSj = cleanString(p.noSj, 120);
     const rows = Array.isArray(p.items) ? p.items : [];
     if (!tanggal || !tujuan || rows.length < 1 || rows.length > 30)
       throw new Error("Tanggal, tujuan, dan minimal satu detail barang wajib diisi (maksimal 30 barang)." );
@@ -597,6 +603,7 @@ function applyInventoryOperation(data, actor, type, payload) {
       const poRef = cleanString(r.poRef, 64).toUpperCase();
       const barangId = cleanString(r.barangId, 64).toUpperCase();
       const qty = validQty(r.qty);
+      const warna = cleanString(r.warna ?? itemById(data, barangId)?.warna ?? "", 80).toUpperCase();
       if (!validateRowId(detailId) || findById(data.keluar, detailId) || seenIds.has(detailId))
         throw new Error(`ID detail Barang Keluar baris ${index+1} tidak valid atau sudah digunakan.`);
       if (!qty) throw new Error(`Qty Barang Keluar baris ${index+1} harus bilangan bulat lebih dari nol.`);
@@ -616,7 +623,7 @@ function applyInventoryOperation(data, actor, type, payload) {
       if (qty > ready) throw new Error(`${item.nama}: Qty keluar ${qty} melebihi Qty Siap Dikirim ${ready}.`);
       seenIds.add(detailId); seenPo.add(poRef);
       stockTotals.set(barangId, (stockTotals.get(barangId)||0) + qty);
-      prepared.push({ row:{ id:detailId, transactionId, groupId:transactionId, tanggal, poRef, barangId, nama:item.nama, jenis:item.jenis, lebar:item.lebar||"", ukuran:item.ukuran||"", satuan:item.satuan, qty, tujuan, user:cleanString(p.user,80) }, readyBefore:ready });
+      prepared.push({ row:{ id:detailId, transactionId, groupId:transactionId, noSj, tanggal, poRef, barangId, nama:item.nama, warna, jenis:item.jenis, lebar:item.lebar||"", ukuran:item.ukuran||"", satuan:item.satuan, qty, tujuan, user:cleanString(p.user,80) }, readyBefore:ready });
     }
     for (const [barangId, totalQty] of stockTotals) {
       const item = itemById(data, barangId);
@@ -1016,8 +1023,10 @@ function validUsername(value) {
 async function hashPassword(
   password,
   salt = randomToken(16),
-  allowLegacyLength = false
+  options = {}
 ) {
+  const allowLegacyLength = options.allowLegacyLength === true;
+  const iterations = Number(options.iterations) > 0 ? Math.floor(options.iterations) : PBKDF2_ITERATIONS;
   const minimumLength = allowLegacyLength ? 1 : 10;
 
   if (
@@ -1044,7 +1053,7 @@ async function hashPassword(
     {
       name: "PBKDF2",
       salt: fromB64url(salt),
-      iterations: PBKDF2_ITERATIONS,
+      iterations,
       hash: "SHA-256"
     },
     material,
@@ -1054,7 +1063,7 @@ async function hashPassword(
   return {
     salt,
     passwordHash: b64url(new Uint8Array(bits)),
-    iterations: PBKDF2_ITERATIONS
+    iterations
   };
 }
 
@@ -1067,14 +1076,18 @@ async function verifyPassword(password, record) {
     return false;
   }
 
+  const iterations = Number(record?.iterations) > 0 ? Math.floor(record.iterations) : LEGACY_PBKDF2_ITERATIONS;
   const result = await hashPassword(
     password,
     record.salt,
-    record.migratedFromLegacy === true
+    {
+      allowLegacyLength: record.migratedFromLegacy === true,
+      iterations
+    }
   );
 
   const a = encoder.encode(result.passwordHash);
-  const b = encoder.encode(record.passwordHash);
+  const b = encoder.encode(String(record.passwordHash || ""));
 
   if (a.length !== b.length) return false;
 
@@ -1106,6 +1119,7 @@ async function createSession(env, user) {
     `${SESSION_COLLECTION}/${id}`,
     {
       username: user.username,
+      sessionVersion: Number(user.sessionVersion || 0),
       createdAt: now,
       expiresAt: now + SESSION_TTL_SECONDS
     }
@@ -1139,6 +1153,7 @@ async function authenticate(request, env) {
   );
 
   if (!user || user.disabled) return null;
+  if (Number(session.sessionVersion || 0) !== Number(user.sessionVersion || 0)) return null;
 
   return {
     ...user,
@@ -1227,36 +1242,66 @@ async function bodyJson(request) {
   }
 }
 
-function corsHeaders(request, env) {
-  const origin =
-    request.headers.get("origin") || "*";
+function timingSafeEqualString(a, b) {
+  const aa = encoder.encode(String(a || ""));
+  const bb = encoder.encode(String(b || ""));
+  if (aa.length !== bb.length) return false;
+  let diff = 0;
+  for (let i = 0; i < aa.length; i++) diff |= aa[i] ^ bb[i];
+  return diff === 0;
+}
 
-  const allowed = env.ALLOWED_ORIGIN || "*";
+function clientIp(request) {
+  return cleanString(
+    request.headers.get("cf-connecting-ip") ||
+    request.headers.get("x-forwarded-for")?.split(",")[0] ||
+    "unknown",
+    80
+  );
+}
+
+async function checkLoginRateLimit(request, env, username) {
+  const now = Math.floor(Date.now() / 1000);
+  const ip = clientIp(request);
+  const key = await sha256Hex(`login:${ip}:${String(username || "").toLowerCase()}`);
+  const path = `artifacts/gudang-pro-cloud-system/private/rate_limits/login/${key}`;
+  const raw = await getRawDoc(env, path);
+  const current = raw ? decodeFields(raw.fields || {}) : null;
+  const windowStart = Number(current?.windowStart || 0);
+  const count = Number(current?.count || 0);
+  const active = windowStart > 0 && (now - windowStart) < LOGIN_RATE_LIMIT_WINDOW_SECONDS;
+  const nextCount = active ? count + 1 : 1;
+  const nextWindowStart = active ? windowStart : now;
+  const record = { ip, username: String(username || "").toLowerCase(), count: nextCount, windowStart: nextWindowStart, expiresAt: nextWindowStart + LOGIN_RATE_LIMIT_WINDOW_SECONDS };
+  try {
+    if (raw) await patchDocWithPrecondition(env, path, record, raw.updateTime);
+    else await putDoc(env, path, record, true);
+  } catch (e) {
+    // fail-open on rate limit store errors to avoid lockout by infra; login still verifies password
+    console.error("Rate limit store error:", e);
+  }
+  const limited = nextCount > LOGIN_RATE_LIMIT_MAX_ATTEMPTS;
+  const retryAfter = Math.max(1, nextWindowStart + LOGIN_RATE_LIMIT_WINDOW_SECONDS - now);
+  return { limited, retryAfter };
+}
+
+function corsHeaders(request, env) {
+  const origin = request.headers.get("origin") || "";
+  const allowed = String(env.ALLOWED_ORIGIN || "https://danurafa.github.io").trim();
+  const allowList = allowed.split(",").map(s => s.trim()).filter(Boolean);
+  const allowOrigin = allowList.includes(origin) ? origin : (allowList[0] || "https://danurafa.github.io");
 
   return {
-    "access-control-allow-origin":
-      allowed === "*"
-        ? "*"
-        : origin === allowed
-          ? origin
-          : "null",
-
-    "access-control-allow-methods":
-      "GET,POST,PUT,DELETE,OPTIONS",
-
-    "access-control-allow-headers":
-      "Content-Type,Authorization,X-Setup-Secret",
-
+    "access-control-allow-origin": allowOrigin,
+    "access-control-allow-methods": "GET,POST,PUT,DELETE,OPTIONS",
+    "access-control-allow-headers": "Content-Type,Authorization,X-Setup-Secret",
     "access-control-max-age": "86400",
     "vary": "Origin"
   };
 }
 
 async function handleSetupMigration(request, env, cors) {
-  if (
-    request.headers.get("x-setup-secret") !==
-    env.SETUP_SECRET
-  ) {
+  if (!timingSafeEqualString(request.headers.get("x-setup-secret") || "", env.SETUP_SECRET || "")) {
     return json(
       { error: "Setup secret tidak valid." },
       401,
@@ -1488,10 +1533,7 @@ export default {
         path === "/api/setup/superadmin" &&
         request.method === "POST"
       ) {
-        if (
-          request.headers.get("x-setup-secret") !==
-          env.SETUP_SECRET
-        ) {
+        if (!timingSafeEqualString(request.headers.get("x-setup-secret") || "", env.SETUP_SECRET || "")) {
           return json(
             { error: "Setup secret tidak valid." },
             401,
@@ -1533,6 +1575,7 @@ export default {
               role: "superadmin",
               disabled: false,
               uiPreference: "classic",
+              sessionVersion: 0,
               createdAt: Math.floor(Date.now() / 1000)
             },
             true
@@ -1601,19 +1644,30 @@ export default {
           );
         }
 
+        const rate = await checkLoginRateLimit(request, env, username);
+        if (rate.limited) {
+          return json(
+            { error: `Terlalu banyak percobaan login. Coba lagi dalam ${Math.ceil(rate.retryAfter / 60)} menit.` },
+            429,
+            { ...cors, "retry-after": String(rate.retryAfter) }
+          );
+        }
+
         const user = await getDoc(
           env,
           `${USER_COLLECTION}/${username}`
         );
 
-        if (
-          !user ||
-          user.disabled ||
-          !(await verifyPassword(
+        const okPassword = !!(
+          user &&
+          !user.disabled &&
+          await verifyPassword(
             String(body.password || ""),
             user
-          ))
-        ) {
+          )
+        );
+
+        if (!okPassword) {
           return json(
             { error: "Username atau password salah." },
             401,
@@ -1621,9 +1675,31 @@ export default {
           );
         }
 
+        // Upgrade hash lama ke iterasi baru secara transparan saat login sukses.
+        const needsRehash = Number(user.iterations || 0) < PBKDF2_ITERATIONS;
+        if (needsRehash) {
+          try {
+            const creds = await hashPassword(String(body.password || ""));
+            const rawUser = await getRawDoc(env, `${USER_COLLECTION}/${username}`);
+            if (rawUser) {
+              const latest = decodeFields(rawUser.fields || {});
+              await patchDocWithPrecondition(env, `${USER_COLLECTION}/${username}`, {
+                ...latest,
+                salt: creds.salt,
+                passwordHash: creds.passwordHash,
+                iterations: creds.iterations,
+                migratedFromLegacy: false
+              }, rawUser.updateTime);
+              Object.assign(user, creds, { migratedFromLegacy: false });
+            }
+          } catch (e) {
+            console.error("Password rehash failed:", e);
+          }
+        }
+
         const token = await createSession(
           env,
-          { username }
+          { ...user, username }
         );
 
         return json(
@@ -1655,6 +1731,54 @@ export default {
         }
 
         return json({ ok: true }, 200, cors);
+      }
+
+      // VERIFY PASSWORD - no new token issued; used for sensitive UI re-auth.
+      if (
+        path === "/api/auth/verify-password" &&
+        request.method === "POST"
+      ) {
+        const user = await authenticate(request, env);
+        if (!user) {
+          return json({ error: "Sesi tidak valid atau sudah berakhir." }, 401, cors);
+        }
+        const body = await bodyJson(request);
+        const password = String(body.password || "");
+        const ok = await verifyPassword(password, user);
+        if (!ok) {
+          return json({ ok: false, error: "Password salah." }, 401, cors);
+        }
+        return json({ ok: true }, 200, cors);
+      }
+
+      // ADMIN: revoke all sessions by bumping sessionVersion for all users.
+      if (
+        path === "/api/admin/revoke-all-sessions" &&
+        request.method === "POST"
+      ) {
+        const actor = await authenticate(request, env);
+        if (!roleAllowed(actor, ["superadmin"])) {
+          return json({ error: "Hanya Super Admin yang dapat revoke semua sesi." }, actor ? 403 : 401, cors);
+        }
+        if (!timingSafeEqualString(request.headers.get("x-setup-secret") || "", env.SETUP_SECRET || "")) {
+          return json({ error: "Setup secret tidak valid." }, 401, cors);
+        }
+        const token = await googleAccessToken(env);
+        const listUrl = `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(env.FIREBASE_PROJECT_ID)}/databases/(default)/documents/${USER_COLLECTION}`;
+        const resp = await fetch(listUrl, { headers: { authorization: `Bearer ${token}` } });
+        const result = await resp.json();
+        if (!resp.ok) throw new Error(result.error?.message || "Gagal membaca user.");
+        let bumped = 0;
+        for (const doc of (result.documents || [])) {
+          const username = doc.name.split("/").pop();
+          const user = decodeFields(doc.fields || {});
+          await patchDocWithPrecondition(env, `${USER_COLLECTION}/${username}`, {
+            ...user,
+            sessionVersion: Number(user.sessionVersion || 0) + 1
+          }, doc.updateTime);
+          bumped++;
+        }
+        return json({ ok: true, bumped }, 200, cors);
       }
 
       // CURRENT USER
@@ -1791,6 +1915,9 @@ export default {
             cors
           );
         }
+        if (!roleAllowed(actor, ["superadmin", "admin", "staff"])) {
+          return json({ error: "Viewer hanya memiliki akses baca." }, 403, cors);
+        }
 
         const body = await bodyJson(request);
         const tid = cleanString(body.tid, 200);
@@ -1813,8 +1940,19 @@ export default {
         const source = body.source;
         const action = body.action;
         const field = `${source}${action === "excel" ? "Excel" : "Print"}`;
-        const eventId = cleanString(body.eventId, 100) || randomToken(12);
-        const incoming = normalizeSjAuditCounts(body.counts);
+        const eventId = cleanString(body.eventId, 100);
+        if (!/^[A-Za-z0-9._:-]{12,100}$/.test(eventId)) {
+          return json({ error: "eventId wajib unik dan valid." }, 400, cors);
+        }
+
+        // Validasi tid agar audit hanya untuk transaksi keluar/surat jalan yang nyata.
+        const inv = await getDoc(env, DATA_PATH);
+        const keluarRows = Array.isArray(inv?.keluar) ? inv.keluar : [];
+        const tidExists = keluarRows.some(r => String(r.transactionId || r.groupId || r.id || "").toUpperCase() === tid.toUpperCase());
+        if (!tidExists) {
+          return json({ error: "Transaksi Surat Jalan tidak ditemukan." }, 404, cors);
+        }
+
         const now = Math.floor(Date.now() / 1000);
         const docPath = await sjAuditDocPath(tid);
 
@@ -1833,10 +1971,9 @@ export default {
             );
           }
 
-          const counts = maxSjAuditCounts(current || {}, incoming);
-
-          counts[field] += 1;
-          counts.count += 1;
+          const counts = normalizeSjAuditCounts(current || {});
+          counts[field] = Number(counts[field] || 0) + 1;
+          counts.count = Number(counts.count || 0) + 1;
           counts.updatedAt = now;
 
           const next = {
@@ -1845,7 +1982,7 @@ export default {
             events: [
               ...events,
               { eventId, source, action, username: actor.username, at: now }
-            ].slice(-50)
+            ].slice(-200)
           };
 
           try {
@@ -2469,6 +2606,7 @@ export default {
           role,
           disabled: false,
           uiPreference: "classic",
+          sessionVersion: 0,
           createdAt: Math.floor(Date.now() / 1000)
         };
 
@@ -2614,7 +2752,9 @@ export default {
               : Boolean(target.disabled)
         };
 
-        if (body.password !== undefined) {
+        const passwordChanged = body.password !== undefined;
+        const disabledChanged = body.disabled !== undefined && Boolean(body.disabled) !== Boolean(target.disabled);
+        if (passwordChanged) {
           const credentials = await hashPassword(
             body.password
           );
@@ -2623,6 +2763,9 @@ export default {
           updated.passwordHash = credentials.passwordHash;
           updated.iterations = credentials.iterations;
           updated.migratedFromLegacy = false;
+        }
+        if (passwordChanged || (disabledChanged && updated.disabled)) {
+          updated.sessionVersion = Number(target.sessionVersion || 0) + 1;
         }
 
         await putDoc(
@@ -2736,8 +2879,7 @@ export default {
 
       return json(
         {
-          error:
-            error.message || "Kesalahan server."
+          error: "Kesalahan server."
         },
         500,
         cors
