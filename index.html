@@ -8,6 +8,10 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+    <!-- Fase 3: CSP Report-Only dulu. Tidak enforce karena app masih pakai banyak inline onclick/style; pindah ke enforce setelah refactor handler. frame-ancestors tidak didukung via meta. -->
+    <meta http-equiv="Content-Security-Policy-Report-Only" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://inventory-backend-test.danurafa.workers.dev https://api.open-meteo.com; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests">
     <title>Sistem Manajemen Inventory Gudang</title>
     <!-- V75: percepat koneksi awal ke resource eksternal tanpa mengubah urutan eksekusi library -->
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
@@ -47,7 +51,7 @@
 
 
 
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@0.577.0/dist/umd/lucide.min.js" integrity="sha384-orgVf2eX2+m1zKAOIi09hD0W6GtVhoOUmqDK+sysYB2JTZ4vS86j4jm+X7a4Nnei" crossorigin="anonymous"></script>
     <script src="assets/boot.js"></script>
 </head>
 <body class="min-h-screen flex flex-col antialiased theme-glass theme-dark">
@@ -1531,6 +1535,6 @@
 
 
 
-    <script src="assets/app.js?v=phase2-sj-viewer-guard-20261126"></script>
+    <script src="assets/app.js?v=phase3-csp-sri-reportonly-20261126"></script>
 </body>
 </html>

@@ -5789,6 +5789,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
         // Download template Surat Jalan sebagai file .xlsx yang sudah diatur (tinggal buka & print di Excel).
         // Library dimuat saat tombol dipakai, tidak menambah beban saat aplikasi dibuka.
         const SJ_XLSX_CDN = 'https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js';
+        const SJ_XLSX_SRI = 'sha384-OUW9euuUyxyHcAhTqbhI+Iyb8LMssXt/cpz0yXhs9UWG2/R/uaWdakx/4cfww7Vb';
         let sjXlsxPromise = null;
         function loadSjXlsx() {
             if (window.XLSX?.utils?.aoa_to_sheet) return Promise.resolve(window.XLSX);
@@ -5796,6 +5797,8 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 sjXlsxPromise = new Promise((resolve, reject) => {
                     const script = document.createElement('script');
                     script.src = SJ_XLSX_CDN;
+                    script.integrity = SJ_XLSX_SRI;
+                    script.crossOrigin = 'anonymous';
                     script.onload = () => {
                         if (window.XLSX?.utils?.aoa_to_sheet) resolve(window.XLSX);
                         else { sjXlsxPromise = null; reject(new Error('Library Excel tidak tersedia.')); }
@@ -5919,6 +5922,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
         }
         // Template .xlsx milik pengguna dipakai apa adanya supaya logo, merge, dan format tetap utuh.
         const SJ_JSZIP_CDN = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+        const SJ_JSZIP_SRI = 'sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG';
         const SJ_TEMPLATE_PATH = 'assets/templates/surat-jalan.xlsx';
         let sjJszipPromise = null;
         function loadSjJszip() {
@@ -5927,6 +5931,8 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 sjJszipPromise = new Promise((resolve, reject) => {
                     const script = document.createElement('script');
                     script.src = SJ_JSZIP_CDN;
+                    script.integrity = SJ_JSZIP_SRI;
+                    script.crossOrigin = 'anonymous';
                     script.onload = () => {
                         if (window.JSZip) resolve(window.JSZip);
                         else { sjJszipPromise = null; reject(new Error('Library ZIP tidak tersedia.')); }
