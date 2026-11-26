@@ -23,9 +23,23 @@ const LEGACY_PBKDF2_ITERATIONS = 10000;
 const MAX_BODY_BYTES = 2 * 1024 * 1024;
 const LOGIN_RATE_LIMIT_WINDOW_SECONDS = 15 * 60;
 const LOGIN_RATE_LIMIT_MAX_ATTEMPTS = 10;
+const OAUTH_TIMEOUT_MS = 5000;
+const FIRESTORE_TIMEOUT_MS = 4000;
 
 const encoder = new TextEncoder();
+
+async function fetchWithTimeout(url, options = {}, timeoutMs = FIRESTORE_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 let cachedGoogleToken = null;
+let pendingGoogleToken = null;
 
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
@@ -152,6 +166,23 @@ async function googleAccessToken(env) {
     return cachedGoogleToken.token;
   }
 
+  // Beberapa endpoint dipanggil paralel; cukup satu refresh OAuth yang
+  // dipakai bersama supaya tidak ada request token bertumpuk.
+  if (!pendingGoogleToken) {
+    pendingGoogleToken = refreshGoogleToken(env)
+      .then((result) => {
+        cachedGoogleToken = result;
+        return result.token;
+      })
+      .finally(() => {
+        pendingGoogleToken = null;
+      });
+  }
+
+  return pendingGoogleToken;
+}
+
+async function refreshGoogleToken(env) {
   const account = JSON.parse(env.FIREBASE_SERVICE_ACCOUNT);
 
   if (!account.client_email || !account.private_key) {
@@ -200,82 +231,120 @@ async function googleAccessToken(env) {
   const assertion =
     `${unsigned}.${b64url(new Uint8Array(signature))}`;
 
-  const response = await fetch(
-    "https://oauth2.googleapis.com/token",
-    {
-      method: "POST",
-      headers: {
-        "content-type": "application/x-www-form-urlencoded"
-      },
-      body: new URLSearchParams({
-        grant_type:
-          "urn:ietf:params:oauth:grant-type:jwt-bearer",
-        assertion
-      })
+  const tokenBody = new URLSearchParams({
+    grant_type:
+      "urn:ietf:params:oauth:grant-type:jwt-bearer",
+    assertion
+  }).toString();
+
+  let response;
+  let result = {};
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      response = await fetchWithTimeout(
+        "https://oauth2.googleapis.com/token",
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/x-www-form-urlencoded"
+          },
+          body: tokenBody
+        },
+        OAUTH_TIMEOUT_MS
+      );
+    } catch (error) {
+      if (attempt === 1) throw error;
+      continue;
     }
-  );
 
-  const result = await response.json();
+    result = await response.json().catch(() => ({}));
 
-  if (!response.ok) {
-    throw new Error(
-      `Google OAuth gagal: ${
-        result.error_description || result.error || response.status
-      }`
-    );
+    if (!response.ok) {
+      if (
+        attempt === 0 &&
+        (response.status >= 500 || response.status === 429)
+      ) continue;
+      throw new Error(
+        `Google OAuth gagal: ${
+          result.error_description || result.error || response.status
+        }`
+      );
+    }
+    break;
   }
 
-  cachedGoogleToken = {
+  return {
     token: result.access_token,
     expiresAt:
       Date.now() + (result.expires_in || 3600) * 1000
   };
-
-  return cachedGoogleToken.token;
 }
 
 async function fsRequest(env, path, options = {}) {
   const token = await googleAccessToken(env);
+  const method = options.method || "GET";
 
   const url =
     `https://firestore.googleapis.com/v1/projects/` +
     `${encodeURIComponent(env.FIREBASE_PROJECT_ID)}` +
     `/databases/(default)/documents/${path}`;
 
-  const response = await fetch(url, {
-    method: options.method || "GET",
-    headers: {
-      authorization: `Bearer ${token}`,
-      ...(options.body
-        ? { "content-type": "application/json" }
-        : {}),
-      ...(options.headers || {})
-    },
-    body: options.body
-      ? JSON.stringify(options.body)
-      : undefined
-  });
+  // GET aman di-retry; PATCH/POST/DELETE sengaja tidak di-retry otomatis
+  // supaya tidak ada efek samping ganda kalau request sudah diproses.
+  const canRetry = method === "GET";
+  const maxAttempts = canRetry ? 2 : 1;
+  let lastError = null;
 
-  if (response.status === 404) return null;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    let response;
+    try {
+      response = await fetchWithTimeout(url, {
+        method,
+        headers: {
+          authorization: `Bearer ${token}`,
+          ...(options.body
+            ? { "content-type": "application/json" }
+            : {}),
+          ...(options.headers || {})
+        },
+        body: options.body
+          ? JSON.stringify(options.body)
+          : undefined
+      }, FIRESTORE_TIMEOUT_MS);
+    } catch (error) {
+      lastError = error;
+      if (canRetry && attempt < maxAttempts - 1) continue;
+      throw error;
+    }
 
-  const body = await response.json().catch(() => ({}));
+    if (response.status === 404) return null;
 
-  if (!response.ok) {
-    const error = Object.assign(
-      new Error(
-        body.error?.message ||
-        `Firestore request gagal (${response.status})`
-      ),
-      {
-        status: response.status,
-        firestoreStatus: body.error?.status || ""
-      }
-    );
+    const body = await response.json().catch(() => ({}));
 
-    throw error;
+    if (!response.ok) {
+      const error = Object.assign(
+        new Error(
+          body.error?.message ||
+          `Firestore request gagal (${response.status})`
+        ),
+        {
+          status: response.status,
+          firestoreStatus: body.error?.status || ""
+        }
+      );
+      lastError = error;
+      if (
+        canRetry &&
+        attempt < maxAttempts - 1 &&
+        (error.status >= 500 || error.status === 429)
+      ) continue;
+      throw error;
+    }
+
+    return body;
   }
 
-  return body;
+  throw lastError || new Error("Firestore request gagal.");
 }
 /** @returns {Promise<any|null>} */
 async function getDoc(env, path) {
@@ -997,7 +1066,7 @@ async function deleteDoc(env, path) {
     `${encodeURIComponent(env.FIREBASE_PROJECT_ID)}` +
     `/databases/(default)/documents/${path}`;
 
-  const response = await fetch(url, {
+  const response = await fetchWithTimeout(url, {
     method: "DELETE",
     headers: {
       authorization: `Bearer ${token}`
@@ -1651,7 +1720,13 @@ export default {
           );
         }
 
-        const rate = await checkLoginRateLimit(request, env, username);
+        // Rate-limit dan lookup user tidak saling bergantung; jalankan paralel
+        // supaya login tidak menunggu dua round-trip Firestore berurutan.
+        const [rate, user] = await Promise.all([
+          checkLoginRateLimit(request, env, username),
+          getDoc(env, `${USER_COLLECTION}/${username}`)
+        ]);
+
         if (rate.unavailable) {
           return json(
             { error: "Layanan verifikasi login sedang gangguan sementara. Coba lagi sebentar." },
@@ -1666,11 +1741,6 @@ export default {
             { ...cors, "retry-after": String(rate.retryAfter) }
           );
         }
-
-        const user = await getDoc(
-          env,
-          `${USER_COLLECTION}/${username}`
-        );
 
         const okPassword = !!(
           user &&
@@ -1785,7 +1855,7 @@ export default {
           const listUrl = new URL(baseUrl);
           listUrl.searchParams.set("pageSize", "200");
           if (pageToken) listUrl.searchParams.set("pageToken", pageToken);
-          const resp = await fetch(listUrl.toString(), { headers: { authorization: `Bearer ${token}` } });
+          const resp = await fetchWithTimeout(listUrl.toString(), { headers: { authorization: `Bearer ${token}` } });
           const result = await resp.json();
           if (!resp.ok) throw new Error(result.error?.message || "Gagal membaca user.");
           for (const doc of (result.documents || [])) {
@@ -2506,7 +2576,7 @@ export default {
           `${encodeURIComponent(env.FIREBASE_PROJECT_ID)}` +
           `/databases/(default)/documents/${USER_COLLECTION}`;
 
-        const response = await fetch(listUrl, {
+        const response = await fetchWithTimeout(listUrl, {
           headers: {
             authorization: `Bearer ${token}`
           }
@@ -2898,6 +2968,20 @@ export default {
         "Inventory Worker error:",
         error
       );
+
+      const timedOut =
+        error?.name === "AbortError" ||
+        String(error?.message || "").toLowerCase().includes("abort");
+
+      if (timedOut) {
+        return json(
+          {
+            error: "Layanan Cloud sedang lambat. Coba lagi sebentar."
+          },
+          503,
+          { ...cors, "retry-after": "1" }
+        );
+      }
 
       return json(
         {
