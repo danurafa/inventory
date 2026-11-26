@@ -346,7 +346,7 @@ Cache-buster saat ini:
 - Gambar logo → `assets/Logo/LOGO CV-NO TEXT.png?v=keluar-detail-fix-20261125` (versi lama,
   tapi file tidak berubah sejak commit `b25c652`, jadi aman; bisa di-bump kalau mau konsisten)
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
-- Marker HEAD di docs = commit aplikasi terakhir yang sudah dicatat; commit `docs:` tidak dihitung guard.
+- Marker HEAD di docs = commit aplikasi terakhir yang sudah dicatat; commit `docs:` (termasuk commit sinkron ini) tidak dihitung guard.
 
 Commit penting (terbaru di atas):
 - `6b793b6` — fix: Total Qty kartu SJ mobile di-center di atas tombol aksi

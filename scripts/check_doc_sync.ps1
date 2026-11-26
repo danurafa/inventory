@@ -35,8 +35,9 @@ function Get-ExpectedHead {
 
     $lines = @(& git -C $root log --format='%h %s' -n 200 $FromRev 2>$null)
     foreach ($line in $lines) {
-        if ($line -notmatch '^docs: ') {
-            return ($line -split ' ', 2)[0]
+        $parts = $line -split ' ', 2
+        if ($parts.Count -lt 2 -or $parts[1] -notmatch '^docs: ') {
+            return $parts[0]
         }
     }
     return $FromRev

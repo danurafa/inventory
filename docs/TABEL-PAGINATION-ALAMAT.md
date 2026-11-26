@@ -276,7 +276,7 @@ index.html
 
 Cache-buster **saat ini** (di `index.html`):
 HEAD `6b793b6`
-Commit aplikasi terakhir; commit `docs:` tidak dihitung guard.
+Commit aplikasi terakhir; commit `docs:` (termasuk commit sinkron) tidak dihitung guard.
 
 ```
 assets/styles.css?v=sj-totalqty-center-20261126
