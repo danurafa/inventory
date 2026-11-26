@@ -146,11 +146,28 @@
             badge.innerHTML = selected[1];
             badge.title = detail || (lastCloudError ? lastCloudError.message : '');
 
-            // V184: cerminkan status yang sama ke badge mobile (semua role).
+            // V184: cerminkan status ke badge mobile (semua role) dengan label pendek
+            // supaya tidak terlalu panjang di header mobile.
             const mobileBadge = document.getElementById('cloud-sync-status-mobile');
             if (mobileBadge) {
+                const shortLabels = {
+                    active: 'Sync',
+                    saving: 'Simpan',
+                    connecting: 'Konek…',
+                    offline: 'Offline',
+                    error: 'Error'
+                };
+                const dotClasses = {
+                    active: 'bg-emerald-400 animate-pulse',
+                    saving: 'bg-sky-400 animate-pulse',
+                    connecting: 'bg-amber-400 animate-pulse',
+                    offline: 'bg-amber-400',
+                    error: 'bg-red-400'
+                };
+                const key = shortLabels[state] ? state : 'connecting';
+                const dot = `<span class="w-1.5 h-1.5 rounded-full ${dotClasses[key]}"></span>`;
                 mobileBadge.className = `cloud-sync-status-mobile inline-flex items-center gap-1 text-[10px] ${selected[0]} px-2 py-0.5 rounded-full border font-bold`;
-                mobileBadge.innerHTML = selected[1];
+                mobileBadge.innerHTML = `${dot} ${shortLabels[key]}`;
                 mobileBadge.title = badge.title;
             }
         }
