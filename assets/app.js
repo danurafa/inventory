@@ -6632,7 +6632,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
             // The same button and original toggle function are retained.
             function placeToggleForViewport() {
                 if (isMobile()) {
-                    const logoutButton = userBanner && userbanner.querySelector('[data-action="logout-user"]');
+                    const logoutButton = userBanner && userBanner.querySelector('[data-action="logout-user"]');
                     if (userBanner) userBanner.insertBefore(button, logoutButton || null);
                     else document.body.appendChild(button);
                     button.classList.add('sidebar-mobile-floating-toggle');
