@@ -1265,24 +1265,31 @@ async function checkLoginRateLimit(request, env, username) {
   const ip = clientIp(request);
   const key = await sha256Hex(`login:${ip}:${String(username || "").toLowerCase()}`);
   const path = `artifacts/gudang-pro-cloud-system/private/rate_limits/login/${key}`;
-  try {
-    const raw = await getRawDoc(env, path);
-    const current = raw ? decodeFields(raw.fields || {}) : null;
-    const windowStart = Number(current?.windowStart || 0);
-    const count = Number(current?.count || 0);
-    const active = windowStart > 0 && (now - windowStart) < LOGIN_RATE_LIMIT_WINDOW_SECONDS;
-    const nextCount = active ? count + 1 : 1;
-    const nextWindowStart = active ? windowStart : now;
-    const record = { ip, username: String(username || "").toLowerCase(), count: nextCount, windowStart: nextWindowStart, expiresAt: nextWindowStart + LOGIN_RATE_LIMIT_WINDOW_SECONDS };
-    if (raw) await patchDocWithPrecondition(env, path, record, raw.updateTime);
-    else await putDoc(env, path, record, true);
-    const limited = nextCount > LOGIN_RATE_LIMIT_MAX_ATTEMPTS;
-    const retryAfter = Math.max(1, nextWindowStart + LOGIN_RATE_LIMIT_WINDOW_SECONDS - now);
-    return { limited, retryAfter, unavailable: false };
-  } catch (e) {
-    console.error("Rate limit store error:", e);
-    return { limited: false, retryAfter: LOGIN_RATE_LIMIT_WINDOW_SECONDS, unavailable: true };
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const raw = await getRawDoc(env, path);
+      const current = raw ? decodeFields(raw.fields || {}) : null;
+      const windowStart = Number(current?.windowStart || 0);
+      const count = Number(current?.count || 0);
+      const active = windowStart > 0 && (now - windowStart) < LOGIN_RATE_LIMIT_WINDOW_SECONDS;
+      const nextCount = active ? count + 1 : 1;
+      const nextWindowStart = active ? windowStart : now;
+      const record = { ip, username: String(username || "").toLowerCase(), count: nextCount, windowStart: nextWindowStart, expiresAt: nextWindowStart + LOGIN_RATE_LIMIT_WINDOW_SECONDS };
+      if (raw) await patchDocWithPrecondition(env, path, record, raw.updateTime);
+      else await putDoc(env, path, record, true);
+      const limited = nextCount > LOGIN_RATE_LIMIT_MAX_ATTEMPTS;
+      const retryAfter = Math.max(1, nextWindowStart + LOGIN_RATE_LIMIT_WINDOW_SECONDS - now);
+      return { limited, retryAfter, unavailable: false };
+    } catch (e) {
+      const status = Number(e?.status || 0);
+      const msg = String(e?.message || "").toLowerCase();
+      const conflict = status === 409 || status === 412 || msg.includes("precondition") || msg.includes("already exists") || msg.includes("aborted");
+      if (conflict && attempt < 2) continue;
+      console.error("Rate limit store error:", e);
+      return { limited: false, retryAfter: LOGIN_RATE_LIMIT_WINDOW_SECONDS, unavailable: true };
+    }
   }
+  return { limited: false, retryAfter: LOGIN_RATE_LIMIT_WINDOW_SECONDS, unavailable: true };
 }
 
 function corsHeaders(request, env) {
