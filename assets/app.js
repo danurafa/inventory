@@ -130,6 +130,8 @@
         let lastSyncedData = null;
         let syncQueue = Promise.resolve();
         let lastCloudError = null;
+        let cloudInitRetryTimer = null;
+        let cloudInitRetries = 0;
 
         function updateCloudStatusBadge(state, detail = '') {
             const badge = document.getElementById('cloud-sync-status');
@@ -373,24 +375,50 @@
         }
         async function fetchSetupStatusWithRetry() {
             let lastError = null;
-            for (let attempt = 0; attempt < 3; attempt++) {
+            for (let attempt = 0; attempt < 2; attempt++) {
+                const controller = new AbortController();
+                const timer = setTimeout(() => controller.abort(), 3500);
                 try {
-                    const response = await fetch(`${WORKER_BASE_URL}/api/setup/status`);
+                    const response = await fetch(`${WORKER_BASE_URL}/api/setup/status`, {
+                        signal: controller.signal,
+                        cache: 'no-store'
+                    });
                     const body = await response.json().catch(() => ({}));
                     if (response.ok) return body;
                     lastError = new Error(body.error || `Tidak dapat memeriksa status setup (${response.status}).`);
                     lastError.status = response.status;
                 } catch (error) {
                     lastError = error;
+                } finally {
+                    clearTimeout(timer);
                 }
                 const retryable = !lastError.status || Number(lastError.status) >= 500;
-                if (!retryable || attempt === 2) throw lastError;
-                await new Promise(resolve => setTimeout(resolve, 400 * (attempt + 1)));
+                if (!retryable || attempt === 1) throw lastError;
+                await new Promise(resolve => setTimeout(resolve, 400));
             }
             throw lastError || new Error('Tidak dapat memeriksa status setup.');
         }
 
+        function scheduleCloudInitRetry(detail) {
+            if (cloudInitRetries >= 3) {
+                updateCloudStatusBadge('error', detail);
+                showToast('Cloud masih tertunda. Muat ulang halaman untuk mencoba lagi.', 'warning');
+                return;
+            }
+            cloudInitRetries += 1;
+            const delay = 5000 * cloudInitRetries;
+            cloudInitRetryTimer = setTimeout(() => {
+                cloudInitRetryTimer = null;
+                if (workerToken) initCloud();
+            }, delay);
+            console.warn(`[Worker Init] retry ${cloudInitRetries}/3 dalam ${delay / 1000}s`, detail);
+        }
+
         async function initCloud() {
+            if (cloudInitRetryTimer) {
+                clearTimeout(cloudInitRetryTimer);
+                cloudInitRetryTimer = null;
+            }
             updateCloudStatusBadge('connecting');
             try {
                 await workerRequest('/health', { method: 'GET' }).catch(async () => {
@@ -402,6 +430,7 @@
                     });
                 });
                 const setupStatus = await fetchSetupStatusWithRetry();
+                cloudInitRetries = 0;
                 if (setupStatus.setupRequired) {
                     const setupSecret = prompt('Setup pertama kali: masukkan SETUP_SECRET Cloudflare (nilai rahasia yang sudah kamu simpan di Worker).');
                     if (!setupSecret) { updateCloudStatusBadge('connecting', 'Setup Super Admin belum dilakukan.'); window.showLoginModal?.(); return; }
@@ -442,11 +471,13 @@
                     await loadUsersFromWorker();
                     window.refreshAllViews?.();
                     cloudReady = true;
+                    cloudInitRetries = 0;
                     updateCloudStatusBadge('active');
                     window.hideLoginModal?.();
                     startAutoLogoutTimer();
                 } else {
                     cloudReady = false;
+                    cloudInitRetries = 0;
                     updateCloudStatusBadge('connecting', 'Silakan login untuk mengaktifkan sinkronisasi.');
                     window.showLoginModal?.();
                 }
@@ -466,7 +497,8 @@
                     document.body.classList.add('inventory-authenticated');
                     const detail = `Sinkronisasi tertunda: ${error.message}. Sesi lokal tetap dipakai.`;
                     updateCloudStatusBadge('connecting', detail);
-                    showToast(detail, 'warning');
+                    if (cloudInitRetries === 0) showToast(detail, 'warning');
+                    scheduleCloudInitRetry(detail);
                     return;
                 }
 

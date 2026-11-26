@@ -279,8 +279,8 @@ HEAD `e5d7edc`
 Commit aplikasi terakhir; commit `docs:` (termasuk commit sinkron) tidak dihitung guard.
 
 ```
-assets/styles.css?v=cloud-retry-20261126
-assets/app.js?v=cloud-retry-20261126
+assets/styles.css?v=cloud-retry2-20261126
+assets/app.js?v=cloud-retry2-20261126
 ```
 
 Commit terkait (terbaru di atas):
