@@ -15376,12 +15376,12 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     white-space:nowrap !important;
     max-width:100% !important;
   }
-  /* Baris 5: Total Qty di kanan, di atas tombol aksi. */
+  /* Baris 5: Total Qty di tengah, di atas tombol aksi. */
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(9) {
     grid-column:1 / -1 !important;
     grid-row:5 !important;
-    text-align:right !important;
-    justify-self:end !important;
+    text-align:center !important;
+    justify-self:center !important;
     min-width:0 !important;
     max-width:100% !important;
     overflow:hidden !important;
