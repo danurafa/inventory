@@ -2194,6 +2194,16 @@
             if (groupSelect) groupSelect.dataset.customerGroup = groupSelect.value;
             populatePoItemOptions();
             document.getElementById('keluar-tujuan').value = r.tujuan || po?.customer || '';
+
+            // Pindahkan fokus ke form edit supaya langsung bisa ubah data (tanpa
+            // perlu klik dua kali). Scroll instan + fokus field pertama.
+            const formKeluar = document.getElementById('form-keluar');
+            if (formKeluar) formKeluar.scrollIntoView({ behavior: 'auto', block: 'center' });
+            const tanggalField = document.getElementById('keluar-tanggal');
+            if (tanggalField) {
+                try { tanggalField.focus({ preventScroll: true }); }
+                catch (e) { tanggalField.focus(); }
+            }
             document.querySelectorAll('#keluar-items-container [data-keluar-row]').forEach(card => {
                 const input = card.querySelector('[data-keluar-qty]');
                 const isEditedRow = card.dataset.poRef === r.poRef;
@@ -2598,7 +2608,7 @@
                         <td class="p-2 text-right font-mono font-bold text-rose-400">-${Number(row.qty || 0).toLocaleString('id-ID')}</td>
                         <td class="p-2 font-mono">${escLocal((window.gudangAppDb.po || []).find(p => String(p.id) === String(row.poRef))?.noPoCustomer || row.poRef || '-')}</td>
                         <td class="p-2 text-center">${!isViewer ? `
-                            <button data-action="edit-keluar" data-id="${escLocal(row.id)}" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
+                            <button data-action="edit-keluar" data-id="${escLocal(row.id)}" style="touch-action:manipulation" class="px-2 py-1 rounded-full border border-white/10 bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Edit</button>
                             <button data-action="delete-keluar" data-id="${escLocal(row.id)}" class="px-2 py-1 rounded-full border border-white/10 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wide leading-none inline-flex items-center justify-center gap-1">Hapus</button>
                         ` : '-'}</td>
                     </tr>
