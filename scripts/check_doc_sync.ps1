@@ -30,13 +30,43 @@ function Get-CachePairs {
 
 $errors = New-Object 'System.Collections.Generic.List[string]'
 
+function Get-ExpectedHead {
+    param([string]$FromRev)
+
+    $lines = @(& git -C $root log --format='%h %s' -n 200 $FromRev 2>$null)
+    foreach ($line in $lines) {
+        if ($line -notmatch '^docs: ') {
+            return ($line -split ' ', 2)[0]
+        }
+    }
+    return $FromRev
+}
+
 $head = ''
+$expectedHead = ''
 try {
     $head = (& git -C $root rev-parse --short HEAD 2>$null).Trim()
+    $hasParent = [bool](& git -C $root rev-parse --verify --quiet HEAD~1 2>$null)
+    $touchedDocs = $false
+    $changed = @(& git -C $root diff-tree --no-commit-id --name-only -r HEAD 2>$null)
+    foreach ($file in $changed) {
+        if ($file -match '^docs/') {
+            $touchedDocs = $true
+            break
+        }
+    }
+
+    # Commit yang menyentuh docs tidak bisa menuliskan hash dirinya sendiri.
+    # Marker di docs selalu menunjuk commit aplikasi terakhir sebelum commit itu.
+    if ($hasParent -and $touchedDocs) {
+        $expectedHead = Get-ExpectedHead 'HEAD~1'
+    } else {
+        $expectedHead = Get-ExpectedHead 'HEAD'
+    }
 } catch {
     $head = ''
 }
-if (-not $head) {
+if (-not $head -or -not $expectedHead) {
     Write-Host '[GAGAL] Tidak bisa membaca HEAD git. Pastikan Jalankan dari repo yang valid.' -ForegroundColor Red
     exit 1
 }
@@ -64,8 +94,8 @@ foreach ($doc in $docs) {
     $headMatch = [regex]::Match($text, $headPattern)
     if (-not $headMatch.Success) {
         [void]$errors.Add("$($name): tidak ada marker HEAD di dekat bagian cache/header")
-    } elseif ($headMatch.Groups[1].Value -ne $head) {
-        [void]$errors.Add("$($name): HEAD ``$($headMatch.Groups[1].Value)`` != git ``$head``")
+    } elseif ($headMatch.Groups[1].Value -ne $expectedHead) {
+        [void]$errors.Add("$($name): HEAD ``$($headMatch.Groups[1].Value)`` != expected ``$expectedHead``")
     }
 
     $actualCache = Get-CachePairs $text
@@ -93,5 +123,5 @@ if ($errors.Count -gt 0) {
     exit 1
 }
 
-Write-Host "[OK] HEAD $head; cache docs == index.html; tidak ada catatan 'belum di-commit'." -ForegroundColor Green
+Write-Host "[OK] HEAD $expectedHead; cache docs == index.html; tidak ada catatan 'belum di-commit'." -ForegroundColor Green
 exit 0
