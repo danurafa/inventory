@@ -5767,6 +5767,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
         // Barang Keluar: cetak pertama bebas, cetak ke-2 wajib password.
         // Riwayat Surat Jalan: langsung wajib password sejak cetak pertama.
         window.printSuratJalan = async function(transactionId, source, button) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') { showToast('Viewer hanya memiliki akses baca.', 'error'); return; }
             const tid = String(transactionId || '');
             const dariRiwayat = source === 'riwayat' || Boolean(button?.closest?.('#tab-sj'));
             await runSjAction(`print:${tid}`, button, async () => {
@@ -5780,9 +5781,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                 if (message && !(await requireSjPassword(message))) return;
                 if (doPrintSuratJalan(tid)) {
                     const saved = await markSjAction(tid, dariRiwayat ? 'riwayat' : 'keluar', 'print');
-                    if (!dariRiwayat && (!synced || !saved)) {
-                        showToast('Riwayat cetak SJ belum tersinkron ke server. Aksi ini dicatat di perangkat ini saja, jadi perangkat lain bisa menganggap SJ ini belum pernah dicetak.', 'warning');
-                    }
+                    if (!saved) { showToast('Riwayat cetak SJ gagal tersinkron ke server. Aksi tidak dicatat.', 'error'); return; }
                 }
             });
         };
@@ -6146,6 +6145,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
         // Dari Riwayat: langsung wajib password sejak unduh pertama.
         // Keduanya tetap dikunci sebentar agar klik cepat nggak mengunduh dua kali.
         window.downloadSuratJalanExcel = async function(transactionId, source, button) {
+            if (window.gudangAppDb.currentUser?.role === 'viewer') { showToast('Viewer hanya memiliki akses baca.', 'error'); return; }
             const tid = String(transactionId || '');
             const dariRiwayat = source === 'riwayat' || Boolean(button?.closest?.('#tab-sj'));
             showSjExcelProgress();
@@ -6164,9 +6164,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     if (message && !(await requireSjPassword(message))) return;
                     if (await doDownloadSuratJalanExcel(tid)) {
                         const saved = await markSjAction(tid, dariRiwayat ? 'riwayat' : 'keluar', 'excel');
-                        if (!dariRiwayat && (!synced || !saved)) {
-                            showToast('Riwayat unduh Excel SJ belum tersinkron ke server. Aksi ini dicatat di perangkat ini saja, jadi perangkat lain bisa menganggap file ini belum pernah diunduh.', 'warning');
-                        }
+                        if (!saved) { showToast('Riwayat unduh Excel SJ gagal tersinkron ke server. Aksi tidak dicatat.', 'error'); return; }
                     }
                 } finally {
                     hideSjExcelProgress();

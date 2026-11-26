@@ -1265,24 +1265,24 @@ async function checkLoginRateLimit(request, env, username) {
   const ip = clientIp(request);
   const key = await sha256Hex(`login:${ip}:${String(username || "").toLowerCase()}`);
   const path = `artifacts/gudang-pro-cloud-system/private/rate_limits/login/${key}`;
-  const raw = await getRawDoc(env, path);
-  const current = raw ? decodeFields(raw.fields || {}) : null;
-  const windowStart = Number(current?.windowStart || 0);
-  const count = Number(current?.count || 0);
-  const active = windowStart > 0 && (now - windowStart) < LOGIN_RATE_LIMIT_WINDOW_SECONDS;
-  const nextCount = active ? count + 1 : 1;
-  const nextWindowStart = active ? windowStart : now;
-  const record = { ip, username: String(username || "").toLowerCase(), count: nextCount, windowStart: nextWindowStart, expiresAt: nextWindowStart + LOGIN_RATE_LIMIT_WINDOW_SECONDS };
   try {
+    const raw = await getRawDoc(env, path);
+    const current = raw ? decodeFields(raw.fields || {}) : null;
+    const windowStart = Number(current?.windowStart || 0);
+    const count = Number(current?.count || 0);
+    const active = windowStart > 0 && (now - windowStart) < LOGIN_RATE_LIMIT_WINDOW_SECONDS;
+    const nextCount = active ? count + 1 : 1;
+    const nextWindowStart = active ? windowStart : now;
+    const record = { ip, username: String(username || "").toLowerCase(), count: nextCount, windowStart: nextWindowStart, expiresAt: nextWindowStart + LOGIN_RATE_LIMIT_WINDOW_SECONDS };
     if (raw) await patchDocWithPrecondition(env, path, record, raw.updateTime);
     else await putDoc(env, path, record, true);
+    const limited = nextCount > LOGIN_RATE_LIMIT_MAX_ATTEMPTS;
+    const retryAfter = Math.max(1, nextWindowStart + LOGIN_RATE_LIMIT_WINDOW_SECONDS - now);
+    return { limited, retryAfter, unavailable: false };
   } catch (e) {
-    // fail-open on rate limit store errors to avoid lockout by infra; login still verifies password
     console.error("Rate limit store error:", e);
+    return { limited: false, retryAfter: LOGIN_RATE_LIMIT_WINDOW_SECONDS, unavailable: true };
   }
-  const limited = nextCount > LOGIN_RATE_LIMIT_MAX_ATTEMPTS;
-  const retryAfter = Math.max(1, nextWindowStart + LOGIN_RATE_LIMIT_WINDOW_SECONDS - now);
-  return { limited, retryAfter };
 }
 
 function corsHeaders(request, env) {
@@ -1645,6 +1645,13 @@ export default {
         }
 
         const rate = await checkLoginRateLimit(request, env, username);
+        if (rate.unavailable) {
+          return json(
+            { error: "Layanan verifikasi login sedang gangguan sementara. Coba lagi sebentar." },
+            503,
+            { ...cors, "retry-after": String(rate.retryAfter) }
+          );
+        }
         if (rate.limited) {
           return json(
             { error: `Terlalu banyak percobaan login. Coba lagi dalam ${Math.ceil(rate.retryAfter / 60)} menit.` },
@@ -1764,19 +1771,27 @@ export default {
           return json({ error: "Setup secret tidak valid." }, 401, cors);
         }
         const token = await googleAccessToken(env);
-        const listUrl = `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(env.FIREBASE_PROJECT_ID)}/databases/(default)/documents/${USER_COLLECTION}`;
-        const resp = await fetch(listUrl, { headers: { authorization: `Bearer ${token}` } });
-        const result = await resp.json();
-        if (!resp.ok) throw new Error(result.error?.message || "Gagal membaca user.");
+        const baseUrl = `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(env.FIREBASE_PROJECT_ID)}/databases/(default)/documents/${USER_COLLECTION}`;
         let bumped = 0;
-        for (const doc of (result.documents || [])) {
-          const username = doc.name.split("/").pop();
-          const user = decodeFields(doc.fields || {});
-          await patchDocWithPrecondition(env, `${USER_COLLECTION}/${username}`, {
-            ...user,
-            sessionVersion: Number(user.sessionVersion || 0) + 1
-          }, doc.updateTime);
-          bumped++;
+        let pageToken = "";
+        while (true) {
+          const listUrl = new URL(baseUrl);
+          listUrl.searchParams.set("pageSize", "200");
+          if (pageToken) listUrl.searchParams.set("pageToken", pageToken);
+          const resp = await fetch(listUrl.toString(), { headers: { authorization: `Bearer ${token}` } });
+          const result = await resp.json();
+          if (!resp.ok) throw new Error(result.error?.message || "Gagal membaca user.");
+          for (const doc of (result.documents || [])) {
+            const username = doc.name.split("/").pop();
+            const user = decodeFields(doc.fields || {});
+            await patchDocWithPrecondition(env, `${USER_COLLECTION}/${username}`, {
+              ...user,
+              sessionVersion: Number(user.sessionVersion || 0) + 1
+            }, doc.updateTime);
+            bumped++;
+          }
+          pageToken = String(result.nextPageToken || "");
+          if (!pageToken) break;
         }
         return json({ ok: true, bumped }, 200, cors);
       }
@@ -2187,9 +2202,9 @@ export default {
           }
 
           current._processedOperationIds = [
-            ...processed,
+            ...processed.filter(id => id !== operationId),
             operationId
-          ].slice(-500);
+          ].slice(-2000);
 
           // Pertahankan akun lama untuk sementara.
           const latestUsers = decodeFields(
