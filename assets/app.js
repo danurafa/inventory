@@ -2199,10 +2199,10 @@
             // perlu klik dua kali). Scroll instan + fokus field pertama.
             const formKeluar = document.getElementById('form-keluar');
             if (formKeluar) formKeluar.scrollIntoView({ behavior: 'auto', block: 'center' });
-            const tanggalField = document.getElementById('keluar-tanggal');
-            if (tanggalField) {
-                try { tanggalField.focus({ preventScroll: true }); }
-                catch (e) { tanggalField.focus(); }
+            const tujuanField = document.getElementById('keluar-tujuan');
+            if (tujuanField) {
+                try { tujuanField.focus({ preventScroll: true }); }
+                catch (e) { tujuanField.focus(); }
             }
             document.querySelectorAll('#keluar-items-container [data-keluar-row]').forEach(card => {
                 const input = card.querySelector('[data-keluar-qty]');
