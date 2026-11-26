@@ -275,7 +275,7 @@ index.html
 ```
 
 Cache-buster **saat ini** (di `index.html`):
-HEAD `ee9250e`
+HEAD `0ad146d`
 Commit aplikasi terakhir; commit `docs:` (termasuk commit sinkron) tidak dihitung guard.
 
 ```
@@ -286,6 +286,7 @@ assets/app.js?v=login-loading-20261126
 Commit terkait (terbaru di atas):
 
 ```
+0ad146d  feat: indikator loading tombol login
 ee9250e  fix: guard HEAD lewati baris hash doc
 5fcfbf7  fix: guard sinkron abaikan commit docs sendiri
 5b587ac  docs: sinkronkan handover ke HEAD 6b793b6 + guard sinkron doc
