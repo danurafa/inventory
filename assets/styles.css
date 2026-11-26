@@ -14871,31 +14871,39 @@ html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .sof
 .cloud-sync-status-mobile { display: none !important; }
 
 @media screen and (max-width: 767px) {
-  html body #v184-mobile-status-row {
+  html body #inventory-top-header #v184-mobile-status-row {
     display: flex !important;
+    flex-wrap: nowrap !important;
     align-items: center !important;
     gap: 4px !important;
+    width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
     overflow: hidden !important;
   }
-  html body #v167-mobile-role-badge {
+  html body #inventory-top-header #v184-mobile-status-row #v167-mobile-role-badge {
+    display: inline-flex !important;
+    align-items: center !important;
     align-self: center !important;
     flex: 0 0 auto !important;
-    max-width: 44% !important;
+    width: auto !important;
+    max-width: 46% !important;
     min-width: 0 !important;
+    padding: 2px 6px !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
+    font-size: 9px !important;
+    line-height: 1.2 !important;
   }
-  html body #cloud-sync-status-mobile {
+  html body #inventory-top-header #v184-mobile-status-row #cloud-sync-status-mobile {
     display: inline-flex !important;
     align-items: center !important;
     gap: 4px !important;
-    flex: 0 1 auto !important;
+    flex: 1 1 auto !important;
     width: auto !important;
     min-width: 0 !important;
-    max-width: 56% !important;
+    max-width: none !important;
     padding: 2px 6px !important;
     border-radius: 999px !important;
     background: rgba(8, 18, 26, .78) !important;
@@ -14904,27 +14912,28 @@ html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .sof
     color: #34d399 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
-    text-overflow: ellipsis !important;
     font-size: 9px !important;
     font-weight: 850 !important;
     line-height: 1.2 !important;
     letter-spacing: .01em !important;
   }
-  html body #cloud-sync-status-mobile > span:first-child {
+  html body #inventory-top-header #v184-mobile-status-row #cloud-sync-status-mobile > span:first-child {
     flex: 0 0 auto !important;
   }
-  html body #cloud-sync-status-mobile:has(.bg-sky-400) { color: #38bdf8 !important; }
-  html body #cloud-sync-status-mobile:has(.bg-amber-400) { color: #fbbf24 !important; }
-  html body #cloud-sync-status-mobile:has(.bg-red-400) { color: #f87171 !important; }
+  html body #inventory-top-header #v184-mobile-status-row #cloud-sync-status-mobile:has(.bg-sky-400) { color: #38bdf8 !important; }
+  html body #inventory-top-header #v184-mobile-status-row #cloud-sync-status-mobile:has(.bg-amber-400) { color: #fbbf24 !important; }
+  html body #inventory-top-header #v184-mobile-status-row #cloud-sync-status-mobile:has(.bg-red-400) { color: #f87171 !important; }
 }
 @media screen and (max-width: 380px) {
-  html body #cloud-sync-status-mobile {
+  html body #inventory-top-header #v184-mobile-status-row #cloud-sync-status-mobile {
     font-size: 8px !important;
-    padding: 1px 4px !important;
+    padding: 1px 5px !important;
     gap: 3px !important;
   }
-  html body #v167-mobile-role-badge {
-    max-width: 40% !important;
+  html body #inventory-top-header #v184-mobile-status-row #v167-mobile-role-badge {
+    font-size: 8px !important;
+    max-width: 44% !important;
+    padding: 2px 5px !important;
   }
 }
 
