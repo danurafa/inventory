@@ -275,7 +275,7 @@ index.html
 ```
 
 Cache-buster **saat ini** (di `index.html`):
-HEAD `5bd2d1c`
+HEAD `404514d`
 Commit aplikasi terakhir; commit `docs:` (termasuk commit sinkron) tidak dihitung guard.
 
 ```
@@ -286,6 +286,7 @@ assets/app.js?v=logout-instant-20261126
 Commit terkait (terbaru di atas):
 
 ```
+404514d  fix: hardening timeout OAuth/Firestore dan login paralel di Worker
 5bd2d1c  fix: logout instan tanpa tunggu worker
 daf478c  fix: retry latar belakang saat cloud connecting
 e5d7edc  fix: tahan sesi saat setup/status 5xx

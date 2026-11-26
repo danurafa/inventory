@@ -1,7 +1,7 @@
 ﻿# Catatan Serah Terima Sesi — Inventory Surat Jalan
 
 Dokumen ini dibuat supaya sesi baru di PC 2 bisa langsung lanjut tanpa membaca
-percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-26 (HEAD `5bd2d1c`, cache disinkronkan ke index.html).
+percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-27 (HEAD `404514d`, cache disinkronkan ke index.html).
 
 Untuk detail pekerjaan UI terbaru (kartu mobile, pagination 10 baris, alamat PO,
 toast, scroll horizontal), baca juga `docs/TABEL-PAGINATION-ALAMAT.md`.
@@ -21,6 +21,7 @@ Fitur yang sudah selesai:
 - Tombol **MASUK SISTEM** ada indikator loading: label jadi `MEMERIKSA…` + spinner, tombol di-disable sampai `/api/data` selesai; label asli dipulihkan di `finally` (sukses maupun gagal).
 - `initCloud()` retry `/api/setup/status` 2× dengan timeout 3,5 detik per attempt. Gangguan sementara tidak menghapus token/sesi: badge `connecting` + toast warning sekali, lalu retry latar belakang 3× (5/10/15 detik); setelah itu badge `error`. 401/403 tetap logout.
 - Logout manual/auto langsung hapus sesi lokal + tampilkan modal; revoke `/api/logout` di-fire-and-forget dengan timeout 3 detik, jadi UI nggak nunggu Firestore walau Worker sedang gangguan.
+- Hardening Worker (perlu deploy ulang): `fetchWithTimeout()` untuk OAuth (5 detik) + Firestore (4 detik), retry 2× hanya untuk GET/OAuth, satu in-flight refresh OAuth untuk request paralel, serta lookup user dan rate-limit `/api/login` berjalan paralel. Timeout diubah jadi 503 `retry-after: 1` supaya retry frontend langsung bereaksi.
 - Shimmer kartu sambutan 2×, animasi soft drop + icon pop, aman untuk `prefers-reduced-motion`.
 - Blok stok tipis: double-flash + jeda, **SATU overlay penuh per baris** (`::after inset:0`, `::before` dimatikan), durasi 1,5 s.
 - Surat Jalan (SJ): nomor SJ di form/tabel, cetak mirip template Excel, download template `.xlsx`, riwayat per transaksi.
@@ -353,6 +354,7 @@ Cache-buster saat ini:
 - Marker HEAD di docs = commit aplikasi terakhir yang sudah dicatat; commit `docs:` (termasuk commit sinkron ini) tidak dihitung guard.
 
 Commit penting (terbaru di atas):
+- `404514d` — fix: hardening timeout OAuth/Firestore dan login paralel di Worker
 - `5bd2d1c` — fix: logout instan tanpa tunggu worker
 - `daf478c` — fix: retry latar belakang saat cloud connecting
 - `e5d7edc` — fix: tahan sesi saat setup/status 5xx
@@ -459,6 +461,8 @@ dan isi Console especially response `/api/sj/audit`.
   (`chrome.exe --headless=new --allow-file-access-from-files --dump-dom`, lalu `new Function(src)`).
 - Deploy Worker dilakukan manual oleh user (`npx wrangler deploy worker.js --name inventory-backend-test`).
   Nama Worker harus tetap `inventory-backend-test` karena tidak ada `wrangler.toml` di repo.
+  Patch hardening timeout/OAuth/paralel di `assets/worker/worker.js` **belum aktif di live**
+  sampai deploy ulang dilakukan; frontend sudah tahan gangguan tanpa patch ini.
 - Frontend di-deploy otomatis lewat **GitHub Pages** (`https://danurafa.github.io/inventory/`).
   Setiap perubahan `app.js`/`styles.css` wajib mengganti `?v=` di `index.html` + **hard refresh**.
   Halaman GitHub Pages memakai HTTPS, jadi status login yang muncul adalah `secure`, bukan `insecure`.
