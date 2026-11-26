@@ -15349,12 +15349,19 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     max-width:100% !important;
     overflow:hidden !important;
     align-self:start !important;
+    white-space:nowrap !important;
+    text-overflow:ellipsis !important;
   }
-  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(8),
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(8) * {
     text-overflow:ellipsis !important;
     white-space:nowrap !important;
     overflow:hidden !important;
+  }
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(8)::before {
+    display:block !important;
+    white-space:normal !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
   }
   /* Baris 5: Total Qty di kiri, User di kanan. */
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(9) {
@@ -15366,11 +15373,19 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     overflow:hidden !important;
     align-self:start !important;
     padding-right:6px !important;
+    white-space:nowrap !important;
+    text-overflow:ellipsis !important;
   }
-  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(9),
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(9) * {
     text-overflow:ellipsis !important;
     white-space:nowrap !important;
+    overflow:hidden !important;
+  }
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(9)::before {
+    display:block !important;
+    white-space:normal !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
   }
   #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(10) {
     grid-column:2 !important;
@@ -15436,8 +15451,7 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     white-space:normal !important;
   }
   /* Label di atas nilai; Customer dan User tetap rata kanan. Nama Barang di kiri. */
-  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(4),
-  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(9) {
+  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(4) {
     text-align:right !important;
   }
   /* Tombol aksi dibagi rata selebar kartu. */
@@ -15467,12 +15481,7 @@ html body.theme-glass:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d)
     -webkit-backface-visibility:hidden;
     backface-visibility:hidden;
   }
-  /* Total Qty benar-benar di tengah kartu (50%). */
-  #tab-sj #sj-table-body tr.sj-card-row > td:nth-child(8) {
-    grid-column:1 / -1 !important;
-    grid-row:5 !important;
-    text-align:center !important;
-  }
+
 }
 
 /* Tombol Detail tambahan khusus baris aksi kartu mobile. */
