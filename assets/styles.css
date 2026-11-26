@@ -14870,6 +14870,12 @@ html body:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) .sof
 }
 .cloud-sync-status-mobile { display: none !important; }
 
+/* UI 3 (Soft) — Barang Keluar mobile: tombol Detail (ungu) disamakan bentuknya
+   (border-radius) dengan tombol Cetak SJ / Excel SJ. Warna tetap ungu. */
+html body.theme-glass.theme-light.theme-soft:not(#lg2a):not(#lg2b):not(#lg2c):not(#lg2d):not(#lg2e):not(#lg2f) #inventory-main-content #tab-keluar #keluar-table-body button.keluar-detail-mobile:not(:disabled):not([hidden]) {
+  border-radius: 12px !important;
+}
+
 @media screen and (max-width: 767px) {
   html body #inventory-top-header #v184-mobile-status-row {
     display: flex !important;
