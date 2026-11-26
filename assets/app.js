@@ -973,8 +973,18 @@
 
         window.handleLoginSubmit = async function(e) {
             e.preventDefault();
+            const submitBtn = document.getElementById('login-submit');
+            if (submitBtn && submitBtn.disabled) return;
+            const submitLabel = submitBtn ? submitBtn.querySelector('.login-submit-label') : null;
+            const submitLabelText = submitLabel ? submitLabel.textContent : '';
             const username = document.getElementById('login-username').value.trim().toLowerCase();
             const password = document.getElementById('login-password').value;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('is-loading');
+                submitBtn.setAttribute('aria-busy', 'true');
+            }
+            if (submitLabel) submitLabel.textContent = 'MEMERIKSA…';
             try {
                 const response = await fetch('https://inventory-backend-test.danurafa.workers.dev/api/login', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -1021,6 +1031,13 @@
                 updateCloudStatusBadge('active');
             } catch (error) {
                 showToast(error.message || 'Login gagal.', 'error');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('is-loading');
+                    submitBtn.removeAttribute('aria-busy');
+                }
+                if (submitLabel) submitLabel.textContent = submitLabelText;
             }
         };
 

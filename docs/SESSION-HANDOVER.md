@@ -18,6 +18,7 @@ yang membuka URL yang sama.
 Fitur yang sudah selesai:
 
 - Toast sambutan login di tengah layar (class `toast-welcome`), toast lain tidak diubah.
+- Tombol **MASUK SISTEM** ada indikator loading: label jadi `MEMERIKSA…` + spinner, tombol di-disable sampai `/api/data` selesai; label asli dipulihkan di `finally` (sukses maupun gagal).
 - Shimmer kartu sambutan 2×, animasi soft drop + icon pop, aman untuk `prefers-reduced-motion`.
 - Blok stok tipis: double-flash + jeda, **SATU overlay penuh per baris** (`::after inset:0`, `::before` dimatikan), durasi 1,5 s.
 - Surat Jalan (SJ): nomor SJ di form/tabel, cetak mirip template Excel, download template `.xlsx`, riwayat per transaksi.
@@ -341,8 +342,8 @@ scripts/install_doc_sync_hook.ps1
 ```
 
 Cache-buster saat ini:
-- `index.html` → `assets/app.js?v=keluar-edit-focus2-20261126`
-- `index.html` → `assets/styles.css?v=sj-totalqty-center-20261126`
+- `index.html` → `assets/app.js?v=login-loading-20261126`
+- `index.html` → `assets/styles.css?v=login-loading-20261126`
 - Gambar logo → `assets/Logo/LOGO CV-NO TEXT.png?v=keluar-detail-fix-20261125` (versi lama,
   tapi file tidak berubah sejak commit `b25c652`, jadi aman; bisa di-bump kalau mau konsisten)
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`

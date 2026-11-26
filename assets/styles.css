@@ -2872,8 +2872,18 @@ input,button,select,textarea{font:inherit}
             min-height:48px;border:1px solid rgba(191,219,254,.32);
             background:linear-gradient(110deg,#2563eb,#0284c7) !important;
             box-shadow:0 10px 28px rgba(37,99,235,.28),inset 0 1px 0 rgba(255,255,255,.24);letter-spacing:.12em;
+            display:inline-flex;align-items:center;justify-content:center;gap:8px;
         }
         #login-modal .login-glass-submit:hover {filter:brightness(1.10);transform:translateY(-1px)}
+        #login-modal .login-glass-submit.is-loading {cursor:wait;opacity:.92}
+        #login-modal .login-glass-submit.is-loading .login-submit-label {opacity:.82}
+        #login-modal .login-submit-spinner {
+            display:none;width:14px;height:14px;border-radius:999px;
+            border:2px solid rgba(255,255,255,.45);border-top-color:currentColor;
+            animation:loginSubmitSpin .8s linear infinite;
+        }
+        #login-modal .login-glass-submit.is-loading .login-submit-spinner {display:inline-block}
+        @keyframes loginSubmitSpin {to{transform:rotate(360deg)}}
         #login-modal .login-glass-footer {color:rgba(219,234,254,.52);font-size:10px;text-align:center;letter-spacing:.06em}
         body.theme-glass.theme-light #login-modal.login-glass-overlay {
             background:radial-gradient(ellipse at 82% 18%,rgba(56,189,248,.20),transparent 34%),radial-gradient(ellipse at 16% 82%,rgba(37,99,235,.16),transparent 38%),rgba(22,39,61,.56) !important;

@@ -279,8 +279,8 @@ HEAD `ee9250e`
 Commit aplikasi terakhir; commit `docs:` (termasuk commit sinkron) tidak dihitung guard.
 
 ```
-assets/styles.css?v=sj-totalqty-center-20261126
-assets/app.js?v=keluar-edit-focus2-20261126
+assets/styles.css?v=login-loading-20261126
+assets/app.js?v=login-loading-20261126
 ```
 
 Commit terkait (terbaru di atas):
