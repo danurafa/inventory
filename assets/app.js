@@ -1982,6 +1982,16 @@
             document.getElementById('master-form-title').innerHTML = `<i data-lucide="edit" class="w-4 h-4 text-orange-400"></i> EDIT MASTER BARANG (${esc(id)})`;
             window.syncResetButtons?.();
             lucide.createIcons();
+
+            // Pindahkan fokus ke form edit supaya user langsung bisa mengubah data.
+            // Scrolling ke form dulu, lalu fokus ke field pertama (Nama Barang).
+            const form = document.getElementById('form-master');
+            if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const namaField = document.getElementById('master-nama');
+            if (namaField) {
+                try { namaField.focus({ preventScroll: true }); }
+                catch (e) { namaField.focus(); }
+            }
         };
 
         window.deleteMasterItem = function(id) {
