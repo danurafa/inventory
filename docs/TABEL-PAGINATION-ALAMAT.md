@@ -279,8 +279,8 @@ HEAD `68d6321`
 Commit aplikasi terakhir; commit `docs:` (termasuk commit sinkron) tidak dihitung guard.
 
 ```
-assets/styles.css?v=po-alamat-badge-20261126
-assets/app.js?v=po-alamat-badge-20261126
+assets/styles.css?v=cloud-retry-20261126
+assets/app.js?v=cloud-retry-20261126
 ```
 
 Commit terkait (terbaru di atas):

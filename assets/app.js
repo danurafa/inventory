@@ -189,7 +189,11 @@
             if (workerToken) headers.Authorization = `Bearer ${workerToken}`;
             const response = await fetch(`${WORKER_BASE_URL}${path}`, { ...options, headers });
             const body = await response.json().catch(() => ({}));
-            if (!response.ok) throw new Error(body.error || `Worker error (${response.status})`);
+            if (!response.ok) {
+                const error = new Error(body.error || `Worker error (${response.status})`);
+                error.status = response.status;
+                throw error;
+            }
             return body;
         }
         const INVENTORY_THEME_KEY = 'gudang_inventory_theme_mode';
@@ -367,6 +371,25 @@
                 window.gudangAppDb.users = [];
             }
         }
+        async function fetchSetupStatusWithRetry() {
+            let lastError = null;
+            for (let attempt = 0; attempt < 3; attempt++) {
+                try {
+                    const response = await fetch(`${WORKER_BASE_URL}/api/setup/status`);
+                    const body = await response.json().catch(() => ({}));
+                    if (response.ok) return body;
+                    lastError = new Error(body.error || `Tidak dapat memeriksa status setup (${response.status}).`);
+                    lastError.status = response.status;
+                } catch (error) {
+                    lastError = error;
+                }
+                const retryable = !lastError.status || Number(lastError.status) >= 500;
+                if (!retryable || attempt === 2) throw lastError;
+                await new Promise(resolve => setTimeout(resolve, 400 * (attempt + 1)));
+            }
+            throw lastError || new Error('Tidak dapat memeriksa status setup.');
+        }
+
         async function initCloud() {
             updateCloudStatusBadge('connecting');
             try {
@@ -378,11 +401,7 @@
                         return b;
                     });
                 });
-                const setupStatus = await fetch(`${WORKER_BASE_URL}/api/setup/status`).then(async r => {
-                    const b = await r.json().catch(() => ({}));
-                    if (!r.ok) throw new Error(b.error || 'Tidak dapat memeriksa status setup.');
-                    return b;
-                });
+                const setupStatus = await fetchSetupStatusWithRetry();
                 if (setupStatus.setupRequired) {
                     const setupSecret = prompt('Setup pertama kali: masukkan SETUP_SECRET Cloudflare (nilai rahasia yang sudah kamu simpan di Worker).');
                     if (!setupSecret) { updateCloudStatusBadge('connecting', 'Setup Super Admin belum dilakukan.'); window.showLoginModal?.(); return; }
@@ -432,14 +451,30 @@
                     window.showLoginModal?.();
                 }
             } catch (error) {
+                const status = Number(error?.status || 0);
+                const transient = !status || status >= 500;
+                lastCloudError = error;
+                cloudReady = false;
+                console.error('[Worker Init]', error);
+
+                // 5xx/timeout bersifat sementara: jangan hapus sesi lokal dan
+                // jangan paksa logout hanya karena Worker/Firestore sedang gangguan.
+                if (transient && workerToken) {
+                    if (!window.gudangAppDb.currentUser && window.activeUserSession) {
+                        window.gudangAppDb.currentUser = window.activeUserSession;
+                    }
+                    document.body.classList.add('inventory-authenticated');
+                    const detail = `Sinkronisasi tertunda: ${error.message}. Sesi lokal tetap dipakai.`;
+                    updateCloudStatusBadge('connecting', detail);
+                    showToast(detail, 'warning');
+                    return;
+                }
+
                 workerToken = '';
                 localStorage.removeItem(WORKER_TOKEN_KEY);
                 localStorage.removeItem('gudang_pro_session');
                 window.activeUserSession = null;
                 window.gudangAppDb.currentUser = null;
-                cloudReady = false;
-                lastCloudError = error;
-                console.error('[Worker Init]', error);
                 updateCloudStatusBadge('error', error.message);
                 window.showLoginModal?.();
                 showToast(`Koneksi backend gagal: ${error.message}`, 'error');
