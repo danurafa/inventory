@@ -10,8 +10,7 @@
     <meta http-equiv="Expires" content="0">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
-    <!-- Fase 3: CSP Report-Only dulu. Tidak enforce karena app masih pakai banyak inline onclick/style; pindah ke enforce setelah refactor handler. frame-ancestors tidak didukung via meta. -->
-    <meta http-equiv="Content-Security-Policy-Report-Only" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://inventory-backend-test.danurafa.workers.dev https://api.open-meteo.com; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests">
+    <!-- Catatan Fase 3: CSP Report-Only tidak bisa lewat <meta> (browser abaikan). CSP enforce via meta juga belum aman karena app masih banyak inline onclick/handler; butuh refactor besar. GitHub Pages statis juga tidak bisa set HTTP security header custom. SRI + pin versi CDN tetap aktif. -->
     <title>Sistem Manajemen Inventory Gudang</title>
     <!-- V75: percepat koneksi awal ke resource eksternal tanpa mengubah urutan eksekusi library -->
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
