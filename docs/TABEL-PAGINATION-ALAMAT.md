@@ -275,7 +275,7 @@ index.html
 ```
 
 Cache-buster **saat ini** (di `index.html`):
-HEAD `68d6321`
+HEAD `e5d7edc`
 Commit aplikasi terakhir; commit `docs:` (termasuk commit sinkron) tidak dihitung guard.
 
 ```
@@ -286,6 +286,7 @@ assets/app.js?v=cloud-retry-20261126
 Commit terkait (terbaru di atas):
 
 ```
+e5d7edc  fix: tahan sesi saat setup/status 5xx
 68d6321  feat: badge alamat customer di detail riwayat PO
 0ad146d  feat: indikator loading tombol login
 ee9250e  fix: guard HEAD lewati baris hash doc
