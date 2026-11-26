@@ -23,6 +23,7 @@ Fitur yang sudah selesai:
 - Blok stok tipis: double-flash + jeda, **SATU overlay penuh per baris** (`::after inset:0`, `::before` dimatikan), durasi 1,5 s.
 - Surat Jalan (SJ): nomor SJ di form/tabel, cetak mirip template Excel, download template `.xlsx`, riwayat per transaksi.
 - Alamat customer ditaruh di **form PO Customer** (`po-alamat`), bukan di form SJ. Cell `G7` berisi alamat + `No. PO: ...`.
+- Label **Alamat Customer** di baris detail riwayat PO memakai badge pill akrilik; isi alamat tetap teks biasa agar bisa wrap di desktop/mobile.
 - Tombol **Cetak SJ** = langsung print browser; **Excel SJ** = download template.
 - Ukuran kertas **Cetak SJ**: custom `@page{size:9.5in 11in;margin:10mm}` (lebar 9.5 inci × panjang 11 inci), bukan A4 portrait. Print tabel lain tetap A4 landscape.
 - Di header Cetak SJ, **No. PO** berada di baris tersendiri tepat di bawah **Tanggal** (kolom kiri); blok kanan cukup `Kepada Yth` + alamat.
@@ -342,8 +343,8 @@ scripts/install_doc_sync_hook.ps1
 ```
 
 Cache-buster saat ini:
-- `index.html` → `assets/app.js?v=login-loading-20261126`
-- `index.html` → `assets/styles.css?v=login-loading-20261126`
+- `index.html` → `assets/app.js?v=po-alamat-badge-20261126`
+- `index.html` → `assets/styles.css?v=po-alamat-badge-20261126`
 - Gambar logo → `assets/Logo/LOGO CV-NO TEXT.png?v=keluar-detail-fix-20261125` (versi lama,
   tapi file tidak berubah sejak commit `b25c652`, jadi aman; bisa di-bump kalau mau konsisten)
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
