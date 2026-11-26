@@ -5587,7 +5587,7 @@ body.theme-crystal #inventory-top-header #live-clock > svg { color:#278bd2 !impo
                     method: 'POST',
                     body: JSON.stringify({ tid: key, source, action, eventId })
                 });
-                if (result?.audit) cacheSjAudit(key, normalizeSjAuditCounts(result.audit));
+                if (result?.audit) cacheSjAudit(key, normalizeSjAudit(result.audit));
                 return true;
             } catch (e) {
                 console.warn('Gagal menyimpan histori SJ ke Worker:', e);
