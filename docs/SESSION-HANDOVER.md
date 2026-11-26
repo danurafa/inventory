@@ -1,7 +1,7 @@
-# Catatan Serah Terima Sesi — Inventory Surat Jalan
+﻿# Catatan Serah Terima Sesi — Inventory Surat Jalan
 
 Dokumen ini dibuat supaya sesi baru di PC 2 bisa langsung lanjut tanpa membaca
-percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-26 (HEAD `7fed984`, perubahan popup tema mobile + grafik flex/smooth belum di-commit).
+percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-26 (HEAD `e3a0559`, working tree bersih).
 
 Untuk detail pekerjaan UI terbaru (kartu mobile, pagination 10 baris, alamat PO,
 toast, scroll horizontal), baca juga `docs/TABEL-PAGINATION-ALAMAT.md`.
@@ -341,11 +341,17 @@ docs/TABEL-PAGINATION-ALAMAT.md
 Cache-buster saat ini:
 - `index.html` → `assets/app.js?v=flexible-movement-chart-20261126`
 - `index.html` → `assets/styles.css?v=chart-flex-soft-scroll-20261126`
+- Gambar logo → `assets/Logo/LOGO CV-NO TEXT.png?v=keluar-detail-fix-20261125` (versi lama,
+  tapi file tidak berubah sejak commit `b25c652`, jadi aman; bisa di-bump kalau mau konsisten)
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 
 Commit penting (terbaru di atas):
-- `535f4de` — hasil Pencarian Umum rata kiri + hover tanpa pop (UI 1/2)
+- `e3a0559` — UI 1 scroll ringan (`background-attachment:scroll` + orb dimatikan)
+- `4302fb3` — grafik flex/smooth, preview tema mobile proporsional, overlay tema penuh
+- `7fed984` — docs: catat commit `535f4de` & `d18bc95`
+- `535f4de` — Pencarian Umum rata kiri + hover tanpa pop (UI 1/2)
 - `d18bc95` — parity layout mobile UI 2/3/4, tombol PO UI 4, gradient UI 2 satu sumber
+- `662a4f7` — efek tekan semua tema, Simpan akrilik, Detail ungu, hapus duplikat UI3/4
 - `60598d0` — badge akrilik berwarna UI 1/2, logo CV, perbaikan duplicate Detail Keluar
 - `b25c652` — logo tanpa teks, placeholder redup, hover sidebar UI 2, jam mono, toast akrilik
 - `5e9770d` — animasi grafik garis dashboard dengan guard anti-render ulang

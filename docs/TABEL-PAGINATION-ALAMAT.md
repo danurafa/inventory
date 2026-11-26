@@ -1,4 +1,4 @@
-# Dokumentasi Tabel, Pagination, dan Alamat PO
+﻿# Dokumentasi Tabel, Pagination, dan Alamat PO
 
 Dibuat: 2026-11-24 · Diperbarui: 2026-11-25 · Commit terakhir: `60598d0` · Remote: `origin/main`
 
@@ -284,6 +284,11 @@ assets/app.js?v=flexible-movement-chart-20261126
 Commit terkait (terbaru di atas):
 
 ```
+e3a0559  UI 1 scroll ringan (attachment scroll + orb off)
+4302fb3  grafik flex smooth + font UI3 mobile proporsional, overlay tema penuh
+535f4de  Pencarian Umum rata kiri + hover tanpa pop (UI 1/2)
+d18bc95  parity layout mobile UI 2/3/4, tombol PO UI 4, gradient UI 2 satu sumber
+662a4f7  efek tekan semua tema, Simpan akrilik, Detail ungu, hapus duplikat UI3/4
 60598d0  badge akrilik UI 1/2, logo CV, perbaikan duplicate Detail Keluar
 b25c652  logo tanpa teks, placeholder redup, hover sidebar UI 2, jam mono, toast akrilik
 5e9770d  animasi grafik garis dashboard dengan guard anti-render ulang
