@@ -348,14 +348,16 @@ scripts/install_doc_sync_hook.ps1
 ```
 
 Cache-buster saat ini:
-- `index.html` → `assets/app.js?v=logout-instant-20261126`
-- `index.html` → `assets/styles.css?v=logout-instant-20261126`
+- `index.html` → `assets/app.js?v=postdeploy-smoke-20261127`
+- `index.html` → `assets/styles.css?v=postdeploy-smoke-20261127`
 - Gambar logo → `assets/Logo/LOGO CV-NO TEXT.png?v=keluar-detail-fix-20261125` (versi lama,
   tapi file tidak berubah sejak commit `b25c652`, jadi aman; bisa di-bump kalau mau konsisten)
 - `assets/boot.js` → `APP_VERSION = "2026.11.23-inventory-v100-surat-jalan"`
 - Marker HEAD di docs = commit aplikasi terakhir yang sudah dicatat; commit `docs:` (termasuk commit sinkron ini) tidak dihitung guard.
 
 Commit penting (terbaru di atas):
+- `10a031a` — chore: bump cache-buster app dan styles untuk smoke test deploy
+- `85e007e` — chore: matikan preview_urls dan update handover deploy worker
 - `af8192c` — chore: tambah wrangler config dan gitignore lokal
 - `404514d` — fix: hardening timeout OAuth/Firestore dan login paralel di Worker
 - `5bd2d1c` — fix: logout instan tanpa tunggu worker
