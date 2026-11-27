@@ -1,7 +1,7 @@
 ﻿# Catatan Serah Terima Sesi — Inventory Surat Jalan
 
 Dokumen ini dibuat supaya sesi baru di PC 2 bisa langsung lanjut tanpa membaca
-percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-27 (HEAD `404514d`, cache disinkronkan ke index.html).
+percakapan lama. Dibuat: 2026-11-23. Diperbarui: 2026-11-27 (HEAD app `404514d`, worker live `bd0bff2f`, cache disinkronkan ke index.html).
 
 Untuk detail pekerjaan UI terbaru (kartu mobile, pagination 10 baris, alamat PO,
 toast, scroll horizontal), baca juga `docs/TABEL-PAGINATION-ALAMAT.md`.
@@ -333,12 +333,14 @@ Remote: `https://github.com/danurafa/inventory.git` (branch `main`)
 
 File yang tersimpan di git:
 ```
+.gitignore
 assets/app.js
 assets/boot.js
 assets/styles.css
 assets/templates/surat-jalan.xlsx
 assets/worker/worker.js
 index.html
+wrangler.jsonc
 docs/SESSION-HANDOVER.md
 docs/TABEL-PAGINATION-ALAMAT.md
 scripts/check_doc_sync.ps1
@@ -354,6 +356,7 @@ Cache-buster saat ini:
 - Marker HEAD di docs = commit aplikasi terakhir yang sudah dicatat; commit `docs:` (termasuk commit sinkron ini) tidak dihitung guard.
 
 Commit penting (terbaru di atas):
+- `af8192c` — chore: tambah wrangler config dan gitignore lokal
 - `404514d` — fix: hardening timeout OAuth/Firestore dan login paralel di Worker
 - `5bd2d1c` — fix: logout instan tanpa tunggu worker
 - `daf478c` — fix: retry latar belakang saat cloud connecting
@@ -459,10 +462,10 @@ dan isi Console especially response `/api/sj/audit`.
 - Tidak ada runtime `node`, `bun`, `deno`, `python` di mesin pengembangan. Alternatif yang dipakai:
   `git diff --check` + syntax check `assets/app.js` lewat **Chrome headless**
   (`chrome.exe --headless=new --allow-file-access-from-files --dump-dom`, lalu `new Function(src)`).
-- Deploy Worker dilakukan manual oleh user (`npx wrangler deploy worker.js --name inventory-backend-test`).
-  Nama Worker harus tetap `inventory-backend-test` karena tidak ada `wrangler.toml` di repo.
-  Patch hardening timeout/OAuth/paralel di `assets/worker/worker.js` **belum aktif di live**
-  sampai deploy ulang dilakukan; frontend sudah tahan gangguan tanpa patch ini.
+- Deploy Worker dilakukan manual oleh user dari root repo: `npx wrangler deploy assets/worker/worker.js --name inventory-backend-test` (atau `npx.cmd ...` di PowerShell bila execution policy memblokir `npx.ps1`).
+  Repo sekarang punya `wrangler.jsonc` (name `inventory-backend-test`, `main` `assets/worker/worker.js`, `compatibility_date` `2026-11-23`, `preview_urls=false`) dan `.gitignore` yang mengabaikan `.wrangler/`, `.dev.vars*`, `node_modules/`.
+  Secret Worker disimpan via `wrangler secret put` di Cloudflare (`FIREBASE_SERVICE_ACCOUNT`, `FIREBASE_PROJECT_ID`, `SETUP_SECRET`); jangan commit nilai secret. `.wrangler/` adalah cache lokal, jangan di-commit.
+  Patch hardening timeout/OAuth/paralel di `assets/worker/worker.js` sudah di-deploy live (version ID `bd0bff2f-d6cb-4681-9128-98005ca7277e`, 2026-11-27).
 - Frontend di-deploy otomatis lewat **GitHub Pages** (`https://danurafa.github.io/inventory/`).
   Setiap perubahan `app.js`/`styles.css` wajib mengganti `?v=` di `index.html` + **hard refresh**.
   Halaman GitHub Pages memakai HTTPS, jadi status login yang muncul adalah `secure`, bukan `insecure`.

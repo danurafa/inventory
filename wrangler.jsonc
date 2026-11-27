@@ -1,5 +1,6 @@
 {
   "name": "inventory-backend-test",
   "compatibility_date": "2026-11-23",
-  "main": "assets/worker/worker.js"
+  "main": "assets/worker/worker.js",
+  "preview_urls": false
 }
